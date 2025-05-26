@@ -137,7 +137,7 @@ const Login = () => {
           />
           <Button
             styled={false}
-            className="!text-[13px] underline text-purple-700 hover:text-purple-900"
+            className="text-[13px]! underline text-purple-700 hover:text-purple-900"
           >Forgot password?</Button>
         </menu>
         <footer className="flex flex-col items-center gap-3 w-full mt-2">

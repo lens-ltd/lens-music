@@ -38,7 +38,7 @@ const Navbar = () => {
       <nav className="flex items-center gap-6"></nav>
 
       <section className="flex items-center gap-6">
-        <Button className="!py-1" primary onClick={(e) => {
+        <Button className="py-1!" primary onClick={(e) => {
           e.preventDefault();
           dispatch(setCreateReleaseModal(true));
         }}>

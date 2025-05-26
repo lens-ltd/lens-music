@@ -40,7 +40,7 @@ const DatePicker = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant={'outline'}
+          variant={'outline-solid'}
           className={cn(
             'w-full justify-start text-left font-normal py-2 h-[40px]',
             !value && 'text-muted-foreground'
@@ -70,7 +70,7 @@ const DatePicker = ({
           >
             {selectionType !== 'recurringDate' && (
               <Select
-                className="!h-8"
+                className="h-8!"
                 placeholder="Year"
                 onChange={(e) => {
                   setYear(e);
@@ -84,7 +84,7 @@ const DatePicker = ({
               />
             )}
             <Select
-              className="!h-8"
+              className="h-8!"
               placeholder="Month"
               onChange={(e) => {
                 setDefaultMonth(moment(`${year}-${e}`, 'YYYY-MM-DD').toDate());

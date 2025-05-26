@@ -50,7 +50,7 @@ const Select = ({
           className={`w-full focus:ring-transparent ring-0 h-10 ${className}`}
         >
           <SelectValue
-            className="!text-[10px]"
+            className="text-[10px]!"
             placeholder={
               <p className="text-[14px] text-gray-500">{placeholder}</p>
             }

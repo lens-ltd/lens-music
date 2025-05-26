@@ -62,7 +62,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
           allowDataOverflow
           tickSize={10}
           tickMargin={20}
-          className="!text-[12px]"
+          className="text-[12px]!"
           style={{
             fontSize: '12px',
           }}

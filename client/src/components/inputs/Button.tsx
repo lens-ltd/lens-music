@@ -35,16 +35,16 @@ const Button: FC<ButtonProps> = ({
   isLoading = false,
   children,
 }) => {
-  const baseStyles = `py-[6px] flex items-center gap-2 justify-center text-center border-[1px] border-primary px-4 rounded-md text-[13px] text-primary bg-white hover:bg-primary hover:text-white cursor-pointer ease-in-out duration-400 hover:scale-[1.005] 
+  const baseStyles = `py-[6px] flex items-center gap-2 justify-center text-center border border-primary px-4 rounded-md text-[13px] text-primary bg-white hover:bg-primary hover:text-white cursor-pointer ease-in-out duration-400 hover:scale-[1.005] 
     sm:text-[12px] md:text-[13px] lg:text-[13px]
     sm:py-[4px] md:py-[6px] lg:py-[8px]
     sm:px-3 md:px-4 lg:px-5
     sm:gap-1 md:gap-2 lg:gap-2
-    ${!styled && '!bg-transparent !shadow-none !text-primary hover:!scale-[1.005] !py-0 !px-0 !border-none hover:!bg-transparent hover:!text-primary'}
+    ${!styled && 'bg-transparent! shadow-none! text-primary! hover:scale-[1.005]! py-0! px-0! border-none! hover:bg-transparent! hover:text-primary!'}
     ${className}
-    ${primary && '!bg-primary !text-white hover:!bg-primary hover:!text-white !shadow-sm'}
-    ${danger && '!bg-red-700 !border-none !text-white hover:!bg-red-700 hover:!text-white !shadow-sm'}
-    ${disabled && '!bg-secondary !shadow-none hover:!scale-[1] !cursor-default hover:!bg-secondary hover:text-opacity-80 !duration-0 text-white text-opacity-80 !border-none text-center transition-all'}`;
+    ${primary && 'bg-primary! text-white! hover:bg-primary! hover:text-white! shadow-xs!'}
+    ${danger && 'bg-red-700! border-none! text-white! hover:bg-red-700! hover:text-white! shadow-xs!'}
+    ${disabled && 'bg-secondary! shadow-none! hover:scale-[1]! cursor-default! hover:bg-secondary! hover:text-opacity-80 duration-0! text-white text-opacity-80 border-none! text-center transition-all'}`;
 
   if (submit || type === 'submit') {
     return (

@@ -85,7 +85,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         return (
           <label className="flex w-fit items-center gap-2 text-[13px]">
             <Checkbox
-            className='!text-white'
+            className='text-white!'
               onCheckedChange={
                 onChange as ((checked: CheckedState) => void) | undefined
               }
@@ -109,7 +109,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             defaultChecked={defaultChecked}
             checked={checked}
             onChange={onChange}
-            className={`w-4 h-4 border-[1.5px] rounded-xl cursor-pointer border-secondary outline-none focus:outline-none accent-primary focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}`}
+            className={`w-4 h-4 border-[1.5px] rounded-xl cursor-pointer border-secondary outline-hidden focus:outline-hidden accent-primary focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}`}
           />
           <p className={`${label ? 'flex' : 'hidden'} text-[13px]`}>{label}</p>
         </label>
@@ -125,7 +125,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <button
             type="button"
             onClick={handleClick}
-            className={`!bg-primary !text-white hover:!bg-primary hover:!text-white !shadow-sm py-[5px] w-full text-[12px] text-center max-[800px]:!text-[14px] px-8 rounded-md cursor-pointer ease-in-out duration-400 hover:scale-[1.005] ${className}`}
+            className={`bg-primary! text-white! hover:bg-primary! hover:text-white! shadow-xs! py-[5px] w-full text-[12px] text-center max-[800px]:text-[14px]! px-8 rounded-md cursor-pointer ease-in-out duration-400 hover:scale-[1.005] ${className}`}
           >
             Choose file{multiple ? 's' : ''}
           </button>
@@ -193,9 +193,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onChange={onChange}
             placeholder={readOnly ? '' : placeholder}
-            className={`py-[7px] px-4 font-normal placeholder:!font-light  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-none focus:outline-none focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
+            className={`py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
               readOnly &&
-              '!border-[.1px] !border-background hover:cursor-default focus:!border-background'
+              'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
             }`}
           />
         )}
@@ -225,10 +225,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 name={name}
                 onChange={onChange}
                 placeholder={readOnly ? '' : placeholder}
-                className={`py-[7px] px-6 font-normal placeholder:!font-light  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-none focus:outline-none focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}
+                className={`py-[7px] px-6 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}
                 ${prefixIcon && 'ps-10'} ${prefixText ? 'ps-[3.6rem]' : ''} ${
                   readOnly &&
-                  '!border-[.1px] !border-background hover:cursor-default focus:!border-background'
+                  'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
                 }`}
               />
             </menu>
@@ -240,7 +240,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 onClick={suffixIconHandler}
                 className={`${
                   !suffixIcon && 'hidden'
-                } absolute top-0 end-0 p-2.5 px-3.5 text-sm font-medium h-full rounded-e-lg border focus:outline-none ${
+                } absolute top-0 end-0 p-2.5 px-3.5 text-sm font-medium h-full rounded-e-lg border focus:outline-hidden ${
                   suffixIconPrimary
                     ? 'bg-primary text-white border-primary border-l-none'
                     : 'border-secondary border-opacity-50 bg-white text-primary border-l-none'
@@ -258,13 +258,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 onKeyPress={onKeyPress}
                 placeholder={readOnly ? '' : placeholder}
                 className={`${
-                  prefixText && '!ml-16 !w-[85%]'
-                } py-[7px] px-4 font-normal placeholder:!font-light  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-none focus:outline-none focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
+                  prefixText && 'ml-16! w-[85%]!'
+                } py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
                   prefixIcon &&
-                  '!ml-[45px] !w-[90%] !border-l-none !rounded-l-none !ps-3.5'
+                  'ml-[45px]! w-[90%]! !border-l-none rounded-l-none! ps-3.5!'
                 } ${
                   readOnly &&
-                  '!border-[.1px] !border-background hover:cursor-default focus:!border-background'
+                  'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
                 }`}
               />
             </menu>

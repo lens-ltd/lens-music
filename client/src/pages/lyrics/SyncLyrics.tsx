@@ -123,7 +123,7 @@ const SyncLyrics = () => {
             </li>
             <li>
               <UIButton
-                variant={`outline`}
+                variant={`outline-solid`}
                 className="text-[13px] p-1 px-4"
                 onClick={handlePlay}
               >

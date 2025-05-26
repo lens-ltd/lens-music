@@ -110,7 +110,7 @@ const Sidebar = () => {
                 <Link
                   to={nav?.path}
                   className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
-                    selected && 'bg-white !text-primary'
+                    selected && 'bg-white text-primary!'
                   } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
                   onClick={(e) => {
                     if (nav.subCategories) {
@@ -126,7 +126,7 @@ const Sidebar = () => {
                   <FontAwesomeIcon
                     icon={nav?.icon}
                     className={`text-secondary font-bold ${
-                      selected && '!text-primary'
+                      selected && 'text-primary!'
                     } ${sidebarOpen ? 'text-[20px]' : 'text-[16px]'}`}
                   />
                   {sidebarOpen ? nav?.title : null}
@@ -155,7 +155,7 @@ const Sidebar = () => {
                               to={sub.path}
                               className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
                                 pathname === sub.path &&
-                                'bg-white !text-primary'
+                                'bg-white text-primary!'
                               } ${
                                 sidebarOpen ? 'justify-start' : 'justify-center'
                               }`}
@@ -163,7 +163,7 @@ const Sidebar = () => {
                               <FontAwesomeIcon
                                 icon={sub.icon}
                                 className={`text-secondary font-bold ${
-                                  pathname === sub.path && '!text-primary'
+                                  pathname === sub.path && 'text-primary!'
                                 } ${
                                   sidebarOpen ? 'text-[20px]' : 'text-[16px]'
                                 }`}

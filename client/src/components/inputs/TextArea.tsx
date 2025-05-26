@@ -53,7 +53,7 @@ const TextArea: FC<TextAreaProps> = ({
         value={value}
         readOnly={readonly}
         placeholder={placeholder}
-        className={`border-[1.5px] border-opacity-50 text-[14px] placeholder:text-[13px] border-secondary flex items-center justify-center px-4 py-[8px] w-full focus:border-[1.3px] focus:outline-none focus:border-primary rounded-md ${
+        className={`border-[1.5px] border-opacity-50 text-[14px] placeholder:text-[13px] border-secondary flex items-center justify-center px-4 py-[8px] w-full focus:border-[1.3px] focus:outline-hidden focus:border-primary rounded-md ${
           resize ? null : 'resize-none'
         } ${className}`}
         onChange={onChange}

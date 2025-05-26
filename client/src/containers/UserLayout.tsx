@@ -17,7 +17,7 @@ const UserLayout: FC<UserLayoutProps> = ({ children }) => {
   return (
     <main className="relative">
       <Sidebar />
-      <section className="w-[100vw] max-w-[100vw]">
+      <section className="w-screen max-w-screen">
         <Navbar />
         <section
           className={`${

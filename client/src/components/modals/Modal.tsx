@@ -29,7 +29,7 @@ const JSX_MODAL: FC<ModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className={`z-[10000] min-w-fit ${className} max-h-[90vh] overflow-y-scroll bg-white`}
+        className={`z-10000 min-w-fit ${className} max-h-[90vh] overflow-y-scroll bg-white`}
       >
         <DialogHeader>
           <DialogTitle
