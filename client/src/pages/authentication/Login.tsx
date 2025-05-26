@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/features/authSlice';
 import { setUser } from '../../state/features/userSlice';
 import { ErrorResponse, useNavigate } from 'react-router-dom';
+import { PublicNavbar } from '../landing/LandingPage';
 
 const Login = () => {
   // REACT HOOK FORM
@@ -72,48 +73,43 @@ const Login = () => {
   ]);
 
   return (
-    <main className="h-[100vh] max-h-screen overflow-clip flex flex-col items-center justify-center gap-5 w-full bg-background">
+    <main className="min-h-screen max-h-screen overflow-clip flex flex-col items-center justify-center gap-5 w-full bg-background relative">
+      {/* Accent geometric shape */}
+      <aside aria-hidden="true" className="absolute left-0 bottom-0 w-full h-1/2 pointer-events-none select-none">
+        <span className="block absolute left-0 bottom-0 w-2/3 h-24 bg-primary/20 rounded-tr-3xl" style={{transform: 'skewY(-4deg)'}}></span>
+        <span className="block absolute left-0 bottom-10 w-1/2 h-8 bg-primary/40 rounded-tr-2xl" style={{transform: 'skewY(-2deg)'}}></span>
+      </aside>
+      <PublicNavbar />
       <form
-        className="flex flex-col gap-5 w-full max-w-[30%] p-7 rounded-md shadow-lg bg-white"
+        className="flex flex-col gap-7 w-full max-w-lg p-10 rounded-2xl shadow-2xl bg-white border border-gray-100 z-10"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <section className="flex flex-col gap-1 w-full items-center justify-center my-4">
-          <h2 className="font-bold uppercase text-xl">Lens Music</h2>
-          <h1 className="font-semibold uppercase text-lg text-center">Login</h1>
-        </section>
-        <Controller
-          control={control}
-          name="email"
-          rules={{
-            required: 'Email is required',
-            validate: (value) => {
-              return validateInputs(value, 'email') || 'Invalid email';
-            },
-          }}
-          render={({ field }) => {
-            return (
+        <header className="flex flex-col gap-2 w-full items-center justify-center my-4">
+          <h2 className="font-extrabold uppercase text-2xl tracking-widest text-primary">Lens Music</h2>
+          <h1 className="font-semibold uppercase text-lg text-center text-gray-700">Login</h1>
+        </header>
+        <section className="flex flex-col gap-6">
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: 'Email is required',
+              validate: (value) => validateInputs(value, 'email') || 'Invalid email',
+            }}
+            render={({ field }) => (
               <label className="flex flex-col gap-1">
-                <Input
-                  label="Email"
-                  required
-                  placeholder="Enter email address"
-                  {...field}
-                />
+                <Input label="Email" required placeholder="Enter email address" {...field} />
                 {errors?.email && (
-                  <p className="text-red-500 text-sm">
-                    {String(errors?.email?.message)}
-                  </p>
+                  <p className="text-red-500 text-sm">{String(errors?.email?.message)}</p>
                 )}
               </label>
-            );
-          }}
-        />
-        <Controller
-          name="password"
-          rules={{ required: 'Password is required' }}
-          control={control}
-          render={({ field }) => {
-            return (
+            )}
+          />
+          <Controller
+            name="password"
+            rules={{ required: 'Password is required' }}
+            control={control}
+            render={({ field }) => (
               <label className="flex flex-col gap-1">
                 <Input
                   type={showPassword ? 'text' : 'password'}
@@ -128,9 +124,9 @@ const Login = () => {
                   {...field}
                 />
               </label>
-            );
-          }}
-        />
+            )}
+          />
+        </section>
         <menu className="flex items-center gap-3 justify-between w-full my-1 max-[1050px]:flex-col max-[800px]:flex-row max-[450px]:flex-col">
           <Input
             label="Keep me logged in"
@@ -141,24 +137,24 @@ const Login = () => {
           />
           <Button
             styled={false}
-            className="!text-[13px] underline"
+            className="!text-[13px] underline text-purple-700 hover:text-purple-900"
           >Forgot password?</Button>
         </menu>
-        <menu className="flex flex-col items-center gap-3 w-full">
+        <footer className="flex flex-col items-center gap-3 w-full mt-2">
           <Button
             primary
             submit
-            className="w-full"
+            className="w-full shadow-md hover:shadow-lg transition-all duration-200"
           >{loginIsLoading ? <Loader /> : 'Login'}</Button>
-          <p className="text-center flex items-center gap-2 text-[15px]">
+          <p className="text-center flex items-center gap-2 text-[14px]">
             Don't have an account?{' '}
             <Button
               styled={false}
               route="/auth/signup"
-              className='underline'
+              className="underline text-purple-700 hover:text-purple-900"
             >Signup here</Button>
           </p>
-        </menu>
+        </footer>
       </form>
     </main>
   );

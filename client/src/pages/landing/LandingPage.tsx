@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import landingHeroImage from '/landing/landing-hero.png';
 import lensMusicLogo from '/logo/lens-music-logo.png';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
 
-const Navbar = () => {
+export const PublicNavbar = ({ scrolled }: { scrolled?: boolean }) => {
+  /**
+   * NAVIGATION
+   */
+
+  // NAVIGATION
+  const { pathname } = useLocation();
+
+  // NAVIGATION LINKS
   const navigationLinks = [
     {
       label: 'About',
@@ -18,33 +26,39 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-white text-black`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 h-[9vh] ${
+        scrolled ? 'bg-white text-black' : 'bg-transparent text-white'
+      }`}
     >
       <nav className="container w-[90%] flex items-center justify-between mx-auto px-4 py-4">
-        <Link to={`#`}>
-          <img src={lensMusicLogo} alt="Lens Music Logo" className="w-12" />
+        <Link to={`/`}>
+          <img src={lensMusicLogo} alt="Lens Music Logo" className="w-8" />
         </Link>
-        <menu className="flex justify-between items-center gap-8">
-          {navigationLinks.map((link, index) => (
-            <Link
-              key={index}
-              to={link.route}
-              className="text-gray-600 hover:text-primary transition-colors duration-300 font-medium text-[15px] relative group"
-            >
-              {link.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-          ))}
-        </menu>
-        <menu className="w-fit flex items-center gap-3">
-          <Button
-            route={`/auth/login`}
-            primary
-            className={`px-4 py-2 rounded-md`}
-          >
-            My account
-          </Button>
-        </menu>
+        {!pathname.includes('/auth') ? (
+          <>
+            <menu className="flex justify-between items-center gap-8">
+              {navigationLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  to={link.route}
+                  className="text-gray-600 hover:text-primary transition-colors duration-300 font-medium text-[14px] relative group"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              ))}
+            </menu>
+            <menu className="w-fit flex items-center gap-3">
+              <Button
+                route={`/auth/login`}
+                primary
+                className={`px-4 py-1 rounded-md`}
+              >
+                My account
+              </Button>
+            </menu>
+          </>
+        ) : null}
       </nav>
     </header>
   );
@@ -70,7 +84,7 @@ const LandingPage = () => {
 
   return (
     <main className="min-h-screen">
-      <Navbar />
+      <PublicNavbar scrolled={scrolled} />
 
       <section
         className="pt-32 pb-20 bg-white flex flex-col items-center justify-center min-h-[80vh]"

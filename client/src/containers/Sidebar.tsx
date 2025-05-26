@@ -109,7 +109,7 @@ const Sidebar = () => {
               <li key={index}>
                 <Link
                   to={nav?.path}
-                  className={`flex items-center gap-5 px-4 font-semibold text-[15px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
+                  className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
                     selected && 'bg-white !text-primary'
                   } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
                   onClick={(e) => {
@@ -153,7 +153,7 @@ const Sidebar = () => {
                           <li key={subIndex}>
                             <Link
                               to={sub.path}
-                              className={`flex items-center gap-5 px-4 font-semibold text-[15px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
+                              className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
                                 pathname === sub.path &&
                                 'bg-white !text-primary'
                               } ${
