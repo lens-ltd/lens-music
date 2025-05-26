@@ -2,16 +2,19 @@ import {
   faBars,
   faChevronDown,
   faChevronUp,
-  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
-import { motion, useAnimation } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/state/store';
 import { setSidebarOpen } from '@/state/features/sidebarSlice';
 import { sidebarNavigation } from '@/constants/sidebar.constants';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -19,168 +22,131 @@ const Sidebar = () => {
   const { isOpen: sidebarOpen } = useSelector(
     (state: RootState) => state.sidebar
   );
-  const [isApplicationsOpen, setIsApplicationsOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [sidebarNav] = useState<
-    Array<{
-      title: string;
-      path: string;
-      icon: IconDefinition;
-      subCategories?: {
-        title: string;
-        path: string;
-        icon: IconDefinition;
-      }[];
-    }>
-  >(sidebarNavigation);
-
-  const controls = useAnimation();
-  const controlText = useAnimation();
-  const controlTitleText = useAnimation();
-
-  const showMore = useCallback(() => {
-    controls.start({
-      width: 'auto',
-      transition: { duration: 0.2 },
-    });
-    controlText.start({
-      opacity: 1,
-      display: 'block',
-      transition: { delay: 0.3 },
-    });
-    controlTitleText.start({
-      opacity: 1,
-      transition: { delay: 0.3 },
-    });
-  }, [controls, controlText, controlTitleText]);
-
-  const showLess = useCallback(() => {
-    controls.start({
-      width: 'auto',
-      transition: { duration: 0.2 },
-    });
-
-    controlText.start({
-      opacity: 0,
-      display: 'none',
-    });
-
-    controlTitleText.start({
-      opacity: 0,
-    });
-  }, [controls, controlText, controlTitleText]);
-
-  useEffect(() => {
-    if (sidebarOpen) {
-      showMore();
-    } else {
-      showLess();
-    }
-  }, [sidebarOpen, showLess, showMore]);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <nav
-      className={`flex flex-col h-screen ${
-        sidebarOpen ? 'w-[22vw]' : 'w-[6vw]'
-      } transition-all duration-300 fixed top-[10vh]`}
+    <aside
+      className={`fixed left-0 top-[10vh] z-40 h-[calc(100vh-10vh)] bg-background text-white flex flex-col transition-all duration-300
+        ${
+          sidebarOpen
+            ? 'w-[18vw] min-w-[220px] max-w-xs'
+            : 'w-[12vw] min-w-[60px] max-w-[80px]'
+        }
+        border-r border-border shadow-lg
+      `}
+      style={{ minHeight: 'calc(100vh - 10vh)' }}
     >
-      <motion.div
-        animate={controls}
-        className={`flex flex-col items-center h-full bg-background text-white transition-all duration-300 px-4`}
-      >
-        <header
-          className={`w-full flex items-center gap-4 justify-end px-4 py-4 ${
-            sidebarOpen ? 'flex-row' : 'flex-col gap-4'
-          }`}
-        >
-          <FontAwesomeIcon
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(setSidebarOpen(!sidebarOpen));
-            }}
-            className="p-2 rounded-full bg-primary px-[9px] text-white text-[16px] cursor-pointer ease-in-out duration-150 hover:scale-[1.01]"
-            icon={faBars}
-          />
-        </header>
-        <ul className="flex flex-col w-full h-full gap-2">
-          {sidebarNav?.map((nav, index) => {
-            const selected = pathname === nav?.path;
-            return (
-              <li key={index}>
-                <Link
-                  to={nav?.path}
-                  className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
-                    selected && 'bg-white text-primary!'
-                  } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
-                  onClick={(e) => {
-                    if (nav.subCategories) {
-                      e.preventDefault();
-                      if (nav.title === 'Applications') {
-                        setIsApplicationsOpen(!isApplicationsOpen);
-                      } else if (nav.title === 'Settings') {
-                        setIsSettingsOpen(!isSettingsOpen);
-                      }
+      <figure className="flex items-center justify-end px-4 py-4 h-[10vh] border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-10">
+        <FontAwesomeIcon
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch(setSidebarOpen(!sidebarOpen));
+          }}
+          icon={faBars}
+          className="bg-primary text-white rounded-full p-2 px-[8.5px] cursor-pointer"
+        />
+      </figure>
+      <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent px-2 py-6">
+        <ul className="flex flex-col gap-4">
+          {sidebarNavigation.map((nav, idx) => {
+            const selected = pathname === nav.path;
+            if (nav?.subCategories && nav?.subCategories?.length > 0) {
+              const isOpen = openDropdown === nav.title;
+              return (
+                <li key={idx} className="relative">
+                  <Popover
+                    open={isOpen}
+                    onOpenChange={(open) =>
+                      setOpenDropdown(open ? nav.title : null)
                     }
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={nav?.icon}
-                    className={`text-secondary font-bold ${
-                      selected && 'text-primary!'
-                    } ${sidebarOpen ? 'text-[20px]' : 'text-[16px]'}`}
-                  />
-                  {sidebarOpen ? nav?.title : null}
-                  {nav.subCategories && sidebarOpen && (
-                    <FontAwesomeIcon
-                      icon={
-                        nav.title === 'Applications'
-                          ? isApplicationsOpen
-                            ? faChevronUp
-                            : faChevronDown
-                          : isSettingsOpen
-                          ? faChevronUp
-                          : faChevronDown
-                      }
-                      className="ml-auto"
-                    />
-                  )}
-                </Link>
-                {nav.subCategories && sidebarOpen && (
-                  <ul className="px-2">
-                    {(nav.title === 'Applications' && isApplicationsOpen) ||
-                    (nav.title === 'Settings' && isSettingsOpen)
-                      ? nav.subCategories.map((sub, subIndex) => (
-                          <li key={subIndex}>
+                  >
+                    <PopoverTrigger asChild>
+                      <button
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-[15px] transition-colors
+                          ${
+                            selected
+                              ? 'bg-white text-primary shadow'
+                              : 'hover:bg-white/20 text-secondary'
+                          }
+                          ${sidebarOpen ? 'justify-start' : 'justify-center'}
+                        `}
+                        onClick={() =>
+                          setOpenDropdown(isOpen ? null : nav.title)
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={nav.icon}
+                          className={`text-[20px] ${
+                            selected ? 'text-primary' : 'text-secondary'
+                          }`}
+                        />
+                        {sidebarOpen && <span>{nav.title}</span>}
+                        {sidebarOpen && (
+                          <FontAwesomeIcon
+                            icon={isOpen ? faChevronUp : faChevronDown}
+                            className="ml-auto"
+                          />
+                        )}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      className="p-0 w-full min-w-[180px] bg-background border-none shadow-none"
+                    >
+                      <ul className="flex flex-col gap-1">
+                        {nav.subCategories.map((sub) => (
+                          <li key={sub.title}>
                             <Link
                               to={sub.path}
-                              className={`flex items-center gap-5 px-4 font-semibold text-[14px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
-                                pathname === sub.path &&
-                                'bg-white text-primary!'
-                              } ${
-                                sidebarOpen ? 'justify-start' : 'justify-center'
-                              }`}
+                              className={`flex items-center gap-3 px-6 py-2 rounded-md text-[14px] font-medium transition-colors
+                                ${
+                                  pathname === sub.path
+                                    ? 'bg-primary text-white'
+                                    : 'hover:bg-primary/10 text-secondary'
+                                }
+                              `}
                             >
                               <FontAwesomeIcon
                                 icon={sub.icon}
-                                className={`text-secondary font-bold ${
-                                  pathname === sub.path && 'text-primary!'
-                                } ${
-                                  sidebarOpen ? 'text-[20px]' : 'text-[16px]'
-                                }`}
+                                className="text-[16px]"
                               />
-                              {sidebarOpen ? sub.title : null}
+                              {sidebarOpen && <span>{sub.title}</span>}
                             </Link>
                           </li>
-                        ))
-                      : null}
-                  </ul>
-                )}
+                        ))}
+                      </ul>
+                    </PopoverContent>
+                  </Popover>
+                </li>
+              );
+            }
+            return (
+              <li key={idx}>
+                <Link
+                  to={nav.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-[15px] transition-colors
+                    ${
+                      selected
+                        ? 'bg-white text-primary shadow'
+                        : 'hover:bg-white/20 text-secondary'
+                    }
+                    ${sidebarOpen ? 'justify-start' : 'justify-center'}
+                  `}
+                >
+                  <FontAwesomeIcon
+                    icon={nav.icon}
+                    className={`text-[20px] ${
+                      selected ? 'text-primary' : 'text-secondary'
+                    }`}
+                  />
+                  {sidebarOpen && <span>{nav.title}</span>}
+                </Link>
               </li>
             );
           })}
         </ul>
-      </motion.div>
-    </nav>
+      </nav>
+    </aside>
   );
 };
 

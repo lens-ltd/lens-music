@@ -30,7 +30,7 @@ export const PublicNavbar = ({ scrolled }: { scrolled?: boolean }) => {
         scrolled ? 'bg-white text-black' : 'bg-transparent text-white'
       }`}
     >
-      <nav className="container w-[90%] flex items-center justify-between mx-auto px-4 py-4">
+      <nav className="w-[90%] flex items-center justify-between mx-auto px-4 py-4">
         <Link to={`/`}>
           <img src={lensMusicLogo} alt="Lens Music Logo" className="w-8" />
         </Link>

@@ -29,8 +29,8 @@ interface DashboardChartProps {
     | 'stepAfter'
     | 'stepBefore';
   vertical?: boolean;
-  fill?: string;
   strokeWidth?: number;
+  fill?: string;
 }
 
 const DashboardChart: FC<DashboardChartProps> = ({
@@ -40,35 +40,69 @@ const DashboardChart: FC<DashboardChartProps> = ({
   width = '100%',
   type = 'natural',
   vertical = false,
-  fill = '#E9EBEB',
   strokeWidth = 2,
+  fill = '#e5e7eb',
 }) => {
   return (
     <ResponsiveContainer height={height} width={width}>
-      <ComposedChart compact data={data}>
+      <ComposedChart
+        compact
+        data={data}
+        style={{ borderRadius: '1rem', overflow: 'visible' }}
+      >
+        <defs>
+          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={fill} stopOpacity={0.8} />
+            <stop offset="100%" stopColor="#f1f5f9" stopOpacity={0.3} />
+          </linearGradient>
+        </defs>
         <Area
           connectNulls
           dataKey="value"
-          fill={fill}
+          fill="url(#chartGradient)"
           stackId={1}
-          fillOpacity={0.8}
+          fillOpacity={1}
           strokeWidth={strokeWidth}
-          stroke="#000000"
+          stroke="#60a5fa"
           type={type || 'natural'}
+          style={{ filter: 'drop-shadow(0 4px 16px rgba(96,165,250,0.10))' }}
         />
-        <XAxis dataKey={dataKey} />
-        <Legend />
+        <XAxis
+          dataKey={dataKey}
+          tick={{ fontSize: 12, fill: '#6b7280' }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Legend
+          wrapperStyle={{ paddingTop: 8, fontSize: 13, color: '#374151' }}
+          iconType="circle"
+        />
         <YAxis
           allowDataOverflow
           tickSize={10}
           tickMargin={20}
-          className="text-[12px]!"
-          style={{
-            fontSize: '12px',
-          }}
+          tick={{ fontSize: 12, fill: '#6b7280' }}
+          axisLine={false}
+          tickLine={false}
         />
-        <Tooltip />
-        <CartesianGrid strokeDasharray={'5 5'} y={0} vertical={vertical} />
+        <Tooltip
+          contentStyle={{
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: '1rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            border: 'none',
+            color: '#222',
+            fontSize: 13,
+          }}
+          itemStyle={{ color: '#60a5fa' }}
+          cursor={{ fill: 'rgba(96,165,250,0.08)' }}
+        />
+        <CartesianGrid
+          strokeDasharray={'5 5'}
+          y={0}
+          vertical={vertical}
+          stroke="#e5e7eb"
+        />
       </ComposedChart>
     </ResponsiveContainer>
   );

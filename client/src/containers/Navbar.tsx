@@ -26,7 +26,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="flex h-[10vh] items-center gap-3 justify-between p-6 w-full px-8 mx-auto bg-background">
+    <header className="fixed top-0 left-0 z-50 w-full flex h-[10vh] items-center gap-3 justify-between px-8 bg-background border-b border-border" style={{ minHeight: '60px' }}>
       <h1>
         <Link
           to={'/dashboard'}

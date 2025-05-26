@@ -1,35 +1,27 @@
-import { FC, ReactNode } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import { RootState } from '@/state/store';
 import { useSelector } from 'react-redux';
 
 interface UserLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const UserLayout: FC<UserLayoutProps> = ({ children }) => {
-  // STATE VARIABLES
-  const { isOpen: sidebarOpen } = useSelector(
-    (state: RootState) => state.sidebar
-  );
+const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
+  const { isOpen: sidebarOpen } = useSelector((state: RootState) => state.sidebar);
 
   return (
-    <main className="relative">
+    <article className="relative w-full flex">
       <Sidebar />
-      <section className="w-screen max-w-screen">
+      <article className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-[18vw]' : 'ml-[12vw]'} w-0`}>
         <Navbar />
-        <section
-          className={`${
-            sidebarOpen ? 'w-[78vw] left-[22vw]' : 'w-[94vw] left-[6vw]'
-          } top-[10vh] absolute mx-auto flex items-center justify-center p-6`}
-        >
-          <section className="h-full w-[95%] mx-auto">
+        <main className="flex-1 overflow-y-auto bg-background p-6 top-[10vh] relative">
+          <section className='bg-white p-6 rounded-md h-fit'>
             {children}
           </section>
-        </section>
-      </section>
-    </main>
+        </main>
+      </article>
+    </article>
   );
 };
 

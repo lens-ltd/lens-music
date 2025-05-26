@@ -6,12 +6,19 @@ import DashboardChart from '../../components/graphs/DashboardChart';
 import { useState } from 'react';
 import { monthsData } from '../../constants/dashboard.constants';
 import AddArtist from '../artists/AddArtist';
+import DashboardCard from '../../containers/DashboardCard';
+import {
+  faMusic,
+  faDownload,
+  faDollarSign,
+} from '@fortawesome/free-solid-svg-icons';
 
 const UserDashboard = () => {
   // STATE VARIABLES
   const [streamingData, setStreamingData] = useState(monthsData());
   const [selectedButton, setSelectedButton] = useState(0);
 
+  // CHART NAVIGATIONS
   const chartNavigations = [
     {
       label: 'Streams',
@@ -24,10 +31,47 @@ const UserDashboard = () => {
     },
   ];
 
+  // DASHBOARD CARDS
+  const dashboardCards = [
+    {
+      title: 'Total Streams',
+      value: '1,234,567',
+      icon: faMusic,
+      color: '#f1f5f9',
+    },
+    {
+      title: 'Total Downloads',
+      value: '89,123',
+      icon: faDownload,
+      color: '#f8fafc',
+    },
+    {
+      title: 'Revenue',
+      value: '$12,345',
+      icon: faDollarSign,
+      color: '#f3f4f6',
+    },
+  ];
+
   return (
     <UserLayout>
-      <main className="flex flex-col gap-6 w-full p-4 px-6">
-        <section className="flex flex-col gap-5 h-[80vh]">
+      <main className="flex flex-col gap-6 w-full">
+        {/* Dashboard Cards */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-2">
+          {dashboardCards.map((card, index) => {
+            return (
+              <DashboardCard
+                key={index}
+                title={card.title}
+                value={card.value}
+                icon={card.icon}
+                color={card.color}
+              />
+            );
+          })}
+        </section>
+        {/* Chart Section */}
+        <section className="flex flex-col gap-5 h-[70vh]">
           <menu className="flex w-full items-center gap-3 justify-between">
             <h1 className="font-semibold uppercase text-lg">Streaming data</h1>
             <Button styled={false}>
@@ -37,8 +81,15 @@ const UserDashboard = () => {
               </menu>
             </Button>
           </menu>
-          <figure className="w-full h-[90%] p-2 shadow-md flex flex-col gap-6">
-            <DashboardChart data={streamingData} dataKey="month" />
+          <figure className="w-full h-[80%] p-2 bg-white/70 rounded-2xl shadow-lg flex flex-col gap-6 border border-gray-200/40 backdrop-blur-md">
+            <DashboardChart
+              data={streamingData}
+              dataKey="month"
+              height="80%"
+              width="100%"
+              fill="#a8edea"
+              strokeWidth={3}
+            />
             <menu className="flex items-center gap-6 justify-center w-full">
               {chartNavigations.map((navigation, index: number) => {
                 return (
