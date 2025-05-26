@@ -12,5 +12,9 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   entities: [`${__dirname}/**/entities/*.{ts,js}`],
   migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
-  ssl: process.env.DB_HOST === 'localhost' ? false : { rejectUnauthorized: false },
+  ssl: ['localhost', '127.0.0.1', '/var/run/postgresql'].includes(
+    process.env.DB_HOST || ''
+  )
+    ? false
+    : { rejectUnauthorized: false },
 });

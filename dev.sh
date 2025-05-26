@@ -25,7 +25,7 @@ API_PID=$!
 # Start Client
 echo "Starting Client (npm run dev in ./client)..."
 cd ../client
-npm run dev &
+npm run dev -- --host &
 CLIENT_PID=$!
 
 # Wait for both to exit
