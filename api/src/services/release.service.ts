@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Release } from "../entities/release.entity";
@@ -5,6 +6,7 @@ import { getPagination, getPagingData } from "../helpers/pagination.helper";
 import { UUID } from "crypto";
 import { ReleasePagination } from "../types/models/release.types";
 
+@Injectable()
 export class ReleaseService {
     private releaseRepository: Repository<Release>;
 

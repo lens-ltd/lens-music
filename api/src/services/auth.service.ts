@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { User } from '../entities/user.entity';
 import { comparePasswords, hashPassword } from '../helpers/encryptions.helper';
 import { ValidationError } from '../helpers/errors.helper';
 
+@Injectable()
 export class AuthService {
   private userRepository: Repository<User>;
 

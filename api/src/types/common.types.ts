@@ -1,1 +1,1 @@
-export { UUID } from 'crypto';
+export type UUID = string;
