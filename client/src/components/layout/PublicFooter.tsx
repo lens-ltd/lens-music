@@ -98,14 +98,12 @@ const PublicFooter: FC = () => (
       {/* bottom row */}
       <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-7">
         <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
-          Distribution is free. Lens charges a 15% revenue share on earnings generated through the platform.
-        </p>
-        <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-sans)' }}>
-          © Lens Music, {new Date().getFullYear()}. All rights reserved.
+          <span className="text-[color:var(--lens-blue)] mr-0.5">*</span>
+          Distribution is free. Lens charges a <span className="text-[color:var(--lens-blue)] tracking-tight text-[11px]">15% revenue share</span> on earnings generated through the platform.
         </p>
       </section>
     </section>
   </footer>
-);
+)
 
-export default PublicFooter;
+export default PublicFooter

@@ -62,7 +62,7 @@ const Login = () => {
     >
       <PublicNavbar scrolled variant="auth" />
 
-      <section className="flex-1 min-h-[calc(100svh-64px)] px-6 py-12 pt-[calc(64px+2.5rem)]">
+      <section className="flex-1 min-h-[calc(100vh)] flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
         <article className="max-w-5xl mx-auto grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
           <section className="border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 rounded-2xl">
             <p

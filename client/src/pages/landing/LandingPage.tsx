@@ -160,10 +160,23 @@ const LandingPage = () => {
         .nav-link:hover::after { width: 100%; }
         .footer-link { position: relative; color: rgba(255,255,255,0.55); transition: color 0.2s ease; }
         .footer-link::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 1px; background: rgba(255,255,255,0.7); transition: width 0.2s ease; }
-        .footer-link:hover { color: #fff; }
+        .footer-link:hover { color: white; }
         .footer-link:hover::after { width: 100%; }
         details[open] > summary .faq-plus { transform: rotate(45deg); }
         .faq-plus { transition: transform .2s ease; }
+        .editorial-chip {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          background: var(--color-primary);
+          color: white;
+          font-size: 10px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          padding: 0.5rem 0.75rem;
+          font-weight: 400;
+        }
         @media (prefers-reduced-motion: reduce) {
           * { scroll-behavior: auto !important; }
         }
@@ -171,10 +184,10 @@ const LandingPage = () => {
 
       <PublicNavbar scrolled={scrolled} variant="landing" />
 
-      <section id="hero" className="pt-28 pb-16 md:pb-20" aria-labelledby="hero-heading">
+      <section id="hero" className="pt-26 pb-16 md:pb-20" aria-labelledby="hero-heading">
         <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 items-start">
           <header className="space-y-6">
-            <SectionLabel>Free music distribution</SectionLabel>
+            <SectionLabel>Free music distribution*</SectionLabel>
             <h1
               id="hero-heading"
               className="text-[clamp(38px,6vw,66px)] leading-[1.02] tracking-[-0.03em] text-[color:var(--lens-ink)]"
@@ -382,19 +395,19 @@ const LandingPage = () => {
         )}
       </FadeSection>
 
-      <FadeSection id="features" className="py-24 bg-[color:var(--lens-sand)]/20">
+      <FadeSection id="features" className="py-24 bg-[color:var(--lens-ink)] text-white">
         {({ inView }) => (
           <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1fr_1fr] gap-12 items-start">
             <header style={fadeUp(inView)}>
-              <SectionLabel>Built for independent teams</SectionLabel>
+              <span className="editorial-chip">Built around your needs</span>
               <h2
                 id="features-heading"
-                className="mt-4 text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em]"
+                className="mt-5 text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-white"
                 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
                 Distribution tools with reporting that stays readable.
               </h2>
-              <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+              <p className="mt-4 text-[13px] leading-7 text-white/70 font-normal">
                 Lens is designed for artists, managers, labels, and small teams that need reliable
                 delivery plus practical revenue visibility.
               </p>
@@ -409,9 +422,13 @@ const LandingPage = () => {
                 ['Label support', 'Manage multiple artists and release operations from one account.'],
                 ['Codes included', 'ISRC and UPC handling stays inside the release process.'],
               ].map(([title, text], index) => (
-                <article key={title} className="rounded-xl border border-[color:var(--lens-sand)] bg-white p-5" style={fadeUp(inView, 0.05 * index)}>
+                <article
+                  key={title}
+                  className="rounded-none border border-white/15 bg-[color:var(--lens-sand)] p-5 text-[color:var(--lens-ink)]"
+                  style={fadeUp(inView, 0.05 * index)}
+                >
                   <h3 className="text-[14px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>{title}</h3>
-                  <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">{text}</p>
+                  <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/75 font-normal">{text}</p>
                 </article>
               ))}
             </div>
@@ -530,41 +547,58 @@ const LandingPage = () => {
                 className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
                 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
-                Built for teams that want distribution and reporting in one place.
+                What artists say after switching to a clearer workflow.
               </h2>
             </header>
 
-            <div className="mt-8 grid md:grid-cols-3 gap-4">
-              {[
-                [
-                  'Lens made our release workflow easier to manage. The reporting view is clear enough that the team actually uses it every week.',
-                  'Aline N.',
-                  'Artist manager',
-                ],
-                [
-                  'We needed a simpler way to track where income was coming from. Platform and territory summaries have been the biggest improvement.',
-                  'M. Didier',
-                  'Independent label',
-                ],
-                [
-                  'The no-upfront-cost model helped us launch quickly, and the dashboard gives us enough visibility to plan the next release cycle.',
-                  'S. Kamanzi',
-                  'Artist',
-                ],
-              ].map(([quote, name, role], index) => (
-                <blockquote
-                  key={String(name)}
-                  className="rounded-2xl border border-[color:var(--lens-sand)] p-6"
-                  style={fadeUp(inView, 0.06 * index)}
-                >
-                  <p className="text-[13px] leading-7 text-[color:var(--lens-ink)]/75 font-normal">{quote}</p>
-                  <footer className="mt-6">
-                    <p className="text-[12px] text-[color:var(--lens-ink)] font-normal">{name}</p>
-                    <p className="text-[11px] text-[color:var(--lens-ink)]/50 font-normal">{role}</p>
-                  </footer>
-                </blockquote>
-              ))}
-            </div>
+            <section className="mt-8 grid lg:grid-cols-2 border border-[color:var(--lens-sand)] rounded-2xl overflow-hidden" style={fadeUp(inView, 0.08)}>
+              <figure className="bg-primary text-white p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
+                <figcaption>
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/70 font-normal">Featured quote</p>
+                  <p
+                    className="mt-4 text-[clamp(26px,4vw,38px)] leading-[1.02] tracking-[-0.03em]"
+                    style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+                  >
+                    “The revenue view finally makes sense to our team.”
+                  </p>
+                </figcaption>
+                <div className="mt-8 h-36 w-36 rounded-full border border-white/25 bg-white/10 flex items-center justify-center">
+                  <span className="text-[10px] uppercase tracking-[0.16em] text-white/80 font-normal">Artist story</span>
+                </div>
+              </figure>
+
+              <div className="bg-white p-6 md:p-8 grid gap-4">
+                {[
+                  [
+                    'Lens made our release workflow easier to manage. The reporting view is clear enough that the team actually uses it every week.',
+                    'Aline N.',
+                    'Artist manager',
+                  ],
+                  [
+                    'We needed a simpler way to track where income was coming from. Platform and territory summaries have been the biggest improvement.',
+                    'M. Didier',
+                    'Independent label',
+                  ],
+                  [
+                    'The no-upfront-cost model helped us launch quickly, and the dashboard gives us enough visibility to plan the next release cycle.',
+                    'S. Kamanzi',
+                    'Artist',
+                  ],
+                ].map(([quote, name, role], index) => (
+                  <blockquote
+                    key={String(name)}
+                    className="border-b last:border-b-0 border-[color:var(--lens-sand)] pb-4 last:pb-0"
+                    style={fadeUp(inView, 0.12 + 0.05 * index)}
+                  >
+                    <p className="text-[13px] leading-7 text-[color:var(--lens-ink)]/75 font-normal">{quote}</p>
+                    <footer className="mt-3">
+                      <p className="text-[12px] text-[color:var(--lens-ink)] font-normal">{name}</p>
+                      <p className="text-[11px] text-[color:var(--lens-ink)]/50 font-normal">{role}</p>
+                    </footer>
+                  </blockquote>
+                ))}
+              </div>
+            </section>
           </article>
         )}
       </FadeSection>
@@ -666,28 +700,32 @@ const LandingPage = () => {
         )}
       </FadeSection>
 
-      <FadeSection id="cta" className="py-20 bg-[color:var(--lens-sand)]/20">
+      <FadeSection id="cta" className="py-20 bg-[color:var(--lens-ink)] text-white">
         {({ inView }) => (
           <article className="max-w-5xl mx-auto px-6">
-            <section className="rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 text-center" style={fadeUp(inView)}>
-              <SectionLabel>Start now</SectionLabel>
+            <section className="rounded-2xl border border-white/15 bg-black/25 p-8 md:p-10 text-center relative overflow-hidden" style={fadeUp(inView)}>
+              <span className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary" aria-hidden="true" />
+              <span className="absolute -left-5 bottom-8 h-14 w-14 rounded-full border border-white/20" aria-hidden="true" />
+              <div className="relative z-10">
+              <span className="editorial-chip">Start now</span>
               <h2
                 id="cta-heading"
-                className="mt-4 text-[clamp(30px,4vw,46px)] leading-tight tracking-[-0.02em]"
+                className="mt-4 text-[clamp(30px,4vw,46px)] leading-tight tracking-[-0.02em] text-white"
                 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
                 Launch your next release with distribution and revenue reporting in one place.
               </h2>
-              <p className="mt-4 max-w-2xl mx-auto text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+              <p className="mt-4 max-w-2xl mx-auto text-[13px] leading-7 text-white/70 font-normal">
                 Create your Lens account to distribute to 150+ stores and monitor earnings with a clear analytics dashboard.
               </p>
               <div className="mt-7 flex flex-wrap justify-center gap-3">
                 <Button route="/auth/signup" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
                   Start uploading
                 </Button>
-                <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal border-white! text-white! bg-transparent! hover:bg-white/10!">
                   Sign in to dashboard
                 </Button>
+              </div>
               </div>
             </section>
           </article>
