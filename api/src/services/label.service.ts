@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { DeleteResult, Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { Label } from '../entities/label.entity';
@@ -6,6 +7,7 @@ import { UserService } from './user.service';
 import { UUID } from '../types/common.types';
 import { LabelPagination } from '../types/models/label.types';
 
+@Injectable()
 export class LabelService {
   private labelRepository: Repository<Label>;
   private userService = new UserService();

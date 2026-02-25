@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { Artist } from '../entities/artist.entity';
@@ -5,6 +6,7 @@ import { getPagination, getPagingData } from '../helpers/pagination.helper';
 import { UUID } from '../types/common.types';
 import { ArtistPagination } from '../types/models/artist.types';
 
+@Injectable()
 export class ArtistService {
   private artistRepository: Repository<Artist>;
 
