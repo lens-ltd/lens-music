@@ -31,6 +31,12 @@ interface DashboardChartProps {
   vertical?: boolean;
   strokeWidth?: number;
   fill?: string;
+  showArea?: boolean;
+  areaFillMode?: 'gradient' | 'solid' | 'none';
+  areaOpacity?: number;
+  showGrid?: boolean;
+  showYAxis?: boolean;
+  tooltipVariant?: 'default' | 'minimal';
 }
 
 // ── custom tooltip ─────────────────────────────────────────────────────────────
@@ -55,7 +61,7 @@ const EditorialTooltip: FC<TooltipProps<number, string>> = ({ active, payload, l
         style={{
           fontFamily: "'Poppins', system-ui, sans-serif",
           fontSize: '10px',
-          fontWeight: 600,
+          fontWeight: 400,
           letterSpacing: '0.14em',
           textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.45)',
@@ -106,8 +112,20 @@ const DashboardChart: FC<DashboardChartProps> = ({
   vertical = false,
   strokeWidth = 2,
   fill = 'rgb(31,98,142)',
+  showArea = true,
+  areaFillMode = 'gradient',
+  areaOpacity = 0.12,
+  showGrid = true,
+  showYAxis = true,
+  tooltipVariant = 'default',
 }) => {
   const gradId = 'lensAreaGrad';
+  const areaFillValue =
+    !showArea || areaFillMode === 'none'
+      ? 'transparent'
+      : areaFillMode === 'solid'
+        ? fill
+        : `url(#${gradId})`;
 
   return (
     <ResponsiveContainer height={height} width={width}>
@@ -116,20 +134,24 @@ const DashboardChart: FC<DashboardChartProps> = ({
         margin={{ top: 12, right: 4, left: 0, bottom: 0 }}
         style={{ overflow: 'visible' }}
       >
-        <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={fill} stopOpacity={0.22} />
-            <stop offset="72%"  stopColor={fill} stopOpacity={0.06} />
-            <stop offset="100%" stopColor={fill} stopOpacity={0}    />
-          </linearGradient>
-        </defs>
+        {areaFillMode === 'gradient' && (
+          <defs>
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={fill} stopOpacity={0.22} />
+              <stop offset="72%" stopColor={fill} stopOpacity={0.06} />
+              <stop offset="100%" stopColor={fill} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+        )}
 
-        <CartesianGrid
-          strokeDasharray="1 6"
-          vertical={vertical}
-          stroke="rgba(16,14,9,0.08)"
-          strokeWidth={1}
-        />
+        {showGrid && (
+          <CartesianGrid
+            strokeDasharray="1 6"
+            vertical={vertical}
+            stroke="rgba(16,14,9,0.08)"
+            strokeWidth={1}
+          />
+        )}
 
         <XAxis
           dataKey={dataKey}
@@ -137,30 +159,32 @@ const DashboardChart: FC<DashboardChartProps> = ({
             fontSize: 10,
             fill: 'rgba(16,14,9,0.4)',
             fontFamily: "'Poppins', system-ui, sans-serif",
-            fontWeight: 500,
+            fontWeight: 400,
           }}
           tickLine={false}
           axisLine={false}
           dy={6}
         />
 
-        <YAxis
-          allowDataOverflow
-          tickSize={0}
-          tickMargin={12}
-          tick={{
-            fontSize: 10,
-            fill: 'rgba(16,14,9,0.35)',
-            fontFamily: "'Poppins', system-ui, sans-serif",
-            fontWeight: 500,
-          }}
-          axisLine={false}
-          tickLine={false}
-          tickFormatter={(v: number) =>
-            v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : String(v)
-          }
-          width={36}
-        />
+        {showYAxis && (
+          <YAxis
+            allowDataOverflow
+            tickSize={0}
+            tickMargin={12}
+            tick={{
+              fontSize: 10,
+              fill: 'rgba(16,14,9,0.35)',
+              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontWeight: 400,
+            }}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : String(v)
+            }
+            width={36}
+          />
+        )}
 
         <Tooltip
           content={<EditorialTooltip />}
@@ -168,21 +192,21 @@ const DashboardChart: FC<DashboardChartProps> = ({
             stroke: fill,
             strokeWidth: 1,
             strokeDasharray: '4 4',
-            strokeOpacity: 0.4,
+            strokeOpacity: tooltipVariant === 'minimal' ? 0.25 : 0.4,
           }}
         />
 
         <Area
           connectNulls
           dataKey="value"
-          fill={`url(#${gradId})`}
-          fillOpacity={1}
+          fill={areaFillValue}
+          fillOpacity={showArea && areaFillMode !== 'none' ? areaOpacity : 0}
           strokeWidth={strokeWidth}
           stroke={fill}
           type={type}
           dot={false}
           activeDot={<PulseDot fill={fill} />}
-          style={{ filter: `drop-shadow(0 2px 8px rgba(31,98,142,0.18))` }}
+          style={tooltipVariant === 'minimal' ? undefined : { filter: `drop-shadow(0 2px 8px rgba(31,98,142,0.12))` }}
         />
       </ComposedChart>
     </ResponsiveContainer>

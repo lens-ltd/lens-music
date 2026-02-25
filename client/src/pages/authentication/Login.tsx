@@ -57,122 +57,142 @@ const Login = () => {
 
   return (
     <main
-      className="min-h-screen bg-[color:var(--lens-sand)] flex flex-col"
+      className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <PublicNavbar scrolled />
+      <PublicNavbar scrolled variant="auth" />
 
-      {/* ── form area ── */}
-      <section className="flex-1 flex items-center justify-center px-6 py-16 pt-[calc(64px+4rem)]">
-        <article className="w-full max-w-md">
-          {/* card header */}
-          <header className="mb-8">
+      <section className="flex-1 min-h-[calc(100svh-64px)] px-6 py-12 pt-[calc(64px+2.5rem)]">
+        <article className="max-w-5xl mx-auto grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
+          <section className="border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 rounded-2xl">
             <p
-              className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3 text-[color:var(--lens-blue)]"
-              style={{ fontFamily: 'var(--font-sans)' }}
+              className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]"
+              style={{ fontWeight: 400 }}
+            >
+              Artist access
+            </p>
+            <h1
+              className="mt-4 text-[clamp(30px,4vw,44px)] leading-[1.06] tracking-[-0.02em] text-[color:var(--lens-ink)]"
+              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+            >
+              Sign in and continue where your release left off.
+            </h1>
+            <p className="mt-4 text-[13px] leading-6 text-[color:var(--lens-ink)]/65 font-normal">
+              Track submissions, review revenue trends, and manage payouts from one dashboard.
+              Lens distributes to 150+ stores with a 15% revenue share on earnings only.
+            </p>
+
+            <dl className="mt-8 grid sm:grid-cols-3 gap-4">
+              {[
+                ['Stores', '150+'],
+                ['Revenue share', '15%'],
+                ['Upfront cost', '$0'],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-xl border border-[color:var(--lens-sand)] p-4 bg-[color:var(--lens-sand)]/20">
+                  <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/55 font-normal">{label}</dt>
+                  <dd
+                    className="mt-2 text-[24px] leading-none text-[color:var(--lens-ink)]"
+                    style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+                  >
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          <section className="w-full">
+            <p
+              className="text-[11px] uppercase tracking-[0.18em] mb-3 text-[color:var(--lens-blue)]"
+              style={{ fontWeight: 400 }}
             >
               Welcome back
             </p>
-            <h1
-              className="text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
+            <h2
+              className="text-[clamp(26px,4vw,36px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
               style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
             >
               Sign in to Lens Music
-            </h1>
+            </h2>
             <p
-              className="text-[13px] mt-3 leading-relaxed"
-              style={{ color: 'rgba(16,14,9,0.55)', fontFamily: 'var(--font-sans)' }}
+              className="text-[13px] mt-3 leading-relaxed text-[color:var(--lens-ink)]/60 font-normal"
             >
-              Distribute your music to 150+ stores worldwide — for free.
+              Use your email and password to access your catalog, analytics, and payout activity.
             </p>
-          </header>
 
-          {/* form card */}
-          <form
-            className="bg-white rounded-2xl border border-[color:var(--lens-sand)] p-8 flex flex-col gap-6 shadow-[0_2px_16px_rgba(16,14,9,0.06)]"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Controller
-              control={control}
-              name="email"
-              rules={{
-                required: 'Email is required',
-                validate: (value) => validateInputs(value, 'email') || 'Invalid email',
-              }}
-              render={({ field }) => (
-                <label className="flex flex-col gap-1.5">
-                  <Input label="Email" required placeholder="Enter email address" {...field} />
-                  {errors?.email && (
-                    <p className="text-red-500 text-[12px]">{String(errors?.email?.message)}</p>
+            <form
+              className="mt-6 bg-white rounded-2xl border border-[color:var(--lens-sand)] p-6 md:p-8 flex flex-col gap-5"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <fieldset className="border-0 p-0 m-0 flex flex-col gap-5">
+                <legend className="sr-only">Sign in details</legend>
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{
+                    required: 'Email is required',
+                    validate: (value) => validateInputs(value, 'email') || 'Invalid email',
+                  }}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input label="Email" required placeholder="you@example.com" {...field} />
+                      {errors?.email && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.email?.message)}</p>
+                      )}
+                    </div>
                   )}
-                </label>
-              )}
-            />
+                />
 
-            <Controller
-              name="password"
-              rules={{ required: 'Password is required' }}
-              control={control}
-              render={({ field }) => (
-                <label className="flex flex-col gap-1.5">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    placeholder="Enter password"
-                    label="Password"
-                    suffixIcon={showPassword ? faEyeSlash : faEye}
-                    suffixIconHandler={(e) => {
-                      e.preventDefault();
-                      setShowPassword(!showPassword);
-                    }}
-                    {...field}
-                  />
-                </label>
-              )}
-            />
+                <Controller
+                  name="password"
+                  rules={{ required: 'Password is required' }}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Enter your password"
+                        label="Password"
+                        suffixIcon={showPassword ? faEyeSlash : faEye}
+                        suffixIconHandler={(e) => {
+                          e.preventDefault();
+                          setShowPassword(!showPassword);
+                        }}
+                        {...field}
+                      />
+                    </div>
+                  )}
+                />
+              </fieldset>
 
-            <menu className="flex items-center justify-between m-0 p-0">
-              <Input
-                label="Keep me logged in"
-                type="checkbox"
-                onChange={(e) => e}
-              />
+              <div className="flex items-center justify-between gap-3">
+                <Input label="Keep me signed in" type="checkbox" onChange={(e) => e} />
+                <Button styled={false} className="text-[12px]! text-[color:var(--lens-blue)]! font-normal!">
+                  Forgot password?
+                </Button>
+              </div>
+
               <Button
-                styled={false}
-                className="text-[12px]! text-[color:var(--lens-blue)]! hover:underline! p-0!"
+                primary
+                submit
+                className="w-full py-3 text-[13px] tracking-[0.03em] shadow-none mt-1 font-normal"
               >
-                Forgot password?
+                {loginIsLoading ? <Loader /> : 'Sign in'}
               </Button>
-            </menu>
 
-            <Button
-              primary
-              submit
-              className="w-full py-3 text-[13px] font-semibold tracking-[0.04em] shadow-none mt-1"
-            >
-              {loginIsLoading ? <Loader /> : 'Sign in'}
-            </Button>
+              <p className="text-center text-[12px] text-[color:var(--lens-ink)]/55 font-normal">
+                Don&apos;t have an account?{' '}
+                <Link to="/auth/signup" className="text-[color:var(--lens-blue)] hover:underline font-normal">
+                  Create one
+                </Link>
+              </p>
+            </form>
 
-            <p
-              className="text-center text-[12px]"
-              style={{ color: 'rgba(16,14,9,0.5)' }}
-            >
-              Don't have an account?{' '}
-              <Link
-                to="/auth/signup"
-                className="font-semibold text-[color:var(--lens-blue)] hover:underline"
-              >
-                Create one
-              </Link>
+            <p className="text-center text-[11px] mt-5 text-[color:var(--lens-ink)]/40 font-normal">
+              Free distribution. Lens takes 15% only from earnings generated through the platform.
             </p>
-          </form>
-
-          <p
-            className="text-center text-[11px] mt-6"
-            style={{ color: 'rgba(16,14,9,0.35)', fontFamily: 'var(--font-sans)' }}
-          >
-            Free distribution. 15% revenue share on earnings only.
-          </p>
+          </section>
         </article>
       </section>
       <PublicFooter />

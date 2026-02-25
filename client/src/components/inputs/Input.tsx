@@ -1,18 +1,19 @@
 import {
   ChangeEvent,
   forwardRef,
-  LegacyRef,
   MouseEventHandler,
   ReactNode,
+  useId,
   useRef,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Link } from 'react-router-dom';
-import DatePicker from './DatePicker';
 import { Checkbox } from '../ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
+import DatePicker from './DatePicker';
+import { Input as ShadcnInput } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 interface InputProps {
   label?: string;
@@ -26,10 +27,10 @@ interface InputProps {
   value?: string | number;
   suffixIcon?: IconProp;
   prefixIcon?: IconProp;
-  suffixIconHandler?: MouseEventHandler<HTMLAnchorElement> | undefined;
+  suffixIconHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
   name?: string;
   suffixIconPrimary?: boolean;
-  prefixIconHandler?: MouseEventHandler<HTMLAnchorElement> | undefined;
+  prefixIconHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
   prefixIconPrimary?: boolean;
   prefixText?: string | ReactNode;
   defaultChecked?: boolean | undefined;
@@ -46,24 +47,29 @@ interface InputProps {
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
+const fieldLabelClasses = 'text-[13px] leading-none text-[color:var(--lens-ink)] font-normal';
+const helperRequiredClasses = 'text-[13px] leading-none text-red-600';
+const baseInputClasses =
+  'h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[13px] font-normal shadow-none placeholder:text-[12px] placeholder:font-normal placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary';
+
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       type = 'text',
-      label = undefined,
+      label,
       placeholder,
       className,
       required = false,
       value = '',
       onChange,
       defaultValue,
-      suffixIcon = undefined,
+      suffixIcon,
       suffixIconHandler,
       suffixIconPrimary = false,
-      prefixIcon = undefined,
+      prefixIcon,
       prefixIconHandler,
-      prefixText = undefined,
-      defaultChecked = undefined,
+      prefixText,
+      defaultChecked,
       name,
       accept = 'application/pdf',
       min,
@@ -78,82 +84,85 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    const hiddenFileInput = useRef<HTMLButtonElement>(null);
+    const generatedId = useId();
+    const inputId = name || generatedId;
+    const hiddenFileInput = useRef<HTMLInputElement>(null);
 
-    if (['checkbox', 'radio'].includes(type)) {
-      if (type === 'checkbox') {
-        return (
-          <label className="flex w-fit items-center gap-2 text-[12px]">
-            <Checkbox
-            className='text-white!'
-              onCheckedChange={
-                onChange as ((checked: CheckedState) => void) | undefined
-              }
-              name={name}
-              value={value}
-              checked={checked}
-              defaultChecked={defaultChecked}
-            />
-            <p className={`${label ? 'flex' : 'hidden'} text-[12px]`}>
-              {label}
-            </p>
-          </label>
-        );
-      }
+    if (type === 'checkbox') {
       return (
-        <label className="flex items-center gap-2 text-[12px]">
+        <label className={cn('inline-flex w-fit items-center gap-2 text-[12px] font-normal', labelClassName)}>
+          <Checkbox
+            className="border-secondary/50"
+            onCheckedChange={onChange as unknown as ((checked: CheckedState) => void) | undefined}
+            name={name}
+            checked={checked}
+            defaultChecked={defaultChecked}
+          />
+          {label && <span className="text-[12px] font-normal">{label}</span>}
+        </label>
+      );
+    }
+
+    if (type === 'radio') {
+      return (
+        <label className={cn('inline-flex items-center gap-2 text-[12px] font-normal', labelClassName)}>
           <input
-            type={type}
+            id={inputId}
+            type="radio"
             name={name}
             value={value}
             defaultChecked={defaultChecked}
             checked={checked}
             onChange={onChange}
-            className={`w-4 h-4 border-[1.5px] rounded-xl cursor-pointer border-secondary outline-hidden focus:outline-hidden accent-primary focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}`}
+            className={cn(
+              'h-4 w-4 cursor-pointer accent-primary border-secondary/50',
+              className
+            )}
           />
-          <p className={`${label ? 'flex' : 'hidden'} text-[12px]`}>{label}</p>
+          {label && <span className="text-[12px] font-normal">{label}</span>}
         </label>
       );
     }
 
     if (type === 'file') {
-      const handleClick = () => {
-        hiddenFileInput.current?.click();
-      };
       return (
-        <menu className="text-[12px] w-fit">
+        <div className={cn('w-fit', labelClassName)}>
+          {label && (
+            <p className={cn(fieldLabelClasses, 'mb-2')}>
+              {label} {required && <span className={helperRequiredClasses}>*</span>}
+            </p>
+          )}
           <button
             type="button"
-            onClick={handleClick}
-            className={`bg-primary! text-white! hover:bg-primary! hover:text-white! shadow-xs! py-[5px] w-full text-[12px] text-center max-[800px]:text-[14px]! px-8 rounded-md cursor-pointer ease-in-out duration-400 hover:scale-[1.005] ${className}`}
+            onClick={() => hiddenFileInput.current?.click()}
+            className={cn(
+              'inline-flex h-9 items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]',
+              className
+            )}
           >
             Choose file{multiple ? 's' : ''}
           </button>
           <input
-            ref={hiddenFileInput as LegacyRef<HTMLInputElement> | undefined}
-            type={type}
+            ref={hiddenFileInput}
+            type="file"
             multiple={multiple}
             accept={accept}
             onChange={onChange}
             className="hidden"
+            name={name}
           />
-        </menu>
+        </div>
       );
     }
 
-    if (['date'].includes(type)) {
+    if (type === 'date') {
       return (
-        <label className={`flex flex-col gap-[5px] w-full ${labelClassName}`}>
-          <p
-            className={`${
-              label ? 'flex items-center gap-[5px] text-[13px]' : 'hidden'
-            }`}
-          >
-            {label}{' '}
-            <span className={required ? 'text-[13px] text-red-600' : 'hidden'}>
-              *
+        <label className={cn('flex w-full flex-col gap-1.5', labelClassName)}>
+          {label && (
+            <span className={fieldLabelClasses}>
+              {label} {required && <span className={helperRequiredClasses}>*</span>}
             </span>
-          </p>
+          )}
           <DatePicker
             placeholder={placeholder}
             fromDate={fromDate}
@@ -170,106 +179,71 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       );
     }
 
-    return (
-      <label className={`flex flex-col gap-[5px] w-full ${labelClassName}`}>
-        <p
-          className={`${
-            label ? 'pl-1 flex items-center gap-[5px] text-[13px]' : 'hidden'
-          }`}
-        >
-          {label}{' '}
-          <span className={required ? 'text-[13px] text-red-600' : 'hidden'}>
-            *
-          </span>
-        </p>
-        {!prefixIcon && !prefixText && !suffixIcon && (
-          <input
-            defaultValue={defaultValue as string}
-            min={min}
-            value={value}
-            type={type || 'text'}
-            readOnly={readOnly}
-            name={name}
-            ref={ref}
-            onChange={onChange}
-            placeholder={readOnly ? '' : placeholder}
-            className={`py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
-              readOnly &&
-              'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
-            }`}
-          />
+    const textInput = (
+      <ShadcnInput
+        id={inputId}
+        defaultValue={defaultValue as string | number | readonly string[] | undefined}
+        min={min}
+        value={value}
+        type={type || 'text'}
+        readOnly={readOnly}
+        name={name}
+        ref={ref}
+        onChange={onChange}
+        onKeyPress={onKeyPress}
+        placeholder={readOnly ? '' : placeholder}
+        className={cn(
+          baseInputClasses,
+          readOnly && 'border-background bg-background/40 text-secondary cursor-default',
+          prefixIcon && 'pl-10',
+          prefixText && 'pl-14',
+          suffixIcon && 'pr-11',
+          className
         )}
-        <section className="relative w-full">
+      />
+    );
+
+    return (
+      <label className={cn('flex w-full flex-col gap-1.5', labelClassName)}>
+        {label && (
+          <span className={cn(fieldLabelClasses, 'pl-0.5')}>
+            {label} {required && <span className={helperRequiredClasses}>*</span>}
+          </span>
+        )}
+        <div className="relative w-full">
           {(prefixIcon || prefixText) && (
-            <menu className={`${labelClassName} relative w-full`}>
-              <label className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                <Link
-                  to={'#'}
-                  onClick={prefixIconHandler}
-                  className="text-secondary"
-                >
-                  {prefixIcon && (
-                    <FontAwesomeIcon
-                      className="text-current"
-                      icon={prefixIcon}
-                    />
-                  )}
-                  {prefixText && <p className="text-[14px]">{prefixText}</p>}
-                </Link>
-              </label>
-              <input
-                defaultValue={defaultValue as string}
-                value={value}
-                type={type || 'text'}
-                readOnly={readOnly}
-                name={name}
-                onChange={onChange}
-                placeholder={readOnly ? '' : placeholder}
-                className={`py-[7px] px-6 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}
-                ${prefixIcon && 'ps-10'} ${prefixText ? 'ps-[3.6rem]' : ''} ${
-                  readOnly &&
-                  'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
-                }`}
-              />
-            </menu>
+            <button
+              type="button"
+              onClick={prefixIconHandler}
+              className={cn(
+                'absolute inset-y-0 left-0 flex items-center px-3 text-secondary',
+                !prefixIconHandler && 'pointer-events-none'
+              )}
+              aria-label={typeof prefixText === 'string' ? prefixText : label || 'Prefix action'}
+            >
+              {prefixIcon && <FontAwesomeIcon icon={prefixIcon} />}
+              {prefixText && <span className="text-[13px] font-normal">{prefixText}</span>}
+            </button>
           )}
+
+          {textInput}
+
           {suffixIcon && (
-            <menu className="flex items-center">
-              <Link
-                to={'#'}
-                onClick={suffixIconHandler}
-                className={`${
-                  !suffixIcon && 'hidden'
-                } absolute top-0 end-0 p-2.5 px-3.5 text-sm font-medium h-full rounded-e-lg border focus:outline-hidden ${
-                  suffixIconPrimary
-                    ? 'bg-primary text-white border-primary border-l-none'
-                    : 'border-secondary border-opacity-50 bg-white text-primary border-l-none'
-                }`}
-              >
-                <FontAwesomeIcon icon={suffixIcon || faSearch} />
-              </Link>
-              <input
-                defaultValue={defaultValue as string}
-                value={value}
-                type={type || 'text'}
-                onChange={onChange}
-                readOnly={readOnly}
-                name={name}
-                onKeyPress={onKeyPress}
-                placeholder={readOnly ? '' : placeholder}
-                className={`${
-                  prefixText && 'ml-16! w-[85%]!'
-                } py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
-                  prefixIcon &&
-                  'ml-[45px]! w-[90%]! !border-l-none rounded-l-none! ps-3.5!'
-                } ${
-                  readOnly &&
-                  'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
-                }`}
-              />
-            </menu>
+            <button
+              type="button"
+              onClick={suffixIconHandler}
+              className={cn(
+                'absolute inset-y-0 right-0 flex h-full items-center justify-center rounded-r-lg border-l px-3 text-[12px]',
+                suffixIconPrimary
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-secondary/30 bg-white text-primary'
+              )}
+              aria-label={`${label || 'Input'} action`}
+            >
+              <FontAwesomeIcon icon={suffixIcon || faSearch} />
+            </button>
           )}
-        </section>
+        </div>
       </label>
     );
   }

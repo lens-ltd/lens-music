@@ -18,23 +18,16 @@ const PublicFooter: FC = () => (
             className="flex items-center gap-2.5 mb-4 focus-visible:outline-2 focus-visible:outline-white rounded w-fit"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="2" y="2" width="20" height="20" rx="2" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-              <circle cx="12" cy="12" r="5.5" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-              <circle cx="12" cy="12" r="2" fill="white" opacity="0.8"/>
-            </svg>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '15px', fontWeight: 700 }}>
-              Lens Music
-            </span>
+            Lens Logo
           </Link>
           <p className="text-[12px] leading-relaxed max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-sans)' }}>
-            Free music distribution for independent artists and labels, built in Rwanda.
+            Distribution and analytics for independent artists and labels, built in Rwanda.
           </p>
         </section>
 
         {/* product links */}
         <nav aria-label="Product links">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
+          <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)', fontWeight: 400 }}>
             Product
           </p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
@@ -42,7 +35,7 @@ const PublicFooter: FC = () => (
               { label: 'How it works', href: '#how-it-works' },
               { label: 'Features',     href: '#features'     },
               { label: 'Pricing',      href: '#pricing'      },
-              { label: 'Dashboard',    href: '#dashboard'    },
+              { label: 'Dashboard',    href: '#analytics'    },
             ].map(({ label, href }) => (
               <li key={label}>
                 <a
@@ -59,7 +52,7 @@ const PublicFooter: FC = () => (
 
         {/* company */}
         <nav aria-label="Company links">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
+          <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)', fontWeight: 400 }}>
             Company
           </p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
@@ -83,7 +76,7 @@ const PublicFooter: FC = () => (
 
         {/* legal */}
         <nav aria-label="Legal links">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
+          <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)', fontWeight: 400 }}>
             Legal
           </p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">

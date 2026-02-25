@@ -62,189 +62,206 @@ const Signup = () => {
 
   return (
     <main
-      className="min-h-screen bg-[color:var(--lens-sand)] flex flex-col"
+      className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <PublicNavbar />
+      <PublicNavbar scrolled variant="auth" />
 
-      {/* ── form area ── */}
-      <section className="flex-1 flex items-center justify-center px-6 py-16 pt-[calc(64px+4rem)]">
-        <article className="w-full max-w-xl">
-          {/* card header */}
-          <header className="mb-8">
+      <section className="flex-1 min-h-[calc(100svh-64px)] px-6 py-12 pt-[calc(64px+2.5rem)]">
+        <article className="max-w-6xl mx-auto grid xl:grid-cols-[0.95fr_1.05fr] gap-8 items-start">
+          <section className="border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 rounded-2xl">
             <p
-              className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3 text-[color:var(--lens-blue)]"
-              style={{ fontFamily: 'var(--font-sans)' }}
+              className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]"
+              style={{ fontWeight: 400 }}
             >
-              Get started — it's free
+              New artist account
             </p>
             <h1
-              className="text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
+              className="mt-4 text-[clamp(30px,4vw,44px)] leading-[1.06] tracking-[-0.02em] text-[color:var(--lens-ink)]"
               style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
             >
-              Create your Lens account
+              Start distributing and track revenue from day one.
             </h1>
-            <p
-              className="text-[13px] mt-3 leading-relaxed"
-              style={{ color: 'rgba(16,14,9,0.55)', fontFamily: 'var(--font-sans)' }}
-            >
-              No upfront cost. Distribute to 150+ stores and only pay when you earn.
+            <p className="text-[13px] mt-4 leading-6 text-[color:var(--lens-ink)]/65 font-normal">
+              Create your Lens account to deliver releases to 150+ stores, monitor earnings, and
+              manage catalog activity in one workspace. No upfront cost.
             </p>
-          </header>
 
-          {/* form card */}
-          <form
-            className="bg-white rounded-2xl border border-[color:var(--lens-sand)] p-8 flex flex-col gap-6 shadow-[0_2px_16px_rgba(16,14,9,0.06)]"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            {/* Name row */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Controller
-                control={control}
-                name="first_name"
-                rules={{ required: 'First name is required' }}
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input label="First name" required placeholder="Enter first name" {...field} />
-                    {errors?.first_name && (
-                      <p className="text-red-500 text-[12px]">{String(errors?.first_name?.message)}</p>
-                    )}
-                  </label>
-                )}
-              />
-              <Controller
-                control={control}
-                name="last_name"
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input label="Last name" placeholder="Enter last name" {...field} />
-                  </label>
-                )}
-              />
-            </section>
+            <div className="mt-8 space-y-4">
+              {[
+                { label: 'No setup fee', value: '$0 upfront' },
+                { label: 'Stores', value: '150+ destinations' },
+                { label: 'Revenue model', value: '15% on earnings only' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-start justify-between gap-4 border-b border-[color:var(--lens-sand)] pb-3">
+                  <p className="text-[12px] text-[color:var(--lens-ink)]/60 font-normal">{item.label}</p>
+                  <p className="text-[12px] text-[color:var(--lens-ink)] font-normal">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            {/* Email + Phone row */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Controller
-                control={control}
-                name="email"
-                rules={{
-                  required: 'Email is required',
-                  validate: (value) => validateInputs(value, 'email') || 'Invalid email',
-                }}
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input label="Email" required placeholder="Enter email address" {...field} />
-                    {errors?.email && (
-                      <p className="text-red-500 text-[12px]">{String(errors?.email?.message)}</p>
-                    )}
-                  </label>
-                )}
-              />
-              <Controller
-                control={control}
-                name="phone"
-                rules={{ required: 'Phone number is required' }}
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input label="Phone number" required placeholder="Enter phone number" {...field} />
-                    {errors?.phone && (
-                      <p className="text-red-500 text-[12px]">{String(errors?.phone?.message)}</p>
-                    )}
-                  </label>
-                )}
-              />
-            </section>
-
-            {/* Password row */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Controller
-                name="password"
-                rules={{ required: 'Password is required' }}
-                control={control}
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      placeholder="Enter password"
-                      label="Password"
-                      suffixIcon={showPassword ? faEyeSlash : faEye}
-                      suffixIconHandler={(e) => {
-                        e.preventDefault();
-                        setShowPassword(!showPassword);
-                      }}
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        if (e.target.value === watch('confirm_password')) {
-                          trigger('confirm_password');
-                        }
-                      }}
-                    />
-                    {errors?.password && (
-                      <p className="text-red-500 text-[12px]">{String(errors?.password?.message)}</p>
-                    )}
-                  </label>
-                )}
-              />
-              <Controller
-                name="confirm_password"
-                rules={{
-                  required: 'Re-enter password to confirm it',
-                  validate: (value) => value === watch('password') || 'Passwords do not match',
-                }}
-                control={control}
-                render={({ field }) => (
-                  <label className="flex flex-col gap-1.5">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      placeholder="Re-enter password"
-                      label="Confirm password"
-                      suffixIcon={showPassword ? faEyeSlash : faEye}
-                      suffixIconHandler={(e) => {
-                        e.preventDefault();
-                        setShowPassword(!showPassword);
-                      }}
-                      {...field}
-                    />
-                    {errors?.confirm_password && (
-                      <p className="text-red-500 text-[12px]">{String(errors?.confirm_password?.message)}</p>
-                    )}
-                  </label>
-                )}
-              />
-            </section>
-
-            <Button
-              primary
-              submit
-              className="w-full py-3 text-[13px] font-semibold tracking-[0.04em] shadow-none mt-1"
-            >
-              {signupIsLoading ? <Loader /> : 'Create account'}
-            </Button>
-
+          <section>
             <p
-              className="text-center text-[12px]"
-              style={{ color: 'rgba(16,14,9,0.5)' }}
+              className="text-[11px] uppercase tracking-[0.18em] mb-3 text-[color:var(--lens-blue)]"
+              style={{ fontWeight: 400 }}
             >
-              Already have an account?{' '}
-              <Link
-                to="/auth/login"
-                className="font-semibold text-[color:var(--lens-blue)] hover:underline"
+              Create your account
+            </p>
+            <h2
+              className="text-[clamp(26px,4vw,36px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
+              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+            >
+              Set up your Lens profile
+            </h2>
+            <p className="text-[13px] mt-3 leading-relaxed text-[color:var(--lens-ink)]/60 font-normal">
+              Use your legal contact details for payouts and account security. You can add artist and label info after sign up.
+            </p>
+
+            <form
+              className="mt-6 bg-white rounded-2xl border border-[color:var(--lens-sand)] p-6 md:p-8 flex flex-col gap-5"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <fieldset className="border-0 p-0 m-0 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <legend className="sr-only">Name details</legend>
+                <Controller
+                  control={control}
+                  name="first_name"
+                  rules={{ required: 'First name is required' }}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input label="First name" required placeholder="First name" {...field} />
+                      {errors?.first_name && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.first_name?.message)}</p>
+                      )}
+                    </div>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="last_name"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input label="Last name" placeholder="Last name" {...field} />
+                    </div>
+                  )}
+                />
+              </fieldset>
+
+              <fieldset className="border-0 p-0 m-0 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <legend className="sr-only">Contact details</legend>
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{
+                    required: 'Email is required',
+                    validate: (value) => validateInputs(value, 'email') || 'Invalid email',
+                  }}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input label="Email" required placeholder="you@example.com" {...field} />
+                      {errors?.email && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.email?.message)}</p>
+                      )}
+                    </div>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="phone"
+                  rules={{ required: 'Phone number is required' }}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input label="Phone number" required placeholder="+250..." {...field} />
+                      {errors?.phone && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.phone?.message)}</p>
+                      )}
+                    </div>
+                  )}
+                />
+              </fieldset>
+
+              <fieldset className="border-0 p-0 m-0 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <legend className="sr-only">Password details</legend>
+                <Controller
+                  name="password"
+                  rules={{ required: 'Password is required' }}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Create a password"
+                        label="Password"
+                        suffixIcon={showPassword ? faEyeSlash : faEye}
+                        suffixIconHandler={(e) => {
+                          e.preventDefault();
+                          setShowPassword(!showPassword);
+                        }}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (e.target.value === watch('confirm_password')) {
+                            trigger('confirm_password');
+                          }
+                        }}
+                      />
+                      {errors?.password && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.password?.message)}</p>
+                      )}
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="confirm_password"
+                  rules={{
+                    required: 'Re-enter password to confirm it',
+                    validate: (value) => value === watch('password') || 'Passwords do not match',
+                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1.5">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Confirm password"
+                        label="Confirm password"
+                        suffixIcon={showPassword ? faEyeSlash : faEye}
+                        suffixIconHandler={(e) => {
+                          e.preventDefault();
+                          setShowPassword(!showPassword);
+                        }}
+                        {...field}
+                      />
+                      {errors?.confirm_password && (
+                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.confirm_password?.message)}</p>
+                      )}
+                    </div>
+                  )}
+                />
+              </fieldset>
+
+              <Button
+                primary
+                submit
+                className="w-full py-3 text-[13px] tracking-[0.03em] shadow-none mt-1 font-normal"
               >
-                Sign in
-              </Link>
-            </p>
-          </form>
+                {signupIsLoading ? <Loader /> : 'Create account'}
+              </Button>
 
-          <p
-            className="text-center text-[11px] mt-6"
-            style={{ color: 'rgba(16,14,9,0.35)', fontFamily: 'var(--font-sans)' }}
-          >
-            Free distribution. 15% revenue share on earnings only. No credit card required.
-          </p>
+              <p className="text-center text-[12px] text-[color:var(--lens-ink)]/55 font-normal">
+                Already have an account?{' '}
+                <Link to="/auth/login" className="text-[color:var(--lens-blue)] hover:underline font-normal">
+                  Sign in
+                </Link>
+              </p>
+            </form>
+
+            <p className="text-center text-[11px] mt-5 text-[color:var(--lens-ink)]/40 font-normal">
+              Free distribution. 15% revenue share on earnings only. No credit card required.
+            </p>
+          </section>
         </article>
       </section>
       <PublicFooter />

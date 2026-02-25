@@ -1,26 +1,28 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { CSSProperties, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faApple,
+  faDeezer,
+  faSpotify,
+  faYoutube,
+  faAmazon,
+  IconDefinition,
+} from '@fortawesome/free-brands-svg-icons';
 import Button from '@/components/inputs/Button';
 import DashboardChart from '@/components/graphs/DashboardChart';
 import PublicNavbar from '@/components/layout/PublicNavbar';
 import PublicFooter from '@/components/layout/PublicFooter';
-import { faAmazon, faApple, faDeezer, faSpotify, faYoutube, IconDefinition } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// Lazy-loaded so it never blocks LCP
-const HeroVisual = lazy(() => import('@/components/landing/HeroVisual'));
-
-// ── chart data ────────────────────────────────────────────────────────────────
 const sampleChartData = [
-  { month: 'Aug', value: 1200 },
-  { month: 'Sep', value: 2100 },
-  { month: 'Oct', value: 1800 },
-  { month: 'Nov', value: 3200 },
-  { month: 'Dec', value: 2700 },
-  { month: 'Jan', value: 4100 },
-  { month: 'Feb', value: 3800 },
+  { month: 'Aug', value: 780 },
+  { month: 'Sep', value: 940 },
+  { month: 'Oct', value: 1210 },
+  { month: 'Nov', value: 1335 },
+  { month: 'Dec', value: 1580 },
+  { month: 'Jan', value: 1840 },
+  { month: 'Feb', value: 2055 },
 ];
 
-// ── useInView hook ────────────────────────────────────────────────────────────
 function useInView() {
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
@@ -28,12 +30,15 @@ function useInView() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        obs.disconnect();
-      }
-    }, { threshold: 0.12 });
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -41,1069 +46,654 @@ function useInView() {
   return { ref, inView };
 }
 
-// ── useStatCounter hook ───────────────────────────────────────────────────────
-function useStatCounter(target: number, duration = 1800, active = false) {
+function useStatCounter(target: number, active: boolean, duration = 1400) {
   const [count, setCount] = useState(0);
+
   useEffect(() => {
     if (!active) return;
-    let start = 0;
+    let current = 0;
     const step = Math.ceil(target / (duration / 16));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
+    const timer = window.setInterval(() => {
+      current += step;
+      if (current >= target) {
         setCount(target);
-        clearInterval(timer);
+        window.clearInterval(timer);
       } else {
-        setCount(start);
+        setCount(current);
       }
     }, 16);
-    return () => clearInterval(timer);
-  }, [active, target, duration]);
+
+    return () => window.clearInterval(timer);
+  }, [active, duration, target]);
+
   return count;
 }
 
-
-// ── inline animation styles ───────────────────────────────────────────────────
-const fadeUp = (inView: boolean, delay = 0): React.CSSProperties => ({
+const fadeUp = (inView: boolean, delay = 0): CSSProperties => ({
   opacity: inView ? 1 : 0,
-  transform: inView ? 'translateY(0)' : 'translateY(22px)',
-  transition: `opacity 0.65s ease ${delay}s, transform 0.65s ease ${delay}s`,
+  transform: inView ? 'translateY(0)' : 'translateY(20px)',
+  transition: `opacity 0.55s ease ${delay}s, transform 0.55s ease ${delay}s`,
 });
 
-// ── SectionLabel ──────────────────────────────────────────────────────────────
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+const SectionLabel = ({ children }: { children: ReactNode }) => (
   <p
-    className="text-[11px] uppercase tracking-[0.2em] text-[color:var(--lens-blue)] font-semibold mb-4"
-    style={{ fontFamily: 'var(--font-sans)' }}
+    className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]"
+    style={{ fontFamily: 'var(--font-sans)', fontWeight: 400 }}
   >
     {children}
   </p>
 );
 
-// ── CheckIcon ─────────────────────────────────────────────────────────────────
 const CheckIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true" className="flex-shrink-0 mt-0.5">
-    <circle cx="7.5" cy="7.5" r="7" fill="rgb(31,98,142)" fillOpacity="0.1" />
-    <path d="M4.5 7.5l2 2L10.5 5.5" stroke="rgb(31,98,142)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="shrink-0 mt-0.5">
+    <circle cx="7" cy="7" r="6.5" stroke="rgb(31,98,142)" opacity="0.18" />
+    <path d="M4 7.1 6.1 9.1 10 5" stroke="rgb(31,98,142)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-// ── StoreIcon ─────────────────────────────────────────────────────────────────
 const StoreIcon = ({ name }: { name: string }) => {
   const icons: Record<string, IconDefinition> = {
-    'Spotify': faSpotify,
+    Spotify: faSpotify,
     'Apple Music': faApple,
-    'Deezer': faDeezer,
-    'Tidal': faApple,
+    Deezer: faDeezer,
+    Tidal: faApple,
     'YouTube Music': faYoutube,
-    'Audiomack': faAmazon,
+    Audiomack: faAmazon,
     'Amazon Music': faAmazon,
   };
 
   return (
-    <figure
-      className="flex flex-col items-center gap-2 opacity-40 grayscale hover:opacity-70 hover:grayscale-0 transition-all duration-300"
-      aria-label={name}
-    >
-      <span className="text-[color:var(--lens-ink)"><FontAwesomeIcon icon={icons[name]} /></span>
-      <figcaption className="text-[10px] font-medium text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
-        {name}
-      </figcaption>
+    <figure className="flex flex-col items-center gap-2 opacity-60 hover:opacity-90 transition-opacity" aria-label={name}>
+      <span className="text-[15px] text-[color:var(--lens-ink)]/75">
+        <FontAwesomeIcon icon={icons[name]} />
+      </span>
+      <figcaption className="text-[10px] text-[color:var(--lens-ink)]/70 font-normal">{name}</figcaption>
     </figure>
   );
 };
 
-// ── LandingPage ───────────────────────────────────────────────────────────────
+const FadeSection = ({
+  id,
+  title,
+  children,
+  className,
+}: {
+  id?: string;
+  title?: string;
+  children: (ctx: { ref: RefObject<HTMLElement>; inView: boolean }) => ReactNode;
+  className?: string;
+}) => {
+  const section = useInView();
+  return (
+    <section
+      id={id}
+      ref={section.ref as RefObject<HTMLElement>}
+      className={className}
+      aria-labelledby={title ? `${id}-heading` : undefined}
+    >
+      {children({ ref: section.ref as RefObject<HTMLElement>, inView: section.inView })}
+    </section>
+  );
+};
+
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
+  const heroStats = useInView();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 64);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Section animation refs
-  const storesSection    = useInView();
-  const howSection       = useInView();
-  const featuresSection  = useInView();
-  const compareSection   = useInView();
-  const dashSection      = useInView();
-  const analyticsSection = useInView();
-  const testimonials     = useInView();
-  const pricingSection   = useInView();
-  const faqSection       = useInView();
-  const ctaSection       = useInView();
+  const countStores = useStatCounter(150, heroStats.inView);
+  const countArtists = useStatCounter(2400, heroStats.inView);
+  const countCountries = useStatCounter(38, heroStats.inView);
 
-  // Hero stat counters
-  const heroStats        = useInView();
-  const countStores      = useStatCounter(150, 1600, heroStats.inView);
-  const countArtists     = useStatCounter(2400, 1800, heroStats.inView);
-  const countCountries   = useStatCounter(38,   1400, heroStats.inView);
-
-  const stores = ['Spotify','Apple Music','Deezer','Tidal','YouTube Music','Audiomack','Amazon Music'];
+  const stores = ['Spotify', 'Apple Music', 'Deezer', 'Tidal', 'YouTube Music', 'Audiomack', 'Amazon Music'];
 
   return (
-    <main
-      className="min-h-screen bg-white text-[color:var(--lens-ink)] overflow-x-hidden"
-      style={{ fontFamily: 'var(--font-sans)' }}
-    >
-      {/* ── scroll-animation keyframes + trust bar animation ──────────────── */}
+    <main className="min-h-screen bg-white text-[color:var(--lens-ink)] overflow-x-hidden" style={{ fontFamily: 'var(--font-sans)' }}>
       <style>{`
-        @keyframes ticker {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .ticker-track { animation: ticker 28s linear infinite; }
-        .ticker-track:hover { animation-play-state: paused; }
-
-        @keyframes countUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .ticker-track { animation: none !important; }
-        }
-
-        /* decorative grain overlay */
-        .grain::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 200px 200px;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .grain > * { position: relative; z-index: 1; }
-
-        details[open] > summary .faq-icon { transform: rotate(45deg); }
-        .faq-icon { transition: transform 0.25s ease; }
-
-        /* ── underline-slide hover ── */
-        .nav-link {
-          position: relative;
-          transition: opacity 0.2s ease;
-        }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 1px;
-          background: currentColor;
-          transition: width 0.25s ease;
-        }
+        .nav-link { position: relative; transition: opacity 0.2s ease; }
+        .nav-link::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 1px; background: currentColor; transition: width 0.2s ease; }
         .nav-link:hover::after { width: 100%; }
-
-        .footer-link {
-          position: relative;
-          color: rgba(255,255,255,0.5);
-          transition: color 0.2s ease;
-        }
-        .footer-link::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 1px;
-          background: rgba(255,255,255,0.6);
-          transition: width 0.25s ease;
-        }
-        .footer-link:hover { color: white; }
+        .footer-link { position: relative; color: rgba(255,255,255,0.55); transition: color 0.2s ease; }
+        .footer-link::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 1px; background: rgba(255,255,255,0.7); transition: width 0.2s ease; }
+        .footer-link:hover { color: #fff; }
         .footer-link:hover::after { width: 100%; }
+        details[open] > summary .faq-plus { transform: rotate(45deg); }
+        .faq-plus { transition: transform .2s ease; }
+        @media (prefers-reduced-motion: reduce) {
+          * { scroll-behavior: auto !important; }
+        }
       `}</style>
 
-      <PublicNavbar scrolled={scrolled} />
+      <PublicNavbar scrolled={scrolled} variant="landing" />
 
-      {/* ═══════════════════════════════════════════════════════════════
-          1. HERO
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="hero"
-        className="min-h-screen pt-16 flex items-center bg-white relative"
-        aria-labelledby="hero-headline"
-      >
-        {/* subtle geometric decoration */}
-        <span
-          aria-hidden="true"
-          className="absolute top-24 right-0 opacity-[0.04] pointer-events-none select-none"
-          style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(200px, 30vw, 400px)', fontWeight: 700, color: 'var(--lens-blue)', lineHeight: 1 }}
-        >
-          L
-        </span>
-
-        <article className="max-w-6xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center py-20">
-          {/* text column */}
-          <section className="flex flex-col items-start gap-7">
-            <p
-              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[color:var(--lens-blue)] font-semibold"
-              style={{ fontFamily: 'var(--font-sans)', animationFillMode: 'forwards' }}
-            >
-              <span aria-hidden="true" className="w-6 h-px bg-[color:var(--lens-blue)] inline-block" />
-              Free Music Distribution
-            </p>
-
+      <section id="hero" className="pt-28 pb-16 md:pb-20" aria-labelledby="hero-heading">
+        <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 items-start">
+          <header className="space-y-6">
+            <SectionLabel>Free music distribution</SectionLabel>
             <h1
-              id="hero-headline"
-              className="text-[clamp(40px,6vw,64px)] leading-[1.04] tracking-[-0.025em] text-[color:var(--lens-ink)]"
+              id="hero-heading"
+              className="text-[clamp(38px,6vw,66px)] leading-[1.02] tracking-[-0.03em] text-[color:var(--lens-ink)]"
               style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
             >
-              Your music,{' '}
-              <em
-                className="not-italic text-[color:var(--lens-blue)]"
-                style={{ fontStyle: 'italic' }}
-              >
-                everywhere
-              </em>
-              .<br />
-              No upfront cost.
+              Release your music widely. Understand what it earns.
             </h1>
-
-            <p
-              className="text-[15px] leading-[1.75] text-[color:var(--lens-ink)] max-w-md"
-              style={{ color: 'rgba(16,14,9,0.62)' }}
-            >
-              Whether you're an independent artist uploading your first track or a label managing a full roster — Lens distributes your music to 150+ stores globally, free.
+            <p className="max-w-xl text-[14px] leading-7 text-[color:var(--lens-ink)]/65 font-normal">
+              Lens Music helps independent artists and labels distribute to 150+ stores, then
+              track revenue and performance in one clear workspace. Distribution is free. Lens
+              takes 15% only when you earn.
             </p>
 
-            <nav aria-label="Primary actions" className="flex flex-wrap items-center gap-3 mt-1">
-              <Button route="/auth/login" primary className="px-6 py-2.5 text-[12px] tracking-[0.05em] font-semibold">
-                Start uploading — it's free
+            <div className="flex flex-wrap items-center gap-3">
+              <Button route="/auth/signup" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                Start uploading
               </Button>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center gap-2 text-[12px] tracking-[0.05em] font-medium text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 transition-opacity"
-                style={{ fontFamily: 'var(--font-sans)' }}
-              >
-                See how it works
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                  <path d="M2 6.5h9M8 3l3.5 3.5L8 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
-            </nav>
+              <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                Sign in to dashboard
+              </Button>
+            </div>
 
-            {/* stat counters */}
-            <section
-              ref={heroStats.ref as React.RefObject<HTMLElement>}
-              className="flex items-center gap-8 pt-4 border-t border-[color:var(--lens-sand)] w-full"
-              aria-label="Platform statistics"
-            >
+            <p className="text-[12px] text-[color:var(--lens-ink)]/50 font-normal">
+              No annual upload fee. Revenue analytics included.
+            </p>
+
+            <section ref={heroStats.ref as RefObject<HTMLElement>} className="grid sm:grid-cols-3 gap-3 pt-4" aria-label="Platform summary">
               {[
-                { count: countStores,  suffix: '+', label: 'Stores' },
-                { count: countArtists, suffix: '+', label: 'Artists' },
-                { count: countCountries, suffix: '', label: 'Countries' },
-              ].map(({ count, suffix, label }) => (
-                <section key={label}>
+                { label: 'Stores connected', value: `${countStores}+` },
+                { label: 'Artists and labels', value: `${countArtists.toLocaleString()}+` },
+                { label: 'Countries reached', value: `${countCountries}+` },
+              ].map((stat) => (
+                <article key={stat.label} className="rounded-xl border border-[color:var(--lens-sand)] p-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50 font-normal">
+                    {stat.label}
+                  </p>
                   <p
-                    className="text-[28px] font-bold text-[color:var(--lens-ink)] leading-none tracking-tight"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                    aria-live="polite"
+                    className="mt-2 text-[26px] leading-none"
+                    style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
                   >
-                    {count}{suffix}
-                  </p>
-                  <p className="text-[11px] uppercase tracking-[0.12em] mt-1" style={{ color: 'rgba(16,14,9,0.45)' }}>
-                    {label}
-                  </p>
-                </section>
-              ))}
-            </section>
-          </section>
-
-          {/* visual column */}
-          <aside
-            aria-label="Distribution network visualization"
-            className="hidden md:flex items-center justify-center h-[440px] lg:h-[500px]"
-          >
-            <Suspense
-              fallback={
-                <figure aria-busy="true" aria-label="Loading visualization" className="w-full h-full" />
-              }
-            >
-              <HeroVisual />
-            </Suspense>
-          </aside>
-        </article>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          2. STORE LOGOS BAR
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="stores"
-        ref={storesSection.ref as React.RefObject<HTMLElement>}
-        className="py-14 border-y border-[color:var(--lens-sand)] bg-white overflow-hidden"
-        aria-label="Distribution store partners"
-        style={fadeUp(storesSection.inView)}
-      >
-        <p
-          className="text-center text-[10px] uppercase tracking-[0.22em] font-semibold mb-8"
-          style={{ fontFamily: 'var(--font-sans)', color: 'rgba(16,14,9,0.38)' }}
-        >
-          Distributed to 150+ stores worldwide
-        </p>
-        <section className="relative" aria-hidden="true">
-          <section className="ticker-track flex items-center gap-14 whitespace-nowrap w-max">
-            {[...stores, ...stores].map((name, i) => (
-              <StoreIcon key={`${name}-${i}`} name={name} />
-            ))}
-          </section>
-        </section>
-        {/* Visible accessible list */}
-        <ul className="sr-only" role="list">
-          {stores.map(s => <li key={s}>{s}</li>)}
-        </ul>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          3. HOW IT WORKS
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="how-it-works"
-        ref={howSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-[color:var(--lens-sand)]"
-        aria-labelledby="how-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <header className="mb-16" style={fadeUp(howSection.inView)}>
-            <SectionLabel>How it works</SectionLabel>
-            <h2
-              id="how-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              Three steps to global reach
-            </h2>
-          </header>
-
-          <ol className="grid md:grid-cols-3 gap-10 list-none p-0 m-0 relative" role="list">
-            {/* connecting line — desktop only */}
-            <li aria-hidden="true" className="hidden md:block absolute top-8 left-[16.66%] right-[16.66%] h-px bg-[color:var(--lens-blue)] opacity-10 pointer-events-none" />
-
-            {[
-              {
-                n: '01',
-                title: 'Upload your release',
-                body: 'Add your track or album, cover art, and release details in minutes. Supports all major audio formats.',
-                icon: (
-                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                    <path d="M11 14V4M7 7.5L11 4l4 3.5" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M4 17h14" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-              {
-                n: '02',
-                title: 'Set credits & splits',
-                body: 'Define collaborators, assign revenue splits, and attach ISRC/UPC codes before you go live.',
-                icon: (
-                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                    <circle cx="8" cy="6" r="3" stroke="rgb(31,98,142)" strokeWidth="1.5"/>
-                    <circle cx="14" cy="16" r="3" stroke="rgb(31,98,142)" strokeWidth="1.5"/>
-                    <path d="M8 9v2a3 3 0 003 3h3" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-              {
-                n: '03',
-                title: 'Distribute & track',
-                body: 'We deliver to 150+ stores globally. Monitor streams, downloads, and earnings from your dashboard.',
-                icon: (
-                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                    <path d="M3 16l5-6 4 4 5-8" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="17" cy="5" r="2" stroke="rgb(31,98,142)" strokeWidth="1.5"/>
-                  </svg>
-                ),
-              },
-            ].map(({ n, title, body, icon }, i) => (
-              <li key={n} style={fadeUp(howSection.inView, 0.1 + i * 0.12)}>
-                <article className="relative">
-                  <header className="flex items-start gap-4 mb-5">
-                    <span
-                      className="text-[56px] leading-none select-none flex-shrink-0 font-bold"
-                      aria-hidden="true"
-                      style={{ fontFamily: 'var(--font-serif)', color: 'rgba(31,98,142,0.13)' }}
-                    >
-                      {n}
-                    </span>
-                    <span
-                      className="w-10 h-10 rounded-lg bg-white border border-[color:var(--lens-sand)] flex items-center justify-center flex-shrink-0 mt-1"
-                      aria-hidden="true"
-                    >
-                      {icon}
-                    </span>
-                  </header>
-                  <h3
-                    className="text-[16px] font-semibold mb-2.5 text-[color:var(--lens-ink)] tracking-tight"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="text-[13px] leading-[1.7]" style={{ color: 'rgba(16,14,9,0.58)', fontFamily: 'var(--font-sans)' }}>
-                    {body}
+                    {stat.value}
                   </p>
                 </article>
-              </li>
-            ))}
-          </ol>
-        </article>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          4. FOR ARTISTS / FOR LABELS
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="features"
-        ref={featuresSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-white"
-        aria-labelledby="features-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <header className="mb-16" style={fadeUp(featuresSection.inView)}>
-            <SectionLabel>Built for everyone</SectionLabel>
-            <h2
-              id="features-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              For artists. For labels.
-            </h2>
-            <p className="text-[14px] mt-4 max-w-lg leading-relaxed" style={{ color: 'rgba(16,14,9,0.58)', fontFamily: 'var(--font-sans)' }}>
-              One platform built for the full spectrum — from the bedroom producer uploading their first single to the label managing a 50-artist roster.
-            </p>
+              ))}
+            </section>
           </header>
 
-          <section className="grid md:grid-cols-2 gap-6">
-            {/* Artists */}
-            <article
-              className="rounded-2xl p-8 border border-[color:var(--lens-sand)]"
-              style={{ ...fadeUp(featuresSection.inView, 0.1), background: 'white' }}
-            >
-              <header className="flex items-center gap-3 mb-7">
-                <span
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(31,98,142,0.08)' }}
-                  aria-hidden="true"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="6.5" r="3.5" stroke="rgb(31,98,142)" strokeWidth="1.5"/>
-                    <path d="M3 17.5c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </span>
-                <h3 className="text-[15px] font-semibold text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  For Artists
-                </h3>
-              </header>
-              <ul className="flex flex-col gap-5 list-none p-0 m-0" role="list">
-                {[
-                  { label: 'Fast release setup', desc: 'Go from upload to live in under 10 minutes. No paperwork, no waiting.' },
-                  { label: 'Revenue splits', desc: 'Divide earnings fairly among collaborators — automatically, every payout.' },
-                  { label: 'ISRC & UPC codes', desc: 'We generate and assign industry-standard codes to every release.' },
-                  { label: 'Smart links & pre-save', desc: 'Coming soon', soon: true },
-                ].map(({ label, desc, soon }) => (
-                  <li key={label} className="flex items-start gap-3">
-                    <CheckIcon />
-                    <section>
-                      <p className="text-[13px] font-semibold text-[color:var(--lens-ink)] leading-snug" style={{ fontFamily: 'var(--font-sans)' }}>
-                        {label}
-                        {soon && (
-                          <span
-                            className="ml-2 text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] align-middle"
-                            style={{ background: 'rgba(31,98,142,0.1)', color: 'rgb(31,98,142)' }}
-                          >
-                            Soon
-                          </span>
-                        )}
-                      </p>
-                      <p className="text-[12px] mt-0.5 leading-relaxed" style={{ color: 'rgba(16,14,9,0.5)', fontFamily: 'var(--font-sans)' }}>
-                        {desc}
-                      </p>
-                    </section>
-                  </li>
-                ))}
-              </ul>
-            </article>
-
-            {/* Labels */}
-            <article
-              className="rounded-2xl p-8 border border-[color:var(--lens-blue)]"
-              style={{ ...fadeUp(featuresSection.inView, 0.2), background: 'rgba(31,98,142,0.03)' }}
-            >
-              <header className="flex items-center gap-3 mb-7">
-                <span
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(31,98,142,0.1)' }}
-                  aria-hidden="true"
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect x="2" y="6" width="16" height="11" rx="1.5" stroke="rgb(31,98,142)" strokeWidth="1.5"/>
-                    <path d="M7 6V5a3 3 0 016 0v1" stroke="rgb(31,98,142)" strokeWidth="1.5" strokeLinecap="round"/>
-                    <path d="M7 11h6M7 14h4" stroke="rgb(31,98,142)" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
-                </span>
-                <h3 className="text-[15px] font-semibold text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
-                  For Labels
-                </h3>
-              </header>
-              <ul className="flex flex-col gap-5 list-none p-0 m-0" role="list">
-                {[
-                  { label: 'Multi-artist catalog', desc: 'Manage all your artists and releases from a single label account.' },
-                  { label: 'Territory analytics', desc: 'Break down performance by region, platform, and time period.' },
-                  { label: 'Consolidated payouts', desc: 'Track earnings across your entire roster in one place.' },
-                  { label: 'Team roles & permissions', desc: 'Coming soon', soon: true },
-                ].map(({ label, desc, soon }) => (
-                  <li key={label} className="flex items-start gap-3">
-                    <CheckIcon />
-                    <section>
-                      <p className="text-[13px] font-semibold text-[color:var(--lens-ink)] leading-snug" style={{ fontFamily: 'var(--font-sans)' }}>
-                        {label}
-                        {soon && (
-                          <span
-                            className="ml-2 text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-[0.1em] align-middle"
-                            style={{ background: 'rgba(31,98,142,0.1)', color: 'rgb(31,98,142)' }}
-                          >
-                            Soon
-                          </span>
-                        )}
-                      </p>
-                      <p className="text-[12px] mt-0.5 leading-relaxed" style={{ color: 'rgba(16,14,9,0.5)', fontFamily: 'var(--font-sans)' }}>
-                        {desc}
-                      </p>
-                    </section>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </section>
-        </article>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          5. DASHBOARD SHOWCASE
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="dashboard"
-        ref={dashSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-[color:var(--lens-sand)]"
-        aria-labelledby="dash-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <header className="mb-12 max-w-xl" style={fadeUp(dashSection.inView)}>
-            <SectionLabel>Platform preview</SectionLabel>
-            <h2
-              id="dash-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              Your releases, analytics, and earnings — all in one place.
-            </h2>
-          </header>
-
-          <figure
-            className="rounded-2xl overflow-hidden border border-[color:var(--lens-sand)] bg-white shadow-[0_4px_24px_rgba(16,14,9,0.07)]"
-            style={fadeUp(dashSection.inView, 0.15)}
-            aria-label="Dashboard interface preview"
-          >
-            {/* browser chrome */}
-            <header className="px-4 py-3 border-b border-[color:var(--lens-sand)] flex items-center gap-3 bg-[color:var(--lens-sand)]">
-              <span aria-hidden="true" className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--lens-ink)] opacity-20" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--lens-ink)] opacity-20" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--lens-ink)] opacity-20" />
-              </span>
-              <span
-                className="flex-1 text-center text-[11px] font-medium rounded-md px-3 py-0.5 bg-white"
-                style={{ color: 'rgba(16,14,9,0.4)', fontFamily: 'var(--font-sans)', maxWidth: '240px', margin: '0 auto' }}
-              >
-                app.lensmusic.io/dashboard
+          <figure className="border border-[color:var(--lens-sand)] rounded-2xl bg-white overflow-hidden" aria-label="Revenue analytics dashboard preview">
+            <header className="px-5 py-4 border-b border-[color:var(--lens-sand)] flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--lens-blue)] font-normal">Revenue analytics</p>
+                <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]/60 font-normal">February payout cycle</p>
+              </div>
+              <span className="px-3 py-1 rounded-full border border-[color:var(--lens-sand)] text-[11px] text-[color:var(--lens-ink)]/65 font-normal">
+                Revenue workspace preview
               </span>
             </header>
 
-            {/* mock dashboard content */}
-            <section className="p-6 grid md:grid-cols-4 gap-4">
+            <section className="p-5 grid grid-cols-2 gap-3 border-b border-[color:var(--lens-sand)]">
               {[
-                { label: 'Total Streams', value: '124,891', change: '+12%' },
-                { label: 'Revenue (MTD)',  value: '$1,204',  change: '+8%'  },
-                { label: 'Active Releases',value: '14',      change: null   },
-                { label: 'Stores Live',    value: '150+',    change: null   },
-              ].map(({ label, value, change }) => (
-                <article
-                  key={label}
-                  className="rounded-xl p-4 border border-[color:var(--lens-sand)]"
-                >
-                  <p className="text-[11px] uppercase tracking-[0.12em] mb-2 font-semibold" style={{ color: 'rgba(16,14,9,0.45)', fontFamily: 'var(--font-sans)' }}>
-                    {label}
-                  </p>
-                  <p className="text-[22px] font-bold text-[color:var(--lens-ink)] leading-none" style={{ fontFamily: 'var(--font-serif)' }}>
+                ['Monthly revenue', '$2,055'],
+                ['Payout pending', '$412'],
+                ['Top platform', 'Spotify'],
+                ['Growth vs last month', '+11.7%'],
+              ].map(([label, value]) => (
+                <article key={label} className="rounded-xl border border-[color:var(--lens-sand)] p-4 bg-[color:var(--lens-sand)]/15">
+                  <p className="text-[10px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/50 font-normal">{label}</p>
+                  <p className="mt-2 text-[20px] leading-none text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}>
                     {value}
                   </p>
-                  {change && (
-                    <p className="text-[11px] font-semibold mt-1.5" style={{ color: 'rgb(31,98,142)', fontFamily: 'var(--font-sans)' }}>
-                      {change} this month
-                    </p>
-                  )}
                 </article>
               ))}
             </section>
 
-            <section className="px-6 pb-6">
-              <figure className="bg-white rounded-xl border border-[color:var(--lens-sand)] p-4 h-52" aria-label="Revenue chart">
+            <section className="p-5 grid gap-4">
+              <figure className="rounded-xl border border-[color:var(--lens-sand)] p-4 h-52" aria-label="Monthly revenue trend">
+                <figcaption className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal mb-2">
+                  Revenue trend (last 7 months)
+                </figcaption>
                 <DashboardChart
                   data={sampleChartData}
                   dataKey="month"
-                  height="100%"
-                  width="100%"
+                  height="88%"
+                  areaFillMode="solid"
+                  areaOpacity={0.08}
+                  tooltipVariant="minimal"
+                  showGrid
                   fill="rgb(31,98,142)"
                 />
               </figure>
+
+              <section className="grid sm:grid-cols-2 gap-4">
+                <article className="rounded-xl border border-[color:var(--lens-sand)] p-4">
+                  <h2 className="text-[13px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>
+                    Platform revenue split
+                  </h2>
+                  <ul className="mt-4 space-y-3 list-none m-0 p-0">
+                    {[
+                      ['Spotify', 42],
+                      ['Apple Music', 28],
+                      ['YouTube Music', 14],
+                      ['Deezer', 9],
+                      ['Other', 7],
+                    ].map(([name, width]) => (
+                      <li key={String(name)} className="grid grid-cols-[92px_1fr_38px] items-center gap-3">
+                        <span className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal">{name}</span>
+                        <span className="h-2 rounded-full bg-[color:var(--lens-sand)] overflow-hidden">
+                          <span
+                            className="block h-full bg-[color:var(--lens-blue)]"
+                            style={{ width: `${width}%` }}
+                            aria-hidden="true"
+                          />
+                        </span>
+                        <span className="text-[12px] text-right text-[color:var(--lens-ink)] font-normal">{width}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+
+                <article className="rounded-xl border border-[color:var(--lens-sand)] p-4">
+                  <h2 className="text-[13px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>
+                    Top territories
+                  </h2>
+                  <ul className="mt-4 divide-y divide-[color:var(--lens-sand)] list-none m-0 p-0">
+                    {[
+                      ['United States', '$881'],
+                      ['Rwanda', '$296'],
+                      ['Kenya', '$241'],
+                      ['United Kingdom', '$198'],
+                    ].map(([market, amount]) => (
+                      <li key={String(market)} className="py-2.5 flex items-center justify-between gap-2">
+                        <span className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal">{market}</span>
+                        <span className="text-[12px] text-[color:var(--lens-ink)] font-normal">{amount}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </section>
             </section>
           </figure>
         </article>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          6. ANALYTICS PREVIEW
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="analytics"
-        ref={analyticsSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-white"
-        aria-labelledby="analytics-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <section className="grid md:grid-cols-2 gap-16 items-center">
-            <header style={fadeUp(analyticsSection.inView)}>
-              <SectionLabel>Analytics</SectionLabel>
+      <section className="border-y border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 py-6" aria-label="Supported music platforms">
+        <article className="max-w-6xl mx-auto px-6">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--lens-ink)]/45 mb-4 font-normal">
+            Distributed to 150+ stores worldwide
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-6">
+            {stores.map((store) => (
+              <StoreIcon key={store} name={store} />
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <FadeSection id="how-it-works" className="py-24 bg-white">
+        {({ inView }) => (
+          <article className="max-w-6xl mx-auto px-6">
+            <header className="max-w-2xl" style={fadeUp(inView)}>
+              <SectionLabel>How it works</SectionLabel>
               <h2
-                id="analytics-heading"
-                className="text-[clamp(26px,4vw,40px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)] mb-5"
+                id="how-it-works-heading"
+                className="mt-4 text-[clamp(28px,4vw,44px)] leading-tight tracking-[-0.02em]"
                 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
-                Know where your audience lives. And grows.
+                A clear release workflow from upload to payout.
               </h2>
-              <p className="text-[13px] leading-[1.75]" style={{ color: 'rgba(16,14,9,0.58)', fontFamily: 'var(--font-sans)' }}>
-                Understand which platforms drive the most revenue, which territories are emerging, and how each release performs over time — all surfaced in a clear, actionable dashboard.
+              <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+                Lens keeps the release process simple and gives you the revenue reporting needed to
+                make decisions after launch.
               </p>
-              <ul className="mt-7 flex flex-col gap-3 list-none p-0 m-0" role="list">
-                {['Revenue by platform', 'Streams by territory', 'Monthly trend reports', 'Release-level breakdown'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-[13px] font-medium text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
+            </header>
+
+            <ol className="mt-10 grid md:grid-cols-3 gap-4 list-none p-0 m-0">
+              {[
+                {
+                  step: '01',
+                  title: 'Prepare your release',
+                  text: 'Add audio, cover art, metadata, and credits in one structured submission flow.',
+                },
+                {
+                  step: '02',
+                  title: 'Deliver to stores',
+                  text: 'Send your release to major streaming and download platforms from a single dashboard.',
+                },
+                {
+                  step: '03',
+                  title: 'Track earnings',
+                  text: 'Review platform and territory performance with revenue trends and payout summaries.',
+                },
+              ].map((item, index) => (
+                <li key={item.step} style={fadeUp(inView, 0.08 * index)}>
+                  <article className="h-full rounded-2xl border border-[color:var(--lens-sand)] p-6">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)] font-normal">{item.step}</p>
+                    <h3 className="mt-4 text-[18px] leading-snug text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-serif)', fontWeight: 400 }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">{item.text}</p>
+                  </article>
+                </li>
+              ))}
+            </ol>
+          </article>
+        )}
+      </FadeSection>
+
+      <FadeSection id="features" className="py-24 bg-[color:var(--lens-sand)]/20">
+        {({ inView }) => (
+          <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1fr_1fr] gap-12 items-start">
+            <header style={fadeUp(inView)}>
+              <SectionLabel>Built for independent teams</SectionLabel>
+              <h2
+                id="features-heading"
+                className="mt-4 text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+              >
+                Distribution tools with reporting that stays readable.
+              </h2>
+              <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+                Lens is designed for artists, managers, labels, and small teams that need reliable
+                delivery plus practical revenue visibility.
+              </p>
+            </header>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              {[
+                ['Store delivery', 'Publish releases to 150+ stores from one workflow.'],
+                ['Catalog tracking', 'Monitor release status and keep your catalog organized.'],
+                ['Revenue analytics', 'View earnings by platform, territory, and reporting period.'],
+                ['Payout visibility', 'Track pending balances and payout activity in one place.'],
+                ['Label support', 'Manage multiple artists and release operations from one account.'],
+                ['Codes included', 'ISRC and UPC handling stays inside the release process.'],
+              ].map(([title, text], index) => (
+                <article key={title} className="rounded-xl border border-[color:var(--lens-sand)] bg-white p-5" style={fadeUp(inView, 0.05 * index)}>
+                  <h3 className="text-[14px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>{title}</h3>
+                  <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">{text}</p>
+                </article>
+              ))}
+            </div>
+          </article>
+        )}
+      </FadeSection>
+
+      <FadeSection id="analytics" className="py-24 bg-white">
+        {({ inView }) => (
+          <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[0.95fr_1.05fr] gap-12 items-center">
+            <header style={fadeUp(inView)}>
+              <SectionLabel>Revenue analytics</SectionLabel>
+              <h2
+                id="analytics-heading"
+                className="mt-4 text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+              >
+                See where revenue comes from, not just how much arrived.
+              </h2>
+              <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+                Lens surfaces the platform and territory context behind every reporting cycle so
+                you can compare release performance and plan your next launch with better data.
+              </p>
+              <ul className="mt-6 space-y-3 list-none p-0 m-0">
+                {[
+                  'Revenue trend tracking by month',
+                  'Platform and territory breakdowns',
+                  'Pending payout visibility',
+                  'Release-level performance review',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-[13px] text-[color:var(--lens-ink)] font-normal">
                     <CheckIcon />
-                    {f}
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </header>
 
-            <figure
-              className="bg-white rounded-2xl border border-[color:var(--lens-sand)] p-6 h-64 shadow-[0_2px_16px_rgba(16,14,9,0.06)]"
-              style={fadeUp(analyticsSection.inView, 0.15)}
-              aria-label="Revenue performance chart preview"
-            >
+            <figure className="rounded-2xl border border-[color:var(--lens-sand)] p-5 h-[320px]" style={fadeUp(inView, 0.12)} aria-label="Revenue trend preview">
+              <figcaption className="text-[12px] text-[color:var(--lens-ink)]/60 mb-3 font-normal">
+                Sample monthly earnings trend
+              </figcaption>
               <DashboardChart
                 data={sampleChartData}
                 dataKey="month"
-                height="100%"
-                width="100%"
+                height="90%"
+                areaFillMode="none"
+                showGrid
+                showYAxis
+                tooltipVariant="minimal"
                 fill="rgb(31,98,142)"
               />
             </figure>
-          </section>
-        </article>
-      </section>
+          </article>
+        )}
+      </FadeSection>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          7. COMPARISON TABLE
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="compare"
-        ref={compareSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-[color:var(--lens-sand)]"
-        aria-labelledby="compare-heading"
-      >
-        <article className="max-w-3xl mx-auto px-6">
-          <header className="mb-12" style={fadeUp(compareSection.inView)}>
-            <SectionLabel>Why Lens</SectionLabel>
-            <h2
-              id="compare-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              The honest comparison.
-            </h2>
-          </header>
+      <FadeSection id="compare" className="py-24 bg-[color:var(--lens-sand)]/20">
+        {({ inView }) => (
+          <article className="max-w-4xl mx-auto px-6">
+            <header className="mb-8" style={fadeUp(inView)}>
+              <SectionLabel>Comparison</SectionLabel>
+              <h2
+                id="compare-heading"
+                className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+              >
+                A straightforward model for independent releases.
+              </h2>
+            </header>
 
-          <figure style={fadeUp(compareSection.inView, 0.1)} aria-label="Feature comparison table">
-            <table className="w-full border-collapse bg-white rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(16,14,9,0.06)]" style={{ fontFamily: 'var(--font-sans)' }}>
-              <thead>
-                <tr className="border-b border-[color:var(--lens-sand)]">
-                  <th className="text-left px-6 py-4 text-[11px] uppercase tracking-[0.16em] font-semibold" style={{ color: 'rgba(16,14,9,0.45)', width: '42%' }}>Feature</th>
-                  <th className="px-6 py-4 text-[11px] uppercase tracking-[0.16em] font-semibold text-center" style={{ color: 'rgb(31,98,142)', background: 'rgba(31,98,142,0.05)' }}>Lens Music</th>
-                  <th className="px-6 py-4 text-[11px] uppercase tracking-[0.16em] font-semibold text-center" style={{ color: 'rgba(16,14,9,0.35)' }}>Typical distributor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { feature: 'Upfront cost',       lens: 'Free',           others: '$20 – 50/year' },
-                  { feature: 'Revenue share',       lens: '15% on earnings',others: '0 – 20% varies' },
-                  { feature: 'Store reach',         lens: '150+ stores',    others: 'Varies' },
-                  { feature: 'Revenue splits',      lens: '✓ Built in',     others: 'Limited / extra cost' },
-                  { feature: 'Label tools',         lens: '✓ Included',     others: 'Extra cost' },
-                  { feature: 'ISRC / UPC codes',    lens: '✓ Auto-assigned',others: 'Manual / extra' },
-                ].map(({ feature, lens, others }, i) => (
-                  <tr
-                    key={feature}
-                    className={i % 2 === 0 ? '' : 'bg-[color:var(--lens-sand)] bg-opacity-30'}
-                    style={{ borderBottom: i < 5 ? '1px solid rgba(228,226,221,0.8)' : 'none' }}
-                  >
-                    <td className="px-6 py-4 text-[13px] font-medium text-[color:var(--lens-ink)]">{feature}</td>
-                    <td className="px-6 py-4 text-[13px] font-semibold text-center text-[color:var(--lens-blue)]" style={{ background: 'rgba(31,98,142,0.03)' }}>{lens}</td>
-                    <td className="px-6 py-4 text-[13px] text-center" style={{ color: 'rgba(16,14,9,0.45)' }}>{others}</td>
+            <figure className="overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-white" style={fadeUp(inView, 0.1)} aria-label="Feature comparison table">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-[color:var(--lens-sand)]">
+                    <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-ink)]/55" style={{ fontWeight: 400 }}>
+                      Category
+                    </th>
+                    <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-blue)]" style={{ fontWeight: 400 }}>
+                      Lens Music
+                    </th>
+                    <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-ink)]/45" style={{ fontWeight: 400 }}>
+                      Typical distributor
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </figure>
-        </article>
-      </section>
+                </thead>
+                <tbody>
+                  {[
+                    ['Upfront cost', 'Free', '$20 to $50/year'],
+                    ['Revenue share', '15% on earnings', 'Varies by plan'],
+                    ['Store reach', '150+ stores', 'Varies'],
+                    ['Revenue analytics', 'Included', 'Often limited by plan'],
+                    ['Label tools', 'Included', 'Often extra cost'],
+                    ['Codes (ISRC/UPC)', 'Handled in workflow', 'May require manual setup'],
+                  ].map((row, i) => (
+                    <tr key={row[0]} className={i % 2 === 0 ? '' : 'bg-[color:var(--lens-sand)]/10'}>
+                      <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)] font-normal">{row[0]}</td>
+                      <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)] font-normal">{row[1]}</td>
+                      <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)]/60 font-normal">{row[2]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </figure>
+          </article>
+        )}
+      </FadeSection>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          8. TESTIMONIALS
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="testimonials"
-        ref={testimonials.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-white"
-        aria-labelledby="testimonials-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <header className="mb-14" style={fadeUp(testimonials.inView)}>
-            <SectionLabel>Artist voices</SectionLabel>
-            <h2
-              id="testimonials-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              From the artists themselves.
-            </h2>
-          </header>
-
-          <section className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                quote: "I uploaded my debut EP on a Friday and it was live on Spotify by Monday. No fees, no friction — just my music where it needs to be.",
-                name: "Kaneza M.",
-                role: "Independent Artist, Kigali",
-              },
-              {
-                quote: "Managing five artists used to be a spreadsheet nightmare. Lens gave us one place for everything — catalog, splits, analytics. It's what we needed.",
-                name: "Trésor Ndiaye",
-                role: "Label Manager, Dakar",
-              },
-              {
-                quote: "The revenue split feature alone saved my working relationship with my producer. Everything's transparent, automatic, and fair.",
-                name: "Amara Diallo",
-                role: "Producer & Artist, Abidjan",
-              },
-            ].map(({ quote, name, role }, i) => (
-              <article
-                key={name}
-                className="rounded-2xl p-7 border border-[color:var(--lens-sand)] flex flex-col gap-5"
-                style={fadeUp(testimonials.inView, 0.1 + i * 0.1)}
+      <FadeSection id="testimonials" className="py-24 bg-white">
+        {({ inView }) => (
+          <article className="max-w-6xl mx-auto px-6">
+            <header className="max-w-2xl" style={fadeUp(inView)}>
+              <SectionLabel>Artist voices</SectionLabel>
+              <h2
+                id="testimonials-heading"
+                className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
-                <span
-                  aria-hidden="true"
-                  className="text-[56px] leading-none font-bold select-none"
-                  style={{ fontFamily: 'var(--font-serif)', color: 'rgba(31,98,142,0.15)', marginTop: '-8px' }}
-                >
-                  "
-                </span>
+                Built for teams that want distribution and reporting in one place.
+              </h2>
+            </header>
+
+            <div className="mt-8 grid md:grid-cols-3 gap-4">
+              {[
+                [
+                  'Lens made our release workflow easier to manage. The reporting view is clear enough that the team actually uses it every week.',
+                  'Aline N.',
+                  'Artist manager',
+                ],
+                [
+                  'We needed a simpler way to track where income was coming from. Platform and territory summaries have been the biggest improvement.',
+                  'M. Didier',
+                  'Independent label',
+                ],
+                [
+                  'The no-upfront-cost model helped us launch quickly, and the dashboard gives us enough visibility to plan the next release cycle.',
+                  'S. Kamanzi',
+                  'Artist',
+                ],
+              ].map(([quote, name, role], index) => (
                 <blockquote
-                  className="text-[14px] leading-[1.75] flex-1"
-                  style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'rgba(16,14,9,0.75)' }}
+                  key={String(name)}
+                  className="rounded-2xl border border-[color:var(--lens-sand)] p-6"
+                  style={fadeUp(inView, 0.06 * index)}
                 >
-                  {quote}
+                  <p className="text-[13px] leading-7 text-[color:var(--lens-ink)]/75 font-normal">{quote}</p>
+                  <footer className="mt-6">
+                    <p className="text-[12px] text-[color:var(--lens-ink)] font-normal">{name}</p>
+                    <p className="text-[11px] text-[color:var(--lens-ink)]/50 font-normal">{role}</p>
+                  </footer>
                 </blockquote>
-                <footer className="flex items-center gap-3 pt-4 border-t border-[color:var(--lens-sand)]">
-                  <span
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white flex-shrink-0"
-                    style={{ background: 'rgb(31,98,142)', fontFamily: 'var(--font-sans)' }}
-                    aria-hidden="true"
-                  >
-                    {name.charAt(0)}
-                  </span>
-                  <section>
-                    <p className="text-[12px] font-semibold text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
-                      {name}
-                    </p>
-                    <p className="text-[11px]" style={{ color: 'rgba(16,14,9,0.45)', fontFamily: 'var(--font-sans)' }}>
-                      {role}
-                    </p>
-                  </section>
-                </footer>
-              </article>
-            ))}
-          </section>
-        </article>
-      </section>
+              ))}
+            </div>
+          </article>
+        )}
+      </FadeSection>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          9. PRICING
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="pricing"
-        ref={pricingSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-[color:var(--lens-sand)]"
-        aria-labelledby="pricing-heading"
-      >
-        <article className="max-w-5xl mx-auto px-6">
-          <header className="mb-16" style={fadeUp(pricingSection.inView)}>
-            <SectionLabel>Pricing</SectionLabel>
-            <h2
-              id="pricing-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              Simple. Transparent. Honest.
-            </h2>
-          </header>
-
-          <section
-            className="grid md:grid-cols-3 gap-6"
-            style={fadeUp(pricingSection.inView, 0.1)}
-          >
-            {[
-              {
-                term: 'Upfront cost',
-                value: 'Free',
-                sub: 'No subscription, no setup fee. Ever.',
-                highlight: true,
-              },
-              {
-                term: 'Revenue share',
-                value: '15%',
-                sub: 'Only on earnings we help you generate.',
-                highlight: false,
-              },
-              {
-                term: 'Store reach',
-                value: '150+',
-                sub: 'Spotify, Apple Music, Audiomack, Deezer, and more.',
-                highlight: false,
-              },
-            ].map(({ term, value, sub, highlight }) => (
-              <article
-                key={term}
-                className="rounded-2xl p-7 flex flex-col gap-2 border"
-                style={{
-                  background: highlight ? 'rgb(31,98,142)' : 'white',
-                  borderColor: highlight ? 'rgb(31,98,142)' : 'rgb(228,226,221)',
-                }}
+      <FadeSection id="pricing" className="py-24 bg-[color:var(--lens-sand)]/20">
+        {({ inView }) => (
+          <article className="max-w-5xl mx-auto px-6">
+            <header className="max-w-2xl" style={fadeUp(inView)}>
+              <SectionLabel>Pricing</SectionLabel>
+              <h2
+                id="pricing-heading"
+                className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
-                <p
-                  className="text-[11px] uppercase tracking-[0.16em] font-semibold mb-1"
-                  style={{ color: highlight ? 'rgba(255,255,255,0.6)' : 'rgba(16,14,9,0.45)', fontFamily: 'var(--font-sans)' }}
-                >
-                  {term}
+                Free to distribute. Revenue share only when earnings arrive.
+              </h2>
+              <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+                Lens does not charge an upfront distribution fee. The platform takes a 15% share
+                of earnings generated through Lens.
+              </p>
+            </header>
+
+            <div className="mt-8 grid md:grid-cols-[1.1fr_0.9fr] gap-4">
+              <article className="rounded-2xl border border-[color:var(--lens-sand)] bg-white p-7" style={fadeUp(inView, 0.05)}>
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)] font-normal">Lens distribution</p>
+                <p className="mt-4 text-[40px] leading-none" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}>
+                  $0
                 </p>
-                <p
-                  className="text-[44px] leading-none font-bold tracking-tight"
-                  style={{ fontFamily: 'var(--font-serif)', color: highlight ? 'white' : 'var(--lens-ink)' }}
-                >
-                  {value}
-                </p>
-                <p
-                  className="text-[13px] leading-relaxed mt-1"
-                  style={{ color: highlight ? 'rgba(255,255,255,0.72)' : 'rgba(16,14,9,0.55)', fontFamily: 'var(--font-sans)' }}
-                >
-                  {sub}
-                </p>
+                <p className="mt-2 text-[12px] text-[color:var(--lens-ink)]/60 font-normal">Upfront distribution cost</p>
+                <ul className="mt-6 space-y-3 list-none p-0 m-0">
+                  {[
+                    'Distribute to 150+ stores',
+                    'Revenue analytics dashboard',
+                    'Payout visibility and reporting',
+                    'Catalog and release management tools',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-[12px] font-normal">
+                      <CheckIcon />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </article>
-            ))}
-          </section>
 
-          <p
-            className="mt-8 text-[12px]"
-            style={{ color: 'rgba(16,14,9,0.45)', fontFamily: 'var(--font-sans)', ...fadeUp(pricingSection.inView, 0.2) }}
-          >
-            The 15% revenue share applies to net earnings generated from stores distributed through Lens. It does not apply to earnings generated outside the platform.
-          </p>
-        </article>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          10. FAQ
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="faq"
-        ref={faqSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 bg-white"
-        aria-labelledby="faq-heading"
-      >
-        <article className="max-w-3xl mx-auto px-6">
-          <header className="mb-12" style={fadeUp(faqSection.inView)}>
-            <SectionLabel>FAQ</SectionLabel>
-            <h2
-              id="faq-heading"
-              className="text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
-              Common questions
-            </h2>
-          </header>
-
-          <ul
-            className="flex flex-col gap-0 list-none p-0 m-0 rounded-2xl overflow-hidden border border-[color:var(--lens-sand)]"
-            role="list"
-            style={fadeUp(faqSection.inView, 0.1)}
-          >
-            {[
-              {
-                q: 'How is distribution free?',
-                a: 'Lens covers the cost of delivering your music to stores. We only earn when you do — through a 15% revenue share on earnings generated through the platform.',
-              },
-              {
-                q: 'What does the 15% apply to?',
-                a: 'The 15% applies to net revenue from stores distributed through Lens. It does not apply to earnings you generate outside the platform, such as live performances or sync licensing.',
-              },
-              {
-                q: 'Which stores do you deliver to?',
-                a: 'We deliver to 150+ stores including Spotify, Apple Music, Audiomack, Deezer, Tidal, Amazon Music, YouTube Music, and many more across Africa and internationally.',
-              },
-              {
-                q: 'Can labels manage multiple artists?',
-                a: 'Yes. Label accounts can manage releases across multiple artists and access consolidated analytics for your full roster from a single dashboard.',
-              },
-              {
-                q: 'Do you support revenue splits?',
-                a: 'Yes. You can define revenue splits for collaborators when setting up a release. Lens handles the distribution of earnings to each party automatically.',
-              },
-              {
-                q: 'How long does distribution take?',
-                a: 'Most releases go live on stores within 2–5 business days after you submit. Timing varies slightly by store — Spotify and Apple Music are typically fastest.',
-              },
-            ].map(({ q, a }, i) => (
-              <li
-                key={q}
-                className={i < 5 ? 'border-b border-[color:var(--lens-sand)]' : ''}
-              >
-                <details className="group">
-                  <summary
-                    className="flex items-center justify-between cursor-pointer px-6 py-5 text-[13px] font-semibold text-[color:var(--lens-ink)] select-none focus-visible:outline-2 focus-visible:outline-[color:var(--lens-blue)] rounded"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    {q}
-                    <span aria-hidden="true" className="ml-4 flex-shrink-0 faq-icon">
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M7 1v12M1 7h12" stroke="rgb(31,98,142)" strokeWidth="1.6" strokeLinecap="round" />
-                      </svg>
-                    </span>
-                  </summary>
-                  <p
-                    className="px-6 pb-5 text-[13px] leading-[1.75]"
-                    style={{ color: 'rgba(16,14,9,0.58)', fontFamily: 'var(--font-sans)' }}
-                  >
-                    {a}
+              <article className="rounded-2xl border border-[color:var(--lens-sand)] bg-white p-7" style={fadeUp(inView, 0.1)}>
+                <h3 className="text-[14px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>Revenue share</h3>
+                <p className="mt-4 text-[34px] leading-none" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}>
+                  15%
+                </p>
+                <p className="mt-2 text-[12px] text-[color:var(--lens-ink)]/60 font-normal">
+                  Applied to earnings generated through Lens.
+                </p>
+                <div className="mt-6 border-t border-[color:var(--lens-sand)] pt-5">
+                  <p className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal leading-6">
+                    Example: if a release earns $100 through Lens, the artist payout is $85 and Lens retains $15.
                   </p>
+                </div>
+              </article>
+            </div>
+          </article>
+        )}
+      </FadeSection>
+
+      <FadeSection id="faq" className="py-24 bg-white">
+        {({ inView }) => (
+          <article className="max-w-4xl mx-auto px-6">
+            <header className="max-w-2xl" style={fadeUp(inView)}>
+              <SectionLabel>FAQ</SectionLabel>
+              <h2
+                id="faq-heading"
+                className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+              >
+                Questions artists ask before they switch.
+              </h2>
+            </header>
+
+            <div className="mt-8 space-y-3">
+              {[
+                ['Is Lens Music free to use?', 'Lens does not charge an upfront distribution fee. Lens earns through a 15% revenue share on earnings generated through the platform.'],
+                ['How many stores can I distribute to?', 'Lens supports delivery to 150+ stores and services, including major streaming platforms.'],
+                ['Do I get revenue analytics?', 'Yes. Lens includes revenue reporting and performance views so you can review trends by platform and territory.'],
+                ['Can labels use Lens?', 'Yes. Lens is designed for independent artists and labels, with catalog and release management support.'],
+              ].map(([question, answer], index) => (
+                <details
+                  key={String(question)}
+                  className="rounded-xl border border-[color:var(--lens-sand)] px-4"
+                  style={fadeUp(inView, 0.04 * index)}
+                >
+                  <summary className="list-none cursor-pointer py-4 flex items-center justify-between gap-4">
+                    <span className="text-[13px] text-[color:var(--lens-ink)] font-normal">{question}</span>
+                    <span className="faq-plus text-[18px] leading-none text-[color:var(--lens-blue)]" aria-hidden="true">+</span>
+                  </summary>
+                  <p className="pb-4 text-[12px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">{answer}</p>
                 </details>
-              </li>
-            ))}
-          </ul>
-        </article>
-      </section>
+              ))}
+            </div>
+          </article>
+        )}
+      </FadeSection>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          11. FINAL CTA
-      ═══════════════════════════════════════════════════════════════ */}
-      <section
-        id="about"
-        ref={ctaSection.ref as React.RefObject<HTMLElement>}
-        className="py-28 grain relative overflow-hidden"
-        style={{ background: 'rgb(31,98,142)' }}
-        aria-labelledby="cta-heading"
-      >
-        {/* decorative geometric shapes */}
-        <span
-          aria-hidden="true"
-          className="absolute -top-12 -right-12 w-64 h-64 rounded-full pointer-events-none"
-          style={{ border: '1px solid rgba(255,255,255,0.08)' }}
-        />
-        <span
-          aria-hidden="true"
-          className="absolute -bottom-8 -left-8 w-48 h-48 rounded-full pointer-events-none"
-          style={{ border: '1px solid rgba(255,255,255,0.06)' }}
-        />
-        <span
-          aria-hidden="true"
-          className="absolute top-10 left-1/4 w-1 h-24 pointer-events-none"
-          style={{ background: 'rgba(255,255,255,0.07)' }}
-        />
+      <FadeSection id="cta" className="py-20 bg-[color:var(--lens-sand)]/20">
+        {({ inView }) => (
+          <article className="max-w-5xl mx-auto px-6">
+            <section className="rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 text-center" style={fadeUp(inView)}>
+              <SectionLabel>Start now</SectionLabel>
+              <h2
+                id="cta-heading"
+                className="mt-4 text-[clamp(30px,4vw,46px)] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+              >
+                Launch your next release with distribution and revenue reporting in one place.
+              </h2>
+              <p className="mt-4 max-w-2xl mx-auto text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+                Create your Lens account to distribute to 150+ stores and monitor earnings with a clear analytics dashboard.
+              </p>
+              <div className="mt-7 flex flex-wrap justify-center gap-3">
+                <Button route="/auth/signup" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                  Start uploading
+                </Button>
+                <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                  Sign in to dashboard
+                </Button>
+              </div>
+            </section>
+          </article>
+        )}
+      </FadeSection>
 
-        <article className="max-w-3xl mx-auto px-6 text-center relative" style={fadeUp(ctaSection.inView)}>
-          <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-5" style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-sans)' }}>
-            Get started today
-          </p>
-          <h2
-            id="cta-heading"
-            className="text-[clamp(30px,5vw,52px)] text-white mb-5 tracking-[-0.02em] leading-tight"
-            style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-          >
-            Your music deserves a global audience.
-          </h2>
-          <p
-            className="text-[15px] leading-[1.75] mb-10 max-w-lg mx-auto"
-            style={{ color: 'rgba(255,255,255,0.68)', fontFamily: 'var(--font-sans)' }}
-          >
-            Start distributing to 150+ stores today. Free to upload — we only earn when you do.
-          </p>
-
-          {/* email + CTA form */}
-          <form
-            onSubmit={(e) => { e.preventDefault(); window.location.href = '/auth/login'; }}
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-            aria-label="Sign up form"
-          >
-            <label htmlFor="cta-email" className="sr-only">Email address</label>
-            <input
-              id="cta-email"
-              type="email"
-              placeholder="your@email.com"
-              className="flex-1 px-4 py-3 rounded-lg text-[13px] text-[color:var(--lens-ink)] placeholder-[color:var(--lens-ink)] focus:outline-none"
-              style={{
-                fontFamily: 'var(--font-sans)',
-                background: 'rgba(255,255,255,0.95)',
-                border: 'none',
-              }}
-              aria-label="Email address"
-            />
-            <button
-              type="submit"
-              className="px-6 py-3 rounded-lg text-[12px] font-semibold tracking-[0.05em] transition-all duration-200 hover:scale-[1.02] whitespace-nowrap"
-              style={{
-                background: 'rgb(16,14,9)',
-                color: 'white',
-                fontFamily: 'var(--font-sans)',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              Start uploading
-            </button>
-          </form>
-
-          <p className="mt-4 text-[11px]" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-sans)' }}>
-            No credit card required. Start in under 2 minutes.
-          </p>
-        </article>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          12. FOOTER
-      ═══════════════════════════════════════════════════════════════ */}
       <PublicFooter />
     </main>
   );
