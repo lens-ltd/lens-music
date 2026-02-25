@@ -1,5 +1,5 @@
-import { UUID } from "crypto";
 import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UUID } from "../types/common.types";
 
 export abstract class AbstractEntity {
   // ID

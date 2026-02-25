@@ -11,18 +11,15 @@ import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/features/authSlice';
 import { setUser } from '../../state/features/userSlice';
-import { ErrorResponse, useNavigate } from 'react-router-dom';
-import { PublicNavbar } from '../landing/LandingPage';
+import { ErrorResponse, Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  // REACT HOOK FORM
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
 
-  // INITIALIZE LOGIN REQUEST
   const [
     login,
     {
@@ -34,22 +31,14 @@ const Login = () => {
     },
   ] = useLoginMutation();
 
-  // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-
-  // NAVIGATION 
   const navigate = useNavigate();
 
-  // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
-    login({
-      email: data.email,
-      password: data.password,
-    });
+    login({ email: data.email, password: data.password });
   };
 
-  // HANDLE LOGIN RESPONSE
   useEffect(() => {
     if (loginIsError) {
       const errorResponse =
@@ -62,100 +51,226 @@ const Login = () => {
       dispatch(setUser(loginData?.data?.user));
       navigate('/dashboard');
     }
-  }, [
-    loginData,
-    loginError,
-    loginIsLoading,
-    loginIsError,
-    loginIsSuccess,
-    dispatch,
-    navigate,
-  ]);
+  }, [loginData, loginError, loginIsLoading, loginIsError, loginIsSuccess, dispatch, navigate]);
 
   return (
-    <main className="min-h-screen max-h-screen overflow-clip flex flex-col items-center justify-center gap-5 w-full bg-background relative">
-      {/* Accent geometric shape */}
-      <aside aria-hidden="true" className="absolute left-0 bottom-0 w-full h-1/2 pointer-events-none select-none">
-        <span className="block absolute left-0 bottom-0 w-2/3 h-24 bg-primary/20 rounded-tr-3xl" style={{transform: 'skewY(-4deg)'}}></span>
-        <span className="block absolute left-0 bottom-10 w-1/2 h-8 bg-primary/40 rounded-tr-2xl" style={{transform: 'skewY(-2deg)'}}></span>
-      </aside>
-      <PublicNavbar />
-      <form
-        className="flex flex-col gap-7 w-full max-w-lg p-10 rounded-2xl shadow-2xl bg-white border border-gray-100 z-10"
-        onSubmit={handleSubmit(onSubmit)}
+    <main
+      className="min-h-screen bg-[color:var(--lens-sand)] flex flex-col"
+      style={{ fontFamily: 'var(--font-sans)' }}
+    >
+      {/* ── navbar ── */}
+      <header
+        className="bg-white/96 backdrop-blur-md border-b border-[color:var(--lens-sand)] shadow-[0_1px_0_rgba(16,14,9,0.06)]"
+        style={{ height: '64px' }}
       >
-        <header className="flex flex-col gap-2 w-full items-center justify-center my-4">
-          <h2 className="font-extrabold uppercase text-2xl tracking-widest text-primary">Lens Music</h2>
-          <h1 className="font-semibold uppercase text-lg text-center text-gray-700">Login</h1>
-        </header>
-        <section className="flex flex-col gap-6">
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: 'Email is required',
-              validate: (value) => validateInputs(value, 'email') || 'Invalid email',
-            }}
-            render={({ field }) => (
-              <label className="flex flex-col gap-1">
-                <Input label="Email" required placeholder="Enter email address" {...field} />
-                {errors?.email && (
-                  <p className="text-red-500 text-sm">{String(errors?.email?.message)}</p>
-                )}
-              </label>
-            )}
-          />
-          <Controller
-            name="password"
-            rules={{ required: 'Password is required' }}
-            control={control}
-            render={({ field }) => (
-              <label className="flex flex-col gap-1">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="Enter password"
-                  label="Password"
-                  suffixIcon={showPassword ? faEyeSlash : faEye}
-                  suffixIconHandler={(e) => {
-                    e.preventDefault();
-                    setShowPassword(!showPassword);
-                  }}
-                  {...field}
-                />
-              </label>
-            )}
-          />
-        </section>
-        <menu className="flex items-center gap-3 justify-between w-full my-1 max-[1050px]:flex-col max-[800px]:flex-row max-[450px]:flex-col">
-          <Input
-            label="Keep me logged in"
-            type="checkbox"
-            onChange={(e) => {
-              return e;
-            }}
-          />
-          <Button
-            styled={false}
-            className="text-[13px]! underline text-purple-700 hover:text-purple-900"
-          >Forgot password?</Button>
-        </menu>
-        <footer className="flex flex-col items-center gap-3 w-full mt-2">
-          <Button
-            primary
-            submit
-            className="w-full shadow-md hover:shadow-lg transition-all duration-200"
-          >{loginIsLoading ? <Loader /> : 'Login'}</Button>
-          <p className="text-center flex items-center gap-2 text-[14px]">
-            Don't have an account?{' '}
+        <nav
+          className="max-w-6xl mx-auto h-full flex items-center justify-between px-6"
+          aria-label="Main navigation"
+        >
+          <Link
+            to="/"
+            aria-label="Lens Music home"
+            className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lens-blue)] rounded"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="2" stroke="rgb(31,98,142)" strokeWidth="1.5" />
+              <circle cx="12" cy="12" r="5.5" stroke="rgb(31,98,142)" strokeWidth="1.5" />
+              <circle cx="12" cy="12" r="2" fill="rgb(31,98,142)" />
+            </svg>
+            <span
+              className="text-[color:var(--lens-ink)] tracking-tight"
+              style={{ fontFamily: 'var(--font-serif)', fontSize: '16px', fontWeight: 700 }}
+            >
+              Lens Music
+            </span>
+          </Link>
+
+          <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0" role="list">
+            {[
+              { label: 'How it works', href: '/#how-it-works' },
+              { label: 'Pricing', href: '/#pricing' },
+              { label: 'FAQ', href: '/#faq' },
+            ].map(({ label, href }) => (
+              <li key={label}>
+                <Link
+                  to={href}
+                  className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
+                  style={{ fontFamily: 'var(--font-sans)' }}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                to="/auth/signup"
+                className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
+                style={{ fontFamily: 'var(--font-sans)' }}
+              >
+                Sign up
+              </Link>
+            </li>
+          </ul>
+
+          <details className="md:hidden relative" id="mobile-nav-login">
+            <summary
+              className="list-none cursor-pointer p-2 rounded focus-visible:outline-2 focus-visible:outline-[color:var(--lens-blue)]"
+              aria-label="Open navigation menu"
+            >
+              <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
+                <rect y="0"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
+                <rect y="7"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
+                <rect y="14" width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
+              </svg>
+            </summary>
+            <nav
+              className="absolute top-full right-0 mt-2 w-52 bg-white border border-[color:var(--lens-sand)] rounded-lg shadow-lg p-3"
+              aria-label="Mobile navigation"
+            >
+              <ul className="flex flex-col gap-1 list-none m-0 p-0" role="list">
+                {[
+                  { label: 'How it works', href: '/#how-it-works' },
+                  { label: 'Pricing', href: '/#pricing' },
+                  { label: 'FAQ', href: '/#faq' },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link
+                      to={href}
+                      className="block px-3 py-2 rounded text-[12px] text-[color:var(--lens-ink)] hover:bg-[color:var(--lens-sand)] transition-colors"
+                      style={{ fontFamily: 'var(--font-sans)' }}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+                <li className="pt-1 border-t border-[color:var(--lens-sand)]">
+                  <Link
+                    to="/auth/signup"
+                    className="block px-3 py-2 rounded text-[12px] font-semibold text-[color:var(--lens-blue)] hover:bg-[color:var(--lens-sand)] transition-colors"
+                    style={{ fontFamily: 'var(--font-sans)' }}
+                  >
+                    Sign up
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </details>
+        </nav>
+      </header>
+
+      {/* ── form area ── */}
+      <section className="flex-1 flex items-center justify-center px-6 py-16">
+        <article className="w-full max-w-md">
+          {/* card header */}
+          <header className="mb-8">
+            <p
+              className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3 text-[color:var(--lens-blue)]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              Welcome back
+            </p>
+            <h1
+              className="text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
+              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+            >
+              Sign in to Lens Music
+            </h1>
+            <p
+              className="text-[13px] mt-3 leading-relaxed"
+              style={{ color: 'rgba(16,14,9,0.55)', fontFamily: 'var(--font-sans)' }}
+            >
+              Distribute your music to 150+ stores worldwide — for free.
+            </p>
+          </header>
+
+          {/* form card */}
+          <form
+            className="bg-white rounded-2xl border border-[color:var(--lens-sand)] p-8 flex flex-col gap-6 shadow-[0_2px_16px_rgba(16,14,9,0.06)]"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: 'Email is required',
+                validate: (value) => validateInputs(value, 'email') || 'Invalid email',
+              }}
+              render={({ field }) => (
+                <label className="flex flex-col gap-1.5">
+                  <Input label="Email" required placeholder="Enter email address" {...field} />
+                  {errors?.email && (
+                    <p className="text-red-500 text-[12px]">{String(errors?.email?.message)}</p>
+                  )}
+                </label>
+              )}
+            />
+
+            <Controller
+              name="password"
+              rules={{ required: 'Password is required' }}
+              control={control}
+              render={({ field }) => (
+                <label className="flex flex-col gap-1.5">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="Enter password"
+                    label="Password"
+                    suffixIcon={showPassword ? faEyeSlash : faEye}
+                    suffixIconHandler={(e) => {
+                      e.preventDefault();
+                      setShowPassword(!showPassword);
+                    }}
+                    {...field}
+                  />
+                </label>
+              )}
+            />
+
+            <menu className="flex items-center justify-between m-0 p-0">
+              <Input
+                label="Keep me logged in"
+                type="checkbox"
+                onChange={(e) => e}
+              />
+              <Button
+                styled={false}
+                className="text-[12px]! text-[color:var(--lens-blue)]! hover:underline! p-0!"
+              >
+                Forgot password?
+              </Button>
+            </menu>
+
             <Button
-              styled={false}
-              route="/auth/signup"
-              className="underline text-purple-700 hover:text-purple-900"
-            >Signup here</Button>
+              primary
+              submit
+              className="w-full py-3 text-[13px] font-semibold tracking-[0.04em] shadow-none mt-1"
+            >
+              {loginIsLoading ? <Loader /> : 'Sign in'}
+            </Button>
+
+            <p
+              className="text-center text-[12px]"
+              style={{ color: 'rgba(16,14,9,0.5)' }}
+            >
+              Don't have an account?{' '}
+              <Link
+                to="/auth/signup"
+                className="font-semibold text-[color:var(--lens-blue)] hover:underline"
+              >
+                Create one
+              </Link>
+            </p>
+          </form>
+
+          <p
+            className="text-center text-[11px] mt-6"
+            style={{ color: 'rgba(16,14,9,0.35)', fontFamily: 'var(--font-sans)' }}
+          >
+            Free distribution. 15% revenue share on earnings only.
           </p>
-        </footer>
-      </form>
+        </article>
+      </section>
     </main>
   );
 };

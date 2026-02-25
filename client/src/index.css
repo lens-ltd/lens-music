@@ -73,4 +73,12 @@ layer(base);
   body {
     background-color: var(--color-background);
   }
+  html {
+    scroll-behavior: smooth;
+  }
+  ::selection {
+    background-color: #20618d;
+    color: #ffffff;
+  }
 }
+/* ── underline-slide hover ── */
