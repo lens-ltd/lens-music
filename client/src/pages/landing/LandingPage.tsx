@@ -12,6 +12,7 @@ import Button from '@/components/inputs/Button';
 import DashboardChart from '@/components/graphs/DashboardChart';
 import PublicNavbar from '@/components/layout/PublicNavbar';
 import PublicFooter from '@/components/layout/PublicFooter';
+import { faRocket } from '@fortawesome/free-solid-svg-icons';
 
 const sampleChartData = [
   { month: 'Aug', value: 780 },
@@ -202,11 +203,9 @@ const LandingPage = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button route="/auth/signup" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+              <Button route="/auth/login" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+              <FontAwesomeIcon icon={faRocket} />
                 Start uploading
-              </Button>
-              <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
-                Sign in to dashboard
               </Button>
             </div>
 
@@ -718,14 +717,11 @@ const LandingPage = () => {
               <p className="mt-4 max-w-2xl mx-auto text-[13px] leading-7 text-white/70 font-normal">
                 Create your Lens account to distribute to 150+ stores and monitor earnings with a clear analytics dashboard.
               </p>
-              <div className="mt-7 flex flex-wrap justify-center gap-3">
-                <Button route="/auth/signup" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+              <menu className="mt-7 flex flex-wrap justify-center gap-3">
+                <Button route="/auth/login" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
                   Start uploading
                 </Button>
-                <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal border-white! text-white! bg-transparent! hover:bg-white/10!">
-                  Sign in to dashboard
-                </Button>
-              </div>
+              </menu>
               </div>
             </section>
           </article>
