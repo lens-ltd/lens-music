@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
 import DashboardChart from '@/components/graphs/DashboardChart';
+import PublicNavbar from '@/components/layout/PublicNavbar';
+import PublicFooter from '@/components/layout/PublicFooter';
+import { faAmazon, faApple, faDeezer, faSpotify, faYoutube, IconDefinition } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Lazy-loaded so it never blocks LCP
 const HeroVisual = lazy(() => import('@/components/landing/HeroVisual'));
@@ -59,109 +62,6 @@ function useStatCounter(target: number, duration = 1800, active = false) {
   return count;
 }
 
-// ── nav ───────────────────────────────────────────────────────────────────────
-export const PublicNavbar = ({ scrolled }: { scrolled?: boolean }) => (
-  <header
-    className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-      scrolled
-        ? 'bg-white/96 backdrop-blur-md border-b border-[color:var(--lens-sand)] shadow-[0_1px_0_rgba(16,14,9,0.06)]'
-        : 'bg-transparent'
-    }`}
-    style={{ height: '64px' }}
-  >
-    <nav
-      className="max-w-6xl mx-auto h-full flex items-center justify-between px-6"
-      aria-label="Main navigation"
-    >
-      <Link
-        to="/"
-        aria-label="Lens Music home"
-        className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lens-blue)] rounded"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <rect x="2" y="2" width="20" height="20" rx="2" stroke="rgb(31,98,142)" strokeWidth="1.5" />
-          <circle cx="12" cy="12" r="5.5" stroke="rgb(31,98,142)" strokeWidth="1.5" />
-          <circle cx="12" cy="12" r="2" fill="rgb(31,98,142)" />
-        </svg>
-        <span
-          className="text-[color:var(--lens-ink)] tracking-tight"
-          style={{ fontFamily: 'var(--font-serif)', fontSize: '16px', fontWeight: 700 }}
-        >
-          Lens Music
-        </span>
-      </Link>
-
-      <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0" role="list">
-        {[
-          { label: 'How it works', href: '#how-it-works' },
-          { label: 'Pricing', href: '#pricing' },
-          { label: 'FAQ', href: '#faq' },
-        ].map(({ label, href }) => (
-          <li key={label}>
-            <a
-              href={href}
-              className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
-              style={{ fontFamily: 'var(--font-sans)' }}
-            >
-              {label}
-            </a>
-          </li>
-        ))}
-        <li>
-          <Link
-            to="/auth/login"
-            className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
-            style={{ fontFamily: 'var(--font-sans)' }}
-          >
-            Sign in
-          </Link>
-        </li>
-        <li>
-          <Button route="/auth/login" primary className="px-5 py-2 text-[12px] tracking-[0.04em] font-semibold">
-            Start uploading
-          </Button>
-        </li>
-      </ul>
-
-      <details className="md:hidden relative group" id="mobile-nav">
-        <summary
-          className="list-none cursor-pointer p-2 rounded focus-visible:outline-2 focus-visible:outline-[color:var(--lens-blue)]"
-          aria-label="Open navigation menu"
-        >
-          <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
-            <rect y="0"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-            <rect y="7"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-            <rect y="14" width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-          </svg>
-        </summary>
-        <nav
-          className="absolute top-full right-0 mt-2 w-52 bg-white border border-[color:var(--lens-sand)] rounded-lg shadow-lg p-3"
-          aria-label="Mobile navigation"
-        >
-          <ul className="flex flex-col gap-1 list-none m-0 p-0" role="list">
-            {['How it works', 'Pricing', 'FAQ'].map((label) => (
-              <li key={label}>
-                <a
-                  href={`#${label.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="block px-3 py-2 rounded text-[13px] text-[color:var(--lens-ink)] hover:bg-[color:var(--lens-sand)] transition-colors"
-                  style={{ fontFamily: 'var(--font-sans)' }}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-            <li className="pt-1 border-t border-[color:var(--lens-sand)]">
-              <Button route="/auth/login" primary className="w-full text-center text-[13px] mt-1">
-                Start uploading
-              </Button>
-            </li>
-          </ul>
-        </nav>
-      </details>
-    </nav>
-  </header>
-);
 
 // ── inline animation styles ───────────────────────────────────────────────────
 const fadeUp = (inView: boolean, delay = 0): React.CSSProperties => ({
@@ -190,42 +90,14 @@ const CheckIcon = () => (
 
 // ── StoreIcon ─────────────────────────────────────────────────────────────────
 const StoreIcon = ({ name }: { name: string }) => {
-  const icons: Record<string, React.ReactNode> = {
-    'Spotify': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Spotify">
-        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-      </svg>
-    ),
-    'Apple Music': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Apple Music">
-        <path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208a4.98 4.98 0 00-.32 1.235c-.063.5-.095 1-.103 1.502-.004.083-.01.166-.015.249v14.604c.01.15.017.302.026.453.058.905.201 1.793.608 2.621.48.977 1.24 1.684 2.24 2.147.866.406 1.782.569 2.72.594.285.007.57.012.856.013H18.31c.09-.003.18-.007.27-.01.67-.024 1.34-.093 1.985-.282 1.15-.339 2.03-1.002 2.645-2.026.35-.573.538-1.205.633-1.86.09-.62.13-1.243.135-1.868.002-.063.004-.126.006-.19V6.124zm-5.647 9.674l-1.41.81c-.494.284-1.013.424-1.553.41a2.97 2.97 0 01-.744-.1c-.48-.137-.898-.4-1.24-.77-.344-.374-.558-.824-.61-1.316-.074-.706.167-1.315.673-1.815.375-.367.833-.584 1.38-.645.443-.05.874.013 1.29.176l.14.054V8.69l-5.46 1.57v6.044l-.001.032c0 .44-.098.854-.31 1.237-.283.513-.715.862-1.287 1.016-.34.093-.687.124-1.038.1-.35-.024-.688-.106-1.003-.26-.482-.235-.812-.6-.94-1.112-.13-.515-.053-1.006.228-1.463.28-.456.7-.745 1.216-.884.36-.097.724-.122 1.09-.087.237.023.466.077.682.163l.14.055V7.57l.017-.005 6.74-1.94v7.22l-.002.013c.01.387-.072.754-.27 1.093-.255.44-.64.741-1.138.884zM18.35 15.8v-1.5l1.41-.81V15l-1.41.8z"/>
-      </svg>
-    ),
-    'Deezer': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Deezer">
-        <path d="M18.944 18.95h4.498v.87h-4.498zm-6.172 0h4.498v.87h-4.498zm-6.172 0H11.1v.87H6.6zm-6.172 0H4.93v.87H.428zM18.944 17.2h4.498v.87h-4.498zM12.772 17.2h4.498v.87h-4.498zM6.6 17.2H11.1v.87H6.6zM18.944 15.45h4.498v.87h-4.498zm-6.172 0h4.498v.87h-4.498zm-6.172 0H11.1v.87H6.6zM18.944 13.7h4.498v.87h-4.498zm-6.172 0h4.498v.87h-4.498zM18.944 11.95h4.498v.87h-4.498z"/>
-      </svg>
-    ),
-    'Tidal': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Tidal">
-        <path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004-4.004-4zm4.004 4.004l-4.004 4.004 4.004 4.004L20.016 12l-4-4.004zM8.008 12l-4.004 4.004L8.008 20.008l4.004-4.004L8.008 12z"/>
-      </svg>
-    ),
-    'YouTube Music': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="YouTube Music">
-        <path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228s6.228-2.796 6.228-6.228S15.432 5.772 12 5.772zM9.684 15.54V8.46L16.2 12l-6.516 3.54z"/>
-      </svg>
-    ),
-    'Audiomack': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Audiomack">
-        <path d="M4 12a8 8 0 1 1 16 0A8 8 0 0 1 4 12zm8-10C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 6v8l6-4-6-4z"/>
-      </svg>
-    ),
-    'Amazon Music': (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-label="Amazon Music">
-        <path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.745.074-1.047-.872-1.234-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.099v-.41c0-.753.06-1.642-.383-2.294-.385-.579-1.124-.82-1.775-.82-1.205 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.548-.266-.472-.66C5.86 2.957 8.637 2 11.135 2c1.279 0 2.95.34 3.956 1.307C16.29 4.43 16.19 5.96 16.19 7.621v4.247c0 1.276.529 1.837 1.026 2.527.175.246.213.54-.01.72l-2.062 1.68zM21.485 19.035c-3.649 2.693-8.944 4.123-13.503 2.177-3.987-1.69-6.74-5.207-7.7-9.09a.486.486 0 01.484-.612c.241 0 .461.157.524.394.857 3.51 3.322 6.643 6.964 8.168 4.117 1.74 8.856.467 12.212-2.054.281-.207.673.024.527.354-.06.137-.19.237-.33.265-.064.013-.124.019-.178.019l.001.001c-.003-.002.001-.421.001-.421l-.002-.001zM22 17.5c0 .36-.086.713-.251 1.021-.145.275-.429.479-.763.479h-.003a.943.943 0 01-.755-.385 1.888 1.888 0 01-.369-.918.493.493 0 01-.001-.08c0-.285.119-.54.309-.717l1.246-1.172c.232-.218.587-.053.587.271v1.501z"/>
-      </svg>
-    ),
+  const icons: Record<string, IconDefinition> = {
+    'Spotify': faSpotify,
+    'Apple Music': faApple,
+    'Deezer': faDeezer,
+    'Tidal': faApple,
+    'YouTube Music': faYoutube,
+    'Audiomack': faAmazon,
+    'Amazon Music': faAmazon,
   };
 
   return (
@@ -233,7 +105,7 @@ const StoreIcon = ({ name }: { name: string }) => {
       className="flex flex-col items-center gap-2 opacity-40 grayscale hover:opacity-70 hover:grayscale-0 transition-all duration-300"
       aria-label={name}
     >
-      <span className="text-[color:var(--lens-ink)]">{icons[name]}</span>
+      <span className="text-[color:var(--lens-ink)"><FontAwesomeIcon icon={icons[name]} /></span>
       <figcaption className="text-[10px] font-medium text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-sans)' }}>
         {name}
       </figcaption>
@@ -1232,117 +1104,7 @@ const LandingPage = () => {
       {/* ═══════════════════════════════════════════════════════════════
           12. FOOTER
       ═══════════════════════════════════════════════════════════════ */}
-      <footer
-        id="contact"
-        className="bg-[color:var(--lens-ink)] text-white"
-        role="contentinfo"
-      >
-        <section className="max-w-6xl mx-auto px-6 pt-16 pb-8">
-          {/* top grid */}
-          <section className="grid grid-cols-2 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
-            {/* brand */}
-            <section className="col-span-2 md:col-span-1">
-              <Link
-                to="/"
-                aria-label="Lens Music home"
-                className="flex items-center gap-2.5 mb-4 focus-visible:outline-2 focus-visible:outline-white rounded w-fit"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <rect x="2" y="2" width="20" height="20" rx="2" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                  <circle cx="12" cy="12" r="5.5" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-                  <circle cx="12" cy="12" r="2" fill="white" opacity="0.8"/>
-                </svg>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '15px', fontWeight: 700 }}>
-                  Lens Music
-                </span>
-              </Link>
-              <p className="text-[12px] leading-relaxed max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-sans)' }}>
-                Free music distribution for independent artists and labels, built in Rwanda.
-              </p>
-            </section>
-
-            {/* product links */}
-            <nav aria-label="Product links">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
-                Product
-              </p>
-              <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-                {[
-                  { label: 'How it works', href: '#how-it-works' },
-                  { label: 'Features',     href: '#features'     },
-                  { label: 'Pricing',      href: '#pricing'      },
-                  { label: 'Dashboard',    href: '#dashboard'    },
-                ].map(({ label, href }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="footer-link text-[12px]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* company */}
-            <nav aria-label="Company links">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
-                Company
-              </p>
-              <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-                {[
-                  { label: 'About',   href: '#about'   },
-                  { label: 'Contact', href: '#contact' },
-                  { label: 'FAQ',     href: '#faq'     },
-                ].map(({ label, href }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="footer-link text-[12px]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* legal */}
-            <nav aria-label="Legal links">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
-                Legal
-              </p>
-              <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-                {['Privacy Policy', 'Terms of Service', 'Artist Agreement'].map(label => (
-                  <li key={label}>
-                    <a
-                      href="#"
-                      className="footer-link text-[12px]"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </section>
-
-          {/* bottom row */}
-          <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-7">
-            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-sans)' }}>
-              Distribution is free. Lens charges a 15% revenue share on earnings generated through the platform.
-            </p>
-            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-sans)' }}>
-              © Lens Music, {new Date().getFullYear()}. All rights reserved.
-            </p>
-          </section>
-        </section>
-      </footer>
+      <PublicFooter />
     </main>
   );
 };

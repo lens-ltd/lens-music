@@ -83,7 +83,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     if (['checkbox', 'radio'].includes(type)) {
       if (type === 'checkbox') {
         return (
-          <label className="flex w-fit items-center gap-2 text-[13px]">
+          <label className="flex w-fit items-center gap-2 text-[12px]">
             <Checkbox
             className='text-white!'
               onCheckedChange={
@@ -94,14 +94,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               checked={checked}
               defaultChecked={defaultChecked}
             />
-            <p className={`${label ? 'flex' : 'hidden'} text-[13px]`}>
+            <p className={`${label ? 'flex' : 'hidden'} text-[12px]`}>
               {label}
             </p>
           </label>
         );
       }
       return (
-        <label className="flex items-center gap-2 text-[13px]">
+        <label className="flex items-center gap-2 text-[12px]">
           <input
             type={type}
             name={name}
@@ -111,7 +111,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             onChange={onChange}
             className={`w-4 h-4 border-[1.5px] rounded-xl cursor-pointer border-secondary outline-hidden focus:outline-hidden accent-primary focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}`}
           />
-          <p className={`${label ? 'flex' : 'hidden'} text-[13px]`}>{label}</p>
+          <p className={`${label ? 'flex' : 'hidden'} text-[12px]`}>{label}</p>
         </label>
       );
     }
@@ -146,11 +146,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <label className={`flex flex-col gap-[5px] w-full ${labelClassName}`}>
           <p
             className={`${
-              label ? 'flex items-center gap-[5px] text-[14px]' : 'hidden'
+              label ? 'flex items-center gap-[5px] text-[13px]' : 'hidden'
             }`}
           >
             {label}{' '}
-            <span className={required ? 'text-[14px] text-red-600' : 'hidden'}>
+            <span className={required ? 'text-[13px] text-red-600' : 'hidden'}>
               *
             </span>
           </p>
@@ -174,11 +174,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <label className={`flex flex-col gap-[5px] w-full ${labelClassName}`}>
         <p
           className={`${
-            label ? 'pl-1 flex items-center gap-[5px] text-[14px]' : 'hidden'
+            label ? 'pl-1 flex items-center gap-[5px] text-[13px]' : 'hidden'
           }`}
         >
           {label}{' '}
-          <span className={required ? 'text-[14px] text-red-600' : 'hidden'}>
+          <span className={required ? 'text-[13px] text-red-600' : 'hidden'}>
             *
           </span>
         </p>
@@ -193,7 +193,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onChange={onChange}
             placeholder={readOnly ? '' : placeholder}
-            className={`py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
+            className={`py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
               readOnly &&
               'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
             }`}
@@ -225,7 +225,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 name={name}
                 onChange={onChange}
                 placeholder={readOnly ? '' : placeholder}
-                className={`py-[7px] px-6 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}
+                className={`py-[7px] px-6 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className}
                 ${prefixIcon && 'ps-10'} ${prefixText ? 'ps-[3.6rem]' : ''} ${
                   readOnly &&
                   'border-[.1px]! border-background! hover:cursor-default focus:border-background!'
@@ -259,7 +259,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 placeholder={readOnly ? '' : placeholder}
                 className={`${
                   prefixText && 'ml-16! w-[85%]!'
-                } py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[13px] text-[14px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
+                } py-[7px] px-4 font-normal placeholder:font-light!  placeholder:text-[12px] text-[13px] flex items-center w-full rounded-lg border-[1.5px] border-secondary border-opacity-50 outline-hidden focus:outline-hidden focus:border-[1.6px] focus:border-primary ease-in-out duration-50 ${className} ${
                   prefixIcon &&
                   'ml-[45px]! w-[90%]! !border-l-none rounded-l-none! ps-3.5!'
                 } ${

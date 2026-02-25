@@ -12,6 +12,8 @@ import { AppDispatch } from '../../state/store';
 import { setUser } from '../../state/features/userSlice';
 import { setToken } from '../../state/features/authSlice';
 import { ErrorResponse, Link } from 'react-router-dom';
+import PublicNavbar from '../../components/layout/PublicNavbar';
+import PublicFooter from '../../components/layout/PublicFooter';
 
 const Signup = () => {
   const {
@@ -63,108 +65,10 @@ const Signup = () => {
       className="min-h-screen bg-[color:var(--lens-sand)] flex flex-col"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      {/* ── navbar ── */}
-      <header
-        className="bg-white/96 backdrop-blur-md border-b border-[color:var(--lens-sand)] shadow-[0_1px_0_rgba(16,14,9,0.06)]"
-        style={{ height: '64px' }}
-      >
-        <nav
-          className="max-w-6xl mx-auto h-full flex items-center justify-between px-6"
-          aria-label="Main navigation"
-        >
-          <Link
-            to="/"
-            aria-label="Lens Music home"
-            className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lens-blue)] rounded"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="2" y="2" width="20" height="20" rx="2" stroke="rgb(31,98,142)" strokeWidth="1.5" />
-              <circle cx="12" cy="12" r="5.5" stroke="rgb(31,98,142)" strokeWidth="1.5" />
-              <circle cx="12" cy="12" r="2" fill="rgb(31,98,142)" />
-            </svg>
-            <span
-              className="text-[color:var(--lens-ink)] tracking-tight"
-              style={{ fontFamily: 'var(--font-serif)', fontSize: '16px', fontWeight: 700 }}
-            >
-              Lens Music
-            </span>
-          </Link>
-
-          <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0" role="list">
-            {[
-              { label: 'How it works', href: '/#how-it-works' },
-              { label: 'Pricing', href: '/#pricing' },
-              { label: 'FAQ', href: '/#faq' },
-            ].map(({ label, href }) => (
-              <li key={label}>
-                <Link
-                  to={href}
-                  className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
-                  style={{ fontFamily: 'var(--font-sans)' }}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                to="/auth/login"
-                className="nav-link text-[color:var(--lens-ink)] opacity-60 hover:opacity-100 text-[12px] tracking-[0.06em] font-medium"
-                style={{ fontFamily: 'var(--font-sans)' }}
-              >
-                Sign in
-              </Link>
-            </li>
-          </ul>
-
-          <details className="md:hidden relative" id="mobile-nav-signup">
-            <summary
-              className="list-none cursor-pointer p-2 rounded focus-visible:outline-2 focus-visible:outline-[color:var(--lens-blue)]"
-              aria-label="Open navigation menu"
-            >
-              <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
-                <rect y="0"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-                <rect y="7"  width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-                <rect y="14" width="22" height="1.8" rx="1" fill="rgb(16,14,9)" />
-              </svg>
-            </summary>
-            <nav
-              className="absolute top-full right-0 mt-2 w-52 bg-white border border-[color:var(--lens-sand)] rounded-lg shadow-lg p-3"
-              aria-label="Mobile navigation"
-            >
-              <ul className="flex flex-col gap-1 list-none m-0 p-0" role="list">
-                {[
-                  { label: 'How it works', href: '/#how-it-works' },
-                  { label: 'Pricing', href: '/#pricing' },
-                  { label: 'FAQ', href: '/#faq' },
-                ].map(({ label, href }) => (
-                  <li key={label}>
-                    <Link
-                      to={href}
-                      className="block px-3 py-2 rounded text-[12px] text-[color:var(--lens-ink)] hover:bg-[color:var(--lens-sand)] transition-colors"
-                      style={{ fontFamily: 'var(--font-sans)' }}
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-                <li className="pt-1 border-t border-[color:var(--lens-sand)]">
-                  <Link
-                    to="/auth/login"
-                    className="block px-3 py-2 rounded text-[12px] font-semibold text-[color:var(--lens-blue)] hover:bg-[color:var(--lens-sand)] transition-colors"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    Sign in
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </details>
-        </nav>
-      </header>
+      <PublicNavbar />
 
       {/* ── form area ── */}
-      <section className="flex-1 flex items-center justify-center px-6 py-16">
+      <section className="flex-1 flex items-center justify-center px-6 py-16 pt-[calc(64px+4rem)]">
         <article className="w-full max-w-xl">
           {/* card header */}
           <header className="mb-8">
@@ -343,6 +247,7 @@ const Signup = () => {
           </p>
         </article>
       </section>
+      <PublicFooter />
     </main>
   );
 };

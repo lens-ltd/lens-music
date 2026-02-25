@@ -35,9 +35,9 @@ const Button: FC<ButtonProps> = ({
   isLoading = false,
   children,
 }) => {
-  const baseStyles = `py-[6px] flex items-center gap-2 justify-center text-center border border-primary px-4 rounded-md text-[13px] text-primary bg-white hover:bg-primary hover:text-white cursor-pointer ease-in-out duration-400 hover:scale-[1.005] 
-    sm:text-[12px] md:text-[13px] lg:text-[13px]
-    sm:py-[4px] md:py-[6px] lg:py-[8px]
+  const baseStyles = `py-[5px] flex items-center gap-2 justify-center text-center border border-primary px-4 rounded-md text-[12px] text-primary bg-white hover:bg-primary hover:text-white cursor-pointer ease-in-out duration-400 hover:scale-[1.005]
+    sm:text-[11px] md:text-[12px] lg:text-[12px]
+    sm:py-[4px] md:py-[5px] lg:py-[6px]
     sm:px-3 md:px-4 lg:px-5
     sm:gap-1 md:gap-2 lg:gap-2
     ${!styled && 'bg-transparent! shadow-none! text-primary! hover:scale-[1.005]! py-0! px-0! border-none! hover:bg-transparent! hover:text-primary!'}
