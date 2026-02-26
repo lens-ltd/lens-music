@@ -1,11 +1,11 @@
 import store from 'store';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { LOCAL_API_URL } from '@/constants/environments.constants';
+import { API_URL } from '@/constants/environments.constants';
 
 export const apiMutationSlice = createApi({
   reducerPath: 'apiMutation',
   baseQuery: fetchBaseQuery({
-    baseUrl: LOCAL_API_URL,
+    baseUrl: API_URL,
     prepareHeaders: (headers) => {
       const token = store.get('token');
       if (token) {

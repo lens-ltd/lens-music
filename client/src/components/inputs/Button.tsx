@@ -47,7 +47,7 @@ const Button: FC<ButtonProps> = ({
   );
 
   const classes = cn(
-    'inline-flex items-center justify-center gap-2 rounded-md text-[12px] tracking-[0.02em] font-normal transition-colors',
+    'inline-flex items-center cursor-pointer justify-center gap-2 rounded-md text-[12px] tracking-[0.02em] font-normal transition-colors',
     !styled && 'border-0 bg-transparent shadow-none hover:bg-transparent px-0 py-0 h-auto text-primary justify-start',
     styled && 'min-h-9 px-4 py-2',
     styled && !primary && !danger && 'border border-primary bg-white text-primary hover:bg-[color:var(--lens-sand)]',
