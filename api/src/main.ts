@@ -4,10 +4,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { AppDataSource } from './data-source';
+import logger from './utils/logger';
 
 async function bootstrap() {
-  await AppDataSource.initialize();
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
@@ -23,7 +22,7 @@ async function bootstrap() {
 
   const port = Number(process.env.PORT) || 8080;
   await app.listen(port);
-  console.log(`API running on port ${port}`);
-}
+  logger.child({ module: 'main' }).info({ port }, 'API running');
+} 
 
 bootstrap();

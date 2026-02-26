@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -13,9 +12,10 @@ import {
 import moment from 'moment';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
-import { ReleaseService } from '../../services/release.service';
+import { ReleaseService } from './releases.service';
 import { generateCatalogNumber } from '../../helpers/strings.helper';
 import { ROLES } from '../../constants/auth.constant';
+import { CreateReleaseDto } from './dto/create-release.dto';
 
 @Controller('releases')
 @UseGuards(JwtAuthGuard)
@@ -23,40 +23,18 @@ export class ReleasesController {
   constructor(private readonly releaseService: ReleaseService) {}
 
   @Post()
-  async createRelease(
-    @Body()
-    body: {
-      title: string;
-      upc: string;
-      releaseDate: string;
-      version?: string;
-      productionYear: number;
-      labelId: string;
-    },
-    @CurrentUser() user: AuthUser
-  ) {
-    const {
-      title,
-      upc,
-      releaseDate,
-      version = 'original',
-      productionYear,
-      labelId,
-    } = body;
+  async createRelease(@Body() dto: CreateReleaseDto, @CurrentUser() user: AuthUser) {
+    const { title, upc, releaseDate, version = 'original', productionYear, labelId } = dto;
 
-    if (!title || !releaseDate || !productionYear) {
-      throw new BadRequestException(
-        'Title, release date, and production year are required'
-      );
-    }
+    const formattedReleaseDate = moment(releaseDate).format();
 
-    const releaseExists = await this.releaseService.checkIfLabelExists({
-      labelId,
+    const releaseExists = await this.releaseService.checkIfReleaseExists({
+      labelId: labelId as string,
       productionYear,
-      releaseDate: moment(releaseDate).format(),
+      releaseDate: formattedReleaseDate,
       title,
       userId: user.id,
-      version,
+      version: version as string,
     });
 
     if (releaseExists) {
@@ -68,12 +46,12 @@ export class ReleasesController {
 
     const newRelease = await this.releaseService.createRelease({
       title,
-      upc,
-      releaseDate: moment(releaseDate).format(),
-      version,
+      upc: upc as string,
+      releaseDate: formattedReleaseDate,
+      version: version as string,
       productionYear,
       catalogNumber: generateCatalogNumber(productionYear),
-      labelId,
+      labelId: labelId as string,
       userId: user.id,
     });
 

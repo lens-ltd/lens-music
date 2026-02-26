@@ -1,15 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { LabelsModule } from './modules/labels/labels.module';
 import { ArtistsModule } from './modules/artists/artists.module';
 import { ReleasesModule } from './modules/releases/releases.module';
+import { LyricsModule } from './modules/lyrics/lyrics.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1w' },
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -18,7 +25,7 @@ import { ReleasesModule } from './modules/releases/releases.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: true,
-      autoLoadEntities: false,
+      autoLoadEntities: true,
       entities: [`${__dirname}/**/entities/*.{ts,js}`],
       migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
       ssl: ['localhost', '127.0.0.1', '/var/run/postgresql'].includes(
@@ -32,6 +39,7 @@ import { ReleasesModule } from './modules/releases/releases.module';
     LabelsModule,
     ArtistsModule,
     ReleasesModule,
+    LyricsModule,
   ],
 })
 export class AppModule {}

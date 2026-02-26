@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { AppError } from '../../helpers/errors.helper';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -12,16 +13,24 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    const httpException =
-      exception instanceof HttpException
-        ? exception
-        : new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const payload = exception.getResponse();
+      return response.status(status).json(
+        typeof payload === 'string' ? { message: payload } : payload,
+      );
+    }
 
-    const status = httpException.getStatus();
-    const payload = httpException.getResponse();
+    if (exception instanceof AppError) {
+      return response.status(exception.statusCode).json({
+        message: exception.message,
+        errorCode: exception.errorCode,
+        ...(exception.data ? { data: exception.data } : {}),
+      });
+    }
 
-    response.status(status).json(
-      typeof payload === 'string' ? { message: payload } : payload
-    );
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal server error',
+    });
   }
 }

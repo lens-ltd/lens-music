@@ -7,41 +7,25 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
 import { validateEmail } from '../../helpers/validations.helper';
-import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service';
+import { AuthService } from './auth.service';
+import { UserService } from '../users/users.service';
+import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   @Post('signup')
-  async signup(
-    @Body()
-    body: {
-      email: string;
-      name: string;
-      phone: string;
-      password: string;
-      role: string;
-    }
-  ) {
-    const { email, name, phone, password, role } = body;
+  async signup(@Body() dto: SignupDto) {
+    const { error } = validateEmail(dto.email);
+    if (error) throw new BadRequestException(error.message);
 
-    if (!email || !name || !password) {
-      throw new BadRequestException('Email, name, and password are required');
-    }
-
-    const { error } = validateEmail(email);
-    if (error) {
-      throw new BadRequestException(error.message);
-    }
-
-    const userExists = await this.userService.findUserByEmail(email);
+    const userExists = await this.userService.findUserByEmail(dto.email);
     if (userExists) {
       throw new ConflictException({
         message: 'User already exists',
@@ -49,37 +33,18 @@ export class AuthController {
       });
     }
 
-    const newUser = await this.authService.signup({
-      email,
-      name,
-      phone,
-      password,
-      role,
-    });
-
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: newUser.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1d' }
-    );
+    const { user, token } = await this.authService.signup(dto);
 
     return {
       message: 'You have signed up successfully!',
-      data: { user: { ...newUser, password: undefined }, token },
+      data: { user: { ...user, password: undefined }, token },
     };
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: { email: string; password: string }) {
-    const { email, password } = body;
-    const user = await this.authService.login({ email, password });
-
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1w' }
-    );
+  async login(@Body() dto: LoginDto) {
+    const { user, token } = await this.authService.login(dto);
 
     return {
       message: 'You have logged in successfully!',

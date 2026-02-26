@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
 import { UUID } from '../types/common.types';
-import { languagesList } from '../constants/data.constant';
+import { languagesList } from '../constants/location.constant';
 
 @Entity()
 export class Lyrics extends AbstractEntity {

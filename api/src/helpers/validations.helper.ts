@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { countriesList } from '../constants/data.constant';
+import { countriesList } from '../constants/location.constant';
 
 export const validateEmail = (email: string) => {
   const schema = Joi.object({

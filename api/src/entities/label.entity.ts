@@ -8,7 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { User } from './user.entity';
-import { countriesList } from '../constants/data.constant';
+import { countriesList } from '../constants/location.constant';
 import { Release } from './release.entity';
 import { AbstractEntity } from './abstract.entity';
 

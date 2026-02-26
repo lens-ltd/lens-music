@@ -5,6 +5,8 @@ import { Label } from './label.entity';
 import { Artist } from './artist.entity';
 import { Release } from './release.entity';
 import { AbstractEntity } from './abstract.entity';
+import { Role } from './role.entity';
+import { RolePermission } from './rolePermission.entity';
 
 @Entity()
 @Unique(['email', 'phone'])
@@ -41,16 +43,6 @@ export class User extends AbstractEntity {
   @IsNotEmpty({ message: 'Password is required' })
   password!: string;
 
-  // ROLE
-  @Column({
-    name: 'role',
-    type: 'enum',
-    nullable: false,
-    default: ROLES.USER,
-    enum: Object.values(ROLES),
-  })
-  role!: string;
-
   @OneToMany(() => Label, (label) => label.user)
   labels: Label[];
 
@@ -61,4 +53,16 @@ export class User extends AbstractEntity {
   // RELEASES
   @OneToMany(() => Release, (release) => release.user)
   releases: Release[];
+
+  /**
+   * RELATIONS
+   */
+
+  // CREATED ROLES
+  @OneToMany(() => Role, (role) => role.createdBy)
+  createdRoles: Role[];
+
+  // CREATED ROLE PERMISSIONS
+  @OneToMany(() => RolePermission, (rolePermission) => rolePermission.createdBy)
+  createdRolePermissions: RolePermission[];
 }
