@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
+import LensLogo from '/logo.png';
 
 interface PublicNavbarProps {
   scrolled?: boolean;
@@ -36,7 +37,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({ scrolled, variant = 'landing' }) 
           className="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lens-blue)]"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          Lens Logo
+          <img src={LensLogo} alt="Lens Logo" className="w-10 h-10 rounded-md bg-slate-600" />
         </Link>
 
         {variant === 'auth' ? (

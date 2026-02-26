@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
+import LensLogo from '/logo.png';
 
 const PublicFooter: FC = () => (
   <footer
@@ -18,7 +19,7 @@ const PublicFooter: FC = () => (
             className="flex items-center gap-2.5 mb-4 focus-visible:outline-2 focus-visible:outline-white rounded w-fit"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            Lens Logo
+            <img src={LensLogo} alt="Lens Logo" className="w-10 h-10" />
           </Link>
           <p className="text-[12px] leading-relaxed max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-sans)' }}>
             Distribution and analytics for independent artists and labels, built in Rwanda.
