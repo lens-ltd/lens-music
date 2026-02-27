@@ -6,7 +6,7 @@ import { Column, Entity, JoinColumn, ManyToOne, Unique } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity('role_permissions')
-@Unique(['roleId', 'permissionId'])
+@Unique(['role_id', 'permission_id'])
 export class RolePermission extends AbstractEntity {
     // ROLE ID
     @Column({ name: 'role_id', nullable: false, type: 'uuid' })
@@ -16,14 +16,6 @@ export class RolePermission extends AbstractEntity {
     @Column({ name: 'permission_id', nullable: false, type: 'uuid' })
     permissionId!: UUID;
 
-    // ROLE
-    @ManyToOne(() => Role, (role) => role.permissions)
-    role: Role;
-
-    // PERMISSION
-    @ManyToOne(() => Permission, (permission) => permission.roles)
-    permission: Permission;
-
     // CREATED BY ID
     @Column({ name: 'created_by_id', nullable: true, type: 'uuid' })
     createdById: UUID;
@@ -31,6 +23,14 @@ export class RolePermission extends AbstractEntity {
     /**
      * RELATIONS
      */
+
+    // ROLE
+    @ManyToOne(() => Role, (role) => role.permissions)
+    role: Role;
+
+    // PERMISSION
+    @ManyToOne(() => Permission, (permission) => permission.roles)
+    permission: Permission;
 
     // CREATED BY
     @ManyToOne(() => User, (user) => user.createdRolePermissions)
