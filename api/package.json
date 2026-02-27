@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon --exec ts-node ./src/main.ts",
+    "dev": "nodemon",
     "start": "node ./dist/main.js",
     "seed": "ts-node ./src/seeds/index.ts"
   },

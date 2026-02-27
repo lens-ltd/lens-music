@@ -3,8 +3,10 @@ import 'reflect-metadata';
 import { AppDataSource } from '../data-source';
 import logger from '../utils/logger';
 import { seedPermissions } from './permission.seeds';
+import { seedUsers } from './user.seeds';
+import { seedRoles } from './role.seeds';
 
-const seeds = [seedPermissions];
+const seeds = [seedPermissions, seedUsers, seedRoles];
 
 const runSeeds = async () => {
   logger.info('Connecting to database...');

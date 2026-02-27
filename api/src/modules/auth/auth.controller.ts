@@ -29,7 +29,7 @@ export class AuthController {
     if (userExists) {
       throw new ConflictException({
         message: 'User already exists',
-        data: { id: userExists.id, email: userExists.email },
+        data: { id: userExists?.id, email: userExists?.email },
       });
     }
 

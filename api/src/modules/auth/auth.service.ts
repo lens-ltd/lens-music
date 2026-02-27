@@ -4,7 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { comparePasswords, hashPassword } from '../../helpers/encryptions.helper';
-import { ValidationError } from '../../helpers/errors.helper';
+import { ConflictError, ValidationError } from '../../helpers/errors.helper';
+import { UserStatus } from '../../constants/user.constants';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   // SIGNUP
   async signup({
@@ -28,6 +29,13 @@ export class AuthService {
     password: string;
     role?: string;
   }): Promise<{ user: User; token: string }> {
+
+    // CHECK IF USER EXISTS
+    const userExists: User | null = await this.userRepository.findOne({ where: { email } });
+    // CHECK IF USER STATUS IS ACTIVE
+    if (userExists?.status !== UserStatus.ACTIVE) throw new ValidationError('User is not active', 'AUTH SERVICE');
+
+    if (userExists) throw new ConflictError('User already exists', { id: userExists.id, email: userExists.email }, 'AUTH SERVICE');
     const hashedPassword = await hashPassword(password);
 
     const newUser = await this.userRepository.save(

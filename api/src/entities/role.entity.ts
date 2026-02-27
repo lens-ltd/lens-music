@@ -16,7 +16,7 @@ export class Role extends AbstractEntity {
     description: string;
 
     // CREATED BY ID
-    @Column({ name: 'created_by_id', nullable: false })
+    @Column({ name: 'created_by_id', nullable: false, type: 'uuid' })
     createdById: UUID;
 
     /**

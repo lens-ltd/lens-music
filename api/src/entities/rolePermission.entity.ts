@@ -9,11 +9,11 @@ import { User } from "./user.entity";
 @Unique(['roleId', 'permissionId'])
 export class RolePermission extends AbstractEntity {
     // ROLE ID
-    @Column({ name: 'role_id', nullable: false })
+    @Column({ name: 'role_id', nullable: false, type: 'uuid' })
     roleId!: UUID;
 
     // PERMISSION ID
-    @Column({ name: 'permission_id', nullable: false })
+    @Column({ name: 'permission_id', nullable: false, type: 'uuid' })
     permissionId!: UUID;
 
     // ROLE
@@ -25,7 +25,7 @@ export class RolePermission extends AbstractEntity {
     permission: Permission;
 
     // CREATED BY ID
-    @Column({ name: 'created_by_id', nullable: true })
+    @Column({ name: 'created_by_id', nullable: true, type: 'uuid' })
     createdById: UUID;
 
     /**

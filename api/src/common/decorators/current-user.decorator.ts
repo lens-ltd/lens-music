@@ -1,9 +1,9 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { UUID } from '../../types/common.types';
 
 export interface AuthUser {
-  id: string;
+  id: UUID;
   email: string;
-  role: string;
 }
 
 export const CurrentUser = createParamDecorator(

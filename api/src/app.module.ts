@@ -8,6 +8,7 @@ import { LabelsModule } from './modules/labels/labels.module';
 import { ArtistsModule } from './modules/artists/artists.module';
 import { ReleasesModule } from './modules/releases/releases.module';
 import { LyricsModule } from './modules/lyrics/lyrics.module';
+import { RolesModule } from './modules/roles/roles.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { LyricsModule } from './modules/lyrics/lyrics.module';
     ArtistsModule,
     ReleasesModule,
     LyricsModule,
+    RolesModule,
   ],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import { Release } from './release.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Role } from './role.entity';
 import { RolePermission } from './rolePermission.entity';
+import { UserStatus } from '../constants/user.constants';
 
 @Entity()
 @Unique(['email', 'phone'])
@@ -31,6 +32,10 @@ export class User extends AbstractEntity {
   // PHONE
   @Column({ name: 'phone', type: 'varchar', length: 255, nullable: true })
   phone: string;
+
+  // STATUS
+  @Column({ name: 'status', type: 'enum', enum: UserStatus, nullable: false, default: UserStatus.ACTIVE })
+  status!: UserStatus;
 
   // PASSWORD
   @Column({
