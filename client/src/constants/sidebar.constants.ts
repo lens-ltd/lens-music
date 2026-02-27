@@ -1,8 +1,6 @@
 import {
   faChartLine,
-  faFont,
-  faRecordVinyl,
-  faSitemap,
+  faUserGroup,
   faUserTie,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
@@ -21,23 +19,13 @@ export const sidebarNavigation: SidebarNavigation[] = [
     icon: faChartLine,
   },
   {
-    title: 'Artists',
-    path: '/artists',
+    title: 'Users',
+    path: '/users',
+    icon: faUserGroup,
+  },
+  {
+    title: 'Roles',
+    path: '/roles',
     icon: faUserTie,
-  },
-  {
-    title: 'Releases',
-    path: '/releases',
-    icon: faRecordVinyl,
-  },
-  {
-    title: 'Lyrics',
-    path: '/lyrics',
-    icon: faFont,
-  },
-  {
-    title: 'Labels',
-    path: '/labels',
-    icon: faSitemap,
   },
 ];

@@ -33,17 +33,19 @@ interface SpinnerContentProps
     VariantProps<typeof loaderVariants> {
   className?: string;
   children?: React.ReactNode;
+  primary?: boolean;
 }
 
 const Loader = ({
   size,
   show,
   children,
+  primary = false,
   className = 'text-white',
 }: SpinnerContentProps) => {
   return (
     <span className={spinnerVariants({ show })}>
-      <Loader2 className={cn(loaderVariants({ size }), className)} />
+      <Loader2 className={cn(loaderVariants({ size }), primary ? 'text-primary' : 'text-white', className)} />
       {children}
     </span>
   );

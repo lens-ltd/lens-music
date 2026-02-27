@@ -1,7 +1,6 @@
 import {
   ColumnDef,
   ColumnFiltersState,
-  Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -24,7 +23,7 @@ import {
 } from '@/components/ui/table';
 
 import { DataTablePagination } from './TablePagination';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { UnknownAction } from '@reduxjs/toolkit';
 
 interface DataTableProps<TData, TValue> {
@@ -40,6 +39,9 @@ interface DataTableProps<TData, TValue> {
   totalPages?: number;
   setPage?: (page: number) => UnknownAction;
   setSize?: (size: number) => UnknownAction;
+  isLoading?: boolean;
+  noDataMessage?: string | ReactNode;
+  rowClassName?: string | ((row: TData) => string);
 }
 
 export default function Table<TData, TValue>({
@@ -47,12 +49,15 @@ export default function Table<TData, TValue>({
   data = [],
   rowClickHandler = undefined,
   showPagination = true,
-  page = 1,
+  page = 0,
   size = 10,
-  totalCount,
-  totalPages,
+  totalCount = 0,
+  totalPages = 1,
   setPage,
   setSize,
+  isLoading = false,
+  noDataMessage = 'No results.',
+  rowClassName = '',
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -62,13 +67,13 @@ export default function Table<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    state: {
+    initialState: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
       pagination: {
-        pageIndex: page,
+        pageIndex: page - 1,
         pageSize: size,
       },
     },
@@ -86,8 +91,8 @@ export default function Table<TData, TValue>({
   });
 
   return (
-    <section className="space-y-4 w-full my-2">
-      <table className="rounded-md border w-full">
+    <>
+      <section className="w-full border rounded-md">
         <DataTable>
           <TableHeader className="px-0">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -112,74 +117,87 @@ export default function Table<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
-                return (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    className={`p-2 ${
-                      rowClickHandler ? 'cursor-pointer' : ''
-                    } hover:bg-background`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      rowClickHandler &&
-                        row?.id !== 'no' &&
-                        rowClickHandler(
-                          row?.original as Row<TData>['original']
-                        );
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => {
-                      const preventAction = [
-                        'no',
-                        'action',
-                        'checkbox',
-                        'actions',
-                      ].includes(
-                        cell.column.id ||
-                          (
-                            cell as unknown as {
-                              column: { accessorKey: string };
-                            }
-                          )?.column?.accessorKey
-                      );
-                      return (
-                        <TableCell
-                          className={`${
-                            preventAction ? 'cursor-auto!' : ''
-                          } text-[13px] p-4`}
-                          key={cell.id}
-                          onClick={(e) => {
-                            if (preventAction) {
-                              e.preventDefault();
-                              e.stopPropagation();
-                            }
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })
+            {isLoading ? (
+              Array.from({ length: size }).map((_, rowIdx) => (
+                <TableRow key={`skeleton-row-${rowIdx}`}>
+                  {columns.map((_, cellIdx) => (
+                    <TableCell key={`skeleton-cell-${cellIdx}`} className="p-4">
+                      <figure
+                        className={`animate-pulse bg-gray-200 rounded-[4px]`}
+                        style={{
+                          width: `${Math.random() * (70 - 50) + 50}%`,
+                          height: '0.75rem',
+                          animationDuration: '1.4s',
+                        }}
+                      />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={`p-2 ${
+                    rowClickHandler ? 'cursor-pointer' : ''
+                  } hover:bg-background ${
+                    typeof rowClassName === 'function'
+                      ? rowClassName(row.original)
+                      : rowClassName
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const preventAction = [
+                      'no',
+                      'action',
+                      'checkbox',
+                      'actions',
+                    ].includes(
+                      cell.column.id ||
+                        (cell as unknown as { column: { accessorKey: string } })
+                          ?.column?.accessorKey
+                    );
+                    return (
+                      <TableCell
+                        className={`${
+                          preventAction ? '!cursor-auto' : ''
+                        } text-[13px] p-4`}
+                        key={cell.id}
+                        onClick={(e) => {
+                          if (preventAction) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <p className="text-gray-500 font-light text-[14px]">
+                    {noDataMessage}
+                  </p>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </DataTable>
-      </table>
+      </section>
       {showPagination && (
         <DataTablePagination
           page={page}
@@ -191,6 +209,6 @@ export default function Table<TData, TValue>({
           setSize={setSize}
         />
       )}
-    </section>
+    </>
   );
 }

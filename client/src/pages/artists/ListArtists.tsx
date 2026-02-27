@@ -61,7 +61,7 @@ const ListArtists = () => {
       toast.error(errorResponse);
     } else if (artistsIsSuccess) {
       dispatch(setArtistsList(artistsData?.data?.rows));
-      dispatch(setArtistTotalCount(artistsData?.data?.totalElements));
+      dispatch(setArtistTotalCount(artistsData?.data?.totalCount));
       dispatch(setArtistTotalPages(artistsData?.data?.totalPages));
     }
   }, [artistsData, artistsError, artistsIsError, artistsIsSuccess, dispatch]);

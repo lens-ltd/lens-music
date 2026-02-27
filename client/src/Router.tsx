@@ -12,6 +12,8 @@ import ListLyrics from './pages/lyrics/ListLyrics';
 import CreateLyrics from './pages/lyrics/CreateLyrics';
 import LyricsGuidelines from './pages/lyrics/LyricsGuidelines';
 import SyncLyrics from './pages/lyrics/SyncLyrics';
+import NotFoundPage from './pages/common/NotFoundPage';
+import RolesPage from './pages/roles/RolesPage';
 
 const Router = () => {
   return (
@@ -52,6 +54,14 @@ const Router = () => {
             <Route path="sync" element={<SyncLyrics />} />
           </Route>
         </Route>
+
+        {/* ROLES ROUTES */}
+        <Route path="/roles">
+          <Route path="" element={<RolesPage />} />
+        </Route>
+
+        {/* NOT FOUND */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <CreateRelase />
       <LyricsGuidelines />

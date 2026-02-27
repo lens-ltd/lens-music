@@ -47,7 +47,7 @@ const Select = ({
         name={name}
       >
         <SelectTrigger
-          className={`w-full focus:ring-transparent ring-0 h-10 ${className}`}
+          className={`w-full cursor-pointer focus:ring-transparent ring-0 h-10 ${className}`}
         >
           <SelectValue
             className="text-[10px]!"

@@ -1,27 +1,46 @@
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import { RootState } from '@/state/store';
-import { useSelector } from 'react-redux';
+import { setSidebarOpen } from '@/state/features/sidebarSlice';
 
 interface UserLayoutProps {
   children: React.ReactNode;
 }
 
-const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
-  const { isOpen: sidebarOpen } = useSelector((state: RootState) => state.sidebar);
+const UserLayout = ({ children }: UserLayoutProps) => {
+  const { isOpen: isSidebarOpen } = useAppSelector((state) => state.sidebar);
+  const dispatch = useAppDispatch();
 
   return (
-    <article className="relative w-full flex">
+    <main className="relative min-h-screen bg-background">
+      <Navbar />
       <Sidebar />
-      <article className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-[18vw]' : 'ml-[12vw]'} w-0`}>
-        <Navbar />
-        <main className="flex-1 overflow-y-auto bg-background p-6 top-[10vh] relative">
-          <section className='bg-white p-6 rounded-md h-fit'>
-            {children}
-          </section>
-        </main>
-      </article>
-    </article>
+
+      {/* Mobile overlay — closes sidebar on backdrop tap */}
+      {isSidebarOpen && (
+        <aside
+          className="fixed inset-0 z-[39] bg-black/50 md:hidden"
+          onClick={() => dispatch(setSidebarOpen(false))}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Page content — shifts right with sidebar, capped at 1440px */}
+      <section
+        className={[
+          'transition-all duration-300 ease-in-out',
+          'pt-[calc(8vh+16px)] h-fit max-h-[calc(100vh-9.25vh)]',
+          'flex justify-center',
+          isSidebarOpen
+            ? 'pl-[max(18vw,220px)] pr-4'
+            : 'pl-[max(8vw,80px)] pr-4',
+        ].join(' ')}
+      >
+        <article className="w-full max-w-[1440px] p-6 rounded-md bg-white">
+          {children}
+        </article>
+      </section>
+    </main>
   );
 };
 

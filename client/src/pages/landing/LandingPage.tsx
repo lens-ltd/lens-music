@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import PublicFooter from '@/components/layout/PublicFooter';
 import PublicNavbar from '@/components/layout/PublicNavbar';
 import AnalyticsSection from './AnalyticsSection';
@@ -14,6 +15,7 @@ import TestimonialsSection from './TestimonialsSection';
 import { LandingPageStyles } from './landingShared';
 
 export default function LandingPage() {
+  const { hash } = useLocation();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -21,6 +23,27 @@ export default function LandingPage() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!hash) return;
+
+    const sectionId = decodeURIComponent(hash.replace('#', ''));
+    const timer = window.setTimeout(() => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const navbarOffset = 72;
+      const position =
+        section.getBoundingClientRect().top + window.scrollY - navbarOffset;
+
+      window.scrollTo({
+        top: Math.max(position, 0),
+        behavior: 'smooth',
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [hash]);
 
   return (
     <main
