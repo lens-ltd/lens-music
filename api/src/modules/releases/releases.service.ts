@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { UUID } from '../../types/common.types';
+import { generateCatalogNumber } from '../../helpers/releases.helper';
 
 @Injectable()
 export class ReleaseService {
@@ -17,6 +18,7 @@ export class ReleaseService {
       title: dto.title,
       type: dto.type,
       createdById: userId,
+      catalogNumber: generateCatalogNumber(),
     });
 
     return this.releaseRepository.save(release);

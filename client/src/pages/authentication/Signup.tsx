@@ -1,19 +1,17 @@
 import { Controller, FieldValues, useForm } from 'react-hook-form';
-import Loader from '../../components/inputs/Loader';
 import Button from '../../components/inputs/Button';
 import Input from '../../components/inputs/Input';
 import { validateInputs } from '../../utils/validations.helper';
 import { useEffect, useState } from 'react';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
-import { useSignupMutation } from '../../state/api/apiMutationSlice';
-import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../state/store';
 import { setUser } from '../../state/features/userSlice';
 import { setToken } from '../../state/features/authSlice';
-import { ErrorResponse, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
+import { useSignup } from '@/hooks/auth/auth.hooks';
 
 const Signup = () => {
   const {
@@ -22,18 +20,13 @@ const Signup = () => {
     formState: { errors },
     watch,
     trigger,
+    reset
   } = useForm();
 
-  const [
-    signup,
-    {
-      data: signupData,
-      error: signupError,
-      isLoading: signupIsLoading,
-      isError: signupIsError,
-      isSuccess: signupIsSuccess,
-    },
-  ] = useSignupMutation();
+  // NAVIGATION
+  const navigate = useNavigate();
+
+  const { signup, isLoading, isSuccess, isError, reset: signupReset, data } = useSignup();
 
   const dispatch: AppDispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
@@ -48,17 +41,14 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    if (signupIsError) {
-      const errorResponse =
-        (signupError as ErrorResponse)?.data?.message ||
-        'An error occurred while signing up. Please try again later.';
-      toast.error(errorResponse);
-    } else if (signupIsSuccess) {
-      toast.success('Account created successfully. Login to continue...');
-      dispatch(setUser(signupData?.data?.user));
-      dispatch(setToken(signupData?.data?.token));
+    if (isSuccess) {
+      dispatch(setUser(data?.data?.user));
+      dispatch(setToken(data?.data?.token));
+      navigate('/dashboard');
+      reset();
+      signupReset();
     }
-  }, [signupData, signupError, signupIsLoading, signupIsError, signupIsSuccess, dispatch]);
+  }, [isError, isSuccess, data, dispatch, navigate, signupReset]);
 
   return (
     <main
@@ -126,24 +116,17 @@ const Signup = () => {
                 <legend className="sr-only">Name details</legend>
                 <Controller
                   control={control}
-                  name="first_name"
+                  name="firstName"
                   rules={{ required: 'First name is required' }}
                   render={({ field }) => (
-                    <div className="flex flex-col gap-1.5">
-                      <Input label="First name" required placeholder="First name" {...field} />
-                      {errors?.first_name && (
-                        <p className="text-red-500 text-[12px] font-normal">{String(errors?.first_name?.message)}</p>
-                      )}
-                    </div>
+                      <Input label="First name" required placeholder="First name" {...field} errorMessage={errors?.firstName?.message} />
                   )}
                 />
                 <Controller
                   control={control}
-                  name="last_name"
+                  name="lastName"
                   render={({ field }) => (
-                    <div className="flex flex-col gap-1.5">
-                      <Input label="Last name" placeholder="Last name" {...field} />
-                    </div>
+                      <Input label="Last name" placeholder="Last name" {...field} errorMessage={errors?.lastName?.message} />
                   )}
                 />
               </fieldset>
@@ -245,9 +228,9 @@ const Signup = () => {
               <Button
                 primary
                 submit
-                className="w-full py-3 text-[13px] tracking-[0.03em] shadow-none mt-1 font-normal"
+                isLoading={isLoading}
               >
-                {signupIsLoading ? <Loader /> : 'Create account'}
+                Create account
               </Button>
 
               <p className="text-center text-[12px] text-[color:var(--lens-ink)]/55 font-normal">

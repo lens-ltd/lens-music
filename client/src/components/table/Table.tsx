@@ -136,7 +136,7 @@ export default function Table<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="text-[13px] text-black p-4"
+                      className="text-[12px] text-black p-4"
                       key={header.id}
                       colSpan={header.colSpan}
                     >
@@ -191,7 +191,7 @@ export default function Table<TData, TValue>({
                     return (
                       <TableCell
                         className={`${preventAction ? '!cursor-auto' : ''
-                          } text-[13px] text-black p-4`}
+                          } text-[12px] text-black p-4`}
                         key={cell.id}
                         onClick={(e) => {
                           if (preventAction) {
@@ -215,7 +215,7 @@ export default function Table<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  <span className="text-gray-500 font-light text-[13px]">
+                  <span className="text-gray-500 font-light text-[12px]">
                     {noDataMessage}
                   </span>
                 </TableCell>

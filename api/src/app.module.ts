@@ -9,6 +9,8 @@ import { ArtistsModule } from './modules/artists/artists.module';
 import { ReleasesModule } from './modules/releases/releases.module';
 import { LyricsModule } from './modules/lyrics/lyrics.module';
 import { RolesModule } from './modules/roles/roles.module';
+import { StaticReleaseNavigationModule } from './modules/static-release-navigation/static-release-navigation.module';
+import { ReleaseNavigationFlowsModule } from './modules/release-navigation-flows/release-navigation-flows.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { RolesModule } from './modules/roles/roles.module';
     ReleasesModule,
     LyricsModule,
     RolesModule,
+    StaticReleaseNavigationModule,
+    ReleaseNavigationFlowsModule,
   ],
 })
 export class AppModule {}

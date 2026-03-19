@@ -1,15 +1,11 @@
+import { Toaster } from 'sonner';
 import Router from './Router';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <>
-      <ToastContainer
-        closeOnClick
-        hideProgressBar
-        autoClose={3000}
-        position="top-right"
+      <Toaster
+        duration={1500}
       />
       <Router />
     </>

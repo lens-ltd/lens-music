@@ -7,7 +7,6 @@ const stores = [
   'Tidal',
   'YouTube Music',
   'Audiomack',
-  'Amazon Music',
 ];
 
 export default function StoreStripSection() {

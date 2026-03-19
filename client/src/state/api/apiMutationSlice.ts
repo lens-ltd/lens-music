@@ -73,6 +73,29 @@ export const apiMutationSlice = createApi({
           },
         }),
       }),
+
+      // CREATE RELEASE NAVIGATION FLOW
+      createReleaseNavigationFlow: builder.mutation({
+        query: ({ releaseId, staticReleaseNavigationId }) => ({
+          url: '/release-navigation-flows',
+          method: 'POST',
+          body: {
+            releaseId,
+            staticReleaseNavigationId,
+          },
+        }),
+      }),
+
+      // COMPLETE RELEASE NAVIGATION FLOW
+      completeReleaseNavigationFlow: builder.mutation({
+        query: ({ id, isCompleted }) => ({
+          url: `/release-navigation-flows/${id}/complete`,
+          method: 'PATCH',
+          body: {
+            isCompleted,
+          },
+        }),
+      }),
     };
   },
 });
@@ -84,5 +107,7 @@ export const {
   useLazyListLabelsQuery,
   useCreateArtistMutation,
   useCreateReleaseMutation,
+  useCreateReleaseNavigationFlowMutation,
+  useCompleteReleaseNavigationFlowMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

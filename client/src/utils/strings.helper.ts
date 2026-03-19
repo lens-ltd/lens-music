@@ -135,44 +135,39 @@ export const maskPhoneDigits = (phone: string) => {
  * @returns The background color
  */
 export const getStatusBackgroundColor = (status?: string) => {
+  // Default classes
   let bgColor =
-    'bg-gray-700 text-center p-[3px] px-3 text-white rounded-md text-[13px]';
+    'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
+
   switch (status) {
-    case 'PENDING':
+    case 'DRAFT':
       bgColor =
-        'bg-yellow-700 text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-yellow-800 text-center p-1 px-3 text-white rounded-md text-[11px]';
+      break;
+    case 'REVIEW':
+      bgColor =
+        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     case 'APPROVED':
-    case 'ACTIVE':
-    case 'ACCEPTED':
-    case 'COMPLETED':
-    case 'PERMIT_APPROVED':
-    case 'RECEIVED':
       bgColor =
-        'bg-green-700 text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-green-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
-    case 'REJECTED':
-    case 'CANCELLED':
-    case 'PERMIT_REJECTED':
-    case 'INACTIVE':
+    case 'DELIVERED':
       bgColor =
-        'bg-red-700 text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
-    case 'ACTION_REQUIRED':
+    case 'LIVE':
       bgColor =
-        'bg-amber-800 text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
-    case 'RESUBMITTED':
+    case 'TAKENDOWN':
       bgColor =
-        'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[13px]';
-      break;
-    case 'SUBMITTED':
-      bgColor =
-        'bg-primary text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-red-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     default:
+      // fallback for unknown statuses
       bgColor =
-        'bg-yellow-700 text-center p-1 px-3 text-white rounded-md text-[13px]';
+        'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
   }
   return bgColor;
 };

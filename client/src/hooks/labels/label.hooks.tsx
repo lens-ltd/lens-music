@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '@/state/store';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorResponse } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 interface UseFetchLabelsProps {
   isOpen?: boolean;

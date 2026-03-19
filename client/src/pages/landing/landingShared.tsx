@@ -1,8 +1,8 @@
 import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAmazon,
   faApple,
+  faAudible,
   faDeezer,
   faSpotify,
   faYoutube,
@@ -100,8 +100,7 @@ const storeIcons: Record<string, IconDefinition> = {
   Deezer: faDeezer,
   Tidal: faApple,
   'YouTube Music': faYoutube,
-  Audiomack: faAmazon,
-  'Amazon Music': faAmazon,
+  Audiomack: faAudible,
 };
 
 export function StoreIcon({ name }: { name: string }) {

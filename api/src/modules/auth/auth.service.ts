@@ -33,7 +33,7 @@ export class AuthService {
     // CHECK IF USER EXISTS
     const userExists: User | null = await this.userRepository.findOne({ where: { email } });
     // CHECK IF USER STATUS IS ACTIVE
-    if (userExists?.status !== UserStatus.ACTIVE) throw new ValidationError('User is not active', 'AUTH SERVICE');
+    if (userExists && userExists?.status !== UserStatus.ACTIVE) throw new ValidationError('User is not active', 'AUTH SERVICE');
 
     if (userExists) throw new ConflictError('User already exists', { id: userExists.id, email: userExists.email }, 'AUTH SERVICE');
     const hashedPassword = await hashPassword(password);

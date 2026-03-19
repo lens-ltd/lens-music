@@ -34,8 +34,6 @@ const Navbar = () => {
     setDropdownOpen((prev) => !prev);
   };
 
-  console.log(user);
-
   return (
     <header
       className="fixed top-0 left-0 z-50 w-full border-b border-[color:var(--lens-sand)] bg-white/95 backdrop-blur-sm"
@@ -53,7 +51,7 @@ const Navbar = () => {
           <nav ref={dropdownRef} className="relative">
             <button
               onClick={toggleDropdown}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[color:var(--lens-sand)] bg-white px-1.5 py-1 transition-colors hover:bg-[color:var(--lens-sand)]/30"
+              className="inline-flex cursor-pointer items-start gap-2 rounded-md bg-white px-3 py-2 transition-colors hover:bg-[color:var(--lens-sand)]/30"
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
@@ -71,21 +69,20 @@ const Navbar = () => {
                 )}
               </span>
 
-              <Link to={``} className="hidden md:flex cursor-pointer flex-col items-start pr-1">
-                <span
+              <Link to={``} className="hidden mt-1 md:flex cursor-pointer flex-col h-full items-start justify-between pr-1">
+                <p
                   className="max-w-[140px] truncate text-[11px] leading-none text-[color:var(--lens-ink)]"
-                  style={{ fontFamily: 'var(--font-sans)', fontWeight: 400 }}
                 >
                   {user?.name || 'User'}
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)]/80">
-                  Account
+                </p>
+                <span className="text-[8px] tracking-[0.05em] mt-[2px] text-[color:var(--lens-blue)]/80">
+                  {user?.email || 'User'}
                 </span>
               </Link>
 
               <FontAwesomeIcon
                 icon={faChevronDown}
-                className={`mr-1 hidden text-[10px] text-[color:var(--lens-ink)]/60 transition-transform duration-200 md:inline ${dropdownOpen ? 'rotate-180' : ''
+                className={`mr-1 hidden text-[10px] mt-[2.5px] text-[color:var(--lens-ink)]/60 transition-transform duration-200 md:inline ${dropdownOpen ? 'rotate-180' : ''
                   }`}
               />
             </button>
@@ -105,9 +102,9 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
 
   return (
     <ul
-      className={`absolute right-0 mt-2 w-[250px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-1.5 shadow-[0_18px_40px_-24px_rgba(16,14,9,0.45)] transition-all duration-200 z-10 ${isOpen
-          ? 'translate-y-0 opacity-100 pointer-events-auto'
-          : 'translate-y-[-8px] opacity-0 pointer-events-none'
+      className={`absolute right-0 mt-2 w-[250px] rounded-xl bg-white p-1.5 shadow-[0_18px_40px_-24px_rgba(16,14,9,0.45)] transition-all duration-200 z-10 ${isOpen
+        ? 'translate-y-0 opacity-100 pointer-events-auto'
+        : 'translate-y-[-8px] opacity-0 pointer-events-none'
         }`}
     >
       <Link

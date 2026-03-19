@@ -27,12 +27,15 @@ export class ReleaseQueryService {
       order: { createdAt: 'DESC' },
       take,
       skip,
+      relations: {
+        createdBy: true,
+      }
     });
 
     return getPagingData({ data: releases, size, page });
   }
 
   async getReleaseById(id: UUID): Promise<Release | null> {
-    return this.releaseRepository.findOne({ where: { id } });
+    return this.releaseRepository.findOne({ where: { id }, relations: { createdBy: true } });
   }
 }

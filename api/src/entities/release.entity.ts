@@ -11,6 +11,7 @@ import { User } from './user.entity';
 import { ReleaseArtist } from './releaseArtist.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
+import { ReleaseNavigationFlow } from './releaseNavigationFlow.entity';
 import {
   ReleaseParentalAdvisory,
   ReleaseRightsLine,
@@ -135,4 +136,11 @@ export class Release extends AbstractEntity {
   // RELEASE ARTISTS
   @OneToMany(() => ReleaseArtist, (releaseArtist) => releaseArtist.release)
   artists!: ReleaseArtist[];
+
+  // RELEASE NAVIGATION FLOWS
+  @OneToMany(
+    () => ReleaseNavigationFlow,
+    (releaseNavigationFlow) => releaseNavigationFlow.release,
+  )
+  releaseNavigationFlows!: ReleaseNavigationFlow[];
 }

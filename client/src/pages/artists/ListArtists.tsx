@@ -26,7 +26,7 @@ import { Row } from '@tanstack/react-table';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorResponse } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 const ListArtists = () => {
   // STATE VARIABLES
