@@ -1,8 +1,6 @@
 import store from 'store';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '@/constants/environments.constants';
-import { GroupedStaticReleaseNavigation } from '@/types/models/staticReleaseNavigation.types';
-import { ReleaseNavigationFlow } from '@/types/models/releaseNavigationFlow.types';
 
 export const apiQuerySlice = createApi({
   reducerPath: 'apiQuery',
@@ -20,17 +18,44 @@ export const apiQuerySlice = createApi({
     return {
       // LIST ALL ARTISTS
       fetchArtists: builder.query({
-        query: ({ size, page }) => `/artists?size=${size}&page=${page}`,
+        query: ({ size, page }) => {
+          return {
+            url: '/artists',
+            method: 'GET',
+            params: {
+              size,
+              page,
+            },
+          };
+        },
       }),
 
       // LIST LABELS
       fetchLabels: builder.query({
-        query: ({ size, page }) => `/labels?size=${size}&page=${page}`,
+        query: ({ size, page }) => {
+          return {
+            url: '/labels',
+            method: 'GET',
+            params: {
+              size,
+              page,
+            },
+          };
+        },
       }),
 
       // FETCH RELEASES
       fetchReleases: builder.query({
-        query: ({ size, page }) => `/releases?size=${size}&page=${page}`,
+        query: ({ size, page }) => {
+          return {
+            url: '/releases',
+            method: 'GET',
+            params: {
+              size,
+              page,
+            },
+          };
+        },
       }),
 
       // GET RELEASE
@@ -39,19 +64,40 @@ export const apiQuerySlice = createApi({
       }),
 
       // FETCH STATIC RELEASE NAVIGATION
-      fetchStaticReleaseNavigation: builder.query<
-        { message: string; data: GroupedStaticReleaseNavigation },
-        void
-      >({
+      fetchStaticReleaseNavigation: builder.query({
         query: () => '/static-release-navigation',
       }),
 
       // FETCH RELEASE NAVIGATION FLOWS
-      fetchReleaseNavigationFlows: builder.query<
-        { message: string; data: ReleaseNavigationFlow[] },
-        { releaseId: string }
-      >({
-        query: ({ releaseId }) => `/release-navigation-flows?releaseId=${releaseId}`,
+      fetchReleaseNavigationFlows: builder.query({
+        query: ({ releaseId }) => {
+          return {
+            url: '/release-navigation-flows',
+            method: 'GET',
+            params: {
+              releaseId: releaseId,
+            },
+          };
+        },
+      }),
+
+      // FETCH CONTRIBUTORS
+      fetchContributors: builder.query({
+        query: ({ page, size }) => {
+          return {
+            url: '/contributors',
+            method: 'GET',
+            params: {
+              page,
+              size,
+            },
+          };
+        },
+      }),
+
+      // GET CONTRIBUTOR
+      getContributor: builder.query({
+        query: ({ id }) => `/contributors/${id}`,
       }),
     };
   },
@@ -64,5 +110,7 @@ export const {
   useLazyFetchStaticReleaseNavigationQuery,
   useLazyFetchReleaseNavigationFlowsQuery,
   useLazyGetReleaseQuery,
+  useLazyGetContributorQuery,
+  useLazyFetchContributorsQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

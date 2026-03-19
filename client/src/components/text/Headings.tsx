@@ -3,6 +3,7 @@ import { SkeletonLoader } from "@/components/inputs/Loader";
 interface HeadingProps {
   children: React.ReactNode;
   className?: string;
+  id?: string;
   type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   isLoading?: boolean;
 }
@@ -10,6 +11,7 @@ interface HeadingProps {
 export const Heading = ({
   children,
   className,
+  id,
   type = 'h1',
   isLoading,
 }: HeadingProps) => {
@@ -17,6 +19,7 @@ export const Heading = ({
     case 'h1':
       return (
         <h1
+          id={id}
           className={`text-xl uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="20vw" /> : children}
@@ -25,6 +28,7 @@ export const Heading = ({
     case 'h2':
       return (
         <h2
+          id={id}
           className={`text-lg uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
@@ -33,6 +37,7 @@ export const Heading = ({
     case 'h3':
       return (
         <h3
+          id={id}
           className={`text-base uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
@@ -41,6 +46,7 @@ export const Heading = ({
     case 'h4':
       return (
         <h4
+          id={id}
           className={`text-sm uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
@@ -49,6 +55,7 @@ export const Heading = ({
     case 'h5':
       return (
         <h5
+          id={id}
           className={`text-xs uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
@@ -57,6 +64,7 @@ export const Heading = ({
     case 'h6':
       return (
         <h6
+          id={id}
           className={`text-xs uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
@@ -65,6 +73,7 @@ export const Heading = ({
     default:
       return (
         <h1
+          id={id}
           className={`text-xl uppercase font-semibold text-primary ${className}`}
         >
           {isLoading ? <SkeletonLoader type="text" width="20vw" /> : children}

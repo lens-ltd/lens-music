@@ -102,7 +102,7 @@ export function DataTablePagination<TData>({
 
         <section className="flex items-center gap-2">
           <span className="text-sm font-normal whitespace-nowrap">
-            Page {page + 1} of {formatNumbers(totalPages) || 1}
+            Page {page + 1} of {formatNumbers(totalPages || 1)}
           </span>
           <input
             type="number"

@@ -141,6 +141,7 @@ export const getStatusBackgroundColor = (status?: string) => {
 
   switch (status) {
     case 'DRAFT':
+    case 'PENDING':
       bgColor =
         'bg-yellow-800 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
@@ -149,6 +150,7 @@ export const getStatusBackgroundColor = (status?: string) => {
         'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     case 'APPROVED':
+    case 'VERIFIED':
       bgColor =
         'bg-green-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;

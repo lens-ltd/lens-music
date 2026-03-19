@@ -84,7 +84,7 @@ const Sidebar = () => {
         >
           <FontAwesomeIcon
             icon={sidebarOpen ? faAnglesLeft : faBars}
-            className="text-[13px] cursor-pointer"
+            className="text-[12px] cursor-pointer"
           />
         </button>
       </header>
@@ -109,7 +109,7 @@ const Sidebar = () => {
               <li key={nav.title} className="flex flex-col">
                 <Link
                   to={nav.path}
-                  className={`group relative flex items-center gap-3 overflow-hidden rounded-lg text-[13px] font-normal transition-all duration-200
+                  className={`group relative flex items-center gap-3 overflow-hidden rounded-lg text-[12px] font-normal transition-all duration-200
                     ${sidebarOpen ? 'px-3 py-3' : 'justify-center p-3'}
                     ${
                       isActive
@@ -147,7 +147,7 @@ const Sidebar = () => {
                     <motion.span
                       initial={{ opacity: 0 }}
                       animate={textControls}
-                      className="whitespace-nowrap text-[13px] font-normal"
+                      className="whitespace-nowrap text-[12px] font-normal"
                     >
                       {nav.title}
                     </motion.span>
@@ -196,7 +196,7 @@ const Sidebar = () => {
                                 />
                                 <motion.span
                                   animate={textControls}
-                                  className="whitespace-nowrap text-[13px] font-normal"
+                                  className="whitespace-nowrap text-[12px] font-normal"
                                 >
                                   {subCategory.title}
                                 </motion.span>

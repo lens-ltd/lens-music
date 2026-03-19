@@ -17,5 +17,5 @@ export const InputErrorMessage = ({
     | undefined;
   className?: string;
 }) => {
-  return <p className={cn("text-red-600 text-[12px] font-normal", className)}>{String(message)}</p>;
+  return <p className={cn("text-red-700 text-[12px] font-normal", className)}>{String(message)}</p>;
 };

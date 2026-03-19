@@ -71,7 +71,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
             <label className={`flex flex-col gap-1 w-full ${labelClassName}`}>
                 <p
                     className={
-                        label ? 'flex items-center gap-1 text-sm font-medium text-gray-700' : 'hidden'
+                        label ? 'flex items-center gap-1 text-sm font-normal text-black' : 'hidden'
                     }
                 >
                     {label}{' '}
@@ -97,8 +97,8 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={open}
-                                className={`w-full flex items-center justify-between font-normal ${inputClassName || 'text-[12px]'
-                                    } ${className || 'h-10'}`}
+                                className={`w-full flex hover:bg-gray-100 items-center justify-between font-normal ${inputClassName || 'text-[12px]'
+                                    } ${className || 'h-10 hover:bg-gray-100'}`}
                             >
                                 <span
                                     className={`flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] ${value ?
@@ -134,7 +134,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                             key={option.label}
                                             defaultValue={defaultValue}
                                             disabled={option?.disabled}
-                                            className="flex items-center gap-2 w-full cursor-pointer overflow-hidden hover:bg-lens-sand"
+                                            className="flex items-center gap-2 w-full cursor-pointer overflow-hidden hover:bg-gray-100"
                                             value={option.label}
                                             onSelect={(currentValue) => {
                                                 const selectedOption = options.find(

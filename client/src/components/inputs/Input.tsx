@@ -26,7 +26,7 @@ interface InputProps {
   defaultValue?: string | number | Date;
   submit?: boolean;
   type?: string;
-  value?: string | number;
+  value?: string | number | Date;
   suffixIcon?: IconProp;
   prefixIcon?: IconProp;
   suffixIconHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
@@ -50,10 +50,10 @@ interface InputProps {
   errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
 }
 
-const fieldLabelClasses = 'text-[13px] leading-none text-[color:var(--lens-ink)] font-normal';
-const helperRequiredClasses = 'text-[13px] leading-none text-red-600';
+const fieldLabelClasses = 'text-[12px] leading-none text-[color:var(--lens-ink)] font-normal';
+const helperRequiredClasses = 'text-[12px] leading-none text-red-600';
 const baseInputClasses =
-  'h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[13px] font-normal shadow-none placeholder:text-[12px] placeholder:font-normal placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary';
+  'h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[12px] font-normal shadow-none placeholder:text-[12px] placeholder:font-light placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary';
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -91,6 +91,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const generatedId = useId();
     const inputId = name || generatedId;
     const hiddenFileInput = useRef<HTMLInputElement>(null);
+    const normalizedDefaultValue =
+      defaultValue instanceof Date ? defaultValue.toISOString() : defaultValue;
+    const normalizedValue =
+      value instanceof Date ? value.toISOString() : value;
 
     if (type === 'checkbox') {
       return (
@@ -186,9 +190,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const textInput = (
       <ShadcnInput
         id={inputId}
-        defaultValue={defaultValue as string | number | readonly string[] | undefined}
+        defaultValue={normalizedDefaultValue as string | number | readonly string[] | undefined}
         min={min}
-        value={value}
+        value={normalizedValue as string | number | readonly string[] | undefined}
         type={type || 'text'}
         readOnly={readOnly}
         name={name}
@@ -208,7 +212,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     );
 
     return (
-      <label className={cn('flex w-full flex-col gap-1.5', labelClassName)}>
+      <label className={cn('flex w-full flex-col gap-2', labelClassName)}>
         {label && (
           <span className={cn(fieldLabelClasses, 'pl-0.5')}>
             {label} {required && <span className={helperRequiredClasses}>*</span>}
@@ -226,7 +230,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               aria-label={typeof prefixText === 'string' ? prefixText : label || 'Prefix action'}
             >
               {prefixIcon && <FontAwesomeIcon icon={prefixIcon} />}
-              {prefixText && <span className="text-[13px] font-normal">{prefixText}</span>}
+              {prefixText && <span className="text-[12px] font-normal">{prefixText}</span>}
             </button>
           )}
 
@@ -249,7 +253,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {errorMessage && (
-          <InputErrorMessage message={errorMessage} className="mt-1.5" />
+          <InputErrorMessage message={errorMessage} className="mt-0.5" />
         )}
       </label>
     );

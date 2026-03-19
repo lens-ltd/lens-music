@@ -16,6 +16,8 @@ import NotFoundPage from './pages/common/NotFoundPage';
 import RolesPage from './pages/roles/RolesPage';
 import ReleaseWizardPage from './pages/releases/ReleaseWizardPage';
 import ContributorsPage from './pages/contributors/ContributorsPage';
+import CreateContributorPage from './pages/contributors/CreateContributorPage';
+import UpdateContributorPage from './pages/contributors/UpdateContributorPage';
 
 const Router = () => {
   return (
@@ -53,6 +55,8 @@ const Router = () => {
           {/* CONTRIBUTORS ROUTES */}
           <Route path="/contributors">
             <Route path="" element={<ContributorsPage />} />
+            <Route path="create" element={<CreateContributorPage />} />
+            <Route path=":id/update" element={<UpdateContributorPage />} />
           </Route>
 
           {/* LYRICS ROUTES */}

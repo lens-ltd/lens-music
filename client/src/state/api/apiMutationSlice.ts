@@ -1,6 +1,7 @@
 import store from 'store';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '@/constants/environments.constants';
+import type { CreateContributorPayload, UpdateContributorPayload } from '@/types/models/contributor.types';
 
 export const apiMutationSlice = createApi({
   reducerPath: 'apiMutation',
@@ -44,12 +45,30 @@ export const apiMutationSlice = createApi({
 
       // LIST ALL ARTISTS
       listArtists: builder.query({
-        query: ({ size, page }) => `/artists?size=${size}&page=${page}`,
+        query: ({ size, page }) => {
+          return {
+            url: '/artists',
+            method: 'GET',
+            params: {
+              size,
+              page,
+            },
+          };
+        },
       }),
 
       // LIST LABELS
       listLabels: builder.query({
-        query: ({ size, page }) => `/labels?size=${size}&page=${page}`,
+        query: ({ size, page }) => {
+          return {
+            url: '/labels',
+            method: 'GET',
+            params: {
+              size,
+              page,
+            },
+          };
+        },
       }),
 
       // CREATE ARTIST
@@ -96,6 +115,24 @@ export const apiMutationSlice = createApi({
           },
         }),
       }),
+
+      // CREATE CONTRIBUTOR
+      createContributor: builder.mutation({
+        query: (body: CreateContributorPayload) => ({
+          url: '/contributors',
+          method: 'POST',
+          body,
+        }),
+      }),
+
+      // UPDATE CONTRIBUTOR
+      updateContributor: builder.mutation({
+        query: ({ id, body }: { id: string; body: UpdateContributorPayload }) => ({
+          url: `/contributors/${id}`,
+          method: 'PATCH',
+          body,
+        }),
+      }),
     };
   },
 });
@@ -109,5 +146,7 @@ export const {
   useCreateReleaseMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
+  useCreateContributorMutation,
+  useUpdateContributorMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

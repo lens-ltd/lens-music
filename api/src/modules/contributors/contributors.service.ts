@@ -12,11 +12,28 @@ export class ContributorService {
   constructor(
     @InjectRepository(Contributor)
     private readonly contributorRepository: Repository<Contributor>,
-  ) {}
+  ) { }
+
+  private getPrioritizedContributorName({
+    displayName,
+    name,
+    fallbackName,
+  }: {
+    displayName?: string;
+    name?: string;
+    fallbackName?: string;
+  }): string | undefined {
+    return displayName || name || fallbackName;
+  }
 
   async create(dto: CreateContributorDto, createdById: UUID): Promise<Contributor> {
-    const contributor = this.contributorRepository.create({
+    const prioritizedName = this.getPrioritizedContributorName({
+      displayName: dto.displayName,
       name: dto.name,
+    });
+
+    const contributor = this.contributorRepository.create({
+      name: prioritizedName,
       email: dto.email,
       phoneNumber: dto.phoneNumber,
       country: dto.country,
@@ -60,7 +77,14 @@ export class ContributorService {
       throw new NotFoundException('Contributor not found');
     }
 
-    if (dto.name !== undefined) contributor.name = dto.name;
+    if (dto.displayName !== undefined) contributor.displayName = dto.displayName;
+    if (dto.name !== undefined || dto.displayName !== undefined) {
+      contributor.name = this.getPrioritizedContributorName({
+        displayName: dto.displayName ?? contributor.displayName,
+        name: dto.name,
+        fallbackName: contributor.name,
+      }) || contributor.name;
+    }
     if (dto.email !== undefined) contributor.email = dto.email;
     if (dto.phoneNumber !== undefined) contributor.phoneNumber = dto.phoneNumber;
     if (dto.country !== undefined) contributor.country = dto.country;
@@ -68,7 +92,6 @@ export class ContributorService {
     if (dto.dateOfBirth !== undefined) {
       contributor.dateOfBirth = dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined;
     }
-    if (dto.displayName !== undefined) contributor.displayName = dto.displayName;
     if (dto.profileLinks !== undefined) contributor.profileLinks = dto.profileLinks;
     if (dto.status !== undefined) contributor.status = dto.status;
     if (dto.verificationStatus !== undefined) {

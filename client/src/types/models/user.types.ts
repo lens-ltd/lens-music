@@ -2,12 +2,10 @@ import { Label } from './label.types';
 import { Artist } from './artist.types';
 import { Release } from './release.types';
 import { ROLES } from '../../constants/role.constants';
-import { AbstractEntity } from './index.types';
+import type { Person } from './person.types';
 
-export interface User extends AbstractEntity {
+export interface User extends Person {
   email: string;
-  name: string;
-  phone?: string;
   password: string;
   role: keyof typeof ROLES;
   labels: Label[];

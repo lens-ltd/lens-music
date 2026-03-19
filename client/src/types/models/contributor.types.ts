@@ -1,10 +1,7 @@
-import { AbstractEntity } from './index.types';
+import type { Person } from './person.types';
 import type { User } from './user.types';
 
-export enum Gender {
-  MALE = 'M',
-  FEMALE = 'F',
-}
+export { Gender } from '../../constants/person.constants';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -38,13 +35,22 @@ export interface ContributorProfileLink {
   url?: string;
 }
 
-export interface Contributor extends AbstractEntity {
+export interface CreateContributorPayload {
   name: string;
+  displayName?: string;
   email?: string;
   phoneNumber?: string;
   country?: string;
-  gender?: Gender;
-  dateOfBirth?: Date;
+  gender?: string;
+  dateOfBirth?: string;
+  profileLinks?: ContributorProfileLink[];
+  status?: UserStatus;
+  verificationStatus?: ContributorVerificationStatus;
+}
+
+export interface UpdateContributorPayload extends Partial<CreateContributorPayload> {}
+
+export interface Contributor extends Person {
   displayName?: string;
   verificationStatus: ContributorVerificationStatus;
   verifiedById: string;

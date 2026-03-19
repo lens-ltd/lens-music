@@ -15,9 +15,9 @@ import { UserStatus } from '../../../constants/user.constants';
 import { ContributorProfileLinkItemDto } from './contributor-profile-link.dto';
 
 export class CreateContributorDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  name!: string;
+  name?: string;
 
   @IsOptional()
   @IsEmail({}, { message: 'Invalid email address' })
@@ -39,9 +39,9 @@ export class CreateContributorDto {
   @IsDateString()
   dateOfBirth?: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  displayName?: string;
+  displayName!: string;
 
   @IsOptional()
   @IsArray()

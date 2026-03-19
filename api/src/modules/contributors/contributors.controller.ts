@@ -24,6 +24,7 @@ export class ContributorsController {
   constructor(private readonly contributorService: ContributorService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateContributorDto, @CurrentUser() user: AuthUser) {
     const contributor = await this.contributorService.create(dto, user.id);
     return { message: 'Contributor created successfully', data: contributor };

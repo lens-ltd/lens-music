@@ -1213,5 +1213,5 @@ export const COUNTRIES_LIST = [
 
 export const getCountryName = (code?: string) => {
   if (!code) return '';
-  return COUNTRIES.find((country) => country.code === code)?.name || '';
+  return COUNTRIES_LIST.find((country) => country.code === code)?.name || '';
 };
