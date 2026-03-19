@@ -1,11 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import {
+  IconDefinition,
+  faArrowTrendUp,
+  faArrowTrendDown,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface DashboardCardProps {
   title: string;
   value: string | number;
   icon: IconDefinition;
   color?: string;
+  change?: number;
 }
 
 const DashboardCard = ({
@@ -13,6 +18,7 @@ const DashboardCard = ({
   value,
   icon,
   color = '#f8fafc',
+  change,
 }: DashboardCardProps) => {
   return (
     <section
@@ -21,7 +27,7 @@ const DashboardCard = ({
       aria-label={title}
     >
       <header className="flex items-center justify-between mb-2">
-        <span className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+        <span className="text-gray-500 text-xs font-normal uppercase tracking-wide">
           {title}
         </span>
         <span className="text-2xl opacity-70">
@@ -29,11 +35,25 @@ const DashboardCard = ({
         </span>
       </header>
       <span
-        className="text-3xl font-bold text-gray-900 drop-shadow-sm"
+        className="text-3xl font-medium text-gray-900 drop-shadow-sm"
         aria-live="polite"
       >
         {value}
       </span>
+      {change !== undefined && (
+        <span
+          className={`flex items-center gap-1 text-xs font-normal mt-1 ${
+            change >= 0 ? 'text-emerald-600' : 'text-red-500'
+          }`}
+        >
+          <FontAwesomeIcon
+            icon={change >= 0 ? faArrowTrendUp : faArrowTrendDown}
+            className="text-[10px]"
+          />
+          {change >= 0 ? '+' : ''}
+          {change}% vs last month
+        </span>
+      )}
     </section>
   );
 };

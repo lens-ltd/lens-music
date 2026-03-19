@@ -14,6 +14,8 @@ import { CheckedState } from '@radix-ui/react-checkbox';
 import DatePicker from './DatePicker';
 import { Input as ShadcnInput } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { InputErrorMessage } from '../feedbacks/ErrorLabels';
+import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
 
 interface InputProps {
   label?: string;
@@ -45,6 +47,7 @@ interface InputProps {
   checked?: boolean;
   selectionType?: 'date' | 'month' | 'year' | 'recurringDate';
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
 }
 
 const fieldLabelClasses = 'text-[13px] leading-none text-[color:var(--lens-ink)] font-normal';
@@ -81,6 +84,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       checked,
       selectionType,
       onKeyPress,
+      errorMessage,
     },
     ref
   ) => {
@@ -170,8 +174,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             selectionType={selectionType}
             onChange={
               onChange as
-                | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
-                | undefined
+              | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
+              | undefined
             }
             value={(value || defaultValue) as Date | undefined}
           />
@@ -244,6 +248,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </button>
           )}
         </div>
+        {errorMessage && (
+          <InputErrorMessage message={errorMessage} className="mt-1.5" />
+        )}
       </label>
     );
   }

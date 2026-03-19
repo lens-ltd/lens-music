@@ -61,6 +61,18 @@ export const apiMutationSlice = createApi({
           formData: true,
         }),
       }),
+
+      // CREATE RELEASE
+      createRelease: builder.mutation({
+        query: ({ title, type }) => ({
+          url: '/releases',
+          method: 'POST',
+          body: {
+            title,
+            type,
+          },
+        }),
+      }),
     };
   },
 });
@@ -71,5 +83,6 @@ export const {
   useLazyListArtistsQuery,
   useLazyListLabelsQuery,
   useCreateArtistMutation,
+  useCreateReleaseMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

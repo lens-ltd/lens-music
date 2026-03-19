@@ -1,15 +1,16 @@
-import { InputErrorMessage } from '@/components/feedbacks/ErrorLabels';
 import Button from '@/components/inputs/Button';
+import Combobox from '@/components/inputs/Combobox';
 import Input from '@/components/inputs/Input';
-import Select from '@/components/inputs/Select';
 import Modal from '@/components/modals/Modal';
-import { useFetchLabels } from '@/hooks/labels/label.hooks';
-import { useGetYearsList } from '@/hooks/releases/release.hooks';
+import { useCreateRelease } from '@/hooks/releases/release.hooks';
 import { setCreateReleaseModal } from '@/state/features/releaseSlice';
 import { AppDispatch, RootState } from '@/state/store';
-import moment from 'moment';
+import { ReleaseType } from '@/types/models/release.types';
+import { capitalizeString } from '@/utils/strings.helper';
+import { useCallback, useEffect } from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const CreateRelase = () => {
   // STATE VARIABLES
@@ -18,33 +19,45 @@ const CreateRelase = () => {
     (state: RootState) => state.release
   );
 
-  // LABELS
-  const { labelsIsFetching, labelsList, labelsIsSuccess } = useFetchLabels({
-    isOpen: createReleaseModal,
-    size: 100,
-  });
+  // NAVIGATION
+  const navigate = useNavigate();
 
   // REACT HOOK FORM
   const {
     control,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm();
+
+  // CREATE RELEASE
+  const { createRelease, isLoading, reset: createRelaseReset, data, isSuccess } = useCreateRelease();
+
+  const closeModal = useCallback(() => {
+    dispatch(setCreateReleaseModal(false));
+    reset();
+    createRelaseReset();
+  }, [dispatch]);
 
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
-    console.log(data);
+    createRelease({ title: data?.title, type: data?.type });
   };
 
-  // PRODUCTION YEARS
-  const productionYears = useGetYearsList();
+  useEffect(() => {
+    if (isSuccess) {
+      createRelaseReset();
+      if (data?.data?.id) {
+        navigate(`/releases/${data?.data?.id}/wizard`);
+      }
+      closeModal();
+    }
+  }, [isSuccess, createRelaseReset, dispatch, closeModal, navigate, data]);
 
   return (
     <Modal
       isOpen={createReleaseModal}
-      onClose={() => {
-        dispatch(setCreateReleaseModal(false));
-      }}
+      onClose={closeModal}
       heading="Add new Release"
       className="min-w-[60vw]"
     >
@@ -65,107 +78,38 @@ const CreateRelase = () => {
                     placeholder="Enter release title"
                     label="Title"
                     required
+                    errorMessage={errors?.title?.message}
                   />
-                  {errors.title && (
-                    <InputErrorMessage message={errors?.title?.message} />
-                  )}
                 </label>
               );
             }}
           />
           <Controller
-            name="releaseDate"
+            name="type"
             control={control}
-            rules={{ required: 'Release date is required' }}
+            rules={{ required: 'Please select the type' }}
             render={({ field }) => {
               return (
                 <label className="w-full flex flex-col gap-1">
-                  <Input
+                  <Combobox
                     {...field}
-                    type="date"
-                    label="Digital Release date"
+                    placeholder="Please select the type"
+                    label="Type"
                     required
-                    fromDate={moment().add(7, 'days').toDate()}
+                    options={Object.entries(ReleaseType).map(([key, value]) => ({
+                      label: capitalizeString(key),
+                      value: value,
+                    }))}
+                    errorMessage={errors?.type?.message}
                   />
-                  {errors?.releaseDate && (
-                    <InputErrorMessage message={errors?.releaseDate?.message} />
-                  )}
-                </label>
-              );
-            }}
-          />
-          <Controller
-            name="productionYear"
-            control={control}
-            rules={{ required: 'Select production year' }}
-            render={({ field }) => {
-              return (
-                <label className="w-full flex flex-col gap-1">
-                  <Select
-                    {...field}
-                    label={'Production Year'}
-                    required
-                    options={productionYears?.map((year) => {
-                      return {
-                        label: String(year),
-                        value: String(year),
-                      };
-                    })}
-                  />
-                  {errors?.productionYear && (
-                    <InputErrorMessage
-                      message={errors?.productionYear?.message}
-                    />
-                  )}
-                </label>
-              );
-            }}
-          />
-          <Controller
-            name="labelId"
-            control={control}
-            render={({ field }) => {
-              return (
-                <label className="w-full flex flex-col gap-1">
-                  <Select
-                    {...field}
-                    label="Label"
-                    placeholder={
-                      labelsIsFetching ? `Loading labels...` : `Select label`
-                    }
-                    required
-                    options={
-                      labelsIsSuccess
-                        ? labelsList?.map((label) => {
-                            return {
-                              label: label.name,
-                              value: label.id,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                  {errors?.labelId && (
-                    <InputErrorMessage message={errors?.labelId?.message} />
-                  )}
                 </label>
               );
             }}
           />
         </fieldset>
-        <menu className="w-full flex items-center gap-3 justify-between">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(setCreateReleaseModal(false));
-            }}
-          >
-            Cancel
-          </Button>
-          <Button primary submit>
-            Continue
-          </Button>
-        </menu>
+        <Button primary submit isLoading={isLoading} className='self-end'>
+          Continue
+        </Button>
       </form>
     </Modal>
   );

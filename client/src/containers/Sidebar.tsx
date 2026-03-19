@@ -57,7 +57,7 @@ const Sidebar = () => {
 
   return (
     <motion.aside
-      className={`fixed left-0 top-[8vh] z-40 h-[calc(100vh-8vh)] flex flex-col bg-primary text-white transition-all duration-300 ease-in-out
+      className={`fixed left-0 top-[clamp(60px,8vh,64px)] z-40 h-[calc(100vh-clamp(60px,8vh,64px))] flex flex-col bg-primary text-white transition-all duration-300 ease-in-out
         ${
           sidebarOpen
             ? 'w-[18vw] min-w-[220px] max-w-[260px] shadow-[4px_0_24px_-4px_rgba(0,40,80,0.18)]'

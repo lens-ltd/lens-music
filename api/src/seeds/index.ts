@@ -5,8 +5,9 @@ import logger from '../utils/logger';
 import { seedPermissions } from './permission.seeds';
 import { seedUsers } from './user.seeds';
 import { seedRoles } from './role.seeds';
+import { seedStaticReleaseNavigation } from './staticReleaseNavigation.seeds';
 
-const seeds = [seedPermissions, seedUsers, seedRoles];
+const seeds = [seedPermissions, seedRoles, seedUsers, seedStaticReleaseNavigation];
 
 const runSeeds = async () => {
   logger.info('Connecting to database...');

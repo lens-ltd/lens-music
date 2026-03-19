@@ -11,74 +11,128 @@ import { User } from './user.entity';
 import { ReleaseArtist } from './releaseArtist.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
+import {
+  ReleaseParentalAdvisory,
+  ReleaseRightsLine,
+  ReleaseStatus,
+  ReleaseType,
+} from '../constants/release.constants';
+import { UUID } from '../types/common.types';
 
 @Entity('releases')
 @Unique([
   'title',
-  'releaseDate',
+  'digitalReleaseDate',
+  'originalReleaseDate',
+  'preorderDate',
   'productionYear',
-  'userId',
-  'labelId',
   'version',
 ])
 export class Release extends AbstractEntity {
   // TITLE
-  @Column({ name: 'title', nullable: false })
+  @Column({ name: 'title', type: 'varchar', length: 500, nullable: false })
   title!: string;
 
-  // COVER ART
-  @Column({ name: 'cover_art', nullable: true })
-  coverArt: string;
-
   // UPC
-  @Column({ name: 'upc', nullable: true })
-  upc: string;
-
-  // RELEASE DATE
-  @Column({ name: 'release_date', nullable: false })
-  releaseDate: string;
+  @Column({ name: 'upc', type: 'varchar', length: 14, nullable: true, unique: true })
+  upc?: string;
 
   // VERSION
-  @Column({ name: 'version', nullable: true })
-  version: string;
+  @Column({ name: 'version', type: 'varchar', length: 255, nullable: true })
+  version?: string;
 
   // PRODUCTION YEAR
-  @Column({ name: 'production_year', nullable: false })
+  @Column({ name: 'production_year', type: 'integer', nullable: true })
   productionYear: number;
 
   // CATALOG NUMBER
-  @Column({ name: 'catalog_number', nullable: true })
-  catalogNumber: string;
+  @Column({ name: 'catalog_number', type: 'varchar', length: 50, nullable: true })
+  catalogNumber?: string;
 
-  // LABEL ID
-  @Column({ name: 'label_id', nullable: true })
-  labelId: string;
+  // TITLE VERSION
+  @Column({ name: 'title_version', type: 'varchar', length: 255, nullable: true })
+  titleVersion?: string;
 
-  // USER ID
-  @Column({ name: 'user_id', nullable: false })
-  userId: string;
-
-  // LABEL
-  @ManyToOne(() => Label, (label) => label.releases, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+  // RELEASE TYPE
+  @Column({
+    name: 'type',
+    type: 'enum',
+    enum: ReleaseType,
+    nullable: true,
+    default: ReleaseType.ALBUM,
   })
-  @JoinColumn({ name: 'label_id' })
-  label: Label;
+  type?: ReleaseType;
 
-  // USER
-  @ManyToOne(() => User, (user) => user.releases, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+  // PRIMARY LANGUAGE
+  @Column({ name: 'primary_language', type: 'varchar', length: 5, nullable: true })
+  primaryLanguage?: string;
+
+  // C LINE
+  @Column({ name: 'c_line', type: 'jsonb', nullable: true })
+  cLine?: ReleaseRightsLine | null;
+
+  // P LINE
+  @Column({ name: 'p_line', type: 'jsonb', nullable: true })
+  pLine?: ReleaseRightsLine | null;
+
+  // ORIGINAL RELEASE DATE
+  @Column({ name: 'original_release_date', type: 'date', nullable: true })
+  originalReleaseDate?: string;
+
+  // DIGITAL RELEASE DATE
+  @Column({ name: 'digital_release_date', type: 'date', nullable: true })
+  digitalReleaseDate?: string;
+
+  // PREORDER DATE
+  @Column({ name: 'preorder_date', type: 'date', nullable: true })
+  preorderDate?: string;
+
+  // PARENTAL ADVISORY
+  @Column({
+    name: 'parental_advisory',
+    type: 'enum',
+    enum: ReleaseParentalAdvisory,
+    nullable: false,
+    default: ReleaseParentalAdvisory.NOT_EXPLICIT,
   })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  parentalAdvisory!: ReleaseParentalAdvisory;
 
-  // RELEASE ARTISTS
-  @OneToMany(() => ReleaseArtist, (releaseArtist) => releaseArtist.release)
-  artists: ReleaseArtist[];
+  // STATUS
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: ReleaseStatus,
+    nullable: false,
+    default: ReleaseStatus.DRAFT,
+  })
+  status!: ReleaseStatus;
+
+  // METADATA LANGUAGE
+  @Column({ name: 'metadata_language', type: 'varchar', length: 5, nullable: true })
+  metadataLanguage?: string;
+
+  // TERRITORIES
+  @Column({ name: 'territories', type: 'jsonb', nullable: true, default: () => "'[]'" })
+  territories?: string[];
+
+  // CREATED BY ID
+  @Column({ name: 'created_by', type: 'uuid', nullable: true })
+  createdById?: UUID;
+
+  // CREATED BY
+  @ManyToOne(() => User, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User | null;
 
   // TRACKS
   @OneToMany(() => Track, (track) => track.release)
-  tracks: Track[];
+  tracks!: Track[];
+
+  // RELEASE ARTISTS
+  @OneToMany(() => ReleaseArtist, (releaseArtist) => releaseArtist.release)
+  artists!: ReleaseArtist[];
 }

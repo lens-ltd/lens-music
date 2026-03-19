@@ -1,19 +1,54 @@
 import { AbstractEntity } from './index.types';
-import { Label } from './label.types';
 import { User } from './user.types';
 import { ReleaseArtist } from './releaseArtist.types';
 
+export enum ReleaseType {
+  ALBUM = 'ALBUM',
+  EP = 'EP',
+  SINGLE = 'SINGLE',
+  COMPILATION = 'COMPILATION',
+  MIXTAPE = 'MIXTAPE',
+}
+
+export enum ReleaseParentalAdvisory {
+  EXPLICIT = 'EXPLICIT',
+  CLEAN = 'CLEAN',
+  NOT_EXPLICIT = 'NOT_EXPLICIT',
+}
+
+export enum ReleaseStatus {
+  DRAFT = 'DRAFT',
+  REVIEW = 'REVIEW',
+  APPROVED = 'APPROVED',
+  DELIVERED = 'DELIVERED',
+  LIVE = 'LIVE',
+  TAKENDOWN = 'TAKENDOWN',
+}
+
+export interface ReleaseRightsLine {
+  year: number;
+  owner: string;
+}
+
 export interface Release extends AbstractEntity {
   title: string;
-  coverArt?: string;
   upc?: string;
-  releaseDate: string;
   version?: string;
   productionYear: number;
   catalogNumber?: string;
-  labelId?: string;
-  userId: string;
-  label?: Label;
-  user: User;
+  titleVersion?: string;
+  type?: ReleaseType;
+  primaryLanguage?: string;
+  cLine?: ReleaseRightsLine | null;
+  pLine?: ReleaseRightsLine | null;
+  originalReleaseDate?: string;
+  digitalReleaseDate?: string;
+  preorderDate?: string;
+  parentalAdvisory: ReleaseParentalAdvisory;
+  status: ReleaseStatus;
+  metadataLanguage?: string;
+  territories?: string[];
+  createdById?: string;
+  createdBy?: User | null;
   artists: ReleaseArtist[];
 }

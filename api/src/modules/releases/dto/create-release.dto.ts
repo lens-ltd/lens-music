@@ -1,27 +1,18 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
+import {
+  ReleaseType,
+} from '../../../constants/release.constants';
 
 export class CreateReleaseDto {
   @IsNotEmpty()
   @IsString()
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  upc?: string;
+  title!: string;
 
   @IsNotEmpty()
-  @IsString()
-  releaseDate: string;
-
-  @IsOptional()
-  @IsString()
-  version?: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  productionYear: number;
-
-  @IsOptional()
-  @IsString()
-  labelId?: string;
+  @IsEnum(ReleaseType)
+  type!: ReleaseType;
 }

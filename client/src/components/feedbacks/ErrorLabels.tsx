@@ -4,15 +4,18 @@ import {
   FieldValues,
   Merge,
 } from 'react-hook-form';
+import { cn } from '@/lib/utils';
 
 export const InputErrorMessage = ({
   message,
+  className,
 }: {
   message:
     | string
     | FieldError
     | Merge<FieldError, FieldErrorsImpl<FieldValues>>
     | undefined;
+  className?: string;
 }) => {
-  return <p className="text-red-600 text-[14px]">{String(message)}</p>;
+  return <p className={cn("text-red-600 text-[12px] font-normal", className)}>{String(message)}</p>;
 };

@@ -5,7 +5,7 @@ import UserDashboard from './pages/dashboard/UserDashboard';
 import AuthenticatedRoutes from './outlets/AuthenticatedRoutes';
 import ListArtists from './pages/artists/ListArtists';
 import ListLabels from './pages/labels/ListLabels';
-import ListReleases from './pages/releases/ListReleases';
+import ReleasesPage from './pages/releases/ReleasesPage';
 import CreateRelase from './pages/releases/CreateRelase';
 import LandingPage from './pages/landing/LandingPage';
 import ListLyrics from './pages/lyrics/ListLyrics';
@@ -14,6 +14,7 @@ import LyricsGuidelines from './pages/lyrics/LyricsGuidelines';
 import SyncLyrics from './pages/lyrics/SyncLyrics';
 import NotFoundPage from './pages/common/NotFoundPage';
 import RolesPage from './pages/roles/RolesPage';
+import ReleaseWizardPage from './pages/releases/ReleaseWizardPage';
 
 const Router = () => {
   return (
@@ -44,7 +45,8 @@ const Router = () => {
 
           {/* RELEASE ROUTES */}
           <Route path="/releases">
-            <Route path="" element={<ListReleases />} />
+            <Route path="" element={<ReleasesPage />} />
+            <Route path=":id/wizard" element={<ReleaseWizardPage />} />
           </Route>
 
           {/* LYRICS ROUTES */}

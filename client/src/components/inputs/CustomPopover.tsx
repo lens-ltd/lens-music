@@ -17,12 +17,10 @@ const CustomPopover = ({
   className,
 }: CustomPopoverProps) => {
   return (
-    <Popover>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent className={`bg-white mt-4 w-full p-2 ${className}`}>
-        {children}
-      </PopoverContent>
-    </Popover>
+      <Popover>
+          <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+          <PopoverContent className={`bg-white mt-4 w-full p-2 ${className}`}>{children}</PopoverContent>
+      </Popover>
   );
 };
 

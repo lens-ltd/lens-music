@@ -1,3 +1,4 @@
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 import {
   faChartLine,
   faUserGroup,
@@ -17,6 +18,11 @@ export const sidebarNavigation: SidebarNavigation[] = [
     title: 'Dashboard',
     path: '/dashboard',
     icon: faChartLine,
+  },
+  {
+    title: 'Releases',
+    path: '/releases',
+    icon: faFileLines,
   },
   {
     title: 'Users',

@@ -156,7 +156,7 @@ const DatePicker = ({
         <Button
           variant={'outline'}
           className={cn(
-            'w-full h-10 px-4 cursor-pointer justify-start text-left font-normal text-sm text-gray-900 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 ease-in-out hover:border-gray-300 hover:bg-white/90',
+            'w-full h-10 px-4 justify-start text-left font-normal text-sm text-gray-900 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 ease-in-out hover:border-gray-300 hover:bg-white/90',
             !normalizedValue && 'text-gray-400'
           )}
           onClick={() => setOpen(!open)}

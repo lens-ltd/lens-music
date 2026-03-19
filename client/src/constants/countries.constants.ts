@@ -1,4 +1,4 @@
-export const COUNTRIES = [
+export const COUNTRIES_LIST = [
   {
     name: 'Afghanistan',
     dial_code: '+93',

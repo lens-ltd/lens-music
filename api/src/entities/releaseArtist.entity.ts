@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
 } from 'typeorm';
 import { Release } from './release.entity';
@@ -18,11 +19,13 @@ export class ReleaseArtist extends AbstractEntity {
   @Column({ name: 'artist_id', nullable: false })
   artistId!: string;
 
-  // RELEASES
+  // RELEASE
   @ManyToOne(() => Release, (release) => release.artists)
+  @JoinColumn({ name: 'release_id' })
   release!: Release;
 
-  // ARTISTS
+  // ARTIST
   @ManyToOne(() => Artist, (artist) => artist.releases)
+  @JoinColumn({ name: 'artist_id' })
   artist!: Artist;
 }

@@ -1,26 +1,39 @@
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { type IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FC, MouseEvent, MouseEventHandler, ReactNode } from 'react';
+import { type FC, type MouseEventHandler, type ReactNode, type HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
+import { Loader } from './Loader.tsx';
+import { Button as ButtonUI } from '../ui/button';
 import { cn } from '@/lib/utils';
-import { Button as ShadcnButton } from '@/components/ui/button';
-import Loader from './Loader';
 
-interface ButtonProps {
+interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, 'onClick'> {
   route?: string;
   value?: ReactNode;
-  onClick?: MouseEventHandler<HTMLAnchorElement & HTMLButtonElement>;
-  type?: 'submit' | 'button' | 'reset' | null;
+  onClick?: MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
+  type?: 'submit' | 'button' | 'reset';
   disabled?: boolean;
   primary?: boolean;
   styled?: boolean;
-  className?: string;
   submit?: boolean;
   danger?: boolean;
   icon?: IconProp;
   isLoading?: boolean;
   children?: ReactNode;
 }
+
+const baseStyles =
+  'inline-flex items-center gap-2 justify-center text-center text-[12px] font-normal! h-10 min-h-10 py-2.5! px-5! rounded-sm border transition-colors duration-200 cursor-pointer';
+
+const variantStyles = {
+  default:
+    'border-[color:var(--lens-blue)] text-[color:var(--lens-blue)] bg-transparent hover:bg-[color:var(--lens-blue)] hover:text-white',
+  primary:
+    'bg-[color:var(--lens-blue)] text-white border-[color:var(--lens-blue)] hover:bg-[color:var(--color-primary)]/90',
+  danger: 'bg-red-600 text-white border-red-600 hover:bg-red-700',
+  unstyled:
+    'bg-transparent border-transparent text-[color:var(--lens-blue)] hover:opacity-70',
+  disabled: 'opacity-50 cursor-not-allowed pointer-events-none',
+};
 
 const Button: FC<ButtonProps> = ({
   route = '#',
@@ -33,64 +46,72 @@ const Button: FC<ButtonProps> = ({
   className,
   submit = false,
   danger = false,
-  icon,
+  icon = undefined,
   isLoading = false,
   children,
+  ...rest
 }) => {
-  const content = isLoading ? (
-    <Loader className={primary || danger ? 'text-white' : 'text-primary'} />
-  ) : (
-    <>
-      {icon && <FontAwesomeIcon icon={icon} className="text-[12px]" />}
-      {children || value}
-    </>
-  );
+  const variant = disabled
+    ? 'disabled'
+    : danger
+      ? 'danger'
+      : !styled
+        ? 'unstyled'
+        : primary
+          ? 'primary'
+          : 'default';
 
-  const classes = cn(
-    'inline-flex items-center cursor-pointer justify-center gap-2 rounded-md text-[12px] tracking-[0.02em] font-normal transition-all duration-150 select-none',
-    !styled && 'border-0 bg-transparent shadow-none hover:bg-transparent px-0 py-0 h-auto text-primary justify-start active:scale-95',
-    styled && 'min-h-9 px-4 py-2',
-    styled && !primary && !danger && 'border border-primary bg-white text-primary hover:bg-[color:var(--lens-sand)] hover:shadow-sm active:scale-[0.97] active:shadow-none',
-    primary && 'border border-primary bg-primary text-white hover:brightness-110 hover:shadow-md active:scale-[0.97] active:brightness-95 active:shadow-none',
-    danger && 'border border-red-700 bg-red-700 text-white hover:brightness-110 hover:shadow-md active:scale-[0.97] active:brightness-95 active:shadow-none',
-    disabled && 'pointer-events-none opacity-50',
-    className
-  );
+  const classes = cn(baseStyles, variantStyles[variant], className);
 
-  if (submit || type === 'submit' || type === 'button' || type === 'reset') {
+  if (submit || type === 'submit' || type === 'reset') {
     return (
-      <ShadcnButton
-        type={(type || (submit ? 'submit' : 'button')) as 'submit' | 'button' | 'reset'}
+      <ButtonUI
+        type={type || 'submit'}
         onClick={onClick as MouseEventHandler<HTMLButtonElement> | undefined}
-        disabled={disabled}
-        variant="ghost"
         className={classes}
+        disabled={disabled}
+        {...rest}
       >
-        {content}
-      </ShadcnButton>
+        {isLoading ? (
+          <Loader
+            className={primary ? 'text-white' : 'text-[color:var(--lens-blue)]'}
+          />
+        ) : (
+          <>
+            {icon && <FontAwesomeIcon icon={icon} />}
+            {children || value}
+          </>
+        )}
+      </ButtonUI>
     );
   }
 
   return (
-    <ShadcnButton
-      asChild
-      variant="ghost"
-      disabled={disabled}
+    <Link
+      to={route}
+      onClick={(e) => {
+        if (disabled) {
+          e.preventDefault();
+          return;
+        }
+        if (onClick) {
+          onClick(e);
+        }
+      }}
       className={classes}
+      {...rest}
     >
-      <Link
-        to={route}
-        onClick={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            return;
-          }
-          onClick?.(e as unknown as MouseEvent<HTMLAnchorElement> & MouseEvent<HTMLButtonElement>);
-        }}
-      >
-        {content}
-      </Link>
-    </ShadcnButton>
+      {isLoading ? (
+        <Loader
+          className={primary ? 'text-white' : 'text-[color:var(--lens-blue)]'}
+        />
+      ) : (
+        <>
+          {icon && <FontAwesomeIcon icon={icon} />}
+          {children || value}
+        </>
+      )}
+    </Link>
   );
 };
 

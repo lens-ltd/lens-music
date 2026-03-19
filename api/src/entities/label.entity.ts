@@ -28,7 +28,7 @@ export class Label extends AbstractEntity {
   description: string;
 
   // USER ID
-  @Column({ name: 'user_id', type: 'uuid', nullable: false })
+  @Column({ name: 'created_by_id', type: 'uuid', nullable: false })
   userId: string;
 
   // COUNTRY
@@ -41,12 +41,9 @@ export class Label extends AbstractEntity {
   })
   country: string;
 
-  // USER
+  // CREATED BY
   @ManyToOne(() => User, (user) => user.labels)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @JoinColumn({ name: 'created_by_id' })
+  createdBy: User;
 
-  // RELEASES
-  @OneToMany(() => Release, (release) => release.label)
-  releases: Release[];
 }

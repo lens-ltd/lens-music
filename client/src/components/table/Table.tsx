@@ -23,8 +23,9 @@ import {
 } from '@/components/ui/table';
 
 import { DataTablePagination } from './TablePagination';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { UnknownAction } from '@reduxjs/toolkit';
+import { SkeletonLoader } from '../inputs/Loader';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -42,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   noDataMessage?: string | ReactNode;
   rowClassName?: string | ((row: TData) => string);
+  manualPagination?: boolean;
 }
 
 export default function Table<TData, TValue>({
@@ -58,36 +60,70 @@ export default function Table<TData, TValue>({
   isLoading = false,
   noDataMessage = 'No results.',
   rowClassName = '',
+  manualPagination,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: Math.max(0, page),
+    pageSize: size,
+  });
+
+  const resolvedManualPagination =
+    manualPagination ?? Boolean(setPage || setSize);
+
+  useEffect(() => {
+    setPagination({
+      pageIndex: Math.max(0, page),
+      pageSize: size,
+    });
+  }, [page, size]);
+
+  const paginationState = useMemo(
+    () => ({
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+    }),
+    [pagination.pageIndex, pagination.pageSize]
+  );
 
   const table = useReactTable({
     data,
     columns,
-    initialState: {
+    state: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
-      pagination: {
-        pageIndex: page - 1,
-        pageSize: size,
-      },
+      pagination: paginationState,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: (updater) => {
+      const nextPagination =
+        typeof updater === 'function' ? updater(paginationState) : updater;
+      setPagination(nextPagination);
+      if (setPage) {
+        setPage(nextPagination.pageIndex);
+      }
+      if (setSize) {
+        setSize(nextPagination.pageSize);
+      }
+    },
+    manualPagination: resolvedManualPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getPaginationRowModel: resolvedManualPagination
+      ? undefined
+      : getPaginationRowModel(),
   });
 
   return (
@@ -100,16 +136,16 @@ export default function Table<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="text-[14px] text-black p-4"
+                      className="text-[13px] text-black p-4"
                       key={header.id}
                       colSpan={header.colSpan}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -122,14 +158,7 @@ export default function Table<TData, TValue>({
                 <TableRow key={`skeleton-row-${rowIdx}`}>
                   {columns.map((_, cellIdx) => (
                     <TableCell key={`skeleton-cell-${cellIdx}`} className="p-4">
-                      <figure
-                        className={`animate-pulse bg-gray-200 rounded-[4px]`}
-                        style={{
-                          width: `${Math.random() * (70 - 50) + 50}%`,
-                          height: '0.75rem',
-                          animationDuration: '1.4s',
-                        }}
-                      />
+                      <SkeletonLoader type="text" height='0.8rem' />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -139,13 +168,11 @@ export default function Table<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={`p-2 ${
-                    rowClickHandler ? 'cursor-pointer' : ''
-                  } hover:bg-background ${
-                    typeof rowClassName === 'function'
+                  className={`p-2 ${rowClickHandler ? 'cursor-pointer' : ''
+                    } hover:bg-background ${typeof rowClassName === 'function'
                       ? rowClassName(row.original)
                       : rowClassName
-                  }`}
+                    }`}
                   onClick={(e) => {
                     e.preventDefault();
                   }}
@@ -158,14 +185,13 @@ export default function Table<TData, TValue>({
                       'actions',
                     ].includes(
                       cell.column.id ||
-                        (cell as unknown as { column: { accessorKey: string } })
-                          ?.column?.accessorKey
+                      (cell as unknown as { column: { accessorKey: string } })
+                        ?.column?.accessorKey
                     );
                     return (
                       <TableCell
-                        className={`${
-                          preventAction ? '!cursor-auto' : ''
-                        } text-[13px] p-4`}
+                        className={`${preventAction ? '!cursor-auto' : ''
+                          } text-[13px] text-black p-4`}
                         key={cell.id}
                         onClick={(e) => {
                           if (preventAction) {
@@ -189,9 +215,9 @@ export default function Table<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  <p className="text-gray-500 font-light text-[14px]">
+                  <span className="text-gray-500 font-light text-[13px]">
                     {noDataMessage}
-                  </p>
+                  </span>
                 </TableCell>
               </TableRow>
             )}

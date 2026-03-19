@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
 
 const spinnerVariants = cva('flex-col items-center justify-center', {
@@ -15,7 +15,7 @@ const spinnerVariants = cva('flex-col items-center justify-center', {
   },
 });
 
-const loaderVariants = cva('animate-spin text-primary', {
+const loaderVariants = cva('animate-spin text-black', {
   variants: {
     size: {
       small: 'size-4',
@@ -33,19 +33,17 @@ interface SpinnerContentProps
     VariantProps<typeof loaderVariants> {
   className?: string;
   children?: React.ReactNode;
-  primary?: boolean;
 }
 
 const Loader = ({
   size,
   show,
   children,
-  primary = false,
   className = 'text-white',
 }: SpinnerContentProps) => {
   return (
     <span className={spinnerVariants({ show })}>
-      <Loader2 className={cn(loaderVariants({ size }), primary ? 'text-primary' : 'text-white', className)} />
+      <Loader2 className={cn(loaderVariants({ size }), className)} />
       {children}
     </span>
   );
@@ -57,18 +55,22 @@ interface SkeletonLoaderProps {
   height?: string;
 }
 
-export const SkeletonLoader = ({ type, width, height }: SkeletonLoaderProps) => {
-
+export const SkeletonLoader = ({
+  type,
+  width,
+  height,
+}: SkeletonLoaderProps) => {
   const style = {
     width:
-      width || `${type === `text` ? '12vw' : 100}%`,
+      width ||
+      `${type === `text` ? `${Math.floor(Math.random() * 6 + 10)}vw` : 100}%`,
     height: height || `${type === 'input' ? '2.3rem' : '1.75rem'}`,
     animationDuration: '1.4s',
   };
 
   switch (type) {
     case 'text':
-      style.width = width || '12vw';
+      style.width = width || `${Math.floor(Math.random() * 6 + 10)}vw`;
       style.height = height || `1.5rem`;
       break;
     case 'input':
@@ -91,7 +93,7 @@ export const FormSkeletonLoader = () => {
   return (
     <fieldset className="w-full grid grid-cols-2 gap-6 p-6">
       {Array.from({ length: 10 }).map((_, index) => (
-        <label className="w-full flex flex-col gap-1" key={index}>
+        <label className="w-full flex flex-col gap-2" key={index}>
           <SkeletonLoader type="text" />
           <SkeletonLoader type="input" height="2rem" />
         </label>
@@ -100,4 +102,5 @@ export const FormSkeletonLoader = () => {
   );
 };
 
+export { Loader };
 export default Loader;

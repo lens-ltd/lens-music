@@ -48,15 +48,15 @@ export class User extends AbstractEntity {
   @IsNotEmpty({ message: 'Password is required' })
   password!: string;
 
-  @OneToMany(() => Label, (label) => label.user)
+  @OneToMany(() => Label, (label) => label.createdBy)
   labels: Label[];
-
+  
   // ARTISTS
   @OneToMany(() => Artist, (artist) => artist.user)
   artists: Artist[];
 
   // RELEASES
-  @OneToMany(() => Release, (release) => release.user)
+  @OneToMany(() => Release, (release) => release.createdBy)
   releases: Release[];
 
   /**

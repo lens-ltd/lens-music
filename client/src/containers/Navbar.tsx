@@ -39,7 +39,7 @@ const Navbar = () => {
   return (
     <header
       className="fixed top-0 left-0 z-50 w-full border-b border-[color:var(--lens-sand)] bg-white/95 backdrop-blur-sm"
-      style={{ height: '8vh', minHeight: '60px' }}
+      style={{ height: '8vh', minHeight: '60px', maxHeight: '64px' }}
     >
       <section className="mx-auto flex h-full w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
