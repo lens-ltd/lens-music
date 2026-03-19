@@ -1,13 +1,9 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   Unique,
 } from 'typeorm';
-import { Label } from './label.entity';
-import { User } from './user.entity';
 import { ReleaseArtist } from './releaseArtist.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
@@ -18,7 +14,6 @@ import {
   ReleaseStatus,
   ReleaseType,
 } from '../constants/release.constants';
-import { UUID } from '../types/common.types';
 
 @Entity('releases')
 @Unique([
@@ -115,19 +110,6 @@ export class Release extends AbstractEntity {
   // TERRITORIES
   @Column({ name: 'territories', type: 'jsonb', nullable: true, default: () => "'[]'" })
   territories?: string[];
-
-  // CREATED BY ID
-  @Column({ name: 'created_by', type: 'uuid', nullable: true })
-  createdById?: UUID;
-
-  // CREATED BY
-  @ManyToOne(() => User, {
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'created_by' })
-  createdBy?: User | null;
 
   // TRACKS
   @OneToMany(() => Track, (track) => track.release)

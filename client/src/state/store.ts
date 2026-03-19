@@ -9,6 +9,7 @@ import apiQuerySlice from './api/apiQuerySlice';
 import releaseSlice from './features/releaseSlice';
 import lyricSlice from './features/lyricSlice';
 import navigationSlice from './features/navigationSlice';
+import contributorSlice from './features/contributorSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     release: releaseSlice,
     lyric: lyricSlice,
     navigation: navigationSlice,
+    contributor: contributorSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

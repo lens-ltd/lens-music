@@ -11,11 +11,16 @@ import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/features/authSlice';
 import { setUser } from '../../state/features/userSlice';
-import { ErrorResponse, Link, useNavigate } from 'react-router-dom';
+import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
+import { useAppSelector } from '@/state/hooks';
 
 const Login = () => {
+
+  // STATE
+  const { token } = useAppSelector((state) => state.auth);
+
   const {
     handleSubmit,
     control,
@@ -54,6 +59,10 @@ const Login = () => {
       navigate('/dashboard');
     }
   }, [loginData, loginError, loginIsLoading, loginIsError, loginIsSuccess, dispatch, navigate]);
+
+  if (token) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <main

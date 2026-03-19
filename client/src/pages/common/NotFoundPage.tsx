@@ -46,11 +46,11 @@ export default function NotFoundPage() {
               </Button>
             </section>
 
-            <p className="mt-8 text-[11px] text-[color:var(--lens-ink)]/55">
+            <p className="mt-8 text-[12px] text-[color:var(--lens-ink)]/55">
               Need help? Visit the{' '}
               <Link
                 to="/#faq"
-                className="underline underline-offset-4 hover:text-[color:var(--lens-blue)] transition-colors"
+                className="underline text-[12px] underline-offset-4 hover:text-[color:var(--lens-blue)] transition-colors"
               >
                 FAQ section
               </Link>

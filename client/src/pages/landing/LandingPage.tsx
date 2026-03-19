@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import PublicFooter from '@/components/layout/PublicFooter';
 import PublicNavbar from '@/components/layout/PublicNavbar';
 import AnalyticsSection from './AnalyticsSection';
@@ -13,8 +13,14 @@ import PricingSection from './PricingSection';
 import StoreStripSection from './StoreStripSection';
 import TestimonialsSection from './TestimonialsSection';
 import { LandingPageStyles } from './landingShared';
+import { useAppSelector } from '@/state/hooks';
+import Navbar from '@/containers/Navbar';
 
 export default function LandingPage() {
+
+  // STATE
+  const { token } = useAppSelector((state) => state.auth);
+
   const { hash } = useLocation();
   const [scrolled, setScrolled] = useState(false);
 
@@ -45,13 +51,17 @@ export default function LandingPage() {
     return () => window.clearTimeout(timer);
   }, [hash]);
 
+  if (token) {
+    return <Navigate to="/dashboard" />;
+  }
+
   return (
     <main
       className="min-h-screen bg-white text-[color:var(--lens-ink)] overflow-x-hidden"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       <LandingPageStyles />
-      <PublicNavbar scrolled={scrolled} variant="landing" />
+      {token ? <Navbar public /> : <PublicNavbar scrolled={scrolled} variant="landing" />}
       <HeroSection />
       <StoreStripSection />
       <HowItWorksSection />

@@ -11,6 +11,7 @@ import { LyricsModule } from './modules/lyrics/lyrics.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { StaticReleaseNavigationModule } from './modules/static-release-navigation/static-release-navigation.module';
 import { ReleaseNavigationFlowsModule } from './modules/release-navigation-flows/release-navigation-flows.module';
+import { ContributorsModule } from './modules/contributors/contributors.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ReleaseNavigationFlowsModule } from './modules/release-navigation-flows
     RolesModule,
     StaticReleaseNavigationModule,
     ReleaseNavigationFlowsModule,
+    ContributorsModule,
   ],
 })
 export class AppModule {}

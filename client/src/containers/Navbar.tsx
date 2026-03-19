@@ -12,10 +12,15 @@ import { setToken } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import LensLogo from '/logo.png';
 
-const Navbar = () => {
+export interface NavbarProps {
+  className?: string;
+  public?: boolean;
+}
+
+const Navbar = ({ className, public: isPublic }: NavbarProps) => {
   const { user } = useAppSelector((state) => state.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
@@ -36,19 +41,25 @@ const Navbar = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 z-50 w-full border-b border-[color:var(--lens-sand)] bg-white/95 backdrop-blur-sm"
-      style={{ height: '8vh', minHeight: '60px', maxHeight: '64px' }}
+      className={`fixed top-0 left-0 right-0 z-50 w-full ${
+        isPublic
+          ? 'border-b border-[color:var(--lens-sand)] bg-white/95 backdrop-blur-sm'
+          : 'bg-white'
+      }`}
+      style={{ height: '64px' }}
     >
-      <section className="mx-auto flex h-full w-full items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link
-          to="/dashboard"
-          style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-        >
-          <img src={LensLogo} alt="Lens Logo" className="w-10 h-10 rounded-md bg-slate-600" />
+      <nav
+        className={`flex h-full items-center justify-between ${
+          isPublic ? 'mx-auto max-w-6xl px-6' : 'w-full px-4 sm:px-6 lg:px-8'
+        } ${className ?? ''}`}
+        aria-label="Main navigation"
+      >
+        <Link to="/dashboard" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}>
+          <img src={LensLogo} alt="Lens Logo" className="h-10 w-10 rounded-md bg-slate-600" />
         </Link>
 
         <section className="flex items-center gap-3 sm:gap-4">
-          <nav ref={dropdownRef} className="relative">
+          <div ref={dropdownRef} className="relative">
             <button
               onClick={toggleDropdown}
               className="inline-flex cursor-pointer items-start gap-2 rounded-md bg-white px-3 py-2 transition-colors hover:bg-[color:var(--lens-sand)]/30"
@@ -87,9 +98,9 @@ const Navbar = () => {
               />
             </button>
             <DropdownMenu isOpen={dropdownOpen} />
-          </nav>
+          </div>
         </section>
-      </section>
+      </nav>
     </header>
   );
 };

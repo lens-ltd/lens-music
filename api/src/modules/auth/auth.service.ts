@@ -19,13 +19,13 @@ export class AuthService {
   async signup({
     email,
     name,
-    phone,
+    phoneNumber,
     password,
     role,
   }: {
     email: string;
     name: string;
-    phone?: string;
+    phoneNumber?: string;
     password: string;
     role?: string;
   }): Promise<{ user: User; token: string }> {
@@ -39,7 +39,12 @@ export class AuthService {
     const hashedPassword = await hashPassword(password);
 
     const newUser = await this.userRepository.save(
-      this.userRepository.create({ email, name, phone, password: hashedPassword }),
+      this.userRepository.create({
+        email,
+        name,
+        phoneNumber,
+        password: hashedPassword,
+      }),
     );
 
     const token = this.jwtService.sign(

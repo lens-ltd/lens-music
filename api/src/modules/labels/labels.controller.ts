@@ -25,7 +25,7 @@ export class LabelsController {
 
   @Post()
   async createLabel(@Body() dto: CreateLabelDto, @CurrentUser() user: AuthUser) {
-    const label = await this.labelService.createLabel({ ...dto, userId: user.id });
+    const label = await this.labelService.createLabel({ ...dto, createdById: user.id });
     return { message: 'Label created successfully', data: label };
   }
 

@@ -25,8 +25,8 @@ export const sidebarNavigation: SidebarNavigation[] = [
     icon: faFileLines,
   },
   {
-    title: 'Users',
-    path: '/users',
+    title: 'Contributors',
+    path: '/contributors',
     icon: faUserGroup,
   },
   {

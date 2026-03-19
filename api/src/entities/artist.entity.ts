@@ -31,7 +31,7 @@ export class Artist extends AbstractEntity {
   userId!: string;
 
   // USER
-  @ManyToOne(() => User, (user) => user.artists, {
+  @ManyToOne(() => User, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

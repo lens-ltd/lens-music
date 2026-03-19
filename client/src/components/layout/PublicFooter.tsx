@@ -58,9 +58,9 @@ const PublicFooter: FC = () => (
           </p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
-              { label: 'About',   href: '#about'   },
-              { label: 'Contact', href: '#contact' },
-              { label: 'FAQ',     href: '#faq'     },
+              { label: 'About',   href: '/#about'   },
+              { label: 'Contact', href: '/#contact' },
+              { label: 'FAQ',     href: '/#faq'     },
             ].map(({ label, href }) => (
               <li key={label}>
                 <a

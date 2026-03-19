@@ -15,6 +15,7 @@ import SyncLyrics from './pages/lyrics/SyncLyrics';
 import NotFoundPage from './pages/common/NotFoundPage';
 import RolesPage from './pages/roles/RolesPage';
 import ReleaseWizardPage from './pages/releases/ReleaseWizardPage';
+import ContributorsPage from './pages/contributors/ContributorsPage';
 
 const Router = () => {
   return (
@@ -47,6 +48,11 @@ const Router = () => {
           <Route path="/releases">
             <Route path="" element={<ReleasesPage />} />
             <Route path=":id/wizard" element={<ReleaseWizardPage />} />
+          </Route>
+
+          {/* CONTRIBUTORS ROUTES */}
+          <Route path="/contributors">
+            <Route path="" element={<ContributorsPage />} />
           </Route>
 
           {/* LYRICS ROUTES */}

@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
 import { UUID } from '../types/common.types';
-import { languagesList } from '../constants/location.constant';
 
 @Entity()
 export class Lyrics extends AbstractEntity {
@@ -15,7 +14,7 @@ export class Lyrics extends AbstractEntity {
   trackId!: UUID;
 
   // TRACK
-  @ManyToOne(() => Track, (track) => track.lyrics)
+  @ManyToOne(() => Track, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'track_id' })
   track!: Track;
 

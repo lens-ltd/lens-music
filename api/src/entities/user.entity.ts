@@ -1,43 +1,18 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
-import { Column, Entity, OneToMany, Unique } from 'typeorm';
-import { ROLES } from '../constants/auth.constant';
-import { Label } from './label.entity';
-import { Artist } from './artist.entity';
-import { Release } from './release.entity';
-import { AbstractEntity } from './abstract.entity';
-import { Role } from './role.entity';
-import { RolePermission } from './rolePermission.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { Column, Entity, Unique } from 'typeorm';
 import { UserStatus } from '../constants/user.constants';
+import { Person } from './person.entity';
 
 @Entity()
-@Unique(['email', 'phone'])
-export class User extends AbstractEntity {
-  // EMAIL
-  @Column({
-    name: 'email',
-    type: 'varchar',
-    length: 255,
-    nullable: false,
-    unique: true,
-  })
-  @IsEmail({}, { message: 'Invalid email address' })
-  @IsNotEmpty({ message: 'Email is required' })
-  email!: string;
-
-  // NAME
-  @Column({ name: 'name', type: 'varchar', length: 255, nullable: false })
-  @IsNotEmpty({ message: 'Name is required' })
-  name!: string;
-
-  // PHONE
-  @Column({ name: 'phone', type: 'varchar', length: 255, nullable: true })
-  phone: string;
-
+@Unique(['email', 'phoneNumber'])
+export class User extends Person {
   // STATUS
   @Column({ name: 'status', type: 'enum', enum: UserStatus, nullable: false, default: UserStatus.ACTIVE })
   status!: UserStatus;
 
   // PASSWORD
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString({ message: 'Password must be a string' })
   @Column({
     name: 'password',
     type: 'varchar',
@@ -45,29 +20,5 @@ export class User extends AbstractEntity {
     nullable: false,
     select: false,
   })
-  @IsNotEmpty({ message: 'Password is required' })
   password!: string;
-
-  @OneToMany(() => Label, (label) => label.createdBy)
-  labels: Label[];
-  
-  // ARTISTS
-  @OneToMany(() => Artist, (artist) => artist.user)
-  artists: Artist[];
-
-  // RELEASES
-  @OneToMany(() => Release, (release) => release.createdBy)
-  releases: Release[];
-
-  /**
-   * RELATIONS
-   */
-
-  // CREATED ROLES
-  @OneToMany(() => Role, (role) => role.createdBy)
-  createdRoles: Role[];
-
-  // CREATED ROLE PERMISSIONS
-  @OneToMany(() => RolePermission, (rolePermission) => rolePermission.createdBy)
-  createdRolePermissions: RolePermission[];
 }

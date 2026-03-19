@@ -8,12 +8,17 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../state/store';
 import { setUser } from '../../state/features/userSlice';
 import { setToken } from '../../state/features/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
 import { useSignup } from '@/hooks/auth/auth.hooks';
+import { useAppSelector } from '@/state/hooks';
 
 const Signup = () => {
+
+  // STATE
+  const { token } = useAppSelector((state) => state.auth);
+
   const {
     handleSubmit,
     control,
@@ -49,6 +54,10 @@ const Signup = () => {
       signupReset();
     }
   }, [isError, isSuccess, data, dispatch, navigate, signupReset]);
+
+  if (token) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <main

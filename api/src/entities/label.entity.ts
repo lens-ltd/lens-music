@@ -1,15 +1,9 @@
-import { IsEmpty } from 'class-validator';
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   Unique,
 } from 'typeorm';
-import { User } from './user.entity';
 import { countriesList } from '../constants/location.constant';
-import { Release } from './release.entity';
 import { AbstractEntity } from './abstract.entity';
 
 @Entity('labels')
@@ -27,10 +21,6 @@ export class Label extends AbstractEntity {
   @Column({ name: 'description', length: 255, type: 'varchar', nullable: true })
   description: string;
 
-  // USER ID
-  @Column({ name: 'created_by_id', type: 'uuid', nullable: false })
-  userId: string;
-
   // COUNTRY
   @Column({
     name: 'country',
@@ -39,11 +29,5 @@ export class Label extends AbstractEntity {
     nullable: false,
     default: 'RW',
   })
-  country: string;
-
-  // CREATED BY
-  @ManyToOne(() => User, (user) => user.labels)
-  @JoinColumn({ name: 'created_by_id' })
-  createdBy: User;
-
+  country?: string;
 }

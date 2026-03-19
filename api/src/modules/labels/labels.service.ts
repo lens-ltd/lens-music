@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Label } from '../../entities/label.entity';
-import { getPagination, getPagingData } from '../../helpers/pagination.helper';
+import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
 import { UserService } from '../users/users.service';
 import { UUID } from '../../types/common.types';
-import { LabelPagination } from '../../types/models/label.types';
 
 @Injectable()
 export class LabelService {
@@ -20,23 +19,23 @@ export class LabelService {
     name,
     email,
     description,
-    userId,
+    createdById,
     country,
   }: {
     name: string;
     email?: string;
     description?: string;
-    userId: UUID;
+    createdById: UUID;
     country?: string;
   }): Promise<Label> {
-    const userExists = await this.userService.findUserById(userId);
+    const userExists = await this.userService.findUserById(createdById);
     if (!userExists) throw new Error('User not found');
 
     const newLabel = this.labelRepository.create({
       name,
       email,
       description,
-      userId,
+      createdById,
       country: country?.toUpperCase(),
     });
 
@@ -52,11 +51,11 @@ export class LabelService {
     condition?: object;
     size: number;
     page: number;
-  }): Promise<LabelPagination> {
+  }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
     const labels = await this.labelRepository.findAndCount({
       where: condition,
-      relations: ['user'],
+      relations: ['createdBy'],
       take,
       skip,
     });
@@ -65,7 +64,7 @@ export class LabelService {
 
   // GET LABEL BY ID
   async getLabelById(id: UUID): Promise<Label | null> {
-    return this.labelRepository.findOne({ where: { id }, relations: ['user'] });
+    return this.labelRepository.findOne({ where: { id }, relations: ['createdBy'] });
   }
 
   // UPDATE LABEL
