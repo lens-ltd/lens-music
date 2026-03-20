@@ -4,10 +4,10 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
-import { ReleaseArtist } from './releaseArtist.entity';
+import { ReleaseArtist } from './release-artist.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
-import { ReleaseNavigationFlow } from './releaseNavigationFlow.entity';
+import { ReleaseNavigationFlow } from './release-navigation-flow.entity';
 import {
   ReleaseParentalAdvisory,
   ReleaseRightsLine,

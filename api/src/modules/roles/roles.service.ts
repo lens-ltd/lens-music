@@ -2,7 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Role } from "../../entities/role.entity";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
-import { CreateRoleDto, validateCreateRoleDto } from "./dto/create-role-dto";
+import { CreateRoleDto, validateCreateRoleDto } from "./dto/create-role.dto";
 import { UUID } from "../../types/common.types";
 import { getPagination, getPagingData } from "../../helpers/pagination.helper";
 

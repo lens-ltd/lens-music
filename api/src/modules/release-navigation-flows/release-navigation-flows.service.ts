@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { ReleaseNavigationFlow } from '../../entities/releaseNavigationFlow.entity';
+import { ReleaseNavigationFlow } from '../../entities/release-navigation-flow.entity';
 import { Release } from '../../entities/release.entity';
-import { StaticReleaseNavigation } from '../../entities/staticReleaseNavigation.entity';
+import { StaticReleaseNavigation } from '../../entities/static-release-navigation.entity';
 import { UUID } from '../../types/common.types';
 import {
   GroupedStaticReleaseNavigation,

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReleasesController } from './releases.controller';
 import { ReleaseService } from './releases.service';
-import { ReleaseQueryService } from './releasesQuery.service';
+import { ReleaseQueryService } from './releases-query.service';
 import { Release } from '../../entities/release.entity';
 
 @Module({

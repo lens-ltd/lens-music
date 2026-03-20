@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, Unique } from "typeorm";
 import { AbstractEntity } from "./abstract.entity";
-import { RolePermission } from "./rolePermission.entity";
+import { RolePermission } from "./role-permission.entity";
 
 @Entity('permissions')
 @Unique(['name'])

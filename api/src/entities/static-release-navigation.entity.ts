@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
-import { ReleaseNavigationFlow } from './releaseNavigationFlow.entity';
+import { ReleaseNavigationFlow } from './release-navigation-flow.entity';
 
 @Entity('static_release_navigation')
 export class StaticReleaseNavigation extends AbstractEntity {

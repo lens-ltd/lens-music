@@ -48,3 +48,11 @@ export enum ContributorProfileLinkType {
     SOUNDCLOUD = 'SOUNDCLOUD',
     TIKTOK = 'TIKTOK',
 }
+
+export enum ContributorType {
+    INDIVIDUAL = 'INDIVIDUAL',
+    GROUP = 'GROUP',
+    ORCHESTRA = 'ORCHESTRA',
+    CHOIR = 'CHOIR',
+    OTHER = 'OTHER',
+}

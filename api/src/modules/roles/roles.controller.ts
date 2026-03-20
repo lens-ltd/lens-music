@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/co
 import { RolesService } from "./roles.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { AuthUser, CurrentUser } from "../../common/decorators/current-user.decorator";
-import { CreateRoleDto } from "./dto/create-role-dto";
+import { CreateRoleDto } from "./dto/create-role.dto";
 
 @Controller("roles")
 @UseGuards(JwtAuthGuard)

@@ -17,6 +17,9 @@ import { CurrentUser, AuthUser } from '../../common/decorators/current-user.deco
 import { ContributorService } from './contributors.service';
 import { CreateContributorDto } from './dto/create-contributor.dto';
 import { UpdateContributorDto } from './dto/update-contributor.dto';
+import { UUID } from '../../types/common.types';
+import { Contributor } from '../../entities/contributor.entity';
+import { FindOptionsWhere } from 'typeorm';
 
 @Controller('contributors')
 @UseGuards(JwtAuthGuard)
@@ -34,10 +37,16 @@ export class ContributorsController {
   async findAll(
     @Query('size') size = '10',
     @Query('page') page = '0',
+    @Query('parentContributorId') parentContributorId?: UUID,
   ) {
     const data = await this.contributorService.findAll({
       size: Number(size),
       page: Number(page),
+      condition: parentContributorId ? [{ parentContributorId }] : undefined,
+    } as {
+      size: number;
+      page: number;
+      condition?: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[];
     });
     return { message: 'Contributors fetched successfully', data };
   }
@@ -62,4 +71,5 @@ export class ContributorsController {
   async remove(@Param('id') id: string) {
     await this.contributorService.remove(id);
   }
+
 }

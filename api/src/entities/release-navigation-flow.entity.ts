@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { UUID } from '../types/common.types';
 import { AbstractEntity } from './abstract.entity';
-import { StaticReleaseNavigation } from './staticReleaseNavigation.entity';
+import { StaticReleaseNavigation } from './static-release-navigation.entity';
 import { Release } from './release.entity';
 
 

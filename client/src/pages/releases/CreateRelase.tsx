@@ -37,7 +37,7 @@ const CreateRelase = () => {
     dispatch(setCreateReleaseModal(false));
     reset();
     createRelaseReset();
-  }, [dispatch]);
+  }, [createRelaseReset, dispatch, reset]);
 
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {

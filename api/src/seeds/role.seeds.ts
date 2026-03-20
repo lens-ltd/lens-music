@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Role } from '../entities/role.entity';
-import { RolePermission } from '../entities/rolePermission.entity';
+import { RolePermission } from '../entities/role-permission.entity';
 import { Permission } from '../entities/permission.entity';
 import { User } from '../entities/user.entity';
 import logger from '../utils/logger';

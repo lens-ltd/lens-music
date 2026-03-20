@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { STATUSES } from '../constants/artist.constants';
 import { User } from './user.entity';
-import { ReleaseArtist } from './releaseArtist.entity';
+import { ReleaseArtist } from './release-artist.entity';
 import { AbstractEntity } from './abstract.entity';
 
 @Entity('artists')

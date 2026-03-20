@@ -15,7 +15,7 @@ import { CurrentUser, AuthUser } from '../../common/decorators/current-user.deco
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { ReleaseService } from './releases.service';
-import { ReleaseQueryService } from './releasesQuery.service';
+import { ReleaseQueryService } from './releases-query.service';
 
 @Controller('releases')
 @UseGuards(JwtAuthGuard)

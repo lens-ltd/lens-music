@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StaticReleaseNavigation } from '../../entities/staticReleaseNavigation.entity';
+import { StaticReleaseNavigation } from '../../entities/static-release-navigation.entity';
 
 export type GroupedStaticReleaseNavigation = Record<string, StaticReleaseNavigation[]>;
 

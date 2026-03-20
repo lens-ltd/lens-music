@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { StaticReleaseNavigation } from '../../entities/staticReleaseNavigation.entity';
+import { StaticReleaseNavigation } from '../../entities/static-release-navigation.entity';
 import { StaticReleaseNavigationController } from './static-release-navigation.controller';
 import { StaticReleaseNavigationService } from './static-release-navigation.service';
 

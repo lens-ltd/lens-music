@@ -1,18 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Contributor } from '../../entities/contributor.entity';
-import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
-import { UUID } from '../../types/common.types';
-import { CreateContributorDto } from './dto/create-contributor.dto';
-import { UpdateContributorDto } from './dto/update-contributor.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
+import { Contributor } from "../../entities/contributor.entity";
+import {
+  getPagination,
+  getPagingData,
+  Pagination,
+} from "../../helpers/pagination.helper";
+import { UUID } from "../../types/common.types";
+import { CreateContributorDto } from "./dto/create-contributor.dto";
+import { UpdateContributorDto } from "./dto/update-contributor.dto";
+import { ContributorMembership } from "../../entities/contributor-membership.entity";
 
 @Injectable()
 export class ContributorService {
   constructor(
     @InjectRepository(Contributor)
     private readonly contributorRepository: Repository<Contributor>,
-  ) { }
+    @InjectRepository(ContributorMembership)
+    private readonly contributorMembershipRepository: Repository<ContributorMembership>,
+  ) {}
 
   private getPrioritizedContributorName({
     displayName,
@@ -26,7 +33,10 @@ export class ContributorService {
     return displayName || name || fallbackName;
   }
 
-  async create(dto: CreateContributorDto, createdById: UUID): Promise<Contributor> {
+  async create(
+    dto: CreateContributorDto,
+    createdById: UUID,
+  ): Promise<Contributor> {
     const prioritizedName = this.getPrioritizedContributorName({
       displayName: dto.displayName,
       name: dto.name,
@@ -45,7 +55,16 @@ export class ContributorService {
       verificationStatus: dto.verificationStatus,
       createdById,
     });
-    return this.contributorRepository.save(contributor);
+
+    const savedContributor = await this.contributorRepository.save(contributor);
+    if (dto.parentContributorId) {
+      await this.contributorMembershipRepository.save({
+        parentContributorId: dto?.parentContributorId,
+        memberContributorId: savedContributor?.id,
+        createdById,
+      });
+    }
+    return savedContributor;
   }
 
   async findAll({
@@ -55,44 +74,54 @@ export class ContributorService {
   }: {
     size?: number;
     page?: number;
-    condition?: object;
+    condition?: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[];
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
     const data = await this.contributorRepository.findAndCount({
-      where: condition,
+      where: Array.isArray(condition)
+        ? (condition as FindOptionsWhere<Contributor>[])
+        : (condition as FindOptionsWhere<Contributor>),
       take,
       skip,
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
     return getPagingData({ data, size, page });
   }
 
   async findOne(id: UUID): Promise<Contributor | null> {
-    return this.contributorRepository.findOne({ where: { id } });
+    return this.contributorRepository.findOne({ where: { id }, relations: {  } });
   }
 
   async update(id: UUID, dto: UpdateContributorDto): Promise<Contributor> {
-    const contributor = await this.contributorRepository.findOne({ where: { id } });
+    const contributor = await this.contributorRepository.findOne({
+      where: { id },
+    });
     if (!contributor) {
-      throw new NotFoundException('Contributor not found');
+      throw new NotFoundException("Contributor not found");
     }
 
-    if (dto.displayName !== undefined) contributor.displayName = dto.displayName;
+    if (dto.displayName !== undefined)
+      contributor.displayName = dto.displayName;
     if (dto.name !== undefined || dto.displayName !== undefined) {
-      contributor.name = this.getPrioritizedContributorName({
-        displayName: dto.displayName ?? contributor.displayName,
-        name: dto.name,
-        fallbackName: contributor.name,
-      }) || contributor.name;
+      contributor.name =
+        this.getPrioritizedContributorName({
+          displayName: dto.displayName ?? contributor.displayName,
+          name: dto.name,
+          fallbackName: contributor.name,
+        }) || contributor.name;
     }
     if (dto.email !== undefined) contributor.email = dto.email;
-    if (dto.phoneNumber !== undefined) contributor.phoneNumber = dto.phoneNumber;
+    if (dto.phoneNumber !== undefined)
+      contributor.phoneNumber = dto.phoneNumber;
     if (dto.country !== undefined) contributor.country = dto.country;
     if (dto.gender !== undefined) contributor.gender = dto.gender;
     if (dto.dateOfBirth !== undefined) {
-      contributor.dateOfBirth = dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined;
+      contributor.dateOfBirth = dto.dateOfBirth
+        ? new Date(dto.dateOfBirth)
+        : undefined;
     }
-    if (dto.profileLinks !== undefined) contributor.profileLinks = dto.profileLinks;
+    if (dto.profileLinks !== undefined)
+      contributor.profileLinks = dto.profileLinks;
     if (dto.status !== undefined) contributor.status = dto.status;
     if (dto.verificationStatus !== undefined) {
       contributor.verificationStatus = dto.verificationStatus;
@@ -104,7 +133,7 @@ export class ContributorService {
   async remove(id: UUID): Promise<void> {
     const result = await this.contributorRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException('Contributor not found');
+      throw new NotFoundException("Contributor not found");
     }
   }
 }

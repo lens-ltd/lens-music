@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import { RELEASE_STATIC_NAVIGATION_STEPS } from "../constants/staticReleaseNavigation.constants";
-import { StaticReleaseNavigation } from "../entities/staticReleaseNavigation.entity";
+import { RELEASE_STATIC_NAVIGATION_STEPS } from "../constants/static-release-navigation.constants";
+import { StaticReleaseNavigation } from "../entities/static-release-navigation.entity";
 import logger from "../utils/logger";
 
 export const seedStaticReleaseNavigation = async (dataSource: DataSource) => {

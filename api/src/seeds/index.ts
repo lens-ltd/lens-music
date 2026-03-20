@@ -5,7 +5,7 @@ import logger from '../utils/logger';
 import { seedPermissions } from './permission.seeds';
 import { seedUsers } from './user.seeds';
 import { seedRoles } from './role.seeds';
-import { seedStaticReleaseNavigation } from './staticReleaseNavigation.seeds';
+import { seedStaticReleaseNavigation } from './static-release-navigation.seeds';
 
 const seeds = [seedPermissions, seedRoles, seedUsers, seedStaticReleaseNavigation];
 

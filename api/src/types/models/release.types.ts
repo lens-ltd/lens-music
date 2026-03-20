@@ -8,7 +8,7 @@ import {
 import { UUID } from '../common.types';
 import { User } from '../../entities/user.entity';
 import { Track } from '../../entities/track.entity';
-import { ReleaseArtist } from '../../entities/releaseArtist.entity';
+import { ReleaseArtist } from '../../entities/release-artist.entity';
 
 export interface ReleaseModel {
   id: UUID;
