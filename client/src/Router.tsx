@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from './pages/authentication/Login';
-import Signup from './pages/authentication/Signup';
+import CompleteInvitation from './pages/authentication/CompleteInvitation';
+import ForgotPassword from './pages/authentication/ForgotPassword';
+import ResetPassword from './pages/authentication/ResetPassword';
 import UserDashboard from './pages/dashboard/UserDashboard';
 import AuthenticatedRoutes from './outlets/AuthenticatedRoutes';
 import ListArtists from './pages/artists/ListArtists';
@@ -32,7 +34,9 @@ const Router = () => {
 
         {/* AUTHENTICATION */}
         <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/signup" element={<Signup />} />
+        <Route path="/auth/invitation/:token" element={<CompleteInvitation />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password/:token" element={<ResetPassword />} />
 
         {/* AUTHENTICATED ROUTES */}
         <Route element={<AuthenticatedRoutes />}>

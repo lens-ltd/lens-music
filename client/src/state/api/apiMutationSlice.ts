@@ -21,61 +21,81 @@ export const apiMutationSlice = createApi({
   }),
   endpoints: (builder) => {
     return {
-      // LOGIN
       login: builder.mutation({
         query: ({ email, password }) => ({
           url: "/auth/login",
           method: "POST",
-          body: {
-            email,
-            password,
-          },
+          body: { email, password },
         }),
       }),
 
-      // SIGNUP
-      signup: builder.mutation({
-        query: ({ email, name, phone, password }) => ({
-          url: "/auth/signup",
+      createInvitation: builder.mutation({
+        query: ({ email }) => ({
+          url: "/auth/invitations",
+          method: "POST",
+          body: { email },
+        }),
+      }),
+
+      validateInvitationToken: builder.mutation({
+        query: ({ token }) => ({
+          url: `/auth/invitations/${token}`,
+          method: "GET",
+        }),
+      }),
+
+      completeInvitation: builder.mutation({
+        query: ({ token, name, phoneNumber, password }) => ({
+          url: "/auth/invitations/complete",
           method: "POST",
           body: {
-            email,
-            password,
+            token,
             name,
-            phone,
+            phoneNumber,
+            password,
           },
         }),
       }),
 
-      // LIST ALL ARTISTS
+      requestPasswordReset: builder.mutation({
+        query: ({ email }) => ({
+          url: "/auth/password-reset/request",
+          method: "POST",
+          body: { email },
+        }),
+      }),
+
+      validatePasswordResetToken: builder.mutation({
+        query: ({ token }) => ({
+          url: `/auth/password-reset/${token}`,
+          method: "GET",
+        }),
+      }),
+
+      confirmPasswordReset: builder.mutation({
+        query: ({ token, password }) => ({
+          url: "/auth/password-reset/confirm",
+          method: "POST",
+          body: { token, password },
+        }),
+      }),
+
       listArtists: builder.query({
-        query: ({ size, page }) => {
-          return {
-            url: "/artists",
-            method: "GET",
-            params: {
-              size,
-              page,
-            },
-          };
-        },
+        query: ({ size, page }) => ({
+          url: "/artists",
+          method: "GET",
+          params: { size, page },
+        }),
       }),
 
-      // LIST LABELS
       listLabels: builder.query({
-        query: ({ size, page }) => {
-          return {
-            url: "/labels",
-            method: "GET",
-            params: {
-              size,
-              page,
-            },
-          };
-        },
+        query: ({ size, page }) => ({
+          url: "/labels",
+          method: "GET",
+          params: { size, page },
+        }),
       }),
 
-      // CREATE ARTIST
       createArtist: builder.mutation({
         query: ({ formData }) => ({
           url: "/artists",
@@ -85,19 +105,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // CREATE RELEASE
       createRelease: builder.mutation({
         query: ({ title, type }) => ({
           url: "/releases",
           method: "POST",
-          body: {
-            title,
-            type,
-          },
+          body: { title, type },
         }),
       }),
 
-      // DELETE RELEASE
       deleteRelease: builder.mutation({
         query: ({ id }) => ({
           url: `/releases/${id}`,
@@ -105,7 +120,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // UPLOAD RELEASE COVER ART
       uploadReleaseCoverArt: builder.mutation({
         query: ({ id, formData }: { id: string; formData: FormData }) => ({
           url: `/releases/${id}/cover-art`,
@@ -115,7 +129,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // UPDATE RELEASE OVERVIEW
       updateReleaseOverview: builder.mutation({
         query: ({
           id,
@@ -130,30 +143,22 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // CREATE RELEASE NAVIGATION FLOW
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
           url: "/release-navigation-flows",
           method: "POST",
-          body: {
-            releaseId,
-            staticReleaseNavigationId,
-          },
+          body: { releaseId, staticReleaseNavigationId },
         }),
       }),
 
-      // COMPLETE RELEASE NAVIGATION FLOW
       completeReleaseNavigationFlow: builder.mutation({
         query: ({ id, isCompleted }) => ({
           url: `/release-navigation-flows/${id}/complete`,
           method: "PATCH",
-          body: {
-            isCompleted,
-          },
+          body: { isCompleted },
         }),
       }),
 
-      // CREATE CONTRIBUTOR
       createContributor: builder.mutation({
         query: (body: CreateContributorPayload) => ({
           url: "/contributors",
@@ -162,7 +167,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // UPDATE CONTRIBUTOR
       updateContributor: builder.mutation({
         query: ({
           id,
@@ -177,7 +181,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // DELETE CONTRIBUTOR
       deleteContributor: builder.mutation({
         query: ({ id }) => ({
           url: `/contributors/${id}`,
@@ -185,7 +188,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // CREATE CONTRIBUTOR MEMBERSHIP
       createContributorMembership: builder.mutation({
         query: (body: CreateContributorMembershipPayload) => ({
           url: "/contributor-memberships",
@@ -194,7 +196,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // DELETE CONTRIBUTOR MEMBERSHIP
       deleteContributorMembership: builder.mutation({
         query: ({ id }: { id: string }) => ({
           url: `/contributor-memberships/${id}`,
@@ -202,20 +203,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // CREATE TRACK
       createTrack: builder.mutation({
         query: ({ title, releaseId, titleVersion }) => ({
           url: "/tracks",
           method: "POST",
-          body: {
-            title,
-            releaseId,
-            titleVersion,
-          },
+          body: { title, releaseId, titleVersion },
         }),
       }),
 
-      // UPDATE TRACK
       updateTrack: builder.mutation({
         query: ({
           id,
@@ -230,7 +225,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // UPLOAD TRACK AUDIO
       uploadTrackAudio: builder.mutation({
         query: ({ id, formData }: { id: string; formData: FormData }) => ({
           url: `/tracks/${id}/audio`,
@@ -240,7 +234,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // DELETE TRACK AUDIO
       deleteTrackAudio: builder.mutation({
         query: ({ id, audioFileId }: { id: string; audioFileId: string }) => ({
           url: `/tracks/${id}/audio/${audioFileId}`,
@@ -248,7 +241,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // VALIDATE TRACK
       validateTrack: builder.mutation({
         query: ({ id }: { id: string }) => ({
           url: `/tracks/${id}/validate`,
@@ -256,7 +248,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // CREATE TRACK CONTRIBUTOR
       createTrackContributor: builder.mutation({
         query: (body: { trackId: string; contributorId: string; role: string }) => ({
           url: "/track-contributors",
@@ -265,7 +256,6 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      // DELETE TRACK CONTRIBUTOR
       deleteTrackContributor: builder.mutation({
         query: ({ id }: { id: string }) => ({
           url: `/track-contributors/${id}`,
@@ -278,7 +268,12 @@ export const apiMutationSlice = createApi({
 
 export const {
   useLoginMutation,
-  useSignupMutation,
+  useCreateInvitationMutation,
+  useValidateInvitationTokenMutation,
+  useCompleteInvitationMutation,
+  useRequestPasswordResetMutation,
+  useValidatePasswordResetTokenMutation,
+  useConfirmPasswordResetMutation,
   useLazyListArtistsQuery,
   useLazyListLabelsQuery,
   useCreateArtistMutation,

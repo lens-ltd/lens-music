@@ -2,79 +2,242 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
+import { randomBytes } from 'crypto';
 import { User } from '../../entities/user.entity';
 import { comparePasswords, hashPassword } from '../../helpers/encryptions.helper';
-import { ConflictError, ValidationError } from '../../helpers/errors.helper';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '../../helpers/errors.helper';
 import { UserStatus } from '../../constants/user.constants';
+import { UserInvitation } from '../../entities/user-invitation.entity';
+import { PasswordResetToken } from '../../entities/password-reset-token.entity';
+import { UserService } from '../users/users.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserInvitation)
+    private readonly userInvitationRepository: Repository<UserInvitation>,
+    @InjectRepository(PasswordResetToken)
+    private readonly passwordResetRepository: Repository<PasswordResetToken>,
+    private readonly userService: UserService,
+    private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
-  // SIGNUP
-  async signup({
-    email,
-    name,
-    phoneNumber,
-    password,
-    role,
-  }: {
-    email: string;
-    name: string;
-    phoneNumber?: string;
-    password: string;
-    role?: string;
-  }): Promise<{ user: User; token: string }> {
-
-    // CHECK IF USER EXISTS
-    const userExists: User | null = await this.userRepository.findOne({ where: { email } });
-    // CHECK IF USER STATUS IS ACTIVE
-    if (userExists && userExists?.status !== UserStatus.ACTIVE) throw new ValidationError('User is not active', 'AUTH SERVICE');
-
-    if (userExists) throw new ConflictError('User already exists', { id: userExists.id, email: userExists.email }, 'AUTH SERVICE');
-    const hashedPassword = await hashPassword(password);
-
-    const newUser = await this.userRepository.save(
-      this.userRepository.create({
-        email,
-        name,
-        phoneNumber,
-        password: hashedPassword,
-      }),
+  private signToken(user: Pick<User, 'id' | 'email'>): string {
+    return this.jwtService.sign(
+      { id: user.id, email: user.email },
+      { expiresIn: '1w' },
     );
-
-    const token = this.jwtService.sign(
-      { id: newUser.id, email: newUser.email },
-      { expiresIn: '1d' },
-    );
-
-    return { user: newUser, token };
   }
 
-  // LOGIN
-  async login({ email, password }: { email: string; password: string }): Promise<{ user: User; token: string }> {
+  private createToken(): string {
+    return randomBytes(32).toString('hex');
+  }
+
+  private getAppUrl(): string {
+    return process.env.APP_URL || 'http://localhost:5173';
+  }
+
+  private getInvitationExpiryDays(): number {
+    return Number(process.env.INVITATION_EXPIRES_IN_DAYS || 7);
+  }
+
+  private getPasswordResetExpiryMinutes(): number {
+    return Number(process.env.PASSWORD_RESET_EXPIRES_IN_MINUTES || 60);
+  }
+
+  private ensureFutureDate(date: Date, message: string) {
+    if (date.getTime() < Date.now()) {
+      throw new ValidationError(message, 'AUTH SERVICE');
+    }
+  }
+
+  async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<{ user: User; token: string }> {
     if (!email) throw new ValidationError('Email is required', 'AUTH SERVICE');
-    if (!password) throw new ValidationError('Password is required', 'AUTH SERVICE');
+    if (!password) {
+      throw new ValidationError('Password is required', 'AUTH SERVICE');
+    }
 
     const userExists = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'name'],
+      select: ['id', 'email', 'password', 'name', 'phoneNumber', 'status'],
     });
 
-    if (!userExists) throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
+    if (!userExists || !userExists.password) {
+      throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
+    }
+
+    if (userExists.status !== UserStatus.ACTIVE) {
+      throw new ValidationError('Your account is not active yet', 'AUTH SERVICE');
+    }
 
     const isPasswordMatch = await comparePasswords(password, userExists.password);
-    if (!isPasswordMatch) throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
+    if (!isPasswordMatch) {
+      throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
+    }
 
-    const token = this.jwtService.sign(
-      { id: userExists.id, email: userExists.email },
-      { expiresIn: '1w' },
-    );
-
+    const token = this.signToken(userExists);
     return { user: userExists, token };
+  }
+
+  async createInvitation(email: string, createdById?: string) {
+    const existingUser = await this.userService.findUserByEmail(email);
+    if (existingUser) {
+      throw new ConflictError('User already exists', { email }, 'AUTH SERVICE');
+    }
+
+    const token = this.createToken();
+    const expiresInDays = this.getInvitationExpiryDays();
+    const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
+
+    const existingInvitation = await this.userInvitationRepository.findOne({
+      where: { email },
+    });
+
+    const invitation = existingInvitation
+      ? await this.userInvitationRepository.save({
+          ...existingInvitation,
+          token,
+          expiresAt,
+          createdById: createdById || existingInvitation.createdById,
+        })
+      : await this.userInvitationRepository.save(
+          this.userInvitationRepository.create({
+            email,
+            token,
+            expiresAt,
+            createdById,
+          }),
+        );
+
+    await this.emailService.sendInvitationEmail({
+      to: email,
+      invitationUrl: `${this.getAppUrl()}/auth/invitation/${token}`,
+      expiresInDays,
+    });
+
+    return invitation;
+  }
+
+  async getInvitationByToken(token: string): Promise<UserInvitation> {
+    const invitation = await this.userInvitationRepository.findOne({ where: { token } });
+
+    if (!invitation) {
+      throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
+    }
+
+    this.ensureFutureDate(invitation.expiresAt, 'Invitation has expired');
+    return invitation;
+  }
+
+  async completeInvitation({
+    token,
+    name,
+    phoneNumber,
+    password,
+  }: {
+    token: string;
+    name: string;
+    phoneNumber?: string;
+    password: string;
+  }): Promise<{ user: User; token: string }> {
+    const invitation = await this.getInvitationByToken(token);
+
+    const existingUser = await this.userService.findUserByEmail(invitation.email);
+    if (existingUser) {
+      await this.userInvitationRepository.delete({ email: invitation.email });
+      throw new ConflictError('User already exists', { email: invitation.email }, 'AUTH SERVICE');
+    }
+
+    const hashedPassword = await hashPassword(password);
+    const user = await this.userService.createUser({
+      email: invitation.email,
+      name,
+      phoneNumber,
+      password: hashedPassword,
+    });
+
+    await this.userInvitationRepository.delete({ email: invitation.email });
+
+    return {
+      user,
+      token: this.signToken(user),
+    };
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const expiresInMinutes = this.getPasswordResetExpiryMinutes();
+    const user = await this.userService.findUserByEmail(email);
+
+    if (!user) {
+      return;
+    }
+
+    const token = this.createToken();
+    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
+
+    const existingResetToken = await this.passwordResetRepository.findOne({
+      where: { userId: user.id },
+    });
+
+    if (existingResetToken) {
+      await this.passwordResetRepository.save({
+        ...existingResetToken,
+        token,
+        expiresAt,
+      });
+    } else {
+      await this.passwordResetRepository.save(
+        this.passwordResetRepository.create({
+          userId: user.id,
+          token,
+          expiresAt,
+        }),
+      );
+    }
+
+    await this.emailService.sendPasswordResetEmail({
+      to: email,
+      resetUrl: `${this.getAppUrl()}/auth/reset-password/${token}`,
+      expiresInMinutes,
+    });
+  }
+
+  async getPasswordResetByToken(token: string): Promise<PasswordResetToken> {
+    const passwordReset = await this.passwordResetRepository.findOne({ where: { token } });
+
+    if (!passwordReset) {
+      throw new NotFoundError('Password reset request not found', 'AUTH SERVICE');
+    }
+
+    this.ensureFutureDate(passwordReset.expiresAt, 'Password reset link has expired');
+    return passwordReset;
+  }
+
+  async confirmPasswordReset({
+    token,
+    password,
+  }: {
+    token: string;
+    password: string;
+  }): Promise<void> {
+    const resetRequest = await this.getPasswordResetByToken(token);
+    const hashedPassword = await hashPassword(password);
+
+    await this.userService.updatePassword(resetRequest.userId, hashedPassword);
+    await this.passwordResetRepository.delete({ userId: resetRequest.userId });
   }
 }
