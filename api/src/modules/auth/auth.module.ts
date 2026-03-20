@@ -4,10 +4,18 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { User } from '../../entities/user.entity';
+import { UserInvitation } from '../../entities/user-invitation.entity';
+import { PasswordResetToken } from '../../entities/password-reset-token.entity';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([User, UserInvitation, PasswordResetToken]),
+    UsersModule,
+    EmailModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

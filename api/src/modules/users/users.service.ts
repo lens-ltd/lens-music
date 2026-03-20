@@ -11,21 +11,43 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  // GET USER BY EMAIL
   async findUserByEmail(email: string): Promise<User | null> {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
-      .addSelect('password')
+      .addSelect('user.password')
       .getOne();
   }
 
-  // GET USER BY ID
   async findUserById(id: UUID): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  // DELETE USER
+  async createUser({
+    email,
+    name,
+    phoneNumber,
+    password,
+  }: {
+    email: string;
+    name: string;
+    phoneNumber?: string;
+    password: string;
+  }): Promise<User> {
+    const user = this.userRepository.create({
+      email,
+      name,
+      phoneNumber,
+      password,
+    });
+
+    return this.userRepository.save(user);
+  }
+
+  async updatePassword(id: UUID, password: string): Promise<void> {
+    await this.userRepository.update(id, { password });
+  }
+
   async deleteUser(id: UUID): Promise<User | null> {
     const userExists = await this.userRepository.findOne({ where: { id } });
     if (!userExists) return null;

@@ -16,10 +16,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({ scrolled, variant = 'landing' }) 
     { label: 'FAQ', href: '#faq' },
   ];
 
-  const authCta =
-    typeof window !== 'undefined' && window.location.pathname.includes('/signup')
-      ? { label: 'Sign in', to: '/auth/login' }
-      : { label: 'Create account', to: '/auth/signup' };
+  const authCta = { label: 'Sign in', to: '/auth/login' };
 
   return (
     <header
@@ -80,11 +77,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({ scrolled, variant = 'landing' }) 
                   Sign in
                 </Link>
               </li>
-              <li>
-                <Button route="/auth/signup" primary className="px-5 py-2 text-[12px] tracking-[0.04em] font-normal">
-                  Create account
-                </Button>
-              </li>
+              <li className="text-[11px] tracking-[0.14em] uppercase text-[color:var(--lens-ink)]/45">Invite only</li>
             </ul>
 
             <details className="md:hidden relative" id="mobile-nav">
@@ -116,11 +109,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({ scrolled, variant = 'landing' }) 
                       Sign in
                     </Button>
                   </li>
-                  <li>
-                    <Button route="/auth/signup" primary className="w-full text-[12px] font-normal">
-                      Create account
-                    </Button>
-                  </li>
+                  <li className="px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/45">Invite only</li>
                 </ul>
               </div>
             </details>
