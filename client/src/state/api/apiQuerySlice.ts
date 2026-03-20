@@ -1,16 +1,16 @@
-import store from 'store';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_URL } from '@/constants/environments.constants';
-import { UUID } from '@/types/common.types';
+import store from "store";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_URL } from "@/constants/environments.constants";
+import { UUID } from "@/types/common.types";
 
 export const apiQuerySlice = createApi({
-  reducerPath: 'apiQuery',
+  reducerPath: "apiQuery",
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers) => {
-      const token = store.get('token');
+      const token = store.get("token");
       if (token) {
-        headers.set('authorization', `Bearer ${token}`);
+        headers.set("authorization", `Bearer ${token}`);
       }
       return headers;
     },
@@ -21,8 +21,8 @@ export const apiQuerySlice = createApi({
       fetchArtists: builder.query({
         query: ({ size, page }) => {
           return {
-            url: '/artists',
-            method: 'GET',
+            url: "/artists",
+            method: "GET",
             params: {
               size,
               page,
@@ -35,8 +35,8 @@ export const apiQuerySlice = createApi({
       fetchLabels: builder.query({
         query: ({ size, page }) => {
           return {
-            url: '/labels',
-            method: 'GET',
+            url: "/labels",
+            method: "GET",
             params: {
               size,
               page,
@@ -49,8 +49,8 @@ export const apiQuerySlice = createApi({
       fetchReleases: builder.query({
         query: ({ size, page }) => {
           return {
-            url: '/releases',
-            method: 'GET',
+            url: "/releases",
+            method: "GET",
             params: {
               size,
               page,
@@ -66,15 +66,15 @@ export const apiQuerySlice = createApi({
 
       // FETCH STATIC RELEASE NAVIGATION
       fetchStaticReleaseNavigation: builder.query({
-        query: () => '/static-release-navigation',
+        query: () => "/static-release-navigation",
       }),
 
       // FETCH RELEASE NAVIGATION FLOWS
       fetchReleaseNavigationFlows: builder.query({
         query: ({ releaseId }) => {
           return {
-            url: '/release-navigation-flows',
-            method: 'GET',
+            url: "/release-navigation-flows",
+            method: "GET",
             params: {
               releaseId: releaseId,
             },
@@ -84,10 +84,20 @@ export const apiQuerySlice = createApi({
 
       // FETCH CONTRIBUTORS
       fetchContributors: builder.query({
-        query: ({ page, size, type, searchName }: { page: number; size: number; type?: string; searchName?: string }) => {
+        query: ({
+          page,
+          size,
+          type,
+          searchName,
+        }: {
+          page: number;
+          size: number;
+          type?: string;
+          searchName?: string;
+        }) => {
           return {
-            url: '/contributors',
-            method: 'GET',
+            url: "/contributors",
+            method: "GET",
             params: {
               page,
               size,
@@ -105,10 +115,20 @@ export const apiQuerySlice = createApi({
 
       // FETCH CONTRIBUTOR MEMBERSHIPS
       fetchContributorMemberships: builder.query({
-        query: ({ page, size, parentContributorId, memberContributorId }: { page: number; size: number; parentContributorId?: UUID; memberContributorId?: UUID }) => {
+        query: ({
+          page,
+          size,
+          parentContributorId,
+          memberContributorId,
+        }: {
+          page: number;
+          size: number;
+          parentContributorId?: UUID;
+          memberContributorId?: UUID;
+        }) => {
           return {
-            url: '/contributor-memberships',
-            method: 'GET',
+            url: "/contributor-memberships",
+            method: "GET",
             params: {
               page,
               size,
@@ -117,6 +137,24 @@ export const apiQuerySlice = createApi({
             },
           };
         },
+      }),
+
+      // FETCH TRACKS
+      fetchTracks: builder.query({
+        query: ({ releaseId }) => {
+          return {
+            url: "/tracks",
+            method: "GET",
+            params: {
+              releaseId,
+            },
+          };
+        },
+      }),
+
+      // GET TRACK
+      getTrack: builder.query({
+        query: ({ id }) => `/tracks/${id}`,
       }),
     };
   },
@@ -132,5 +170,7 @@ export const {
   useLazyGetContributorQuery,
   useLazyFetchContributorsQuery,
   useLazyFetchContributorMembershipsQuery,
+  useLazyFetchTracksQuery,
+  useLazyGetTrackQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

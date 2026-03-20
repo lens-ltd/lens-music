@@ -5,10 +5,12 @@ const initialState: {
   tracksList: Track[];
   track?: Track;
   selectedTrack?: Track;
+  createReleaseTrackModal: boolean;
 } = {
   tracksList: [],
   track: undefined,
   selectedTrack: undefined,
+  createReleaseTrackModal: false,
 };
 
 const trackSlice = createSlice({
@@ -24,6 +26,9 @@ const trackSlice = createSlice({
     setSelectedTrack: (state, action) => {
       state.selectedTrack = action.payload;
     },
+    setCreateReleaseTrackModal: (state, action) => {
+      state.createReleaseTrackModal = action.payload;
+    },
   },
 });
 
@@ -31,6 +36,7 @@ export const {
   setTracksList,
   setTrack,
   setSelectedTrack,
+  setCreateReleaseTrackModal,
 } = trackSlice.actions;
 
 export default trackSlice.reducer;

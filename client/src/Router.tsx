@@ -20,6 +20,7 @@ import CreateContributorPage from './pages/contributors/CreateContributorPage';
 import UpdateContributorPage from './pages/contributors/UpdateContributorPage';
 import ContributorDetailsPage from './pages/contributors/ContributorDetailsPage';
 import ContributorMembershipsPage from './pages/contributors/ContributorMembershipsPage';
+import ManageReleaseTrack from './pages/tracks/ManageReleaseTrack';
 
 const Router = () => {
   return (
@@ -52,6 +53,7 @@ const Router = () => {
           <Route path="/releases">
             <Route path="" element={<ReleasesPage />} />
             <Route path=":id/wizard" element={<ReleaseWizardPage />} />
+            <Route path=":id/manage-tracks/:trackId" element={<ManageReleaseTrack />} />
           </Route>
 
           {/* CONTRIBUTORS ROUTES */}
