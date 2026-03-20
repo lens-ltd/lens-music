@@ -1,17 +1,17 @@
 import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
-import { getCountryName } from "@/constants/countries.constants";
 import { ellipsisHClassName } from "@/constants/input.constants";
 import { setDeleteContributorModal, setSelectedContributor } from "@/state/features/contributorSlice";
 import { useAppDispatch } from "@/state/hooks";
-import { Contributor } from "@/types/models/contributor.types";
+import { Contributor, ContributorType } from "@/types/models/contributor.types";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faCircleInfo, faEllipsisH, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faEllipsisH, faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
+// CONTRIBUTOR COLUMNS
 export const useContributorColumns = () => {
 
     // STATE
@@ -38,9 +38,9 @@ export const useContributorColumns = () => {
                 row?.original?.verificationStatus ? <span className={getStatusBackgroundColor(row?.original?.verificationStatus)}>{capitalizeString(row?.original?.verificationStatus)}</span> : '-',
         },
         {
-            header: 'Country',
-            accessorKey: 'country',
-            cell: ({ row }) => getCountryName(row?.original?.country),
+            header: 'Type',
+            accessorKey: 'type',
+            cell: ({ row }) => capitalizeString(row?.original?.type as ContributorType),
         },
         {
             header: 'Last Updated',
@@ -61,8 +61,11 @@ export const useContributorColumns = () => {
                                 View details
                             </TableActionButton>
                             <TableActionButton icon={faPenToSquare} to={`/contributors/${row?.original?.id}/update`}>
-                                Update
+                                Manage
                             </TableActionButton>
+                           {[ContributorType.GROUP].includes(row?.original?.type as ContributorType) && <TableActionButton icon={faUsers} to={`/contributors/${row?.original?.id}/memberships`}>
+                                Manage memberships
+                            </TableActionButton>}
                             <TableActionButton icon={faTrash} iconClassName="text-red-700" onClick={(e) => {
                                 e.preventDefault();
                                 if (row?.original?.id) {

@@ -8,7 +8,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ContributorVerificationStatus } from '../../../constants/contributor.constants';
+import {
+  ContributorType,
+  ContributorVerificationStatus,
+} from '../../../constants/contributor.constants';
 import { Gender } from '../../../constants/person.constants';
 import { UserStatus } from '../../../constants/user.constants';
 import { ContributorProfileLinkItemDto } from './contributor-profile-link.dto';
@@ -55,4 +58,8 @@ export class UpdateContributorDto {
   @IsOptional()
   @IsEnum(ContributorVerificationStatus)
   verificationStatus?: ContributorVerificationStatus;
+
+  @IsOptional()
+  @IsEnum(ContributorType)
+  type?: ContributorType;
 }

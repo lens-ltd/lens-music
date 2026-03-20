@@ -7,7 +7,7 @@ import UserLayout from "@/containers/UserLayout";
 import { useCreateContributorMutation } from "@/state/api/apiMutationSlice";
 import { capitalizeString } from "@/utils/strings.helper";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -15,11 +15,14 @@ import {
   buildContributorPayload,
   contributorGenderOptions,
   ContributorFormValues,
+  contributorTypeOptions,
   getContributorFormDefaults,
   socialProfileFields,
   statusOptions,
   storeProfileFields,
 } from "./contributorForm";
+import { Contributor } from "@/types/models/contributor.types";
+import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 
 const CreateContributorPage = () => {
   // NAVIGATION
@@ -31,10 +34,33 @@ const CreateContributorPage = () => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ContributorFormValues>({
     defaultValues: getContributorFormDefaults(),
   });
+
+  // BELONGS TO GROUP CHECKBOX
+  const [belongsToGroup, setBelongsToGroup] = useState(false);
+
+  // FETCH CONTRIBUTORS FOR PARENT SELECTION
+  const [fetchContributors, { data: contributorsData }] =
+    useLazyFetchContributorsQuery();
+
+  useEffect(() => {
+    if (belongsToGroup) {
+      fetchContributors({ page: 0, size: 100 });
+    } else {
+      setValue("parentContributorId", undefined);
+    }
+  }, [belongsToGroup, fetchContributors, setValue]);
+
+  const parentContributorOptions = (
+    (contributorsData?.data?.rows as Contributor[]) || []
+  ).map((c) => ({
+    label: c.displayName || c.name || "",
+    value: c.id,
+  }));
 
   // CREATE CONTRIBUTOR
   const [
@@ -221,7 +247,64 @@ const CreateContributorPage = () => {
                   />
                 )}
               />
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    label="Contributor type"
+                    placeholder="Select contributor type"
+                    {...field}
+                    options={contributorTypeOptions}
+                    errorMessage={errors?.type?.message}
+                  />
+                )}
+              />
             </fieldset>
+          </section>
+
+          <section
+            className="w-full flex flex-col gap-4"
+            aria-labelledby="contributor-group-heading"
+          >
+            <header className="flex flex-col gap-1">
+              <Heading type="h3" id="contributor-group-heading">
+                Group membership
+              </Heading>
+              <p className="text-[12px] font-normal text-gray-500">
+                Optionally associate this contributor with a parent group.
+              </p>
+            </header>
+
+            <label className="flex items-center gap-2 cursor-pointer w-fit">
+              <input
+                type="checkbox"
+                checked={belongsToGroup}
+                onChange={(e) => setBelongsToGroup(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <span className="text-[13px] text-gray-700">
+                This contributor belongs to a group
+              </span>
+            </label>
+
+            {belongsToGroup && (
+              <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="parentContributorId"
+                  control={control}
+                  render={({ field }) => (
+                    <Combobox
+                      label="Parent group"
+                      placeholder="Search and select a contributor"
+                      {...field}
+                      options={parentContributorOptions}
+                      errorMessage={errors?.parentContributorId?.message}
+                    />
+                  )}
+                />
+              </fieldset>
+            )}
           </section>
 
           <section

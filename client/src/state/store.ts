@@ -10,6 +10,7 @@ import releaseSlice from './features/releaseSlice';
 import lyricSlice from './features/lyricSlice';
 import navigationSlice from './features/navigationSlice';
 import contributorSlice from './features/contributorSlice';
+import contributorMembershipSlice from './features/contributorMembershipSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     lyric: lyricSlice,
     navigation: navigationSlice,
     contributor: contributorSlice,
+    contributorMembership: contributorMembershipSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

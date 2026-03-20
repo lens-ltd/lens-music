@@ -38,15 +38,22 @@ export class ContributorsController {
     @Query('size') size = '10',
     @Query('page') page = '0',
     @Query('parentContributorId') parentContributorId?: UUID,
+    @Query('type') type?: string,
+    @Query('searchName') searchName?: string,
   ) {
+    const condition: FindOptionsWhere<Contributor> = {};
+    if (parentContributorId) {
+      (condition as Record<string, unknown>).parentContributorId = parentContributorId;
+    }
+    if (type) {
+      condition.type = type as Contributor['type'];
+    }
+
     const data = await this.contributorService.findAll({
       size: Number(size),
       page: Number(page),
-      condition: parentContributorId ? [{ parentContributorId }] : undefined,
-    } as {
-      size: number;
-      page: number;
-      condition?: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[];
+      condition: Object.keys(condition).length > 0 ? condition : undefined,
+      searchName,
     });
     return { message: 'Contributors fetched successfully', data };
   }

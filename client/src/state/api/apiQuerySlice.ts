@@ -1,6 +1,7 @@
 import store from 'store';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '@/constants/environments.constants';
+import { UUID } from '@/types/common.types';
 
 export const apiQuerySlice = createApi({
   reducerPath: 'apiQuery',
@@ -83,13 +84,15 @@ export const apiQuerySlice = createApi({
 
       // FETCH CONTRIBUTORS
       fetchContributors: builder.query({
-        query: ({ page, size }) => {
+        query: ({ page, size, type, searchName }: { page: number; size: number; type?: string; searchName?: string }) => {
           return {
             url: '/contributors',
             method: 'GET',
             params: {
               page,
               size,
+              ...(type && { type }),
+              ...(searchName && { searchName }),
             },
           };
         },
@@ -98,6 +101,22 @@ export const apiQuerySlice = createApi({
       // GET CONTRIBUTOR
       getContributor: builder.query({
         query: ({ id }) => `/contributors/${id}`,
+      }),
+
+      // FETCH CONTRIBUTOR MEMBERSHIPS
+      fetchContributorMemberships: builder.query({
+        query: ({ page, size, parentContributorId, memberContributorId }: { page: number; size: number; parentContributorId?: UUID; memberContributorId?: UUID }) => {
+          return {
+            url: '/contributor-memberships',
+            method: 'GET',
+            params: {
+              page,
+              size,
+              parentContributorId,
+              memberContributorId,
+            },
+          };
+        },
       }),
     };
   },
@@ -112,5 +131,6 @@ export const {
   useLazyGetReleaseQuery,
   useLazyGetContributorQuery,
   useLazyFetchContributorsQuery,
+  useLazyFetchContributorMembershipsQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

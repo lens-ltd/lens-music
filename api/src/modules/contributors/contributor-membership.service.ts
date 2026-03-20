@@ -33,9 +33,15 @@ export class ContributorMembershipService {
     const contributorMemberships =
       await this.contributorMembershipRepository.findAndCount({
         where: filters,
+        relations: ["memberContributor", "parentContributor"],
         take,
         skip,
       });
     return getPagingData({ data: contributorMemberships, size, page });
+  }
+
+  // DELETE CONTRIBUTOR MEMBERSHIP
+  async deleteContributorMembership(id: string): Promise<void> {
+    await this.contributorMembershipRepository.delete(id);
   }
 }

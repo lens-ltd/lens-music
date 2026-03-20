@@ -19,6 +19,7 @@ import ContributorsPage from './pages/contributors/ContributorsPage';
 import CreateContributorPage from './pages/contributors/CreateContributorPage';
 import UpdateContributorPage from './pages/contributors/UpdateContributorPage';
 import ContributorDetailsPage from './pages/contributors/ContributorDetailsPage';
+import ContributorMembershipsPage from './pages/contributors/ContributorMembershipsPage';
 
 const Router = () => {
   return (
@@ -58,6 +59,7 @@ const Router = () => {
             <Route path="" element={<ContributorsPage />} />
             <Route path="create" element={<CreateContributorPage />} />
             <Route path=":id/update" element={<UpdateContributorPage />} />
+            <Route path=":id/memberships" element={<ContributorMembershipsPage />} />
             <Route path=":id" element={<ContributorDetailsPage />} />
           </Route>
 

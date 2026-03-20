@@ -1,7 +1,7 @@
 import store from 'store';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '@/constants/environments.constants';
-import type { CreateContributorPayload, UpdateContributorPayload } from '@/types/models/contributor.types';
+import type { CreateContributorPayload, CreateContributorMembershipPayload, UpdateContributorPayload } from '@/types/models/contributor.types';
 
 export const apiMutationSlice = createApi({
   reducerPath: 'apiMutation',
@@ -149,6 +149,23 @@ export const apiMutationSlice = createApi({
           method: 'DELETE',
         }),
       }),
+
+      // CREATE CONTRIBUTOR MEMBERSHIP
+      createContributorMembership: builder.mutation({
+        query: (body: CreateContributorMembershipPayload) => ({
+          url: '/contributor-memberships',
+          method: 'POST',
+          body,
+        }),
+      }),
+
+      // DELETE CONTRIBUTOR MEMBERSHIP
+      deleteContributorMembership: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/contributor-memberships/${id}`,
+          method: 'DELETE',
+        }),
+      }),
     };
   },
 });
@@ -166,5 +183,7 @@ export const {
   useCreateContributorMutation,
   useUpdateContributorMutation,
   useDeleteContributorMutation,
+  useCreateContributorMembershipMutation,
+  useDeleteContributorMembershipMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

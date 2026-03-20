@@ -10,318 +10,420 @@ import { useAppSelector } from "@/state/hooks";
 import { UUID } from "@/types/common.types";
 import { capitalizeString } from "@/utils/strings.helper";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
-    buildContributorPayload,
-    contributorGenderOptions,
-    ContributorFormValues,
-    getContributorFormDefaults,
-    socialProfileFields,
-    statusOptions,
-    storeProfileFields,
+  buildContributorPayload,
+  contributorGenderOptions,
+  ContributorFormValues,
+  contributorTypeOptions,
+  getContributorFormDefaults,
+  socialProfileFields,
+  statusOptions,
+  storeProfileFields,
 } from "./contributorForm";
+import { Contributor } from "@/types/models/contributor.types";
+import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 
 const UpdateContributorPage = () => {
+  // STATE
+  const { contributor } = useAppSelector((state) => state.contributor);
 
-    // STATE
-    const { contributor } = useAppSelector((state) => state.contributor);
+  // NAVIGATION
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: UUID }>();
+  const [searchParams] = useSearchParams();
 
-    // NAVIGATION
-    const navigate = useNavigate();
-    const { id } = useParams<{ id: UUID }>();
-    const [searchParams] = useSearchParams();
+  // REACT HOOK FORM
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<ContributorFormValues>({
+    defaultValues: getContributorFormDefaults(),
+  });
 
-    // REACT HOOK FORM
-    const {
-        control,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<ContributorFormValues>({
-        defaultValues: getContributorFormDefaults(),
+  // BELONGS TO GROUP CHECKBOX
+  const [belongsToGroup, setBelongsToGroup] = useState(false);
+
+  // FETCH CONTRIBUTORS FOR PARENT SELECTION
+  const [fetchContributors, { data: contributorsData }] =
+    useLazyFetchContributorsQuery();
+
+  useEffect(() => {
+    if (belongsToGroup) {
+      fetchContributors({ page: 0, size: 100 });
+    } else {
+      setValue("parentContributorId", undefined);
+    }
+  }, [belongsToGroup, fetchContributors, setValue]);
+
+  const parentContributorOptions = (
+    (contributorsData?.data?.rows as Contributor[]) || []
+  )
+    .filter((c) => c.id !== id)
+    .map((c) => ({
+      label: c.displayName || c.name || "",
+      value: c.id,
+    }));
+
+  // FETCH CONTRIBUTOR
+  const { getContributor, isFetching } = useGetContributor();
+
+  // UPDATE CONTRIBUTOR
+  const [
+    updateContributor,
+    {
+      isLoading,
+      isSuccess,
+      isError,
+      error,
+      data,
+      reset: resetUpdateContributor,
+    },
+  ] = useUpdateContributorMutation();
+
+  useEffect(() => {
+    if (id) {
+      getContributor({ id });
+    }
+  }, [getContributor, id]);
+
+  // SET FORM DEFAULTS
+  useEffect(() => {
+    if (contributor) {
+      reset(getContributorFormDefaults(contributor));
+    }
+  }, [contributor, reset]);
+
+  // HANDLE ERROR
+  useEffect(() => {
+    if (isError) {
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "An error occurred while updating the contributor.";
+      toast.error(errorMessage);
+    }
+
+    // HANDLE SUCCESS
+    if (isSuccess) {
+      toast.success(data?.message || "Contributor updated successfully.");
+      resetUpdateContributor();
+      if (searchParams.get("redirect")) {
+        navigate(searchParams.get("redirect") as string);
+      } else {
+        navigate("/contributors");
+      }
+    }
+  }, [
+    data?.message,
+    error,
+    isError,
+    isSuccess,
+    navigate,
+    resetUpdateContributor,
+    searchParams,
+  ]);
+
+  // HANDLE FORM SUBMISSION
+  const onSubmit = handleSubmit((formValues) => {
+    if (!id) {
+      toast.error("Contributor ID is missing.");
+      return;
+    }
+
+    updateContributor({
+      id,
+      body: buildContributorPayload(formValues),
     });
+  });
 
-    // FETCH CONTRIBUTOR
-    const { getContributor, isFetching } = useGetContributor();
+  return (
+    <UserLayout>
+      <main className="w-full flex flex-col gap-6">
+        <header className="flex w-full items-center justify-between gap-3">
+          <Heading>Update contributor</Heading>
+        </header>
 
-    // UPDATE CONTRIBUTOR
-    const [
-        updateContributor,
-        {
-            isLoading,
-            isSuccess,
-            isError,
-            error,
-            data,
-            reset: resetUpdateContributor,
-        },
-    ] = useUpdateContributorMutation();
+        <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
+          <section
+            className="w-full flex flex-col gap-4"
+            aria-labelledby="contributor-personal-heading"
+          >
+            <header className="flex flex-col gap-1">
+              <Heading type="h3" id="contributor-personal-heading">
+                Personal information
+              </Heading>
+              <p className="text-[12px] font-normal text-gray-500">
+                Review and update the supported contributor details and profile
+                references.
+              </p>
+            </header>
 
-    useEffect(() => {
-        if (id) {
-            getContributor({ id });
-        }
-    }, [getContributor, id]);
+            <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
+                name="displayName"
+                control={control}
+                rules={{ required: "Please enter the display name" }}
+                render={({ field }) => (
+                  <Input
+                    label="Display name/Artist name"
+                    placeholder="Enter the display name/artist name"
+                    {...field}
+                    errorMessage={errors?.displayName?.message}
+                    required
+                  />
+                )}
+              />
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="Full name"
+                    placeholder="Enter the contributor's government name"
+                    {...field}
+                    errorMessage={errors?.name?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="email"
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^\S+@\S+\.\S+$/,
+                    message: "Please enter a valid email address",
+                  },
+                }}
+                render={({ field }) => (
+                  <Input
+                    label="Email"
+                    placeholder="name@example.com"
+                    type="email"
+                    {...field}
+                    errorMessage={errors?.email?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="phoneNumber"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="Phone number"
+                    placeholder="Enter a phone number"
+                    {...field}
+                    errorMessage={errors?.phoneNumber?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    label="Country"
+                    placeholder="Select the country"
+                    {...field}
+                    options={COUNTRIES_LIST.map((country) => ({
+                      label: capitalizeString(country?.name),
+                      value: country?.code,
+                    }))}
+                    errorMessage={errors?.country?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    label="Gender"
+                    placeholder="Select gender"
+                    {...field}
+                    options={contributorGenderOptions}
+                    errorMessage={errors?.gender?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="dateOfBirth"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="Date of birth"
+                    placeholder="Select date of birth"
+                    type="date"
+                    value={field.value}
+                    onChange={field.onChange}
+                    errorMessage={errors?.dateOfBirth?.message}
+                    toDate={new Date()}
+                  />
+                )}
+              />
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    label="Status"
+                    placeholder="Select contributor status"
+                    {...field}
+                    options={statusOptions}
+                    errorMessage={errors?.status?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    label="Contributor type"
+                    placeholder="Select contributor type"
+                    {...field}
+                    options={contributorTypeOptions}
+                    errorMessage={errors?.type?.message}
+                  />
+                )}
+              />
+            </fieldset>
+          </section>
 
-    // SET FORM DEFAULTS
-    useEffect(() => {
-        if (contributor) {
-            reset(getContributorFormDefaults(contributor));
-        }
-    }, [contributor, reset]);
+          <section
+            className="w-full flex flex-col gap-4"
+            aria-labelledby="contributor-group-heading"
+          >
+            <header className="flex flex-col gap-1">
+              <Heading type="h3" id="contributor-group-heading">
+                Group membership
+              </Heading>
+              <p className="text-[12px] font-normal text-gray-500">
+                Optionally associate this contributor with a parent group.
+              </p>
+            </header>
 
-    // HANDLE ERROR
-    useEffect(() => {
-        if (isError) {
-            const errorMessage =
-                (error as { data?: { message?: string } })?.data?.message ||
-                "An error occurred while updating the contributor.";
-            toast.error(errorMessage);
-        }
+            <label className="flex items-center gap-2 cursor-pointer w-fit">
+              <input
+                type="checkbox"
+                checked={belongsToGroup}
+                onChange={(e) => setBelongsToGroup(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <span className="text-[13px] text-gray-700">
+                This contributor belongs to a group
+              </span>
+            </label>
 
-        // HANDLE SUCCESS
-        if (isSuccess) {
-            toast.success(data?.message || "Contributor updated successfully.");
-            resetUpdateContributor();
-            if (searchParams.get("redirect")) {
-                navigate(searchParams.get("redirect") as string);
-            }
-            else {
-                navigate("/contributors");
-            }
-        }
-    }, [data?.message, error, isError, isSuccess, navigate, resetUpdateContributor]);
+            {belongsToGroup && (
+              <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="parentContributorId"
+                  control={control}
+                  render={({ field }) => (
+                    <Combobox
+                      label="Parent group"
+                      placeholder="Search and select a contributor"
+                      {...field}
+                      options={parentContributorOptions}
+                      errorMessage={errors?.parentContributorId?.message}
+                    />
+                  )}
+                />
+              </fieldset>
+            )}
+          </section>
 
-    // HANDLE FORM SUBMISSION
-    const onSubmit = handleSubmit((formValues) => {
-        if (!id) {
-            toast.error("Contributor ID is missing.");
-            return;
-        }
+          <section
+            className="w-full flex flex-col gap-4"
+            aria-labelledby="contributor-social-heading"
+          >
+            <header className="flex flex-col gap-1">
+              <Heading type="h3" id="contributor-social-heading">
+                Social media
+              </Heading>
+              <p className="text-[12px] font-normal text-gray-500">
+                Supported links are stored as contributor profile links.
+              </p>
+            </header>
 
-        updateContributor({
-            id,
-            body: buildContributorPayload(formValues),
-        });
-    });
+            <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+              {socialProfileFields.map((field) => (
+                <Controller
+                  key={field.name}
+                  name={field.name}
+                  control={control}
+                  render={({ field: controllerField }) => (
+                    <Input
+                      label={field.label}
+                      placeholder={field.placeholder}
+                      {...controllerField}
+                    />
+                  )}
+                />
+              ))}
+            </fieldset>
+          </section>
 
-    return (
-        <UserLayout>
-            <main className="w-full flex flex-col gap-6">
-                <header className="flex w-full items-center justify-between gap-3">
-                    <Heading>Update contributor</Heading>
-                </header>
+          <section
+            className="w-full flex flex-col gap-4"
+            aria-labelledby="contributor-stores-heading"
+          >
+            <header className="flex flex-col gap-1">
+              <Heading type="h3" id="contributor-stores-heading">
+                Store IDs
+              </Heading>
+              <p className="text-[12px] font-normal text-gray-500">
+                Update supported store identifiers or profile URLs. Unsupported
+                services from the reference screen are intentionally excluded.
+              </p>
+            </header>
 
-                <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
-                    <section className="w-full flex flex-col gap-4" aria-labelledby="contributor-personal-heading">
-                        <header className="flex flex-col gap-1">
-                            <Heading type="h3" id="contributor-personal-heading">
-                                Personal information
-                            </Heading>
-                            <p className="text-[12px] font-normal text-gray-500">
-                                Review and update the supported contributor details and profile references.
-                            </p>
-                        </header>
+            <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+              {storeProfileFields.map((field) => (
+                <Controller
+                  key={field.name}
+                  name={field.name}
+                  control={control}
+                  render={({ field: controllerField }) => (
+                    <Input
+                      label={field.label}
+                      placeholder={field.placeholder}
+                      {...controllerField}
+                    />
+                  )}
+                />
+              ))}
+            </fieldset>
+          </section>
 
-                        <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Controller
-                                name="displayName"
-                                control={control}
-                                rules={{ required: "Please enter the display name" }}
-                                render={({ field }) => (
-                                    <Input
-                                        label="Display name/Artist name"
-                                        placeholder="Enter the display name/artist name"
-                                        {...field}
-                                        errorMessage={errors?.displayName?.message}
-                                        required
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="name"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        label="Full name"
-                                        placeholder="Enter the contributor's government name"
-                                        {...field}
-                                        errorMessage={errors?.name?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="email"
-                                control={control}
-                                rules={{
-                                    pattern: {
-                                        value: /^\S+@\S+\.\S+$/,
-                                        message: "Please enter a valid email address",
-                                    },
-                                }}
-                                render={({ field }) => (
-                                    <Input
-                                        label="Email"
-                                        placeholder="name@example.com"
-                                        type="email"
-                                        {...field}
-                                        errorMessage={errors?.email?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="phoneNumber"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        label="Phone number"
-                                        placeholder="Enter a phone number"
-                                        {...field}
-                                        errorMessage={errors?.phoneNumber?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="country"
-                                control={control}
-                                render={({ field }) => (
-                                    <Combobox
-                                        label="Country"
-                                        placeholder="Select the country"
-                                        {...field}
-                                        options={COUNTRIES_LIST.map((country) => ({
-                                            label: capitalizeString(country?.name),
-                                            value: country?.code,
-                                        }))}
-                                        errorMessage={errors?.country?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="gender"
-                                control={control}
-                                render={({ field }) => (
-                                    <Combobox
-                                        label="Gender"
-                                        placeholder="Select gender"
-                                        {...field}
-                                        options={contributorGenderOptions}
-                                        errorMessage={errors?.gender?.message}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="dateOfBirth"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        label="Date of birth"
-                                        placeholder="Select date of birth"
-                                        type="date"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        errorMessage={errors?.dateOfBirth?.message}
-                                        toDate={new Date()}
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="status"
-                                control={control}
-                                render={({ field }) => (
-                                    <Combobox
-                                        label="Status"
-                                        placeholder="Select contributor status"
-                                        {...field}
-                                        options={statusOptions}
-                                        errorMessage={errors?.status?.message}
-                                    />
-                                )}
-                            />
-                        </fieldset>
-                    </section>
-
-                    <section className="w-full flex flex-col gap-4" aria-labelledby="contributor-social-heading">
-                        <header className="flex flex-col gap-1">
-                            <Heading type="h3" id="contributor-social-heading">
-                                Social media
-                            </Heading>
-                            <p className="text-[12px] font-normal text-gray-500">
-                                Supported links are stored as contributor profile links.
-                            </p>
-                        </header>
-
-                        <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {socialProfileFields.map((field) => (
-                                <Controller
-                                    key={field.name}
-                                    name={field.name}
-                                    control={control}
-                                    render={({ field: controllerField }) => (
-                                        <Input
-                                            label={field.label}
-                                            placeholder={field.placeholder}
-                                            {...controllerField}
-                                        />
-                                    )}
-                                />
-                            ))}
-                        </fieldset>
-                    </section>
-
-                    <section className="w-full flex flex-col gap-4" aria-labelledby="contributor-stores-heading">
-                        <header className="flex flex-col gap-1">
-                            <Heading type="h3" id="contributor-stores-heading">
-                                Store IDs
-                            </Heading>
-                            <p className="text-[12px] font-normal text-gray-500">
-                                Update supported store identifiers or profile URLs. Unsupported services from the reference screen are intentionally excluded.
-                            </p>
-                        </header>
-
-                        <fieldset className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {storeProfileFields.map((field) => (
-                                <Controller
-                                    key={field.name}
-                                    name={field.name}
-                                    control={control}
-                                    render={({ field: controllerField }) => (
-                                        <Input
-                                            label={field.label}
-                                            placeholder={field.placeholder}
-                                            {...controllerField}
-                                        />
-                                    )}
-                                />
-                            ))}
-                        </fieldset>
-                    </section>
-
-                    <footer className="flex w-full items-center justify-between gap-3">
-                        <Button
-                            onClick={(event) => {
-                                event.preventDefault();
-                                navigate(-1);
-                            }}
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            icon={faSave}
-                            primary
-                            submit
-                            isLoading={isLoading || isFetching}
-                        >
-                            Update
-                        </Button>
-                    </footer>
-                </form>
-            </main>
-        </UserLayout>
-    );
+          <footer className="flex w-full items-center justify-between gap-3">
+            <Button
+              onClick={(event) => {
+                event.preventDefault();
+                navigate(-1);
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              icon={faSave}
+              primary
+              submit
+              isLoading={isLoading || isFetching}
+            >
+              Update
+            </Button>
+          </footer>
+        </form>
+      </main>
+    </UserLayout>
+  );
 };
 
 export default UpdateContributorPage;

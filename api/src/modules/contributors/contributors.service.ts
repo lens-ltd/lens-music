@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
 import {
   getPagination,
@@ -53,6 +53,7 @@ export class ContributorService {
       profileLinks: dto.profileLinks,
       status: dto.status,
       verificationStatus: dto.verificationStatus,
+      type: dto.type,
       createdById,
     });
 
@@ -71,16 +72,31 @@ export class ContributorService {
     size,
     page,
     condition,
+    searchName,
   }: {
     size?: number;
     page?: number;
     condition?: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[];
+    searchName?: string;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
-    const data = await this.contributorRepository.findAndCount({
-      where: Array.isArray(condition)
+
+    let where: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[] | undefined;
+
+    if (searchName) {
+      const baseCondition = (Array.isArray(condition) ? condition[0] : condition) || {};
+      where = [
+        { ...baseCondition, displayName: ILike(`%${searchName}%`) },
+        { ...baseCondition, name: ILike(`%${searchName}%`) },
+      ];
+    } else {
+      where = Array.isArray(condition)
         ? (condition as FindOptionsWhere<Contributor>[])
-        : (condition as FindOptionsWhere<Contributor>),
+        : (condition as FindOptionsWhere<Contributor>);
+    }
+
+    const data = await this.contributorRepository.findAndCount({
+      where,
       take,
       skip,
       order: { createdAt: "DESC" },
@@ -126,6 +142,7 @@ export class ContributorService {
     if (dto.verificationStatus !== undefined) {
       contributor.verificationStatus = dto.verificationStatus;
     }
+    if (dto.type !== undefined) contributor.type = dto.type;
 
     return this.contributorRepository.save(contributor);
   }

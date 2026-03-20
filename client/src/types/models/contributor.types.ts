@@ -1,7 +1,17 @@
+import { UUID } from '../common.types';
+import { AbstractEntity } from './index.types';
 import type { Person } from './person.types';
 import type { User } from './user.types';
 
 export { Gender } from '../../constants/person.constants';
+
+export enum ContributorType {
+  INDIVIDUAL = 'INDIVIDUAL',
+  GROUP = 'GROUP',
+  ORCHESTRA = 'ORCHESTRA',
+  CHOIR = 'CHOIR',
+  OTHER = 'OTHER',
+}
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -46,6 +56,8 @@ export interface CreateContributorPayload {
   profileLinks?: ContributorProfileLink[];
   status?: UserStatus;
   verificationStatus?: ContributorVerificationStatus;
+  type?: ContributorType;
+  parentContributorId?: string;
 }
 
 export interface UpdateContributorPayload extends Partial<CreateContributorPayload> {}
@@ -57,5 +69,18 @@ export interface Contributor extends Person {
   verifiedAt: Date;
   profileLinks?: ContributorProfileLink[];
   status: UserStatus;
+  type?: ContributorType;
   verifiedBy: User;
+}
+
+export interface ContributorMembership extends AbstractEntity {
+  parentContributorId: UUID;
+  memberContributorId: UUID;
+  parentContributor?: Contributor;
+  memberContributor?: Contributor;
+}
+
+export interface CreateContributorMembershipPayload {
+  parentContributorId: string;
+  memberContributorId: string;
 }

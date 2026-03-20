@@ -2,6 +2,7 @@ import { genderOptions } from "@/constants/input.constants";
 import {
     Contributor,
     ContributorProfileLinkType,
+    ContributorType,
     ContributorVerificationStatus,
     CreateContributorPayload,
     UserStatus,
@@ -18,6 +19,8 @@ export type ContributorFormValues = {
     dateOfBirth?: Date | string;
     status?: UserStatus;
     verificationStatus?: ContributorVerificationStatus;
+    type?: ContributorType;
+    parentContributorId?: string;
     homepage?: string;
     facebook?: string;
     twitter?: string;
@@ -63,6 +66,17 @@ export const verificationStatusOptions = Object.values(ContributorVerificationSt
 }));
 
 export const contributorGenderOptions = genderOptions;
+
+export const contributorTypeOptions = Object.values(ContributorType).map((value) => ({
+    label: capitalizeString(value),
+    value,
+}));
+
+export const GROUP_CONTRIBUTOR_TYPES = [
+    ContributorType.GROUP,
+    ContributorType.ORCHESTRA,
+    ContributorType.CHOIR,
+];
 
 const allProfileFields = [...socialProfileFields, ...storeProfileFields];
 
@@ -113,6 +127,8 @@ export const buildContributorPayload = (
         status: formValues.status,
         verificationStatus: formValues.verificationStatus,
         profileLinks: profileLinks.length ? profileLinks : undefined,
+        type: formValues.type,
+        parentContributorId: normalizeValue(formValues.parentContributorId),
     };
 };
 
@@ -130,6 +146,7 @@ export const getContributorFormDefaults = (
         status: contributor?.status || UserStatus.ACTIVE,
         verificationStatus:
             contributor?.verificationStatus || ContributorVerificationStatus.NOT_VERIFIED,
+        type: contributor?.type || ContributorType.INDIVIDUAL,
     };
 
     contributor?.profileLinks?.forEach((profileLink) => {
