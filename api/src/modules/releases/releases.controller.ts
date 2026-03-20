@@ -9,13 +9,17 @@ import {
   Param,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { ReleaseService } from './releases.service';
 import { ReleaseQueryService } from './releases-query.service';
+import { memoryStorage } from 'multer';
 
 @Controller('releases')
 @UseGuards(JwtAuthGuard)
@@ -29,6 +33,21 @@ export class ReleasesController {
   async createRelease(@Body() dto: CreateReleaseDto, @CurrentUser() user: AuthUser) {
     const release = await this.releaseService.createRelease(dto, user.id);
     return { message: 'Release created successfully', data: release };
+  }
+
+  @Post(':id/cover-art')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+    }),
+  )
+  async uploadReleaseCoverArt(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const release = await this.releaseService.uploadCoverArt(id, file, user);
+    return { message: 'Release cover art uploaded successfully', data: release };
   }
 
   @Get()

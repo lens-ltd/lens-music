@@ -37,6 +37,10 @@ export class Release extends AbstractEntity {
   @Column({ name: 'version', type: 'varchar', length: 255, nullable: true })
   version?: string;
 
+  // COVER ART
+  @Column({ name: 'cover_art_url', type: 'varchar', length: 1024, nullable: true })
+  coverArtUrl?: string;
+
   // PRODUCTION YEAR
   @Column({ name: 'production_year', type: 'integer', nullable: true })
   productionYear: number;

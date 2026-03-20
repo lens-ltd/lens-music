@@ -118,7 +118,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type="radio"
             name={name}
-            value={value}
+            value={value as string | number | readonly string[] | undefined}
             defaultChecked={defaultChecked}
             checked={checked}
             onChange={onChange}
@@ -144,7 +144,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type="button"
             onClick={() => hiddenFileInput.current?.click()}
             className={cn(
-              'inline-flex h-9 items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]',
+              'inline-flex h-9 cursor-pointer items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]',
               className
             )}
           >
@@ -165,7 +165,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     if (type === 'date') {
       return (
-        <label className={cn('flex w-full flex-col gap-1.5', labelClassName)}>
+        <label className={cn('flex w-full flex-col gap-2', labelClassName)}>
           {label && (
             <span className={fieldLabelClasses}>
               {label} {required && <span className={helperRequiredClasses}>*</span>}

@@ -34,6 +34,7 @@ export interface Release extends AbstractEntity {
   title: string;
   upc?: string;
   version?: string;
+  coverArtUrl?: string;
   productionYear: number;
   catalogNumber?: string;
   titleVersion?: string;

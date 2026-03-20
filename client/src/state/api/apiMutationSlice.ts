@@ -101,6 +101,16 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      // UPLOAD RELEASE COVER ART
+      uploadReleaseCoverArt: builder.mutation({
+        query: ({ id, formData }: { id: string; formData: FormData }) => ({
+          url: `/releases/${id}/cover-art`,
+          method: 'POST',
+          body: formData,
+          formData: true,
+        }),
+      }),
+
       // CREATE RELEASE NAVIGATION FLOW
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
@@ -178,6 +188,7 @@ export const {
   useCreateArtistMutation,
   useCreateReleaseMutation,
   useDeleteReleaseMutation,
+  useUploadReleaseCoverArtMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
   useCreateContributorMutation,
