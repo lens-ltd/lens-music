@@ -7,6 +7,7 @@ import labelSlice from './features/labelSlice';
 import sidebarSlice from './features/sidebarSlice';
 import apiQuerySlice from './api/apiQuerySlice';
 import releaseSlice from './features/releaseSlice';
+import trackSlice from './features/trackSlice';
 import lyricSlice from './features/lyricSlice';
 import navigationSlice from './features/navigationSlice';
 import contributorSlice from './features/contributorSlice';
@@ -22,6 +23,7 @@ export const store = configureStore({
     label: labelSlice,
     sidebar: sidebarSlice,
     release: releaseSlice,
+    track: trackSlice,
     lyric: lyricSlice,
     navigation: navigationSlice,
     contributor: contributorSlice,
