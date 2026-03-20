@@ -72,22 +72,29 @@ export class ContributorService {
     size,
     page,
     condition,
+    searchKey,
     searchName,
   }: {
     size?: number;
     page?: number;
     condition?: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[];
+    searchKey?: string;
     searchName?: string;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
 
     let where: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[] | undefined;
 
-    if (searchName) {
+    const normalizedSearchKey = searchKey || searchName;
+
+    if (normalizedSearchKey) {
       const baseCondition = (Array.isArray(condition) ? condition[0] : condition) || {};
       where = [
-        { ...baseCondition, displayName: ILike(`%${searchName}%`) },
-        { ...baseCondition, name: ILike(`%${searchName}%`) },
+        { ...baseCondition, displayName: ILike(`%${normalizedSearchKey}%`) },
+        { ...baseCondition, name: ILike(`%${normalizedSearchKey}%`) },
+        { ...baseCondition, email: ILike(`%${normalizedSearchKey}%`) },
+        { ...baseCondition, phoneNumber: ILike(`%${normalizedSearchKey}%`) },
+        { ...baseCondition, country: ILike(`%${normalizedSearchKey}%`) },
       ];
     } else {
       where = Array.isArray(condition)

@@ -10,10 +10,13 @@ import { AbstractEntity } from "./abstract.entity";
 import { UUID } from "../types/common.types";
 import { Release } from "./release.entity";
 import { Lyrics } from "./lyrics.entity";
+import { AudioFile } from "./audio-file.entity";
+import { TrackContributor } from "./track-contributor.entity";
 import { ReleaseParentalAdvisory } from "../constants/release.constants";
 
 export enum TrackStatus {
   DRAFT = "DRAFT",
+  VALIDATED = "VALIDATED",
   READY = "READY",
   DELIVERED = "DELIVERED",
   LIVE = "LIVE",
@@ -74,7 +77,7 @@ export class Track extends AbstractEntity {
   parentalAdvisory!: ReleaseParentalAdvisory;
 
   // PRIMARY LANGUAGE
-  @Column({ name: "primary_language", type: "char", length: 5, nullable: true })
+  @Column({ name: "primary_language", type: "varchar", length: 5, nullable: true })
   primaryLanguage?: string;
 
   // PREVIEW START (MILLISECONDS)
@@ -126,4 +129,12 @@ export class Track extends AbstractEntity {
   // LYRICS
   @OneToMany(() => Lyrics, (lyrics) => lyrics.track)
   lyrics!: Lyrics[];
+
+  // AUDIO FILES
+  @OneToMany(() => AudioFile, (audioFile) => audioFile.track)
+  audioFiles!: AudioFile[];
+
+  // TRACK CONTRIBUTORS
+  @OneToMany(() => TrackContributor, (trackContributor) => trackContributor.track)
+  trackContributors!: TrackContributor[];
 }

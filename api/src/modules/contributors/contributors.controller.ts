@@ -39,6 +39,7 @@ export class ContributorsController {
     @Query('page') page = '0',
     @Query('parentContributorId') parentContributorId?: UUID,
     @Query('type') type?: string,
+    @Query('searchKey') searchKey?: string,
     @Query('searchName') searchName?: string,
   ) {
     const condition: FindOptionsWhere<Contributor> = {};
@@ -53,6 +54,7 @@ export class ContributorsController {
       size: Number(size),
       page: Number(page),
       condition: Object.keys(condition).length > 0 ? condition : undefined,
+      searchKey,
       searchName,
     });
     return { message: 'Contributors fetched successfully', data };

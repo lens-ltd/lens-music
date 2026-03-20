@@ -13,6 +13,7 @@ import { StaticReleaseNavigationModule } from './modules/static-release-navigati
 import { ReleaseNavigationFlowsModule } from './modules/release-navigation-flows/release-navigation-flows.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
 import { TracksModule } from './modules/tracks/tracks.module';
+import { TrackContributorsModule } from './modules/track-contributors/track-contributors.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { TracksModule } from './modules/tracks/tracks.module';
     ReleaseNavigationFlowsModule,
     ContributorsModule,
     TracksModule,
+    TrackContributorsModule,
   ],
 })
 export class AppModule {}

@@ -1,20 +1,26 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   CurrentUser,
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { CreateTrackDto } from "./dto/create-track.dto";
+import { UpdateTrackDto } from "./dto/update-track.dto";
 import { TrackService } from "./tracks.service";
 import { TrackQueryService } from "./tracks-query.service";
 import { UUID } from "../../types/common.types";
@@ -35,6 +41,45 @@ export class TracksController {
   ) {
     const track = await this.trackService.createTrack(dto, user.id);
     return { message: "Track created successfully", data: track };
+  }
+
+  @Patch(":id")
+  async updateTrack(@Param("id") id: string, @Body() dto: UpdateTrackDto) {
+    const track = await this.trackService.updateTrack(id as UUID, dto);
+    return { message: "Track updated successfully", data: track };
+  }
+
+  @Post(":id/validate")
+  @HttpCode(HttpStatus.OK)
+  async validateTrack(@Param("id") id: string) {
+    const result = await this.trackService.validateTrack(id as UUID);
+    return { message: "Track validation completed", data: result };
+  }
+
+  @Post(":id/audio")
+  @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadAudio(
+    @Param("id") id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const audioFile = await this.trackService.uploadAudio(
+      id as UUID,
+      file,
+      user.id,
+    );
+    return { message: "Audio file uploaded successfully", data: audioFile };
+  }
+
+  @Delete(":id/audio/:audioFileId")
+  @HttpCode(HttpStatus.OK)
+  async deleteAudio(
+    @Param("id") id: string,
+    @Param("audioFileId") audioFileId: string,
+  ) {
+    await this.trackService.deleteAudio(id as UUID, audioFileId as UUID);
+    return { message: "Audio file deleted successfully" };
   }
 
   @Get(":id")

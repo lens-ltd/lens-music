@@ -37,7 +37,7 @@ const Select = ({
 }: SelectProps) => {
   return (
     <label className={`flex flex-col gap-1 w-full ${labelClassName}`}>
-      <p className={label ? 'flex items-center gap-1 text-[14px]' : 'hidden'}>
+      <p className={label ? 'flex items-center gap-1 text-[12px]' : 'hidden'}>
         {label} <span className={required ? `text-red-600` : 'hidden'}>*</span>
       </p>
       <SelectComponent
@@ -52,7 +52,7 @@ const Select = ({
           <SelectValue
             className="text-[10px]!"
             placeholder={
-              <p className="text-[14px] text-gray-500">{placeholder}</p>
+              <p className="text-[12px] text-gray-500">{placeholder}</p>
             }
           />
         </SelectTrigger>
@@ -64,9 +64,9 @@ const Select = ({
                   key={index}
                   value={option.value}
                   disabled={readOnly}
-                  className="cursor-pointer text-[13px] py-1 hover:bg-background"
+                  className="cursor-pointer text-[12px] py-1 hover:bg-background"
                 >
-                  <p className="text-[13px] py-[3px]">{option.label}</p>
+                  <p className="text-[12px] py-[3px]">{option.label}</p>
                 </SelectItem>
               );
             })}

@@ -40,10 +40,10 @@ export const useFetchReleaseNavigationFlows = () => {
 
   useEffect(() => {
     if (isSuccess && data?.data) {
-      dispatch(setReleaseNavigationFlows(data.data));
+      dispatch(setReleaseNavigationFlows(data?.data?.flows || []));
       dispatch(
         setActiveReleaseNavigationFlow(
-          data.data.find((flow) => flow.active) || undefined,
+          data?.data?.flows?.find((flow: ReleaseNavigationFlow) => flow?.active) || undefined,
         ),
       );
     }

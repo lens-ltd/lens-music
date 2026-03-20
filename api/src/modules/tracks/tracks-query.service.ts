@@ -12,6 +12,16 @@ export class TrackQueryService {
     private readonly trackRepository: Repository<Track>,
   ) {}
 
+  private normalizeTrack(track: Track | null): Track | null {
+    if (!track) return track;
+
+    if (typeof track.primaryLanguage === 'string') {
+      track.primaryLanguage = track.primaryLanguage.trim();
+    }
+
+    return track;
+  }
+
   async fetchAllTracks({
     releaseId,
     size,
@@ -31,10 +41,19 @@ export class TrackQueryService {
       skip,
     });
 
-    return getPagingData({ data: tracks, size, page });
+    return getPagingData({
+      data: [tracks[0].map((track) => this.normalizeTrack(track)), tracks[1]],
+      size,
+      page,
+    });
   }
 
   async getTrackById(id: UUID): Promise<Track | null> {
-    return this.trackRepository.findOne({ where: { id } });
+    return this.normalizeTrack(
+      await this.trackRepository.findOne({
+        where: { id },
+        relations: ["audioFiles", "trackContributors", "trackContributors.contributor"],
+      }),
+    );
   }
 }

@@ -26,7 +26,7 @@ interface InputProps {
   defaultValue?: string | number | Date;
   submit?: boolean;
   type?: string;
-  value?: string | number | Date;
+  value?: string | number | Date | boolean;
   suffixIcon?: IconProp;
   prefixIcon?: IconProp;
   suffixIconHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
@@ -46,6 +46,7 @@ interface InputProps {
   toDate?: Date;
   checked?: boolean;
   selectionType?: 'date' | 'month' | 'year' | 'recurringDate';
+  onBlur?: ((e: React.FocusEvent<HTMLInputElement>) => void) | undefined;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
 }
@@ -83,6 +84,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       toDate,
       checked,
       selectionType,
+      onBlur,
       onKeyPress,
       errorMessage,
     },
@@ -198,6 +200,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         name={name}
         ref={ref}
         onChange={onChange}
+        onBlur={onBlur}
         onKeyPress={onKeyPress}
         placeholder={readOnly ? '' : placeholder}
         className={cn(

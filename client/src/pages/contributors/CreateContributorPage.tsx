@@ -89,6 +89,13 @@ const CreateContributorPage = () => {
       reset();
       resetCreateContributor();
       if (searchParams.get("redirect")) {
+        if (["CLOSE_TAB"].includes(searchParams.get("redirect") as string)) {
+          // close tab
+          window.open("", "_self", "");
+          window.close();
+        } else {
+          navigate(searchParams.get("redirect") as string);
+        }
         navigate(searchParams.get("redirect") as string);
       } else {
         navigate("/contributors");

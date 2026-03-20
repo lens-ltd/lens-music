@@ -214,6 +214,64 @@ export const apiMutationSlice = createApi({
           },
         }),
       }),
+
+      // UPDATE TRACK
+      updateTrack: builder.mutation({
+        query: ({
+          id,
+          body,
+        }: {
+          id: string;
+          body: Record<string, unknown>;
+        }) => ({
+          url: `/tracks/${id}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      // UPLOAD TRACK AUDIO
+      uploadTrackAudio: builder.mutation({
+        query: ({ id, formData }: { id: string; formData: FormData }) => ({
+          url: `/tracks/${id}/audio`,
+          method: "POST",
+          body: formData,
+          formData: true,
+        }),
+      }),
+
+      // DELETE TRACK AUDIO
+      deleteTrackAudio: builder.mutation({
+        query: ({ id, audioFileId }: { id: string; audioFileId: string }) => ({
+          url: `/tracks/${id}/audio/${audioFileId}`,
+          method: "DELETE",
+        }),
+      }),
+
+      // VALIDATE TRACK
+      validateTrack: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/tracks/${id}/validate`,
+          method: "POST",
+        }),
+      }),
+
+      // CREATE TRACK CONTRIBUTOR
+      createTrackContributor: builder.mutation({
+        query: (body: { trackId: string; contributorId: string; role: string }) => ({
+          url: "/track-contributors",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      // DELETE TRACK CONTRIBUTOR
+      deleteTrackContributor: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/track-contributors/${id}`,
+          method: "DELETE",
+        }),
+      }),
     };
   },
 });
@@ -236,5 +294,11 @@ export const {
   useCreateContributorMembershipMutation,
   useDeleteContributorMembershipMutation,
   useCreateTrackMutation,
+  useUpdateTrackMutation,
+  useUploadTrackAudioMutation,
+  useDeleteTrackAudioMutation,
+  useValidateTrackMutation,
+  useCreateTrackContributorMutation,
+  useDeleteTrackContributorMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

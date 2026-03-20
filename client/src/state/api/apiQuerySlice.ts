@@ -88,11 +88,13 @@ export const apiQuerySlice = createApi({
           page,
           size,
           type,
+          searchKey,
           searchName,
         }: {
           page: number;
           size: number;
           type?: string;
+          searchKey?: string;
           searchName?: string;
         }) => {
           return {
@@ -102,6 +104,7 @@ export const apiQuerySlice = createApi({
               page,
               size,
               ...(type && { type }),
+              ...(searchKey && { searchKey }),
               ...(searchName && { searchName }),
             },
           };
@@ -156,6 +159,19 @@ export const apiQuerySlice = createApi({
       getTrack: builder.query({
         query: ({ id }) => `/tracks/${id}`,
       }),
+
+      // FETCH TRACK CONTRIBUTORS
+      fetchTrackContributors: builder.query({
+        query: ({ trackId }: { trackId: string }) => {
+          return {
+            url: "/track-contributors",
+            method: "GET",
+            params: {
+              trackId,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -172,5 +188,6 @@ export const {
   useLazyFetchContributorMembershipsQuery,
   useLazyFetchTracksQuery,
   useLazyGetTrackQuery,
+  useLazyFetchTrackContributorsQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;
