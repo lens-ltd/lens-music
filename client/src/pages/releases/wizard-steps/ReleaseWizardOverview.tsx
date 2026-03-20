@@ -3,31 +3,69 @@ import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
 import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Heading } from "@/components/text/Headings";
 import Input from "@/components/inputs/Input";
 import { useEffect, useMemo, useState } from "react";
 import Combobox from "@/components/inputs/Combobox";
 import { capitalizeString } from "@/utils/strings.helper";
-import { ReleaseType } from "@/types/models/release.types";
+import {
+  ReleaseParentalAdvisory,
+  ReleaseType,
+} from "@/types/models/release.types";
 import { getProductionYearOptions } from "@/utils/releases.helper";
 import Modal from "@/components/modals/Modal";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useUploadReleaseCoverArt } from "@/hooks/releases/release.hooks";
+import {
+  useUpdateReleaseOverview,
+  useUploadReleaseCoverArt,
+} from "@/hooks/releases/release.hooks";
 import { toast } from "sonner";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { LANGUAGES_LIST } from "@/constants/languages.constants";
+import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
+
+interface ReleaseOverviewFormValues {
+  type: ReleaseType;
+  title: string;
+  titleVersion?: string;
+  version?: string;
+  productionYear: string;
+  originalReleaseDate: string;
+  digitalReleaseDate: string;
+  preorderDate?: string;
+  cLine: {
+    year: string;
+    owner: string;
+  };
+  pLine: {
+    year: string;
+    owner: string;
+  };
+  parentalAdvisory: ReleaseParentalAdvisory;
+  primaryLanguage: string;
+}
 
 const getMutationErrorMessage = (error: unknown) => {
   if (typeof error !== "object" || !error) return "Failed to upload cover art";
 
-  const errorWithData = error as { data?: { message?: string } | string; error?: string };
+  const errorWithData = error as {
+    data?: { message?: string } | string;
+    error?: string;
+  };
 
   if (typeof errorWithData.data === "string") return errorWithData.data;
-  if (typeof errorWithData.data?.message === "string") return errorWithData.data.message;
+  if (typeof errorWithData.data?.message === "string")
+    return errorWithData.data.message;
   if (typeof errorWithData.error === "string") return errorWithData.error;
 
   return "Failed to upload cover art";
+};
+
+const normalizeOptionalString = (value?: string) => {
+  const normalizedValue = value?.trim();
+  return normalizedValue ? normalizedValue : undefined;
 };
 
 const ReleaseWizardOverview = ({
@@ -37,16 +75,31 @@ const ReleaseWizardOverview = ({
   // STATE
   const { release } = useAppSelector((state) => state.release);
   const [coverArtModalOpen, setCoverArtModalOpen] = useState(false);
-  const [selectedCoverArt, setSelectedCoverArt] = useState<File | undefined>(undefined);
-  const [coverArtError, setCoverArtError] = useState<string | undefined>(undefined);
+  const [selectedCoverArt, setSelectedCoverArt] = useState<File | undefined>(
+    undefined,
+  );
+  const [coverArtError, setCoverArtError] = useState<string | undefined>(
+    undefined,
+  );
 
   // NAVIGATION
   const navigate = useNavigate();
 
   // CREATE NAVIGATION FLOW
   const { createReleaseNavigationFlow } = useCreateReleaseNavigationFlow();
-  const { uploadReleaseCoverArt, isLoading: isUploadingCoverArt, reset: resetUploadReleaseCoverArt } =
-    useUploadReleaseCoverArt();
+  const {
+    uploadReleaseCoverArt,
+    isLoading: isUploadingCoverArt,
+    reset: resetUploadReleaseCoverArt,
+  } = useUploadReleaseCoverArt();
+  const {
+    updateReleaseOverview,
+    isLoading: isUpdatingReleaseOverview,
+    reset: resetUpdateReleaseOverview,
+  } = useUpdateReleaseOverview();
+  const [overviewError, setOverviewError] = useState<string | undefined>(
+    undefined,
+  );
 
   // REACT HOOK FORM
   const {
@@ -54,19 +107,88 @@ const ReleaseWizardOverview = ({
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm();
+  } = useForm<ReleaseOverviewFormValues>();
 
   // HANDLE SUBMISSION
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-  });
+  const onSubmit: SubmitHandler<ReleaseOverviewFormValues> = async (data) => {
+    if (!release?.id) {
+      setOverviewError("Release is not available yet");
+      return;
+    }
+
+    setOverviewError(undefined);
+    resetUpdateReleaseOverview();
+
+    const payload = {
+      title: data.title.trim(),
+      type: data.type,
+      titleVersion: normalizeOptionalString(data.titleVersion),
+      version: normalizeOptionalString(data.version),
+      productionYear: Number(data.productionYear),
+      originalReleaseDate: data.originalReleaseDate,
+      digitalReleaseDate: data.digitalReleaseDate,
+      preorderDate: normalizeOptionalString(data.preorderDate),
+      cLine: {
+        year: Number(data.cLine.year),
+        owner: data.cLine.owner.trim(),
+      },
+      pLine: {
+        year: Number(data.pLine.year),
+        owner: data.pLine.owner.trim(),
+      },
+      parentalAdvisory: data.parentalAdvisory,
+      primaryLanguage: data.primaryLanguage,
+    };
+
+    try {
+      const response = await updateReleaseOverview({
+        id: release.id,
+        body: payload,
+      }).unwrap();
+      toast.success(
+        response?.message || "Release overview updated successfully",
+      );
+
+      if (nextStepName) {
+        createReleaseNavigationFlow({
+          releaseId: release.id,
+          staticReleaseNavigationStepName: nextStepName,
+        });
+      }
+    } catch (error) {
+      setOverviewError(getMutationErrorMessage(error));
+    }
+  };
 
   // SET DEFAULT VALUES
   useEffect(() => {
     if (release) {
-      Object.entries(release).forEach(([key, value]) => {
-        setValue(key, value);
-      });
+      setValue("type", release.type || ReleaseType.ALBUM);
+      setValue("title", release.title || "");
+      setValue("titleVersion", release.titleVersion || "");
+      setValue("version", release.version || "");
+      setValue(
+        "productionYear",
+        release.productionYear ? String(release.productionYear) : "",
+      );
+      setValue("originalReleaseDate", release.originalReleaseDate || "");
+      setValue("digitalReleaseDate", release.digitalReleaseDate || "");
+      setValue("preorderDate", release.preorderDate || "");
+      setValue(
+        "cLine.year",
+        release.cLine?.year ? String(release.cLine.year) : "",
+      );
+      setValue("cLine.owner", release.cLine?.owner || "");
+      setValue(
+        "pLine.year",
+        release.pLine?.year ? String(release.pLine.year) : "",
+      );
+      setValue("pLine.owner", release.pLine?.owner || "");
+      setValue(
+        "parentalAdvisory",
+        release.parentalAdvisory || ReleaseParentalAdvisory.NOT_EXPLICIT,
+      );
+      setValue("primaryLanguage", release.primaryLanguage || "");
     }
   }, [release, setValue]);
 
@@ -77,7 +199,10 @@ const ReleaseWizardOverview = ({
     resetUploadReleaseCoverArt();
   };
 
-  const selectedFileName = useMemo(() => selectedCoverArt?.name, [selectedCoverArt]);
+  const selectedFileName = useMemo(
+    () => selectedCoverArt?.name,
+    [selectedCoverArt],
+  );
 
   const handleUploadCoverArt = async () => {
     if (!release?.id) {
@@ -96,8 +221,13 @@ const ReleaseWizardOverview = ({
     formData.append("file", selectedCoverArt);
 
     try {
-      const response = await uploadReleaseCoverArt({ id: release.id, formData }).unwrap();
-      toast.success(response?.message || "Release cover art uploaded successfully");
+      const response = await uploadReleaseCoverArt({
+        id: release.id,
+        formData,
+      }).unwrap();
+      toast.success(
+        response?.message || "Release cover art uploaded successfully",
+      );
       closeCoverArtModal();
     } catch (error) {
       setCoverArtError(getMutationErrorMessage(error));
@@ -106,48 +236,54 @@ const ReleaseWizardOverview = ({
 
   return (
     <section className="flex flex-col gap-4 w-full">
-      <form className="w-full flex flex-col gap-4" onSubmit={onSubmit}>
+      <form
+        className="w-full flex flex-col gap-6"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* COVER ART */}
         <menu className="w-full flex flex-col gap-3">
           <Heading type="h3">Cover Art</Heading>
-          <article className="w-full rounded-2xl border border-secondary/20 bg-white p-4 sm:p-5">
+          <article className="w-full rounded-md border border-secondary/20 bg-white p-4 sm:p-5">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
-                <figure className="w-full overflow-hidden rounded-xl border border-secondary/20 bg-secondary/5">
+                <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-md border border-secondary/20 bg-secondary/5">
                   <img
                     src={release.coverArtUrl}
                     alt={`${release?.title || "Release"} cover art`}
-                    className="h-56 w-full object-cover sm:h-72"
+                    className="aspect-square w-full object-cover"
                   />
                 </figure>
                 <menu className="flex items-center justify-between gap-3">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-[color:var(--lens-ink)]">Current cover art</p>
-                    <p className="text-[12px] text-secondary/80">
+                  <menu className="flex flex-col gap-1">
+                    <p className="text-sm font-medium text-[color:var(--lens-ink)]">
+                      Current cover art
+                    </p>
+                    <p className="text-[12px] text-secondary/80 font-normal">
                       This image will represent the release in the overview.
                     </p>
-                  </div>
-                  <Button
-                    type="button"
+                  </menu>
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    className="cursor-pointer text-primary hover:text-primary/80"
                     onClick={(e) => {
                       e.preventDefault();
                       setCoverArtModalOpen(true);
                     }}
-                    icon={faPenToSquare}
-                  >
-                    Update cover art
-                  </Button>
+                  />
                 </menu>
               </section>
             ) : (
               <section className="flex flex-col gap-4 rounded-xl border border-dashed border-secondary/30 bg-secondary/5 p-5">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-medium text-[color:var(--lens-ink)]">No cover art uploaded</p>
-                  <p className="text-[12px] text-secondary/80">
-                    Upload a release cover image to make it visible at the top of this overview.
+                <menu className="flex flex-col gap-1">
+                  <p className="text-sm font-medium text-[color:var(--lens-ink)]">
+                    No cover art uploaded
                   </p>
-                </div>
-                <div>
+                  <p className="text-[12px] text-secondary/80 font-normal">
+                    Upload a release cover image to make it visible at the top
+                    of this overview.
+                  </p>
+                </menu>
+                <menu>
                   <Button
                     primary
                     type="button"
@@ -158,7 +294,7 @@ const ReleaseWizardOverview = ({
                   >
                     Upload cover art
                   </Button>
-                </div>
+                </menu>
               </section>
             )}
           </article>
@@ -171,6 +307,7 @@ const ReleaseWizardOverview = ({
             <Controller
               name="type"
               control={control}
+              rules={{ required: "Please select the type" }}
               render={({ field }) => (
                 <Combobox
                   {...field}
@@ -181,6 +318,7 @@ const ReleaseWizardOverview = ({
                     label: capitalizeString(key),
                     value: value,
                   }))}
+                  errorMessage={errors?.type?.message}
                 />
               )}
             />
@@ -238,7 +376,7 @@ const ReleaseWizardOverview = ({
                   required
                   options={getProductionYearOptions()?.map((year) => ({
                     label: year.label,
-                    value: year.value,
+                    value: String(year.value),
                   }))}
                   errorMessage={errors?.productionYear?.message}
                 />
@@ -288,38 +426,147 @@ const ReleaseWizardOverview = ({
             />
           </fieldset>
         </menu>
+        <menu className="w-full flex flex-col gap-4">
+          <Heading type="h3">Rights</Heading>
+          <fieldset className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Controller
+              name="cLine.year"
+              control={control}
+              rules={{ required: `Please enter the Control Line year` }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  options={getProductionYearOptions()?.map((year) => ({
+                    label: year.label,
+                    value: String(year.value),
+                  }))}
+                  label="Control Line Year"
+                  placeholder="Select the Control Line year"
+                  required
+                  errorMessage={errors?.cLine?.year?.message}
+                />
+              )}
+            />
+            <Controller
+              name="cLine.owner"
+              control={control}
+              rules={{ required: `Please enter the Control Line owner` }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Control Line Owner"
+                  placeholder="Enter the Control Line owner"
+                  required
+                  errorMessage={errors?.cLine?.owner?.message}
+                />
+              )}
+            />
+            <Controller
+              name="pLine.year"
+              control={control}
+              rules={{ required: `Please enter the Performance Line year` }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  options={getProductionYearOptions()?.map((year) => ({
+                    label: year.label,
+                    value: String(year.value),
+                  }))}
+                  label="Performance Line Year"
+                  placeholder="Select the Performance Line year"
+                  required
+                  errorMessage={errors?.pLine?.year?.message}
+                />
+              )}
+            />
+            <Controller
+              name="pLine.owner"
+              control={control}
+              rules={{ required: `Please enter the Performance Line owner` }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Performance Line Owner"
+                  placeholder="Enter the Performance Line owner"
+                  required
+                  errorMessage={errors?.pLine?.owner?.message}
+                />
+              )}
+            />
+          </fieldset>
+        </menu>
+        <menu className="w-full flex flex-col gap-4">
+          <Heading type="h3">Additional Information</Heading>
+          <fieldset className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Controller
+              name="parentalAdvisory"
+              control={control}
+              rules={{ required: "Please select the parental advisory" }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  label="Parental Advisory"
+                  placeholder="Select the parental advisory"
+                  options={Object.entries(ReleaseParentalAdvisory).map(
+                    ([key, value]) => ({
+                      label: capitalizeString(key),
+                      value: value,
+                    }),
+                  )}
+                  required
+                  errorMessage={errors?.parentalAdvisory?.message}
+                />
+              )}
+            />
+            <Controller
+              name="primaryLanguage"
+              control={control}
+              rules={{ required: "Please select the primary language" }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  label="Primary Language"
+                  placeholder="Select the metadata language"
+                  options={LANGUAGES_LIST.map((language) => ({
+                    label: language.name,
+                    value: language.code,
+                  }))}
+                  required
+                  errorMessage={errors?.primaryLanguage?.message}
+                />
+              )}
+            />
+          </fieldset>
+        </menu>
+        {overviewError && (
+          <InputErrorMessage message={overviewError} className="mt-[-4px]" />
+        )}
+        <footer className="w-full flex items-center gap-3 justify-between">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              if (previousStepName) {
+                createReleaseNavigationFlow({
+                  releaseId: release?.id,
+                  staticReleaseNavigationStepName: previousStepName,
+                });
+              } else {
+                navigate("/releases");
+              }
+            }}
+          >
+            Back
+          </Button>
+          <Button
+            primary
+            submit
+            isLoading={isUpdatingReleaseOverview}
+            disabled={isUpdatingReleaseOverview}
+          >
+            Save and continue
+          </Button>
+        </footer>
       </form>
-      <footer className="w-full flex items-center gap-3 justify-between">
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            if (previousStepName) {
-              createReleaseNavigationFlow({
-                releaseId: release?.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
-            } else {
-              navigate("/releases");
-            }
-          }}
-        >
-          Back
-        </Button>
-        <Button
-          primary
-          onClick={(e) => {
-            e.preventDefault();
-            if (nextStepName) {
-              createReleaseNavigationFlow({
-                releaseId: release?.id,
-                staticReleaseNavigationStepName: nextStepName,
-              });
-            }
-          }}
-        >
-          Save and continue
-        </Button>
-      </footer>
 
       <Modal
         isOpen={coverArtModalOpen}
@@ -346,7 +593,9 @@ const ReleaseWizardOverview = ({
 
           {selectedFileName && (
             <menu className="flex items-center justify-between gap-3 rounded-lg border border-secondary/20 bg-secondary/5 px-3 py-2">
-              <p className="truncate text-[12px] text-[color:var(--lens-ink)]">{selectedFileName}</p>
+              <p className="truncate text-[12px] text-[color:var(--lens-ink)]">
+                {selectedFileName}
+              </p>
               <button
                 type="button"
                 className="inline-flex items-center justify-center text-red-700"
@@ -361,7 +610,9 @@ const ReleaseWizardOverview = ({
             </menu>
           )}
 
-          {coverArtError && <p className="text-[12px] text-red-600">{coverArtError}</p>}
+          {coverArtError && (
+            <p className="text-[12px] text-red-600">{coverArtError}</p>
+          )}
 
           <menu className="flex items-center justify-between gap-3">
             <Button

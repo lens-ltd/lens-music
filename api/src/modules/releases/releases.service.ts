@@ -8,6 +8,7 @@ import { generateCatalogNumber } from '../../helpers/releases.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
+import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
 
 @Injectable()
 export class ReleaseService {
@@ -28,23 +29,41 @@ export class ReleaseService {
     return this.releaseRepository.save(release);
   }
 
+  async updateOverview(
+    id: UUID,
+    dto: UpdateReleaseOverviewDto,
+    user: AuthUser,
+  ): Promise<Release> {
+    const release = await this.getAuthorizedRelease(id, user);
+
+    release.title = dto.title.trim();
+    release.type = dto.type;
+    release.titleVersion = dto.titleVersion?.trim() || undefined;
+    release.version = dto.version?.trim() || undefined;
+    release.productionYear = dto.productionYear;
+    release.originalReleaseDate = dto.originalReleaseDate;
+    release.digitalReleaseDate = dto.digitalReleaseDate;
+    release.preorderDate = dto.preorderDate || undefined;
+    release.cLine = {
+      year: dto.cLine.year,
+      owner: dto.cLine.owner.trim(),
+    };
+    release.pLine = {
+      year: dto.pLine.year,
+      owner: dto.pLine.owner.trim(),
+    };
+    release.parentalAdvisory = dto.parentalAdvisory;
+    release.primaryLanguage = dto.primaryLanguage.trim();
+
+    return this.releaseRepository.save(release);
+  }
+
   async uploadCoverArt(
     id: UUID,
     file: Express.Multer.File | undefined,
     user: AuthUser,
   ): Promise<Release> {
-    const release = await this.releaseRepository.findOne({ where: { id } });
-
-    if (!release) {
-      throw new NotFoundException('Release not found');
-    }
-
-    const isOwner = release.createdById === user.id;
-    const isAdmin = user.role === ROLES.ADMIN;
-
-    if (!isOwner && !isAdmin) {
-      throw new ForbiddenException('Forbidden');
-    }
+    const release = await this.getAuthorizedRelease(id, user);
 
     const uploadedCoverArt = await this.cloudinaryImageUploaderService.uploadImage({
       file,
@@ -62,5 +81,22 @@ export class ReleaseService {
     if (result?.affected === 0) {
       throw new NotFoundException('Release not found');
     }
+  }
+
+  private async getAuthorizedRelease(id: UUID, user: AuthUser): Promise<Release> {
+    const release = await this.releaseRepository.findOne({ where: { id } });
+
+    if (!release) {
+      throw new NotFoundException('Release not found');
+    }
+
+    const isOwner = release.createdById === user.id;
+    const isAdmin = user.role === ROLES.ADMIN;
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Forbidden');
+    }
+
+    return release;
   }
 }

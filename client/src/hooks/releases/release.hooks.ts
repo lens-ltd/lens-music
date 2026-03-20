@@ -1,4 +1,4 @@
-import { useCreateReleaseMutation, useDeleteReleaseMutation, useUploadReleaseCoverArtMutation } from "@/state/api/apiMutationSlice";
+import { useCreateReleaseMutation, useDeleteReleaseMutation, useUpdateReleaseOverviewMutation, useUploadReleaseCoverArtMutation } from "@/state/api/apiMutationSlice";
 import { useLazyFetchReleasesQuery, useLazyGetReleaseQuery } from "@/state/api/apiQuerySlice";
 import { setRelease, setReleasesList } from "@/state/features/releaseSlice";
 import { useAppDispatch } from "@/state/hooks";
@@ -31,6 +31,20 @@ export const useUploadReleaseCoverArt = () => {
     }, [isSuccess, data, dispatch]);
 
     return { uploadReleaseCoverArt, isLoading, reset, data, isSuccess, error };
+};
+
+// UPDATE RELEASE OVERVIEW
+export const useUpdateReleaseOverview = () => {
+    const dispatch = useAppDispatch();
+    const [updateReleaseOverview, { isLoading, reset, data, isSuccess, error }] = useUpdateReleaseOverviewMutation();
+
+    useEffect(() => {
+        if (isSuccess && data?.data) {
+            dispatch(setRelease(data.data));
+        }
+    }, [isSuccess, data, dispatch]);
+
+    return { updateReleaseOverview, isLoading, reset, data, isSuccess, error };
 };
 
 // FETCH RELEASES

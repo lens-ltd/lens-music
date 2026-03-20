@@ -111,6 +111,15 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      // UPDATE RELEASE OVERVIEW
+      updateReleaseOverview: builder.mutation({
+        query: ({ id, body }: { id: string; body: Record<string, unknown> }) => ({
+          url: `/releases/${id}/overview`,
+          method: 'PATCH',
+          body,
+        }),
+      }),
+
       // CREATE RELEASE NAVIGATION FLOW
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
@@ -189,6 +198,7 @@ export const {
   useCreateReleaseMutation,
   useDeleteReleaseMutation,
   useUploadReleaseCoverArtMutation,
+  useUpdateReleaseOverviewMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
   useCreateContributorMutation,

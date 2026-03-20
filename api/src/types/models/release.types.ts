@@ -17,6 +17,7 @@ export interface ReleaseModel {
   title: string;
   upc?: string;
   version?: string;
+  coverArtUrl?: string;
   productionYear: number;
   catalogNumber?: string;
   titleVersion?: string;

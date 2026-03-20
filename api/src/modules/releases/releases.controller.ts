@@ -7,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -17,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
 import { ReleaseService } from './releases.service';
 import { ReleaseQueryService } from './releases-query.service';
 import { memoryStorage } from 'multer';
@@ -33,6 +35,16 @@ export class ReleasesController {
   async createRelease(@Body() dto: CreateReleaseDto, @CurrentUser() user: AuthUser) {
     const release = await this.releaseService.createRelease(dto, user.id);
     return { message: 'Release created successfully', data: release };
+  }
+
+  @Patch(':id/overview')
+  async updateReleaseOverview(
+    @Param('id') id: string,
+    @Body() dto: UpdateReleaseOverviewDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const release = await this.releaseService.updateOverview(id, dto, user);
+    return { message: 'Release overview updated successfully', data: release };
   }
 
   @Post(':id/cover-art')
