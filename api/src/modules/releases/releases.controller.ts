@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -49,5 +52,11 @@ export class ReleasesController {
       throw new NotFoundException('Release not found');
     }
     return { message: 'Release fetched successfully', data: release };
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteRelease(@Param('id') id: string) {
+    await this.releaseService.deleteRelease(id);
   }
 }

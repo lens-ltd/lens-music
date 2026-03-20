@@ -1,4 +1,4 @@
-import { useCreateReleaseMutation } from "@/state/api/apiMutationSlice";
+import { useCreateReleaseMutation, useDeleteReleaseMutation } from "@/state/api/apiMutationSlice";
 import { useLazyFetchReleasesQuery, useLazyGetReleaseQuery } from "@/state/api/apiQuerySlice";
 import { setRelease, setReleasesList } from "@/state/features/releaseSlice";
 import { useAppDispatch } from "@/state/hooks";
@@ -10,6 +10,13 @@ export const useCreateRelease = () => {
     const [createRelease, { isLoading, reset, data, isSuccess }] = useCreateReleaseMutation();
 
     return { createRelease, isLoading, reset, data, isSuccess };
+};
+
+// DELETE RELEASE
+export const useDeleteRelease = () => {
+    const [deleteRelease, { isLoading, reset, data, isSuccess }] = useDeleteReleaseMutation();
+
+    return { deleteRelease, isLoading, reset, data, isSuccess };
 };
 
 // FETCH RELEASES
@@ -27,7 +34,7 @@ export const useFetchReleases = () => {
             setTotalCount(data?.data?.totalCount);
             setTotalPages(data?.data?.totalPages);
         }
-    }, [isSuccess, data, dispatch]);
+    }, [isSuccess, data, dispatch, setTotalCount, setTotalPages]);
 
     return { fetchReleases, isFetching, page, size, totalCount, totalPages, setPage, setSize, setTotalCount, setTotalPages };
 };

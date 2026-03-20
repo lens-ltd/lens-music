@@ -11,11 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '@/components/inputs/Button';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useFetchReleases } from '@/hooks/releases/release.hooks';
+import DeleteRelease from './DeleteRelease';
 
 const ReleasesPage = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
-  const { releasesList } = useSelector(
+  const { releasesList, deleteReleaseModal } = useSelector(
     (state: RootState) => state.release
   );
 
@@ -24,8 +25,10 @@ const ReleasesPage = () => {
 
   // FETCH RELEASES
   useEffect(() => {
-    fetchReleases({ size, page });
-  }, [fetchReleases, size, page]);
+    if (!deleteReleaseModal) {
+      fetchReleases({ size, page });
+    }
+  }, [fetchReleases, size, page, deleteReleaseModal]);
 
   const { releaseColumns } = useReleaseColumns();
 
@@ -60,6 +63,7 @@ const ReleasesPage = () => {
           />
         </section>
       </main>
+      <DeleteRelease />
     </UserLayout>
   );
 };

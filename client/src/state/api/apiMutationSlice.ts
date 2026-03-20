@@ -93,6 +93,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      // DELETE RELEASE
+      deleteRelease: builder.mutation({
+        query: ({ id }) => ({
+          url: `/releases/${id}`,
+          method: 'DELETE',
+        }),
+      }),
+
       // CREATE RELEASE NAVIGATION FLOW
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
@@ -133,6 +141,14 @@ export const apiMutationSlice = createApi({
           body,
         }),
       }),
+
+      // DELETE CONTRIBUTOR
+      deleteContributor: builder.mutation({
+        query: ({ id }) => ({
+          url: `/contributors/${id}`,
+          method: 'DELETE',
+        }),
+      }),
     };
   },
 });
@@ -144,9 +160,11 @@ export const {
   useLazyListLabelsQuery,
   useCreateArtistMutation,
   useCreateReleaseMutation,
+  useDeleteReleaseMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
   useCreateContributorMutation,
   useUpdateContributorMutation,
+  useDeleteContributorMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

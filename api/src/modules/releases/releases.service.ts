@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
@@ -22,5 +22,13 @@ export class ReleaseService {
     });
 
     return this.releaseRepository.save(release);
+  }
+
+  // DELETE RELEASE
+  async deleteRelease(id: UUID): Promise<void> {
+    const result = await this.releaseRepository.delete(id);
+    if (result?.affected === 0) {
+      throw new NotFoundException('Release not found');
+    }
   }
 }

@@ -3,6 +3,7 @@ import { setContributor, setContributorsList } from "@/state/features/contributo
 import { useAppDispatch } from "@/state/hooks";
 import { usePagination } from "../common/pagination.hooks";
 import { useEffect } from "react";
+import { useDeleteContributorMutation } from "@/state/api/apiMutationSlice";
 
 // FETCH CONTRIBUTORS
 export const useFetchContributors = () => {
@@ -36,4 +37,11 @@ export const useGetContributor = () => {
     }, [isSuccess, data, dispatch]);
 
     return { getContributor, isFetching, data, isSuccess };
+};
+
+// DELETE CONTRIBUTOR
+export const useDeleteContributor = () => {
+    const [deleteContributor, { isLoading, data, isSuccess, reset }] = useDeleteContributorMutation();
+
+    return { deleteContributor, isLoading, data, isSuccess, reset };
 };

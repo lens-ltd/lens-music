@@ -7,19 +7,32 @@ import { useFetchContributors } from "@/hooks/contributors/contributor.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
+import DeleteContributor from "./DeleteContributor";
 
 const ContributorsPage = () => {
-
   // STATE
-  const { contributorsList } = useAppSelector((state) => state.contributor);
+  const { contributorsList, deleteContributorModal } = useAppSelector(
+    (state) => state.contributor,
+  );
 
   // FETCH CONTRIBUTORS
-  const { fetchContributors, isFetching, page, size, totalCount, totalPages, setPage, setSize } = useFetchContributors();
+  const {
+    fetchContributors,
+    isFetching,
+    page,
+    size,
+    totalCount,
+    totalPages,
+    setPage,
+    setSize,
+  } = useFetchContributors();
 
   // FETCH CONTRIBUTORS
   useEffect(() => {
-    fetchContributors({ page, size });
-  }, [fetchContributors, page, size]);
+    if (!deleteContributorModal) {
+      fetchContributors({ page, size });
+    }
+  }, [fetchContributors, page, size, deleteContributorModal]);
 
   // COLUMNS
   const { contributorColumns } = useContributorColumns();
@@ -33,10 +46,21 @@ const ContributorsPage = () => {
             Add new contributor
           </Button>
         </nav>
-        <Table data={contributorsList} columns={contributorColumns} isLoading={isFetching} page={page} size={size} totalCount={totalCount} totalPages={totalPages} setPage={setPage} setSize={setSize} />
+        <Table
+          data={contributorsList}
+          columns={contributorColumns}
+          isLoading={isFetching}
+          page={page}
+          size={size}
+          totalCount={totalCount}
+          totalPages={totalPages}
+          setPage={setPage}
+          setSize={setSize}
+        />
       </main>
+      <DeleteContributor />
     </UserLayout>
-  )
-}
+  );
+};
 
 export default ContributorsPage;

@@ -2,15 +2,21 @@ import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { getCountryName } from "@/constants/countries.constants";
 import { ellipsisHClassName } from "@/constants/input.constants";
+import { setDeleteContributorModal, setSelectedContributor } from "@/state/features/contributorSlice";
+import { useAppDispatch } from "@/state/hooks";
 import { Contributor } from "@/types/models/contributor.types";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faEllipsisH, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 export const useContributorColumns = () => {
+
+    // STATE
+    const dispatch = useAppDispatch();
+
     const contributorColumns = useMemo<ColumnDef<Contributor>[]>(() => [
         {
             header: 'Name',
@@ -57,12 +63,21 @@ export const useContributorColumns = () => {
                             <TableActionButton icon={faPenToSquare} to={`/contributors/${row?.original?.id}/update`}>
                                 Update
                             </TableActionButton>
+                            <TableActionButton icon={faTrash} iconClassName="text-red-700" onClick={(e) => {
+                                e.preventDefault();
+                                if (row?.original?.id) {
+                                    dispatch(setSelectedContributor(row?.original));
+                                    dispatch(setDeleteContributorModal(true));
+                                }
+                            }}>
+                                Delete
+                            </TableActionButton>
                         </menu>
                     </CustomPopover>
                 );
             },
         }
-    ], []);
+    ], [dispatch]);
 
     return { contributorColumns };
 };

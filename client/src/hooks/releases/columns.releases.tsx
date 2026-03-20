@@ -1,15 +1,19 @@
 import { useMemo } from "react";
+import { setDeleteReleaseModal, setSelectedRelease } from "@/state/features/releaseSlice";
+import { useAppDispatch } from "@/state/hooks";
 import { Release } from "@/types/models/release.types";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faEllipsisH, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ellipsisHClassName } from "@/constants/input.constants";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 
 export const useReleaseColumns = () => {
+  const dispatch = useAppDispatch();
+
   const releaseColumns = useMemo<ColumnDef<Release>[]>(
     () => [
       {
@@ -59,13 +63,22 @@ export const useReleaseColumns = () => {
                 <TableActionButton icon={faPenToSquare} to={`/releases/${row?.original?.id}/wizard`}>
                   Resume
                 </TableActionButton>
+                <TableActionButton icon={faTrash} iconClassName="text-red-700" onClick={(e) => {
+                  e.preventDefault();
+                  if (row?.original?.id) {
+                    dispatch(setSelectedRelease(row.original));
+                    dispatch(setDeleteReleaseModal(true));
+                  }
+                }}>
+                  Delete
+                </TableActionButton>
               </menu>
             </CustomPopover>
           );
         },
       },
     ],
-    []
+    [dispatch]
   );
 
   return { releaseColumns };

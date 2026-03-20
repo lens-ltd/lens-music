@@ -29,7 +29,7 @@ const variantStyles = {
     'border-[color:var(--lens-blue)] text-[color:var(--lens-blue)] bg-transparent hover:bg-[color:var(--lens-blue)] hover:text-white',
   primary:
     'bg-[color:var(--lens-blue)] text-white border-[color:var(--lens-blue)] hover:bg-[color:var(--color-primary)]/90',
-  danger: 'bg-red-600 text-white border-red-600 hover:bg-red-700',
+  danger: 'bg-red-700 text-white border-red-700 hover:bg-red-700',
   unstyled:
     'bg-transparent border-transparent text-[color:var(--lens-blue)] hover:opacity-70',
   disabled: 'opacity-50 cursor-not-allowed pointer-events-none',
