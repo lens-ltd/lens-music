@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ReactElement } from 'react';
 import Login from './pages/authentication/Login';
 import CompleteInvitation from './pages/authentication/CompleteInvitation';
 import ForgotPassword from './pages/authentication/ForgotPassword';
@@ -23,6 +24,111 @@ import UpdateContributorPage from './pages/contributors/UpdateContributorPage';
 import ContributorDetailsPage from './pages/contributors/ContributorDetailsPage';
 import ContributorMembershipsPage from './pages/contributors/ContributorMembershipsPage';
 import ManageReleaseTrack from './pages/tracks/ManageReleaseTrack';
+import Seo, { SeoProps } from '@/components/seo/Seo';
+
+type RouteSeoConfig = Omit<SeoProps, 'children'>;
+
+const routeSeo = {
+  landing: {
+    title: 'Music Distribution for Independent Artists',
+    description:
+      'Lens Music helps artists distribute releases, manage contributors, and track performance with one modern workspace.',
+  },
+  login: {
+    title: 'Sign In',
+    description:
+      'Access your Lens Music dashboard to manage releases, contributors, lyrics, and catalog performance.',
+  },
+  signup: {
+    title: 'Create Account',
+    description:
+      'Create your Lens Music account and start distributing music, organizing contributors, and managing releases.',
+  },
+  dashboard: {
+    title: 'Dashboard Overview',
+    description:
+      'Monitor release performance, streams, downloads, and revenue trends from your Lens Music dashboard.',
+  },
+  artists: {
+    title: 'Artists',
+    description:
+      'Manage artist profiles and organize the creative roster connected to your Lens Music catalog.',
+  },
+  labels: {
+    title: 'Labels',
+    description:
+      'View and manage record label details connected to your Lens Music distribution workflow.',
+  },
+  releases: {
+    title: 'Releases',
+    description:
+      'Track release status, organize catalog delivery, and manage publishing workflows inside Lens Music.',
+  },
+  releaseWizard: {
+    title: 'Release Wizard',
+    description:
+      'Complete release setup, upload assets, and finalize distribution details for your next Lens Music release.',
+  },
+  manageTrack: {
+    title: 'Manage Release Track',
+    description:
+      'Edit track details, contributors, rights, and metadata for a release track in Lens Music.',
+  },
+  contributors: {
+    title: 'Contributors',
+    description:
+      'Manage contributor records, roles, profile links, and membership relationships across your catalog.',
+  },
+  createContributor: {
+    title: 'Create Contributor',
+    description:
+      'Add a new contributor profile with identity, role, and store metadata in Lens Music.',
+  },
+  updateContributor: {
+    title: 'Update Contributor',
+    description:
+      'Edit contributor details, status, and profile information in your Lens Music workspace.',
+  },
+  contributorMemberships: {
+    title: 'Contributor Memberships',
+    description:
+      'Review and manage membership relationships attached to a contributor in Lens Music.',
+  },
+  contributorDetails: {
+    title: 'Contributor Details',
+    description:
+      'View contributor identity, profile links, verification status, and related memberships in Lens Music.',
+  },
+  lyrics: {
+    title: 'Lyrics',
+    description:
+      'Manage lyric records, synchronization workflows, and catalog text assets in Lens Music.',
+  },
+  createLyrics: {
+    title: 'Create Lyrics',
+    description:
+      'Add new lyric content and prepare it for your Lens Music release workflow.',
+  },
+  syncLyrics: {
+    title: 'Sync Lyrics',
+    description:
+      'Synchronize timed lyrics for tracks and keep listening experiences aligned across platforms.',
+  },
+  roles: {
+    title: 'Roles',
+    description:
+      'Review role definitions and access-related configuration inside the Lens Music client.',
+  },
+  notFound: {
+    title: 'Page Not Found',
+    description:
+      'The page you requested could not be found. Return to Lens Music to continue browsing or managing your catalog.',
+  },
+} satisfies Record<string, RouteSeoConfig>;
+
+const withSeo = (element: ReactElement, seo: RouteSeoConfig) => (
+  <Seo {...seo}>{element}</Seo>
+);
 
 const Router = () => {
   return (
@@ -30,7 +136,7 @@ const Router = () => {
       <Routes>
         {/* REDIRECT */}
         {/* LANDING PAGE */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={withSeo(<LandingPage />, routeSeo.landing)} />
 
         {/* AUTHENTICATION */}
         <Route path="/auth/login" element={<Login />} />
@@ -41,49 +147,55 @@ const Router = () => {
         {/* AUTHENTICATED ROUTES */}
         <Route element={<AuthenticatedRoutes />}>
           {/* DASHBOARD */}
-          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/dashboard" element={withSeo(<UserDashboard />, routeSeo.dashboard)} />
 
           {/* ARTIST ROUTES */}
           <Route path="/artists">
-            <Route path="" element={<ListArtists />} />
+            <Route path="" element={withSeo(<ListArtists />, routeSeo.artists)} />
           </Route>
 
           {/* LABEL ROUTES */}
           <Route path="/labels">
-            <Route path="" element={<ListLabels />} />
+            <Route path="" element={withSeo(<ListLabels />, routeSeo.labels)} />
           </Route>
 
           {/* RELEASE ROUTES */}
           <Route path="/releases">
-            <Route path="" element={<ReleasesPage />} />
-            <Route path=":id/wizard" element={<ReleaseWizardPage />} />
-            <Route path=":id/manage-tracks/:trackId" element={<ManageReleaseTrack />} />
+            <Route path="" element={withSeo(<ReleasesPage />, routeSeo.releases)} />
+            <Route path=":id/wizard" element={withSeo(<ReleaseWizardPage />, routeSeo.releaseWizard)} />
+            <Route
+              path=":id/manage-tracks/:trackId"
+              element={withSeo(<ManageReleaseTrack />, routeSeo.manageTrack)}
+            />
           </Route>
 
           {/* CONTRIBUTORS ROUTES */}
           <Route path="/contributors">
-            <Route path="" element={<ContributorsPage />} />
-            <Route path="create" element={<CreateContributorPage />} />
-            <Route path=":id/update" element={<UpdateContributorPage />} />
-            <Route path=":id/memberships" element={<ContributorMembershipsPage />} />
-            <Route path=":id" element={<ContributorDetailsPage />} />
+            <Route path="" element={withSeo(<ContributorsPage />, routeSeo.contributors)} />
+            <Route path="create" element={withSeo(<CreateContributorPage />, routeSeo.createContributor)} />
+            <Route path=":id/update" element={withSeo(<UpdateContributorPage />, routeSeo.updateContributor)} />
+            <Route
+              path=":id/memberships"
+              element={withSeo(<ContributorMembershipsPage />, routeSeo.contributorMemberships)}
+            />
+            <Route path=":id" element={withSeo(<ContributorDetailsPage />, routeSeo.contributorDetails)} />
           </Route>
 
           {/* LYRICS ROUTES */}
           <Route path="/lyrics">
-            <Route path="" element={<ListLyrics />} />
-            <Route path="create" element={<CreateLyrics />} />
-            <Route path="sync" element={<SyncLyrics />} />
+            <Route path="" element={withSeo(<ListLyrics />, routeSeo.lyrics)} />
+            <Route path="create" element={withSeo(<CreateLyrics />, routeSeo.createLyrics)} />
+            <Route path="sync" element={withSeo(<SyncLyrics />, routeSeo.syncLyrics)} />
           </Route>
         </Route>
 
         {/* ROLES ROUTES */}
         <Route path="/roles">
-          <Route path="" element={<RolesPage />} />
+          <Route path="" element={withSeo(<RolesPage />, routeSeo.roles)} />
         </Route>
 
         {/* NOT FOUND */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={withSeo(<NotFoundPage />, routeSeo.notFound)} />
       </Routes>
       <CreateRelase />
       <LyricsGuidelines />
