@@ -7,7 +7,7 @@ import { UUID } from '../types/common.types';
 export class Lyrics extends AbstractEntity {
   // CONTENT
   @Column({ type: 'jsonb' })
-  content: { time?: string; text: string }[];
+  content: { time?: number; text: string }[];
 
   // TRACK ID
   @Column({ name: 'track_id', nullable: false, type: 'uuid' })

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -35,7 +36,14 @@ export class LyricsController {
 
   @Get(':id')
   async getLyricsById(@Param('id') id: string) {
-    const lyrics = await this.lyricsService.getLyricsById(id);
+    const lyrics = await this.lyricsService.getLyricsById(id as any);
     return { message: 'Lyrics fetched successfully', data: lyrics };
   }
+
+  @Patch(':id')
+  async updateLyrics(@Param('id') id: string, @Body() body: Partial<Lyrics>) {
+    const lyrics = await this.lyricsService.updateLyrics(id as any, body);
+    return { message: 'Lyrics updated successfully', data: lyrics };
+  }
 }
+

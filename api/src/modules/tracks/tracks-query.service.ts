@@ -52,7 +52,7 @@ export class TrackQueryService {
     return this.normalizeTrack(
       await this.trackRepository.findOne({
         where: { id },
-        relations: ["audioFiles", "trackContributors", "trackContributors.contributor"],
+        relations: ["audioFiles", "lyrics", "trackContributors", "trackContributors.contributor"],
       }),
     );
   }

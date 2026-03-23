@@ -292,6 +292,22 @@ export const apiMutationSlice = createApi({
           method: "DELETE",
         }),
       }),
+
+      createLyrics: builder.mutation({
+        query: (body: Record<string, unknown>) => ({
+          url: "/lyrics",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateLyrics: builder.mutation({
+        query: ({ id, body }: { id: string; body: Record<string, unknown> }) => ({
+          url: `/lyrics/${id}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
     };
   },
 });
@@ -329,5 +345,7 @@ export const {
   useDeleteTrackContributorMutation,
   useCreateReleaseContributorMutation,
   useDeleteReleaseContributorMutation,
+  useCreateLyricsMutation,
+  useUpdateLyricsMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

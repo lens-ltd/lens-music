@@ -222,6 +222,26 @@ export const apiQuerySlice = createApi({
           };
         },
       }),
+
+      // FETCH LYRICS
+      fetchLyrics: builder.query({
+        query: ({ trackId, size = 100, page = 0 }: { trackId?: string; size?: number; page?: number }) => {
+          return {
+            url: "/lyrics",
+            method: "GET",
+            params: {
+              trackId,
+              size,
+              page,
+            },
+          };
+        },
+      }),
+
+      // GET LYRICS
+      getLyrics: builder.query({
+        query: ({ id }: { id: string }) => `/lyrics/${id}`,
+      }),
     };
   },
 });
@@ -242,5 +262,7 @@ export const {
   useLazyGetTrackQuery,
   useLazyFetchTrackContributorsQuery,
   useLazyFetchReleaseContributorsQuery,
+  useLazyFetchLyricsQuery,
+  useLazyGetLyricsQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

@@ -49,8 +49,15 @@ export interface TrackContributor extends AbstractEntity {
   };
 }
 
-export interface TrackLyrics {
-  id: string;
+export interface TimedLyricLine {
+  time?: number;
+  text: string;
+}
+
+export interface TrackLyrics extends AbstractEntity {
+  trackId: string;
+  language: string;
+  content: TimedLyricLine[];
 }
 
 export interface Track extends AbstractEntity {
