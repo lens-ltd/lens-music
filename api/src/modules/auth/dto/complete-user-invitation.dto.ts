@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CompleteUserInvitationDto {
   @IsString()
@@ -11,6 +11,7 @@ export class CompleteUserInvitationDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(8, { message: 'Password must be at least 8 characters' })
   password: string;
 
   @IsOptional()

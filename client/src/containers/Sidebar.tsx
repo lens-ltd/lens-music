@@ -12,6 +12,9 @@ import { AppDispatch, RootState } from '@/state/store';
 import { setSidebarOpen } from '@/state/features/sidebarSlice';
 import { sidebarNavigation } from '@/constants/sidebar.constants';
 
+const matchesPath = (pathname: string, targetPath: string) =>
+  pathname === targetPath || pathname.startsWith(`${targetPath}/`);
+
 const Sidebar = () => {
   const { pathname } = useLocation();
   const dispatch: AppDispatch = useDispatch();
@@ -46,6 +49,22 @@ const Sidebar = () => {
     showLess();
     setOpenCategories([]);
   }, [sidebarOpen, showLess, showMore]);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    const activeCategories = sidebarNavigation
+      .filter((nav) =>
+        nav.subCategories?.some((subCategory) =>
+          matchesPath(pathname, subCategory.path),
+        ),
+      )
+      .map((nav) => nav.title);
+
+    if (activeCategories.length) {
+      setOpenCategories((prev) => Array.from(new Set([...prev, ...activeCategories])));
+    }
+  }, [pathname, sidebarOpen]);
 
   const toggleCategory = useCallback((title: string) => {
     setOpenCategories((prev) =>
@@ -100,9 +119,10 @@ const Sidebar = () => {
             const hasSubcategories =
               !!nav.subCategories && nav.subCategories.length > 0;
             const isSubcategoriesOpen = openCategories.includes(nav.title);
-            const isSubcategoryActive = nav.subCategories?.some((subCategory) =>
-              pathname.startsWith(subCategory.path),
-            );
+            const activeSubcategoryPath = nav.subCategories
+              ?.filter((subCategory) => matchesPath(pathname, subCategory.path))
+              .sort((left, right) => right.path.length - left.path.length)[0]?.path;
+            const isSubcategoryActive = Boolean(activeSubcategoryPath);
             const isActive = selected || isSubcategoryActive;
 
             return (
@@ -174,9 +194,8 @@ const Sidebar = () => {
                     >
                       <ul className="ml-[14px] flex flex-col gap-1.5 border-l border-white/10 py-1.5 pl-2 pr-1">
                         {nav.subCategories?.map((subCategory) => {
-                          const isSubActive = pathname.startsWith(
-                            subCategory.path,
-                          );
+                          const isSubActive =
+                            activeSubcategoryPath === subCategory.path;
 
                           return (
                             <li key={subCategory.title}>

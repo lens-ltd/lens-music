@@ -7,6 +7,14 @@ export class EmailService {
   private readonly apiKey = process.env.RESEND_API_KEY;
   private readonly fromEmail = process.env.RESEND_FROM_EMAIL;
 
+  private get appUrl(): string {
+    return process.env.APP_URL || 'http://localhost:5173';
+  }
+
+  private get logoUrl(): string {
+    return process.env.LOGO_URL || `${this.appUrl}/logo.png`;
+  }
+
   private async sendEmail({
     to,
     subject,
@@ -52,7 +60,12 @@ export class EmailService {
     return this.sendEmail({
       to,
       subject: 'Your Lens Music invitation',
-      html: renderInvitationEmail({ invitationUrl, expiresInDays }),
+      html: renderInvitationEmail({
+        invitationUrl,
+        expiresInDays,
+        logoUrl: this.logoUrl,
+        appUrl: this.appUrl,
+      }),
     });
   }
 
@@ -68,7 +81,12 @@ export class EmailService {
     return this.sendEmail({
       to,
       subject: 'Reset your Lens Music password',
-      html: renderPasswordResetEmail({ resetUrl, expiresInMinutes }),
+      html: renderPasswordResetEmail({
+        resetUrl,
+        expiresInMinutes,
+        logoUrl: this.logoUrl,
+        appUrl: this.appUrl,
+      }),
     });
   }
 }

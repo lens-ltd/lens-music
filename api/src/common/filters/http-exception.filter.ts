@@ -6,6 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AppError } from '../../helpers/errors.helper';
+import logger from '../../utils/logger';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -29,8 +30,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
 
+    logger.child({ module: 'HttpExceptionFilter' }).error(
+      { err: exception },
+      exception instanceof Error ? exception.message : 'Unhandled exception',
+    );
+
+    const message =
+      exception instanceof Error && process.env.NODE_ENV !== 'production'
+        ? exception.message
+        : 'Internal server error';
+
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal server error',
+      message,
     });
   }
 }

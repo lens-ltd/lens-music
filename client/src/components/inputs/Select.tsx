@@ -8,6 +8,14 @@ import {
 } from '@/components/ui/select';
 import { UUID } from 'crypto';
 
+const EMPTY_SELECT_VALUE = '__lens_empty_select_value__';
+
+const toSelectValue = (value?: string | UUID) =>
+  value === '' ? EMPTY_SELECT_VALUE : String(value ?? '');
+
+const fromSelectValue = (value: string) =>
+  value === EMPTY_SELECT_VALUE ? '' : value;
+
 type SelectProps = {
   label?: string | number | undefined;
   options?: Array<{ label: string | undefined; value: string | UUID }>;
@@ -41,9 +49,11 @@ const Select = ({
         {label} <span className={required ? `text-red-600` : 'hidden'}>*</span>
       </p>
       <SelectComponent
-        onValueChange={onChange}
-        defaultValue={defaultValue}
-        value={value}
+        onValueChange={(nextValue) => onChange?.(fromSelectValue(nextValue))}
+        defaultValue={
+          defaultValue === undefined ? undefined : toSelectValue(defaultValue)
+        }
+        value={value === undefined ? undefined : toSelectValue(value)}
         name={name}
       >
         <SelectTrigger
@@ -62,7 +72,7 @@ const Select = ({
               return (
                 <SelectItem
                   key={index}
-                  value={option.value}
+                  value={toSelectValue(option.value)}
                   disabled={readOnly}
                   className="cursor-pointer text-[12px] py-1 hover:bg-background"
                 >

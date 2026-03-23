@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
@@ -11,10 +11,12 @@ import {
   ValidationError,
 } from '../../helpers/errors.helper';
 import { UserStatus } from '../../constants/user.constants';
+import { InvitationStatus } from '../../constants/invitation.constants';
 import { UserInvitation } from '../../entities/user-invitation.entity';
 import { PasswordResetToken } from '../../entities/password-reset-token.entity';
 import { UserService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
+import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
 
 @Injectable()
 export class AuthService {
@@ -59,13 +61,23 @@ export class AuthService {
     }
   }
 
+  private validatePassword(password: string): void {
+    if (!password || password.length < 8) {
+      throw new ValidationError('Password must be at least 8 characters', 'AUTH SERVICE');
+    }
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   async login({
     email,
     password,
   }: {
     email: string;
     password: string;
-  }): Promise<{ user: User; token: string }> {
+  }): Promise<{ user: User; accessToken: string }> {
     if (!email) throw new ValidationError('Email is required', 'AUTH SERVICE');
     if (!password) {
       throw new ValidationError('Password is required', 'AUTH SERVICE');
@@ -89,8 +101,8 @@ export class AuthService {
       throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
     }
 
-    const token = this.signToken(userExists);
-    return { user: userExists, token };
+    const accessToken = this.signToken(userExists);
+    return { user: userExists, accessToken };
   }
 
   async createInvitation(email: string, createdById?: string) {
@@ -112,6 +124,8 @@ export class AuthService {
           ...existingInvitation,
           token,
           expiresAt,
+          status: InvitationStatus.PENDING,
+          completedAt: null,
           createdById: createdById || existingInvitation.createdById,
         })
       : await this.userInvitationRepository.save(
@@ -119,17 +133,88 @@ export class AuthService {
             email,
             token,
             expiresAt,
+            status: InvitationStatus.PENDING,
+            completedAt: null,
             createdById,
           }),
         );
 
-    await this.emailService.sendInvitationEmail({
-      to: email,
-      invitationUrl: `${this.getAppUrl()}/auth/invitation/${token}`,
-      expiresInDays,
-    });
+    try {
+      await this.emailService.sendInvitationEmail({
+        to: email,
+        invitationUrl: `${this.getAppUrl()}/auth/invitation/${token}`,
+        expiresInDays,
+      });
+    } catch (error) {
+      await this.userInvitationRepository.save({
+        ...invitation,
+        status: InvitationStatus.FAILED,
+      });
+      throw new BadGatewayException(
+        this.getErrorMessage(error) || 'Failed to send invitation email',
+      );
+    }
 
     return invitation;
+  }
+
+  async createBulkInvitations(
+    emails: string[],
+    createdById?: string,
+  ): Promise<{ succeeded: string[]; failed: { email: string; reason: string }[] }> {
+    const succeeded: string[] = [];
+    const failed: { email: string; reason: string }[] = [];
+
+    for (const email of emails) {
+      try {
+        await this.createInvitation(email, createdById);
+        succeeded.push(email);
+      } catch (error) {
+        failed.push({ email, reason: this.getErrorMessage(error) });
+      }
+    }
+
+    return { succeeded, failed };
+  }
+
+  async listInvitations({
+    page,
+    size,
+    status,
+  }: {
+    page: number;
+    size: number;
+    status?: InvitationStatus;
+  }): Promise<Pagination> {
+    const { take, skip } = getPagination({ size, page });
+    const where = status ? { status } : {};
+    const data = await this.userInvitationRepository.findAndCount({
+      select: [
+        'id',
+        'email',
+        'expiresAt',
+        'status',
+        'completedAt',
+        'createdAt',
+        'updatedAt',
+        'createdById',
+      ],
+      where,
+      order: { createdAt: 'DESC' },
+      take,
+      skip,
+    });
+    return getPagingData({ data, size, page });
+  }
+
+  async revokeInvitation(id: string): Promise<UserInvitation> {
+    const invitation = await this.userInvitationRepository.findOne({ where: { id } });
+    if (!invitation) throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
+    if (invitation.status !== InvitationStatus.PENDING) {
+      throw new ValidationError('Only pending invitations can be revoked', 'AUTH SERVICE');
+    }
+    invitation.status = InvitationStatus.REVOKED;
+    return this.userInvitationRepository.save(invitation);
   }
 
   async getInvitationByToken(token: string): Promise<UserInvitation> {
@@ -140,6 +225,11 @@ export class AuthService {
     }
 
     this.ensureFutureDate(invitation.expiresAt, 'Invitation has expired');
+
+    if (invitation.status !== InvitationStatus.PENDING) {
+      throw new ValidationError('This invitation is no longer valid', 'AUTH SERVICE');
+    }
+
     return invitation;
   }
 
@@ -153,7 +243,9 @@ export class AuthService {
     name: string;
     phoneNumber?: string;
     password: string;
-  }): Promise<{ user: User; token: string }> {
+  }): Promise<{ user: User; accessToken: string }> {
+    this.validatePassword(password);
+
     const invitation = await this.getInvitationByToken(token);
 
     const existingUser = await this.userService.findUserByEmail(invitation.email);
@@ -170,11 +262,13 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    await this.userInvitationRepository.delete({ email: invitation.email });
+    invitation.status = InvitationStatus.COMPLETED;
+    invitation.completedAt = new Date();
+    await this.userInvitationRepository.save(invitation);
 
     return {
       user,
-      token: this.signToken(user),
+      accessToken: this.signToken(user),
     };
   }
 
@@ -234,6 +328,8 @@ export class AuthService {
     token: string;
     password: string;
   }): Promise<void> {
+    this.validatePassword(password);
+
     const resetRequest = await this.getPasswordResetByToken(token);
     const hashedPassword = await hashPassword(password);
 

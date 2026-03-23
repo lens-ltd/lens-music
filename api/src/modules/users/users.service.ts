@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { UUID } from '../../types/common.types';
+import { getPagingData, getPagination, Pagination } from '../../helpers/pagination.helper';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,33 @@ export class UserService {
 
   async findUserById(id: UUID): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
+  }
+
+  async listUsers({
+    page,
+    size,
+  }: {
+    page: number;
+    size: number;
+  }): Promise<Pagination> {
+    const { take, skip } = getPagination({ page, size });
+    const data = await this.userRepository.findAndCount({
+      select: [
+        'id',
+        'name',
+        'email',
+        'phoneNumber',
+        'status',
+        'createdAt',
+        'updatedAt',
+        'createdById',
+      ],
+      order: { createdAt: 'DESC' },
+      take,
+      skip,
+    });
+
+    return getPagingData({ data, page, size });
   }
 
   async createUser({

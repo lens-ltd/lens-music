@@ -37,6 +37,21 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      createBulkInvitations: builder.mutation({
+        query: (body: { emails: string[] }) => ({
+          url: "/auth/invitations/bulk",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      revokeInvitation: builder.mutation({
+        query: (id: string) => ({
+          url: `/auth/invitations/${id}/revoke`,
+          method: "POST",
+        }),
+      }),
+
       validateInvitationToken: builder.mutation({
         query: ({ token }) => ({
           url: `/auth/invitations/${token}`,
@@ -269,6 +284,8 @@ export const apiMutationSlice = createApi({
 export const {
   useLoginMutation,
   useCreateInvitationMutation,
+  useCreateBulkInvitationsMutation,
+  useRevokeInvitationMutation,
   useValidateInvitationTokenMutation,
   useCompleteInvitationMutation,
   useRequestPasswordResetMutation,

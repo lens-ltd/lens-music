@@ -152,6 +152,7 @@ export const getStatusBackgroundColor = (status?: string) => {
     case 'APPROVED':
     case 'VERIFIED':
     case 'ACTIVE':
+    case 'COMPLETED':
       bgColor =
         'bg-green-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
@@ -164,8 +165,14 @@ export const getStatusBackgroundColor = (status?: string) => {
         'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     case 'TAKENDOWN':
+    case 'REVOKED':
+    case 'FAILED':
       bgColor =
         'bg-red-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
+      break;
+    case 'INACTIVE':
+      bgColor =
+        'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     default:
       // fallback for unknown statuses

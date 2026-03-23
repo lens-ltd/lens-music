@@ -1,10 +1,11 @@
-import { faFileLines } from '@fortawesome/free-regular-svg-icons';
+import { faEnvelope, faFileLines } from "@fortawesome/free-regular-svg-icons";
 import {
   faChartLine,
+  faUser,
   faUserGroup,
   faUserTie,
   IconDefinition,
-} from '@fortawesome/free-solid-svg-icons';
+} from "@fortawesome/free-solid-svg-icons";
 
 export interface SidebarNavigation {
   title: string;
@@ -15,23 +16,40 @@ export interface SidebarNavigation {
 
 export const sidebarNavigation: SidebarNavigation[] = [
   {
-    title: 'Dashboard',
-    path: '/dashboard',
+    title: "Dashboard",
+    path: "/dashboard",
     icon: faChartLine,
   },
   {
-    title: 'Releases',
-    path: '/releases',
+    title: "Releases",
+    path: "/releases",
     icon: faFileLines,
   },
   {
-    title: 'Contributors',
-    path: '/contributors',
+    title: "Contributors",
+    path: "/contributors",
     icon: faUserGroup,
   },
   {
-    title: 'Roles',
-    path: '/roles',
+    title: "Users",
+    path: "/users",
+    icon: faUser,
+    subCategories: [
+      {
+        title: "Users",
+        path: "/users",
+        icon: faUser,
+      },
+      {
+        title: "Invitations",
+        path: "/users/invitations",
+        icon: faEnvelope,
+      },
+    ],
+  },
+  {
+    title: "Roles",
+    path: "/roles",
     icon: faUserTie,
   },
 ];

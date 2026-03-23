@@ -1,25 +1,38 @@
 import {
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ROLES } from '../../constants/auth.constant';
+import { AdminGuard } from '../../common/guards/admin.guard';
+import { ListUsersQueryDto } from './dto/list-users-query.dto';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
+  @Get()
+  async listUsers(@Query() query: ListUsersQueryDto) {
+    const data = await this.userService.listUsers({
+      page: query.page ?? 0,
+      size: query.size ?? 10,
+    });
+
+    return {
+      message: 'Users retrieved.',
+      data,
+    };
+  }
+
   @Delete(':id')
-  @Roles(ROLES.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
     const deletedUser = await this.userService.deleteUser(id);

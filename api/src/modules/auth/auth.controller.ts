@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { validateEmail } from '../../helpers/validations.helper';
@@ -16,9 +17,12 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { AdminGuard } from '../../common/guards/admin.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { CreateUserInvitationDto } from './dto/create-user-invitation.dto';
+import { CreateBulkUserInvitationDto } from './dto/create-bulk-user-invitation.dto';
+import { ListInvitationsQueryDto } from './dto/list-invitations-query.dto';
 import { CompleteUserInvitationDto } from './dto/complete-user-invitation.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
+import { User } from '../../entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -27,11 +31,14 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
-    const { user, token } = await this.authService.login(dto);
+    const { user, accessToken } = await this.authService.login(dto);
+    const { password: _password, ...userWithoutPassword } = user as User & {
+      password?: string;
+    };
 
     return {
       message: 'You have logged in successfully!',
-      data: { user: { ...user, password: undefined }, token },
+      data: { user: userWithoutPassword, accessToken },
     };
   }
 
@@ -52,7 +59,35 @@ export class AuthController {
         id: invitation.id,
         email: invitation.email,
         expiresAt: invitation.expiresAt,
+        status: invitation.status,
       },
+    };
+  }
+
+  @Post('invitations/bulk')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  async createBulkInvitations(
+    @Body() dto: CreateBulkUserInvitationDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    const result = await this.authService.createBulkInvitations(dto.emails, user?.id);
+    return {
+      message: `${result.succeeded.length} invitation(s) sent successfully.`,
+      data: result,
+    };
+  }
+
+  @Get('invitations')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  async listInvitations(@Query() query: ListInvitationsQueryDto) {
+    const data = await this.authService.listInvitations({
+      page: query.page ?? 0,
+      size: query.size ?? 10,
+      status: query.status,
+    });
+    return {
+      message: 'Invitations retrieved.',
+      data,
     };
   }
 
@@ -72,11 +107,24 @@ export class AuthController {
   @Post('invitations/complete')
   @HttpCode(HttpStatus.OK)
   async completeInvitation(@Body() dto: CompleteUserInvitationDto) {
-    const { user, token } = await this.authService.completeInvitation(dto);
+    const { user, accessToken } = await this.authService.completeInvitation(dto);
+    const { password: _password, ...userWithoutPassword } = user as User & {
+      password?: string;
+    };
 
     return {
       message: 'Your account has been created successfully!',
-      data: { user: { ...user, password: undefined }, token },
+      data: { user: userWithoutPassword, accessToken },
+    };
+  }
+
+  @Post('invitations/:id/revoke')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  async revokeInvitation(@Param('id') id: string) {
+    const invitation = await this.authService.revokeInvitation(id);
+    return {
+      message: 'Invitation revoked.',
+      data: { id: invitation.id, email: invitation.email, status: invitation.status },
     };
   }
 

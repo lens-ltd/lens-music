@@ -45,6 +45,43 @@ export const apiQuerySlice = createApi({
         },
       }),
 
+      fetchInvitations: builder.query({
+        query: ({
+          size,
+          page,
+          status,
+        }: {
+          size: number;
+          page: number;
+          status?: string;
+        }) => ({
+          url: "/auth/invitations",
+          method: "GET",
+          params: {
+            size,
+            page,
+            ...(status ? { status } : {}),
+          },
+        }),
+      }),
+
+      fetchUsers: builder.query({
+        query: ({
+          size,
+          page,
+        }: {
+          size: number;
+          page: number;
+        }) => ({
+          url: "/users",
+          method: "GET",
+          params: {
+            size,
+            page,
+          },
+        }),
+      }),
+
       // FETCH RELEASES
       fetchReleases: builder.query({
         query: ({ size, page }) => {
@@ -177,6 +214,8 @@ export const apiQuerySlice = createApi({
 });
 
 export const {
+  useLazyFetchInvitationsQuery,
+  useLazyFetchUsersQuery,
   useLazyFetchArtistsQuery,
   useLazyFetchLabelsQuery,
   useLazyFetchReleasesQuery,

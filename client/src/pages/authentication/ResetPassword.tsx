@@ -87,7 +87,10 @@ const ResetPassword = () => {
               <Controller
                 control={control}
                 name="password"
-                rules={{ required: 'Password is required' }}
+                rules={{
+                  required: 'Password is required',
+                  minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                }}
                 render={({ field }) => (
                   <Input
                     label="New password"
@@ -110,6 +113,7 @@ const ResetPassword = () => {
                 name="confirmPassword"
                 rules={{
                   required: 'Please confirm your password',
+                  minLength: { value: 8, message: 'Password must be at least 8 characters' },
                   validate: (value) => value === watch('password') || 'Passwords do not match',
                 }}
                 render={({ field }) => (

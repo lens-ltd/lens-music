@@ -64,7 +64,7 @@ const CompleteInvitation = () => {
 
   useEffect(() => {
     if (completionState.isSuccess) {
-      dispatch(setToken(completionState.data?.data?.token));
+      dispatch(setToken(completionState.data?.data?.accessToken));
       dispatch(setUser(completionState.data?.data?.user));
       toast.success('Account setup complete. Redirecting...');
       navigate('/dashboard');
@@ -155,7 +155,10 @@ const CompleteInvitation = () => {
                 <Controller
                   control={control}
                   name="password"
-                  rules={{ required: 'Password is required' }}
+                  rules={{
+                    required: 'Password is required',
+                    minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                  }}
                   render={({ field }) => (
                     <Input
                       label="Password"
@@ -178,6 +181,7 @@ const CompleteInvitation = () => {
                   name="confirmPassword"
                   rules={{
                     required: 'Please confirm your password',
+                    minLength: { value: 8, message: 'Password must be at least 8 characters' },
                     validate: (value) => value === watch('password') || 'Passwords do not match',
                   }}
                   render={({ field }) => (

@@ -44,7 +44,7 @@ const Login = () => {
 
     if (isSuccess) {
       toast.success('Login successful. Redirecting...');
-      dispatch(setToken(data?.data?.token));
+      dispatch(setToken(data?.data?.accessToken));
       dispatch(setUser(data?.data?.user));
       navigate('/dashboard');
     }
