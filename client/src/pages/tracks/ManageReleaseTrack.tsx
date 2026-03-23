@@ -367,6 +367,10 @@ const ManageReleaseTrack = () => {
             uploadFileName={uploadFileName}
             onAudioUpload={handleAudioUpload}
             onDeleteAudio={handleDeleteAudio}
+            onSyncLyrics={() => {
+              if (!trackId) return;
+              navigate(`/lyrics/sync?trackId=${trackId}`);
+            }}
           />
 
           <TrackContributorsPanel

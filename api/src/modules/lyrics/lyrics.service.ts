@@ -24,7 +24,12 @@ export class LyricsService {
     page: number,
   ): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
-    const lyrics = await this.lyricsRepository.findAndCount({ where: condition, take, skip });
+    const lyrics = await this.lyricsRepository.findAndCount({
+      where: condition,
+      order: { createdAt: 'DESC' },
+      take,
+      skip,
+    });
     return getPagingData({ data: lyrics, size, page });
   }
 
@@ -34,4 +39,12 @@ export class LyricsService {
     if (!lyrics) throw new NotFoundException('Lyrics not found');
     return lyrics;
   }
+
+  // UPDATE LYRICS
+  async updateLyrics(id: UUID, payload: Partial<Lyrics>): Promise<Lyrics> {
+    const lyrics = await this.getLyricsById(id);
+    Object.assign(lyrics, payload);
+    return this.lyricsRepository.save(lyrics);
+  }
 }
+
