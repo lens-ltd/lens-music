@@ -5,8 +5,9 @@ import { Track } from "@/types/models/track.types";
 import { formatDuration } from "./trackForm.helpers";
 import type { TrackAudioUploadPhase } from "@/hooks/tracks/useTrackAudioUpload";
 import TrackUploadProgress from "./TrackUploadProgress";
-import { faClosedCaptioning } from "@fortawesome/free-solid-svg-icons";
+import { faAlignLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from "@/components/inputs/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type TrackAudioPanelProps = {
   track?: Track;
@@ -48,7 +49,7 @@ const TrackAudioPanel = ({
             </p>
           </div>
           {primaryAudio && onSyncLyrics && (
-            <Button icon={faClosedCaptioning} onClick={(event) => {
+            <Button icon={faAlignLeft} onClick={(event) => {
               event.preventDefault();
               onSyncLyrics();
             }}>
@@ -123,14 +124,14 @@ const TrackAudioPanel = ({
                     </p>
                   )}
                 </section>
-                <button
-                  type="button"
-                  onClick={() => void onDeleteAudio(audioFile.id)}
-                  disabled={isDeletingAudio}
-                  className="text-[12px] text-red-600 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Remove
-                </button>
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void onDeleteAudio(audioFile.id);
+                  }}
+                  className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </header>
               <a
                 href={audioFile.storagePath}

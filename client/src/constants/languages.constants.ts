@@ -1,10 +1,18 @@
 export const LANGUAGES_LIST = [
-  {
-    name: 'English',
-    code: 'en',
-  },
-  {
-    name: 'Spanish',
-    code: 'es',
-  },
+  { name: 'English', code: 'en' },
+  { name: 'Spanish', code: 'es' },
+  { name: 'French', code: 'fr' },
+  { name: 'Portuguese', code: 'pt' },
+  { name: 'German', code: 'de' },
+  { name: 'Italian', code: 'it' },
+  { name: 'Arabic', code: 'ar' },
+  { name: 'Hindi', code: 'hi' },
+  { name: 'Mandarin', code: 'zh' },
+  { name: 'Japanese', code: 'ja' },
+  { name: 'Swahili', code: 'sw' },
+  { name: 'Yoruba', code: 'yo' },
+  { name: 'Amharic', code: 'am' },
+  { name: 'Hausa', code: 'ha' },
+  { name: 'Zulu', code: 'zu' },
+  { name: 'Afrikaans', code: 'af' },
 ];

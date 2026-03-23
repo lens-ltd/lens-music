@@ -1,4 +1,6 @@
 import Button from "@/components/inputs/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import UserLayout from "@/containers/UserLayout";
 import { useGetRelease } from "@/hooks/releases/release.hooks";
 import {
@@ -27,6 +29,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useDeleteLyricsMutation } from "@/state/api/apiMutationSlice";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 import { Contributor } from "@/types/models/contributor.types";
 import TrackAudioPanel from "./components/TrackAudioPanel";
@@ -42,6 +45,21 @@ import {
   ValidationResult,
 } from "./components/trackForm.helpers";
 import useTrackMetadataAutosave from "./components/useTrackMetadataAutosave";
+import { Lyrics } from "@/types/models/lyrics.types";
+
+const formatTrackLyricsLabel = (lyrics: Lyrics) => {
+  const createdAt = lyrics.createdAt
+    ? new Date(lyrics.createdAt).toLocaleDateString()
+    : "Draft";
+  return `${lyrics.language.toUpperCase()} · ${createdAt}`;
+};
+
+const sortTrackLyricsByNewest = (lyrics: Lyrics[]) =>
+  [...lyrics].sort(
+    (first, second) =>
+      new Date(second.createdAt).getTime() -
+      new Date(first.createdAt).getTime(),
+  );
 
 const ManageReleaseTrack = () => {
   const { id, trackId } = useParams();
@@ -71,6 +89,8 @@ const ManageReleaseTrack = () => {
     useCreateTrackContributor();
   const { deleteTrackContributor, isLoading: isDeletingContributor } =
     useDeleteTrackContributor();
+  const [deleteLyrics, { isLoading: isDeletingLyrics }] =
+    useDeleteLyricsMutation();
   const [fetchContributors, { isFetching: isSearchingContributors }] =
     useLazyFetchContributorsQuery();
   const [validationResult, setValidationResult] =
@@ -214,9 +234,7 @@ const ManageReleaseTrack = () => {
         setTimeout(() => resetUpload(), 3000);
       } catch (error) {
         const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Unable to upload audio.";
+          error instanceof Error ? error.message : "Unable to upload audio.";
         toast.error(errorMessage);
         resetUpload();
       } finally {
@@ -335,6 +353,31 @@ const ManageReleaseTrack = () => {
     ],
   );
 
+  const handleDeleteLyrics = useCallback(
+    async (lyricsIdToDelete: string) => {
+      if (!trackId) return;
+      if (
+        !window.confirm(
+          "Delete this lyrics record? Timed sync data will be lost.",
+        )
+      ) {
+        return;
+      }
+      resetValidationResult();
+      try {
+        await deleteLyrics({ id: lyricsIdToDelete }).unwrap();
+        await getTrack({ id: trackId });
+        toast.success("Lyrics deleted successfully.");
+      } catch (error) {
+        const errorMessage =
+          (error as { data?: { message?: string } })?.data?.message ||
+          "Unable to delete lyrics.";
+        toast.error(errorMessage);
+      }
+    },
+    [deleteLyrics, getTrack, resetValidationResult, trackId],
+  );
+
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-4">
@@ -390,6 +433,65 @@ const ManageReleaseTrack = () => {
             onAddContributor={handleAddContributor}
             onDeleteContributor={handleDeleteContributor}
           />
+
+          <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+            <header className="space-y-1">
+              <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+                Lyrics
+              </h2>
+              <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+                Lyrics records linked to this track. Open sync to edit timing,
+                or remove a record here.
+              </p>
+            </header>
+            {track?.lyrics?.length ? (
+              <ul className="mt-3 flex list-none flex-col gap-2 p-0">
+                {sortTrackLyricsByNewest(track.lyrics).map((lyric) => (
+                  <li
+                    key={lyric.id}
+                    className="flex items-center justify-between gap-3 rounded-md border border-[color:var(--lens-sand)]/70 p-3"
+                  >
+                    <p className="text-[12px] text-[color:var(--lens-ink)]">
+                      {formatTrackLyricsLabel(lyric)}
+                    </p>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Button
+                        styled={false}
+                        className="!min-h-0 !px-2 !py-1"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          if (!trackId) return;
+                          navigate(
+                            `/lyrics/sync?trackId=${trackId}&lyricsId=${lyric.id}`,
+                          );
+                        }}
+                      >
+                        Open sync
+                      </Button>
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          if (isDeletingLyrics) return;
+                          void handleDeleteLyrics(lyric.id);
+                        }}
+                        className={`text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 ${
+                          isDeletingLyrics
+                            ? "cursor-not-allowed opacity-50"
+                            : ""
+                        }`}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-[12px] text-[color:var(--lens-ink)]/55">
+                No lyrics records yet. Use Sync lyrics (with audio uploaded) or
+                create lyrics from the Lyrics section.
+              </p>
+            )}
+          </section>
 
           {isUpdatingTrack && (
             <p className="text-[12px] text-[color:var(--lens-ink)]/55">

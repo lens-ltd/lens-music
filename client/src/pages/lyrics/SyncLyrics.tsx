@@ -1,26 +1,43 @@
-import Button from '@/components/inputs/Button';
-import { Heading, RelaxedHeading } from '@/components/text/Headings';
-import UserLayout from '@/containers/UserLayout';
-import { useGetTrack } from '@/hooks/tracks/track.hooks';
+import Button from "@/components/inputs/Button";
+import Combobox from "@/components/inputs/Combobox";
+import { Heading, RelaxedHeading } from "@/components/text/Headings";
+import UserLayout from "@/containers/UserLayout";
+import { useGetTrack } from "@/hooks/tracks/track.hooks";
 import {
   useCreateLyricsMutation,
   useUpdateLyricsMutation,
-} from '@/state/api/apiMutationSlice';
+} from "@/state/api/apiMutationSlice";
+import type { AudioFile, Track } from "@/types/models/track.types";
+import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import {
-  useLazyFetchLyricsQuery,
-  useLazyGetLyricsQuery,
-} from '@/state/api/apiQuerySlice';
-import type {
-  AudioFile,
-  TimedLyricLine,
-  Track,
-  TrackLyrics,
-} from '@/types/models/track.types';
-import { faArrowRotateLeft, faClosedCaptioning, faPlus, faSave } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ChangeEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
+  faArrowRotateLeft,
+  faBook,
+  faClosedCaptioning,
+  faPlus,
+  faSave,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  KeyboardEvent as ReactKeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import LyricsGuidelines from "./LyricsGuidelines";
+import { useFetchLyrics, useGetLyrics } from "@/hooks/lyrics/lyrics.hooks";
+import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { Lyrics, TimedLyricLine } from "@/types/models/lyrics.types";
+import {
+  setDeleteLyricsModal,
+  setLyricsGuideLinesModal,
+  setSelectedLyrics,
+} from "@/state/features/lyricSlice";
+import DeleteLyrics from "./DeleteLyrics";
 
 type SyncStateLine = {
   index: number;
@@ -28,41 +45,60 @@ type SyncStateLine = {
   time?: number;
 };
 
-const formatSyncLabel = (lyrics: TrackLyrics) => {
+const formatSyncLabel = (lyrics: Lyrics) => {
   const createdAt = lyrics.createdAt
     ? new Date(lyrics.createdAt).toLocaleDateString()
-    : 'Draft';
+    : "Draft";
   return `${lyrics.language.toUpperCase()} · ${createdAt}`;
 };
 
-const sortLyricsByNewest = (lyrics: TrackLyrics[]) =>
+const sortLyricsByNewest = (lyrics: Lyrics[]) =>
   [...lyrics].sort(
     (first, second) =>
-      new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime(),
+      new Date(second.createdAt).getTime() -
+      new Date(first.createdAt).getTime(),
   );
 
 const toSyncLines = (content: TimedLyricLine[]): SyncStateLine[] =>
   content.map((line, index) => ({
     index,
     text: line.text,
-    time: typeof line.time === 'number' ? line.time : undefined,
+    time: typeof line.time === "number" ? line.time : undefined,
   }));
 
-const SyncLyrics = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const trackId = searchParams.get('trackId') ?? '';
-  const lyricsId = searchParams.get('lyricsId') ?? '';
+const languageOptions = LANGUAGES_LIST.map((lang) => ({
+  label: lang.name,
+  value: lang.code,
+}));
 
-  const { getTrack, data: trackResponse, isFetching: trackIsFetching } = useGetTrack();
-  const [fetchLyrics, { data: lyricsResponse, isFetching: lyricsAreFetching }] =
-    useLazyFetchLyricsQuery();
-  const [getLyrics, { isFetching: lyricsRecordIsFetching }] = useLazyGetLyricsQuery();
-  const [createLyrics, { isLoading: isCreatingLyrics }] = useCreateLyricsMutation();
-  const [updateLyrics, { isLoading: isUpdatingLyrics }] = useUpdateLyricsMutation();
+const SyncLyrics = () => {
+  // STATE VARIABLES
+  const dispatch = useAppDispatch();
+  const { lyricsList, deleteLyricsModal } = useAppSelector(
+    (state) => state.lyric,
+  );
+
+  // NAVIGATION
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const trackId = searchParams.get("trackId") ?? "";
+  const lyricsId = searchParams.get("lyricsId") ?? "";
+
+  const {
+    getTrack,
+    data: trackResponse,
+    isFetching: trackIsFetching,
+  } = useGetTrack();
+  const { fetchLyrics, isFetching: lyricsAreFetching } = useFetchLyrics();
+  const { getLyrics, isFetching: lyricsRecordIsFetching } = useGetLyrics();
+  const [createLyrics, { isLoading: isCreatingLyrics }] =
+    useCreateLyricsMutation();
+  const [updateLyrics, { isLoading: isUpdatingLyrics }] =
+    useUpdateLyricsMutation();
 
   const [selectedLyricsId, setSelectedLyricsId] = useState(lyricsId);
-  const [editorLanguage, setEditorLanguage] = useState('en');
-  const [plainTextLyrics, setPlainTextLyrics] = useState('');
+  const [editorLanguage, setEditorLanguage] = useState("en");
+  const [plainTextLyrics, setPlainTextLyrics] = useState("");
   const [syncState, setSyncState] = useState<SyncStateLine[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -76,25 +112,25 @@ const SyncLyrics = () => {
   }, [lyricsId]);
 
   useEffect(() => {
-    if (trackId) {
+    if (trackId && !deleteLyricsModal) {
       void getTrack({ id: trackId });
       void fetchLyrics({ trackId, size: 100, page: 0 });
     }
-  }, [fetchLyrics, getTrack, trackId]);
+  }, [fetchLyrics, getTrack, trackId, deleteLyricsModal]);
 
   const track = trackResponse?.data as Track | undefined;
-  const lyricsRecords = useMemo<TrackLyrics[]>(() => {
-    const rows = (lyricsResponse?.data?.rows ?? []) as TrackLyrics[];
+  const lyricsRecords = useMemo<Lyrics[]>(() => {
+    const rows = (lyricsList ?? []) as Lyrics[];
     return sortLyricsByNewest(rows);
-  }, [lyricsResponse?.data?.rows]);
+  }, [lyricsList]);
 
   useEffect(() => {
     if (!lyricsId && !selectedLyricsId && lyricsRecords.length > 0) {
-      const nextLyricsId = lyricsRecords[0].id;
-      setSelectedLyricsId(nextLyricsId);
+      const nextLyricsId = lyricsRecords[0]?.id ?? "";
+      setSelectedLyricsId(nextLyricsId ?? "");
       setSearchParams((params) => {
-        params.set('trackId', trackId);
-        params.set('lyricsId', nextLyricsId);
+        params.set("trackId", trackId);
+        params.set("lyricsId", nextLyricsId ?? "");
         return params;
       });
     }
@@ -102,16 +138,22 @@ const SyncLyrics = () => {
 
   useEffect(() => {
     if (!selectedLyricsId) {
-      setEditorLanguage(track?.primaryLanguage || 'en');
-      setPlainTextLyrics('');
+      setEditorLanguage(track?.primaryLanguage || "en");
+      setPlainTextLyrics("");
       setSyncState([]);
       return;
     }
 
-    const matchingRecord = lyricsRecords.find((record) => record.id === selectedLyricsId);
+    const matchingRecord = lyricsRecords.find(
+      (record) => record.id === selectedLyricsId,
+    );
     if (matchingRecord) {
-      setEditorLanguage(matchingRecord.language || track?.primaryLanguage || 'en');
-      setPlainTextLyrics(matchingRecord.content.map((line) => line.text).join('\n'));
+      setEditorLanguage(
+        matchingRecord.language || track?.primaryLanguage || "en",
+      );
+      setPlainTextLyrics(
+        matchingRecord.content.map((line) => line.text).join("\n"),
+      );
       setSyncState(toSyncLines(matchingRecord.content));
       setCurrentLineIndex(0);
       return;
@@ -120,27 +162,33 @@ const SyncLyrics = () => {
     void (async () => {
       try {
         const response = await getLyrics({ id: selectedLyricsId }).unwrap();
-        const fetchedLyrics = response.data as TrackLyrics;
-        setEditorLanguage(fetchedLyrics.language || track?.primaryLanguage || 'en');
-        setPlainTextLyrics(fetchedLyrics.content.map((line) => line.text).join('\n'));
+        const fetchedLyrics = response.data as Lyrics;
+        setEditorLanguage(
+          fetchedLyrics.language || track?.primaryLanguage || "en",
+        );
+        setPlainTextLyrics(
+          fetchedLyrics.content.map((line) => line.text).join("\n"),
+        );
         setSyncState(toSyncLines(fetchedLyrics.content));
         setCurrentLineIndex(0);
       } catch (error) {
         const errorMessage =
           (error as { data?: { message?: string } })?.data?.message ||
-          'Unable to load the selected lyrics record.';
+          "Unable to load the selected lyrics record.";
         toast.error(errorMessage);
       }
     })();
   }, [getLyrics, lyricsRecords, selectedLyricsId, track?.primaryLanguage]);
 
   const primaryAudio = useMemo<AudioFile | undefined>(
-    () => track?.audioFiles?.find((audioFile) => audioFile.isPrimary) ?? track?.audioFiles?.[0],
+    () =>
+      track?.audioFiles?.find((audioFile) => audioFile.isPrimary) ??
+      track?.audioFiles?.[0],
     [track?.audioFiles],
   );
 
   const lyricLines = useMemo(
-    () => plainTextLyrics.split('\n').map((line) => line.trimEnd()),
+    () => plainTextLyrics.split("\n").map((line) => line.trimEnd()),
     [plainTextLyrics],
   );
 
@@ -179,14 +227,14 @@ const SyncLyrics = () => {
     const handlePause = () => setIsPlaying(false);
     const handlePlay = () => setIsPlaying(true);
 
-    audioElement.addEventListener('timeupdate', handleTimeUpdate);
-    audioElement.addEventListener('pause', handlePause);
-    audioElement.addEventListener('play', handlePlay);
+    audioElement.addEventListener("timeupdate", handleTimeUpdate);
+    audioElement.addEventListener("pause", handlePause);
+    audioElement.addEventListener("play", handlePlay);
 
     return () => {
-      audioElement.removeEventListener('timeupdate', handleTimeUpdate);
-      audioElement.removeEventListener('pause', handlePause);
-      audioElement.removeEventListener('play', handlePlay);
+      audioElement.removeEventListener("timeupdate", handleTimeUpdate);
+      audioElement.removeEventListener("pause", handlePause);
+      audioElement.removeEventListener("play", handlePlay);
     };
   }, [handleTimeUpdate]);
 
@@ -197,15 +245,15 @@ const SyncLyrics = () => {
     const lineElements = lyricsRef.current.children;
     if (lineElements[currentLineIndex] instanceof HTMLElement) {
       lineElements[currentLineIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: "smooth",
+        block: "center",
       });
     }
   }, [currentLineIndex]);
 
   const handleSync = useCallback(
     (index: number) => {
-      const nextLine = lyricLines[index] ?? '';
+      const nextLine = lyricLines[index] ?? "";
       setSyncState((previousState) =>
         previousState.map((line) =>
           line.index === index
@@ -236,11 +284,11 @@ const SyncLyrics = () => {
 
   const handleEditorKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
-      if (event.key === 'ArrowUp') {
+      if (event.key === "ArrowUp") {
         setCurrentLineIndex((previousIndex) => Math.max(previousIndex - 1, 0));
       }
 
-      if (event.key === 'ArrowDown') {
+      if (event.key === "ArrowDown") {
         setCurrentLineIndex((previousIndex) =>
           Math.min(previousIndex + 1, Math.max(lyricLines.length - 1, 0)),
         );
@@ -251,20 +299,20 @@ const SyncLyrics = () => {
 
   useEffect(() => {
     const handleWindowKeyDown = (event: KeyboardEvent) => {
-      if (event.code === 'ArrowUp') {
+      if (event.code === "ArrowUp") {
         setCurrentLineIndex((previousIndex) => Math.max(previousIndex - 1, 0));
-      } else if (event.code === 'ArrowDown') {
+      } else if (event.code === "ArrowDown") {
         setCurrentLineIndex((previousIndex) =>
           Math.min(previousIndex + 1, Math.max(lyricLines.length - 1, 0)),
         );
-      } else if (event.code === 'Space' && isPlaying) {
+      } else if (event.code === "Space" && isPlaying) {
         event.preventDefault();
         handleSync(currentLineIndex);
       }
     };
 
-    window.addEventListener('keydown', handleWindowKeyDown);
-    return () => window.removeEventListener('keydown', handleWindowKeyDown);
+    window.addEventListener("keydown", handleWindowKeyDown);
+    return () => window.removeEventListener("keydown", handleWindowKeyDown);
   }, [currentLineIndex, handleSync, isPlaying, lyricLines.length]);
 
   const handlePlayToggle = async () => {
@@ -281,47 +329,37 @@ const SyncLyrics = () => {
         setIsPlaying(false);
       }
     } catch {
-      toast.error('Unable to start audio playback.');
+      toast.error("Unable to start audio playback.");
     }
-  };
-
-  const handleLyricsRecordChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const nextLyricsId = event.target.value;
-    setSelectedLyricsId(nextLyricsId);
-    setSearchParams((params) => {
-      params.set('trackId', trackId);
-      params.set('lyricsId', nextLyricsId);
-      return params;
-    });
   };
 
   const handleSave = async () => {
     if (!trackId) {
-      toast.error('Track ID is required to save synced lyrics.');
+      toast.error("Track ID is required to save synced lyrics.");
       return;
     }
 
     const payload = {
       trackId,
-      language: editorLanguage.trim() || track?.primaryLanguage || 'en',
+      language: editorLanguage.trim() || track?.primaryLanguage || "en",
       content: syncState.map((line) => ({
         text: line.text,
-        ...(typeof line.time === 'number' ? { time: line.time } : {}),
+        ...(typeof line.time === "number" ? { time: line.time } : {}),
       })),
     };
 
     try {
       if (selectedLyricsId) {
         await updateLyrics({ id: selectedLyricsId, body: payload }).unwrap();
-        toast.success('Lyrics sync updated successfully.');
+        toast.success("Lyrics sync updated successfully.");
       } else {
         const response = await createLyrics(payload).unwrap();
-        const createdLyrics = response.data as TrackLyrics;
-        toast.success('Lyrics sync created successfully.');
-        setSelectedLyricsId(createdLyrics.id);
+        const createdLyrics = response.data as Lyrics;
+        toast.success("Lyrics sync created successfully.");
+        setSelectedLyricsId(createdLyrics?.id ?? "");
         setSearchParams((params) => {
-          params.set('trackId', trackId);
-          params.set('lyricsId', createdLyrics.id);
+          params.set("trackId", trackId);
+          params.set("lyricsId", createdLyrics?.id ?? "");
           return params;
         });
       }
@@ -329,7 +367,7 @@ const SyncLyrics = () => {
     } catch (error) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
-        'Unable to save synced lyrics.';
+        "Unable to save synced lyrics.";
       toast.error(errorMessage);
     }
   };
@@ -345,14 +383,23 @@ const SyncLyrics = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <section className="rounded-md border border-dashed border-gray-300 bg-white p-8 text-center shadow-sm">
-            <Heading className="!text-gray-900">Track required</Heading>
-            <p className="mt-3 text-[12px] text-gray-500">
+          <section className="rounded-md border border-dashed border-[color:var(--lens-sand)]/70 bg-white p-8 text-center">
+            <Heading className="!text-[color:var(--lens-ink)]">
+              Track required
+            </Heading>
+            <p className="mt-3 text-[12px] text-[color:var(--lens-ink)]/55">
               Open lyrics sync from a track page so the editor can load the
               uploaded primary audio.
             </p>
             <div className="mt-4 flex justify-center">
-              <Button route="/lyrics">Back to lyrics</Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(-1);
+                }}
+              >
+                Go back
+              </Button>
             </div>
           </section>
         </main>
@@ -363,46 +410,34 @@ const SyncLyrics = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-4">
-        <header className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-1">
+        <header className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+          <nav className="flex flex-wrap items-start justify-between gap-4">
+            <menu className="space-y-1">
               <RelaxedHeading>Lyrics sync</RelaxedHeading>
-              <Heading className="!text-gray-900">
-                {track?.title || 'Track lyrics sync'}
+              <Heading className="!text-[color:var(--lens-ink)]">
+                {track?.title || "Track lyrics sync"}
               </Heading>
-              <p className="text-[12px] text-gray-500">
+              <p className="text-[12px] text-[color:var(--lens-ink)]/55">
                 Sync lyrics against the uploaded primary audio and overwrite the
                 selected lyrics record when you save.
               </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                icon={faPlus}
-                route={`/lyrics/create?trackId=${trackId}`}
-              >
+            </menu>
+            <menu className="flex flex-wrap items-center gap-2">
+              <Button icon={faPlus} route={`/lyrics/create?trackId=${trackId}`}>
                 New lyrics record
               </Button>
-              <Button
-                primary
-                icon={faSave}
-                onClick={(event) => {
-                  event.preventDefault();
-                  void handleSave();
-                }}
-                isLoading={isBusy}
-              >
-                Save sync
-              </Button>
-            </div>
-          </div>
+            </menu>
+          </nav>
         </header>
 
         {!primaryAudio ? (
-          <section className="rounded-md border border-dashed border-gray-300 bg-white p-8 text-center shadow-sm">
-            <Heading className="!text-gray-900">Primary audio required</Heading>
-            <p className="mt-3 text-[12px] text-gray-500">
-              Upload track audio before syncing lyrics. The sync timeline uses the
-              track&apos;s uploaded primary audio source.
+          <section className="rounded-md border border-dashed border-[color:var(--lens-sand)]/70 bg-white p-8 text-center">
+            <Heading className="!text-[color:var(--lens-ink)]">
+              Primary audio required
+            </Heading>
+            <p className="mt-3 text-[12px] text-[color:var(--lens-ink)]/55">
+              Upload track audio before syncing lyrics. The sync timeline uses
+              the track&apos;s uploaded primary audio source.
             </p>
             <div className="mt-4 flex justify-center">
               <Button
@@ -415,70 +450,83 @@ const SyncLyrics = () => {
         ) : (
           <section className="grid gap-4 xl:grid-cols-[minmax(0,1.75fr)_360px]">
             <article className="flex flex-col gap-4">
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
                 <header className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <Heading type="h3" className="!text-gray-900">
+                    <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
                       Audio reference
-                    </Heading>
-                    <p className="text-[12px] text-gray-500">
+                    </h2>
+                    <p className="text-[12px] text-[color:var(--lens-ink)]/55">
                       Primary uploaded audio · {primaryAudio.fileType}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      icon={faClosedCaptioning}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        void handlePlayToggle();
-                      }}
-                    >
-                      {isPlaying ? 'Pause' : 'Play'}
-                    </Button>
-                  </div>
+                  <Button
+                    icon={faClosedCaptioning}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      void handlePlayToggle();
+                    }}
+                  >
+                    {isPlaying ? "Pause" : "Play"}
+                  </Button>
                 </header>
 
-                <audio ref={audioRef} src={primaryAudio.storagePath} preload="metadata" className="mt-4 w-full" controls />
+                <audio
+                  ref={audioRef}
+                  src={primaryAudio.storagePath}
+                  preload="metadata"
+                  className="mt-4 w-full"
+                  controls
+                />
 
-                <dl className="mt-4 grid gap-3 rounded-md border border-gray-100 bg-gray-50/80 p-4 sm:grid-cols-3">
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.14em] text-gray-500">
+                <dl className="mt-4 grid gap-3 rounded-md bg-[color:var(--lens-sand)]/10 p-4 sm:grid-cols-3">
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
                       Current time
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900">{currentTime.toFixed(2)}s</dd>
+                    <dd className="text-sm text-[color:var(--lens-ink)]">
+                      {currentTime.toFixed(2)}s
+                    </dd>
                   </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.14em] text-gray-500">
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
                       Active line
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900">{currentLineIndex + 1}</dd>
+                    <dd className="text-sm text-[color:var(--lens-ink)]">
+                      {currentLineIndex + 1}
+                    </dd>
                   </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.14em] text-gray-500">
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
                       Synced lines
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900">
-                      {syncState.filter((line) => typeof line.time === 'number').length} / {syncState.length}
+                    <dd className="text-sm text-[color:var(--lens-ink)]">
+                      {
+                        syncState.filter(
+                          (line) => typeof line.time === "number",
+                        ).length
+                      }{" "}
+                      / {syncState.length}
                     </dd>
                   </div>
                 </dl>
               </section>
 
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
                 <header className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <Heading type="h3" className="!text-gray-900">
+                    <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
                       Lyrics lines
-                    </Heading>
-                    <p className="text-[12px] text-gray-500">
+                    </h2>
+                    <p className="text-[12px] text-[color:var(--lens-ink)]/55">
                       Use ↑ and ↓ to move between lines, then press Space while
                       the audio is playing to capture a timestamp.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-2 text-[12px] text-[color:var(--lens-blue)] transition-colors hover:opacity-80"
-                    onClick={() => {
+                  <Button
+                    icon={faArrowRotateLeft}
+                    onClick={(event) => {
+                      event.preventDefault();
                       setCurrentLineIndex(0);
                       if (audioRef.current) {
                         audioRef.current.currentTime = 0;
@@ -486,56 +534,68 @@ const SyncLyrics = () => {
                       }
                     }}
                   >
-                    <FontAwesomeIcon icon={faArrowRotateLeft} />
                     Reset playhead
-                  </button>
+                  </Button>
                 </header>
 
-                <div ref={lyricsRef} className="mt-4 flex max-h-[65vh] flex-col gap-3 overflow-y-auto">
+                <div
+                  ref={lyricsRef}
+                  className="mt-4 flex max-h-[65vh] flex-col gap-3 overflow-y-auto"
+                >
                   {syncState.map((line) => {
                     const isActive = line.index === currentLineIndex;
-                    const isSynced = typeof line.time === 'number';
+                    const isSynced = typeof line.time === "number";
 
                     return (
                       <section
                         key={`${line.index}-${line.text}`}
                         className={`rounded-md border p-3 transition-colors ${
                           isActive
-                            ? 'border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)]/5'
-                            : 'border-gray-100 bg-gray-50/80'
+                            ? "border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)]/5"
+                            : "border-[color:var(--lens-sand)]/40 bg-[color:var(--lens-sand)]/10"
                         }`}
                       >
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="space-y-1">
-                            <p className="text-[11px] uppercase tracking-[0.14em] text-gray-500">
+                            <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
                               Line {line.index + 1}
                             </p>
-                            <p className={`text-sm ${isSynced ? 'font-normal text-gray-900' : 'text-gray-600'}`}>
-                              {line.text || <span className="italic text-gray-400">Blank line</span>}
+                            <p
+                              className={`text-sm ${isSynced ? "font-normal text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/70"}`}
+                            >
+                              {line.text || (
+                                <span className="italic text-[color:var(--lens-ink)]/40">
+                                  Blank line
+                                </span>
+                              )}
                             </p>
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="min-w-16 text-right text-[12px] text-[color:var(--lens-blue)]">
-                              {typeof line.time === 'number' ? `${line.time.toFixed(2)}s` : 'Not synced'}
+                            <span className="min-w-16 text-right text-[11px] text-[color:var(--lens-blue)]">
+                              {typeof line.time === "number"
+                                ? `${line.time.toFixed(2)}s`
+                                : "Not synced"}
                             </span>
-                            <button
-                              type="button"
-                              className="inline-flex h-9 items-center justify-center rounded-md border border-[color:var(--lens-blue)] px-3 text-[12px] text-[color:var(--lens-blue)] transition-colors hover:bg-[color:var(--lens-sand)]"
-                              onClick={() => {
+                            <Button
+                              onClick={(event) => {
+                                event.preventDefault();
                                 setCurrentLineIndex(line.index);
                                 handleSync(line.index);
                               }}
+                              className="!text-[11px]"
                               disabled={!isPlaying}
                             >
                               Sync now
-                            </button>
-                            <button
-                              type="button"
-                              className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 px-3 text-[12px] text-gray-600 transition-colors hover:bg-gray-100"
-                              onClick={() => handleResetLine(line.index)}
+                            </Button>
+                            <Button
+                              onClick={(event) => {
+                                event.preventDefault();
+                                handleResetLine(line.index);
+                              }}
+                              className="!text-[11px]"
                             >
                               Clear
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </section>
@@ -546,54 +606,77 @@ const SyncLyrics = () => {
             </article>
 
             <aside className="flex flex-col gap-4">
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
                 <header className="space-y-1">
-                  <Heading type="h3" className="!text-gray-900">
+                  <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
                     Record selection
-                  </Heading>
-                  <p className="text-[12px] text-gray-500">
-                    Multiple lyrics records can exist per track. Saving overwrites
-                    the currently selected record.
+                  </h2>
+                  <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+                    Multiple lyrics records can exist per track. Saving
+                    overwrites the currently selected record.
                   </p>
                 </header>
 
                 <label className="mt-4 flex flex-col gap-2">
-                  <span className="text-[12px] text-[color:var(--lens-ink)]">Lyrics record</span>
-                  <select
-                    className="h-10 rounded-lg border border-secondary/40 bg-white px-3 text-[12px]"
+                  <Combobox
+                    label="Lyrics record"
+                    options={lyricsRecords.map((lyrics) => ({
+                      label: formatSyncLabel(lyrics),
+                      value: lyrics.id,
+                    }))}
                     value={selectedLyricsId}
-                    onChange={handleLyricsRecordChange}
-                    disabled={lyricsRecords.length === 0}
-                  >
-                    {lyricsRecords.length === 0 ? (
-                      <option value="">No lyrics records yet</option>
-                    ) : (
-                      lyricsRecords.map((lyrics) => (
-                        <option key={lyrics.id} value={lyrics.id}>
-                          {formatSyncLabel(lyrics)}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                </label>
-
-                <label className="mt-4 flex flex-col gap-2">
-                  <span className="text-[12px] text-[color:var(--lens-ink)]">Language</span>
-                  <input
-                    value={editorLanguage}
-                    onChange={(event) => setEditorLanguage(event.target.value)}
-                    className="h-10 rounded-lg border border-secondary/40 bg-white px-3 text-[12px]"
-                    placeholder="en"
+                    onChange={(value) => {
+                      if (!value) return;
+                      setSelectedLyricsId(value);
+                      setSearchParams((params) => {
+                        params.set("trackId", trackId);
+                        params.set("lyricsId", value as string);
+                        return params;
+                      });
+                    }}
+                    readOnly={lyricsRecords.length === 0}
                   />
                 </label>
+
+                {lyricsRecords.length > 0 && selectedLyricsId ? (
+                  <div className="mt-3">
+                    <Button
+                      danger
+                      icon={faTrash}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        dispatch(
+                          setSelectedLyrics(
+                            lyricsRecords.find(
+                              (lyrics) => lyrics.id === selectedLyricsId,
+                            ),
+                          ),
+                        );
+                        dispatch(setDeleteLyricsModal(true));
+                      }}
+                    >
+                      Delete lyrics record
+                    </Button>
+                  </div>
+                ) : null}
+
+                <div className="mt-4">
+                  <Combobox
+                    label="Language"
+                    options={languageOptions}
+                    value={editorLanguage}
+                    onChange={(value) => setEditorLanguage(value)}
+                    placeholder="Select language..."
+                  />
+                </div>
               </section>
 
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
                 <header className="space-y-1">
-                  <Heading type="h3" className="!text-gray-900">
+                  <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
                     Lyrics editor
-                  </Heading>
-                  <p className="text-[12px] text-gray-500">
+                  </h2>
+                  <p className="text-[12px] text-[color:var(--lens-ink)]/55">
                     Update the plain lyric lines here before syncing timestamps.
                   </p>
                 </header>
@@ -603,21 +686,51 @@ const SyncLyrics = () => {
                   onChange={(event) => setPlainTextLyrics(event.target.value)}
                   onKeyDown={handleEditorKeyDown}
                   rows={18}
-                  className="mt-4 w-full rounded-md border border-gray-200 bg-gray-50/70 p-3 text-[13px] text-gray-900 outline-hidden transition-colors focus:border-[color:var(--lens-blue)]"
+                  className="mt-4 w-full rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--lens-sand)]/10 p-3 text-[13px] text-[color:var(--lens-ink)] outline-hidden transition-colors focus:border-[color:var(--lens-blue)]"
                   placeholder="Enter one lyric line per row"
                 />
               </section>
 
-              <section className="rounded-md border border-dashed border-gray-200 bg-gray-50/60 p-4 text-[12px] text-gray-500 shadow-sm">
-                <p>
-                  Tip: Keep the lyrics editor and sync list aligned by editing one
-                  line per row. Empty rows are preserved when saved.
-                </p>
-              </section>
+              <Link
+                to="#"
+                onClick={(event) => {
+                  event.preventDefault();
+                  dispatch(setLyricsGuideLinesModal(true));
+                }}
+                className="self-start text-[12px] text-[color:var(--lens-blue)] hover:underline underline-offset-2"
+              >
+                <FontAwesomeIcon icon={faBook} className="mr-1.5" />
+                View lyrics guidelines
+              </Link>
             </aside>
           </section>
         )}
+
+        <footer className="flex w-full items-center justify-between gap-3">
+          <Button
+            onClick={(event) => {
+              event.preventDefault();
+              navigate(-1);
+            }}
+          >
+            Back
+          </Button>
+          <Button
+            primary
+            icon={faSave}
+            onClick={(event) => {
+              event.preventDefault();
+              void handleSave();
+            }}
+            isLoading={isBusy}
+          >
+            Save sync
+          </Button>
+        </footer>
       </main>
+
+      <LyricsGuidelines />
+      <DeleteLyrics />
     </UserLayout>
   );
 };

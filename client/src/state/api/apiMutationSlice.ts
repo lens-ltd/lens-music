@@ -308,6 +308,13 @@ export const apiMutationSlice = createApi({
           body,
         }),
       }),
+
+      deleteLyrics: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/lyrics/${id}`,
+          method: "DELETE",
+        }),
+      }),
     };
   },
 });
@@ -347,5 +354,6 @@ export const {
   useDeleteReleaseContributorMutation,
   useCreateLyricsMutation,
   useUpdateLyricsMutation,
+  useDeleteLyricsMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

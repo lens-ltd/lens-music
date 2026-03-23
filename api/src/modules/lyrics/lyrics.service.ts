@@ -46,5 +46,13 @@ export class LyricsService {
     Object.assign(lyrics, payload);
     return this.lyricsRepository.save(lyrics);
   }
+
+  // DELETE LYRICS
+  async deleteLyrics(id: UUID): Promise<void> {
+    const result = await this.lyricsRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('Lyrics not found');
+    }
+  }
 }
 

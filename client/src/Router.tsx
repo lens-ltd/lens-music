@@ -13,7 +13,6 @@ import CreateRelase from "./pages/releases/CreateRelase";
 import LandingPage from "./pages/landing/LandingPage";
 import ListLyrics from "./pages/lyrics/ListLyrics";
 import CreateLyrics from "./pages/lyrics/CreateLyrics";
-import LyricsGuidelines from "./pages/lyrics/LyricsGuidelines";
 import SyncLyrics from "./pages/lyrics/SyncLyrics";
 import NotFoundPage from "./pages/common/NotFoundPage";
 import RolesPage from "./pages/roles/RolesPage";
@@ -283,7 +282,6 @@ const Router = () => {
         />
       </Routes>
       <CreateRelase />
-      <LyricsGuidelines />
     </>
   );
 };

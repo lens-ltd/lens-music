@@ -2,6 +2,7 @@ import type { AbstractEntity } from './index.types';
 import type { Release } from './release.types';
 import type { ContributorRole } from './releaseContributor.types';
 import { ReleaseParentalAdvisory } from './release.types';
+import { Lyrics } from './lyrics.types';
 
 export enum TrackStatus {
   DRAFT = 'DRAFT',
@@ -49,16 +50,6 @@ export interface TrackContributor extends AbstractEntity {
   };
 }
 
-export interface TimedLyricLine {
-  time?: number;
-  text: string;
-}
-
-export interface TrackLyrics extends AbstractEntity {
-  trackId: string;
-  language: string;
-  content: TimedLyricLine[];
-}
 
 export interface Track extends AbstractEntity {
   releaseId: string;
@@ -82,7 +73,7 @@ export interface Track extends AbstractEntity {
   pLineOwner?: string;
   status: TrackStatus;
   release: Release;
-  lyrics: TrackLyrics[];
+  lyrics: Lyrics[];
   audioFiles: AudioFile[];
   trackContributors: TrackContributor[];
 }

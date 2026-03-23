@@ -24,6 +24,33 @@ const LyricsGuidelines = () => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
+        components={{
+          h2: ({ children }) => (
+            <h2 className="mb-2 mt-5 border-b border-[color:var(--lens-sand)]/70 pb-1 text-sm font-semibold text-[color:var(--lens-ink)] first:mt-0">
+              {children}
+            </h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="mb-1 mt-4 text-[12px] font-semibold text-[color:var(--lens-ink)]">
+              {children}
+            </h3>
+          ),
+          p: ({ children }) => (
+            <p className="mb-2 text-[12px] leading-relaxed text-[color:var(--lens-ink)]/75">
+              {children}
+            </p>
+          ),
+          ul: ({ children }) => (
+            <ul className="mb-3 mt-1 list-disc space-y-1 pl-4">
+              {children}
+            </ul>
+          ),
+          li: ({ children }) => (
+            <li className="text-[12px] leading-relaxed text-[color:var(--lens-ink)]/75">
+              {children}
+            </li>
+          ),
+        }}
       >
         {lyricsGuidelines}
       </ReactMarkdown>

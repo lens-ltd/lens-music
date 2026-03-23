@@ -1,22 +1,26 @@
-import { InputErrorMessage } from '@/components/feedbacks/ErrorLabels';
-import Button from '@/components/inputs/Button';
-import CustomTooltip from '@/components/inputs/CustomTooltip';
-import Input from '@/components/inputs/Input';
-import TextArea from '@/components/inputs/TextArea';
-import { Heading, RelaxedHeading } from '@/components/text/Headings';
-import UserLayout from '@/containers/UserLayout';
-import { useValidateLyrics } from '@/hooks/lyrics/lyrics.hooks';
-import { useGetTrack } from '@/hooks/tracks/track.hooks';
-import { setLyricsGuideLinesModal } from '@/state/features/lyricSlice';
-import { useCreateLyricsMutation } from '@/state/api/apiMutationSlice';
-import { AppDispatch } from '@/state/store';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ChangeEvent, useEffect } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
+import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
+import Button from "@/components/inputs/Button";
+import CustomTooltip from "@/components/inputs/CustomTooltip";
+import Input from "@/components/inputs/Input";
+import TextArea from "@/components/inputs/TextArea";
+import { Heading, RelaxedHeading } from "@/components/text/Headings";
+import UserLayout from "@/containers/UserLayout";
+import { useValidateLyrics } from "@/hooks/lyrics/lyrics.hooks";
+import { useGetTrack } from "@/hooks/tracks/track.hooks";
+import { setLyricsGuideLinesModal } from "@/state/features/lyricSlice";
+import { useCreateLyricsMutation } from "@/state/api/apiMutationSlice";
+import { AppDispatch } from "@/state/store";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ChangeEvent, useEffect } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { useAppSelector } from "@/state/hooks";
+import Combobox from "@/components/inputs/Combobox";
+import { LANGUAGES_LIST } from "@/constants/languages.constants";
+import LyricsGuidelines from "./LyricsGuidelines";
 
 type CreateLyricsFormValues = {
   trackId: string;
@@ -24,38 +28,37 @@ type CreateLyricsFormValues = {
   content: string;
 };
 
-const defaultValues: CreateLyricsFormValues = {
-  trackId: '',
-  language: 'en',
-  content: '',
-};
-
 const CreateLyrics = () => {
   const dispatch: AppDispatch = useDispatch();
+  const { track } = useAppSelector((state) => state.track);
+
+  // NAVIGATION
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const trackIdFromQuery = searchParams.get('trackId') ?? '';
+  const trackIdFromQuery = searchParams.get("trackId") ?? "";
+
+  // FETCH TRACK
   const { getTrack, data: trackResponse } = useGetTrack();
   const [createLyrics, { isLoading }] = useCreateLyricsMutation();
 
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
+    setValue,
   } = useForm<CreateLyricsFormValues>({
     defaultValues: {
-      ...defaultValues,
       trackId: trackIdFromQuery,
     },
   });
 
   useEffect(() => {
-    if (trackIdFromQuery) {
-      setValue('trackId', trackIdFromQuery);
+    if (trackIdFromQuery && track?.id) {
+      setValue("trackId", track?.title);
       void getTrack({ id: trackIdFromQuery });
     }
-  }, [getTrack, setValue, trackIdFromQuery]);
+    setValue("language", "en");
+  }, [getTrack, setValue, trackIdFromQuery, track?.id, track?.title]);
 
   const { errors: validateErrors, validateLyrics } = useValidateLyrics();
 
@@ -63,18 +66,20 @@ const CreateLyrics = () => {
     try {
       const payload = {
         trackId: data.trackId.trim(),
-        language: data.language.trim() || 'en',
+        language: data.language.trim() || "en",
         content: data.content
-          .split('\n')
+          .split("\n")
           .map((line) => ({ text: line.trim() })),
       };
       const response = await createLyrics(payload).unwrap();
-      toast.success('Lyrics created successfully.');
-      navigate(`/lyrics/sync?trackId=${payload.trackId}&lyricsId=${response.data.id}`);
+      toast.success("Lyrics created successfully.");
+      navigate(
+        `/lyrics/sync?trackId=${payload.trackId}&lyricsId=${response.data.id}`,
+      );
     } catch (error) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
-        'Unable to create lyrics.';
+        "Unable to create lyrics.";
       toast.error(errorMessage);
     }
   };
@@ -82,30 +87,33 @@ const CreateLyrics = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-5">
-        <header className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+        <header className="rounded-md">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-1">
               <RelaxedHeading>Lyrics</RelaxedHeading>
-              <Heading className="!text-gray-900">Create lyrics record</Heading>
+              <Heading type="h3" className="!text-gray-900">
+                Create lyrics record
+              </Heading>
               <p className="text-[12px] text-gray-500">
-                Create a track-linked lyrics record before syncing it against the
-                uploaded primary audio.
+                Create a track-linked lyrics record before syncing it against
+                the uploaded primary audio.
               </p>
             </div>
             <CustomTooltip label="Lyrics guidelines">
-              <button
-                type="button"
-                className="rounded-full border border-gray-200 p-2 text-primary transition-colors hover:bg-gray-50"
-                onClick={() => dispatch(setLyricsGuideLinesModal(true))}
-              >
-                <FontAwesomeIcon icon={faCircleInfo} />
-              </button>
+              <FontAwesomeIcon
+                className="cursor-pointer text-primary"
+                icon={faCircleInfo}
+                onClick={(event) => {
+                  event.preventDefault();
+                  dispatch(setLyricsGuideLinesModal(true));
+                }}
+              />
             </CustomTooltip>
           </div>
         </header>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+          <section className="rounded-md">
             <header className="mb-4 space-y-1">
               <Heading type="h3" className="!text-gray-900">
                 Record details
@@ -113,7 +121,7 @@ const CreateLyrics = () => {
               <p className="text-[12px] text-gray-500">
                 {trackResponse?.data?.title
                   ? `Creating lyrics for ${trackResponse.data.title}.`
-                  : 'Associate the lyrics with a track and add the base text.'}
+                  : "Associate the lyrics with a track and add the base text."}
               </p>
             </header>
 
@@ -121,10 +129,15 @@ const CreateLyrics = () => {
               <Controller
                 name="trackId"
                 control={control}
-                rules={{ required: 'Track ID is required' }}
+                rules={{ required: "Track name is required" }}
                 render={({ field }) => (
                   <label className="flex flex-col gap-1">
-                    <Input {...field} label="Track ID" placeholder="Enter track ID" />
+                    <Input
+                      {...field}
+                      label="Track name"
+                      placeholder="Enter track name"
+                      readOnly={!!(trackIdFromQuery && track?.id)}
+                    />
                     {errors.trackId && (
                       <InputErrorMessage message={errors.trackId.message} />
                     )}
@@ -135,10 +148,18 @@ const CreateLyrics = () => {
               <Controller
                 name="language"
                 control={control}
-                rules={{ required: 'Language is required' }}
+                rules={{ required: "Language is required" }}
                 render={({ field }) => (
                   <label className="flex flex-col gap-1">
-                    <Input {...field} label="Language" placeholder="en" />
+                    <Combobox
+                      {...field}
+                      label="Language"
+                      placeholder="Select the language"
+                      options={LANGUAGES_LIST.map((language) => ({
+                        label: language.name,
+                        value: language.code,
+                      }))}
+                    />
                     {errors.language && (
                       <InputErrorMessage message={errors.language.message} />
                     )}
@@ -151,7 +172,7 @@ const CreateLyrics = () => {
               <Controller
                 name="content"
                 control={control}
-                rules={{ required: 'Lyrics content is required' }}
+                rules={{ required: "Lyrics content is required" }}
                 render={({ field }) => (
                   <label className="flex flex-col gap-1">
                     <TextArea
@@ -182,14 +203,24 @@ const CreateLyrics = () => {
             )}
           </section>
 
-          <footer className="flex items-center justify-end gap-3">
-            <Button route="/lyrics">Cancel</Button>
+          <footer className="flex items-center justify-between gap-3">
+            <Button
+              onClick={(event) => {
+                event.preventDefault();
+                dispatch(setLyricsGuideLinesModal(false));
+                navigate(-1);
+              }}
+            >
+              Cancel
+            </Button>
             <Button primary submit isLoading={isLoading}>
               Create and sync
             </Button>
           </footer>
         </form>
       </main>
+
+      <LyricsGuidelines />
     </UserLayout>
   );
 };
