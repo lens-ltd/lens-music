@@ -2,11 +2,13 @@ import Button from "@/components/inputs/Button";
 import Modal from "@/components/modals/Modal";
 import { useDeleteLyrics } from "@/hooks/lyrics/lyrics.hooks";
 import {
+  removeLyricsFromList,
   setDeleteLyricsModal,
   setSelectedLyrics,
 } from "@/state/features/lyricSlice";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const DeleteLyrics = () => {
@@ -15,6 +17,9 @@ const DeleteLyrics = () => {
   const { deleteLyricsModal, selectedLyrics } = useAppSelector(
     (state) => state.lyric,
   );
+
+  // NAVIGATION
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // DELETE LYRICS
   const { deleteLyrics, isLoading, data, isSuccess, reset } = useDeleteLyrics();
@@ -30,11 +35,29 @@ const DeleteLyrics = () => {
     if (isSuccess) {
       if (data?.message && selectedLyrics?.id) {
         toast.success(data?.message);
+        dispatch(removeLyricsFromList(selectedLyrics.id));
+        if (searchParams.get("lyricsId") === selectedLyrics.id) {
+          setSearchParams((params) => {
+            const next = new URLSearchParams(params);
+            next.delete("lyricsId");
+            return next;
+          });
+        }
+        dispatch(setSelectedLyrics(undefined));
       }
       reset();
       closeModal();
     }
-  }, [isSuccess, data, reset, closeModal, selectedLyrics]);
+  }, [
+    isSuccess,
+    data,
+    reset,
+    closeModal,
+    selectedLyrics,
+    searchParams,
+    setSearchParams,
+    dispatch,
+  ]);
 
   return (
     <Modal

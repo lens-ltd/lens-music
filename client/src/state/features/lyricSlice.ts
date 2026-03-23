@@ -1,5 +1,5 @@
 import { Lyrics } from '@/types/models/lyrics.types';
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: {
     lyricsGuideLinesModal: boolean;
@@ -32,6 +32,11 @@ const lyricSlice = createSlice({
     setSelectedLyrics: (state, action) => {
         state.selectedLyrics = action.payload;
     },
+    removeLyricsFromList: (state, action: PayloadAction<string>) => {
+      state.lyricsList = state.lyricsList.filter(
+        (item) => item.id !== action.payload,
+      );
+    },
   }
 });
 
@@ -41,6 +46,7 @@ export const {
     setLyricsList,
     setLyrics,
     setSelectedLyrics,
-} = lyricSlice.actions
+    removeLyricsFromList,
+} = lyricSlice.actions;
 
 export default lyricSlice.reducer
