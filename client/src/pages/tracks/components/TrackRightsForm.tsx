@@ -113,7 +113,7 @@ const TrackRightsForm = ({
                     field.onChange(checked);
                     void onPersistField("isBonusTrack", checked);
                   }}
-                  className="h-4 w-4 accent-[color:var(--lens-blue)]"
+                  className="h-4 w-4 cursor-pointer accent-[color:var(--lens-blue)]"
                 />
                 Bonus track
               </label>
@@ -134,7 +134,7 @@ const TrackRightsForm = ({
                     field.onChange(checked);
                     void onPersistField("isHiddenTrack", checked);
                   }}
-                  className="h-4 w-4 accent-[color:var(--lens-blue)]"
+                  className="h-4 w-4 cursor-pointer accent-[color:var(--lens-blue)]"
                 />
                 Hidden track
               </label>

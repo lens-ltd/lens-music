@@ -108,7 +108,7 @@ const ReleaseTrackCard = ({
               {capitalizeString(track?.status)}
             </p>
           </section>
-          {["DRAFT"].includes(track?.status ?? "") && (
+          {["DRAFT", 'VALIDATED'].includes(track?.status ?? "") && (
             <CustomTooltip label="Manage">
               <FontAwesomeIcon
                 onClick={(e) => {

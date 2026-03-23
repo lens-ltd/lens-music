@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
@@ -14,14 +14,12 @@ import {
 } from '@/state/api/apiMutationSlice';
 import { setToken } from '@/state/features/authSlice';
 import { setUser } from '@/state/features/userSlice';
-import { useAppSelector } from '@/state/hooks';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '@/state/store';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 const CompleteInvitation = () => {
   const { token } = useParams();
   const authToken = useAppSelector((state) => state.auth.token);
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [invitationEmail, setInvitationEmail] = useState<string | null>(null);
@@ -40,7 +38,7 @@ const CompleteInvitation = () => {
     },
   });
 
-  const [validateInvitation, invitationState] = useValidateInvitationTokenMutation();
+  const [validateInvitation, validationState] = useValidateInvitationTokenMutation();
   const [completeInvitation, completionState] = useCompleteInvitationMutation();
 
   useEffect(() => {
@@ -50,17 +48,17 @@ const CompleteInvitation = () => {
   }, [token, validateInvitation]);
 
   useEffect(() => {
-    if (invitationState.isSuccess) {
-      setInvitationEmail(invitationState.data?.data?.email ?? null);
+    if (validationState.isSuccess) {
+      setInvitationEmail(validationState.data?.data?.email ?? null);
     }
 
-    if (invitationState.isError) {
+    if (validationState.isError) {
       toast.error(
-        (invitationState.error as ErrorResponse)?.data?.message ||
+        (validationState.error as ErrorResponse)?.data?.message ||
           'This invitation is invalid or has expired.',
       );
     }
-  }, [invitationState.data, invitationState.error, invitationState.isError, invitationState.isSuccess]);
+  }, [validationState.data, validationState.error, validationState.isError, validationState.isSuccess]);
 
   useEffect(() => {
     if (completionState.isSuccess) {
@@ -78,16 +76,13 @@ const CompleteInvitation = () => {
     }
   }, [completionState.data, completionState.error, completionState.isError, completionState.isSuccess, dispatch, navigate]);
 
-  const invitationUnavailable = useMemo(
-    () => invitationState.isError || (!token && !invitationState.isLoading),
-    [invitationState.isError, invitationState.isLoading, token],
-  );
+  const invitationUnavailable = validationState.isError || (!token && !validationState.isLoading);
 
   if (authToken) {
     return <Navigate to="/dashboard" />;
   }
 
-  const handleFormSubmit = (formData: {
+  const onSubmit = (formData: {
     name: string;
     phoneNumber?: string;
     password: string;
@@ -121,7 +116,7 @@ const CompleteInvitation = () => {
             Finish setting up your Lens Music account and create your password.
           </p>
 
-          {invitationState.isLoading ? (
+          {validationState.isLoading ? (
             <div className="mt-8 flex justify-center"><Loader /></div>
           ) : invitationUnavailable ? (
             <div className="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">
@@ -134,7 +129,7 @@ const CompleteInvitation = () => {
                 <p className="mt-2 text-[14px] text-[color:var(--lens-ink)] font-normal">{invitationEmail}</p>
               </div>
 
-              <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit(handleFormSubmit)}>
+              <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                   control={control}
                   name="name"

@@ -5,7 +5,6 @@ import {
   useDeleteTrackAudio,
   useGetTrack,
   useUpdateTrack,
-  useUploadTrackAudio,
   useValidateTrack,
 } from "@/hooks/tracks/track.hooks";
 import {
@@ -13,6 +12,7 @@ import {
   useDeleteTrackContributor,
   useFetchTrackContributors,
 } from "@/hooks/tracks/track-contributor.hooks";
+import useTrackAudioUpload from "@/hooks/tracks/useTrackAudioUpload";
 import { useAppSelector } from "@/state/hooks";
 import { ContributorRole } from "@/types/models/releaseContributor.types";
 import { TrackContributor } from "@/types/models/track.types";
@@ -54,8 +54,14 @@ const ManageReleaseTrack = () => {
   const { getTrack } = useGetTrack();
   const { getRelease } = useGetRelease();
   const { updateTrack, isLoading: isUpdatingTrack } = useUpdateTrack();
-  const { uploadTrackAudio, isLoading: isUploadingAudio } =
-    useUploadTrackAudio();
+  const {
+    uploadAudio,
+    progress: uploadProgress,
+    phase: uploadPhase,
+    isUploading: isUploadingAudio,
+    isComplete: isUploadComplete,
+    reset: resetUpload,
+  } = useTrackAudioUpload();
   const { deleteTrackAudio, isLoading: isDeletingAudio } =
     useDeleteTrackAudio();
   const { validateTrack, isLoading: isValidatingTrack } = useValidateTrack();
@@ -78,9 +84,9 @@ const ManageReleaseTrack = () => {
   const [contributorSearchResults, setContributorSearchResults] = useState<
     Contributor[]
   >([]);
-  /** True while debouncing or until the contributors fetch finishes (avoids React 18 batching true→false when unwrap resolves from cache). */
   const [isContributorSearchPending, setIsContributorSearchPending] =
     useState(false);
+  const [uploadFileName, setUploadFileName] = useState("");
   const latestSearchRequestRef = useRef(0);
 
   useEffect(() => {
@@ -199,23 +205,25 @@ const ManageReleaseTrack = () => {
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file || !trackId) return;
-      const formData = new FormData();
-      formData.append("file", file);
       resetValidationResult();
+      setUploadFileName(file.name);
       try {
-        await uploadTrackAudio({ id: trackId, formData }).unwrap();
+        await uploadAudio(trackId, file);
         await getTrack({ id: trackId });
         toast.success("Audio uploaded successfully.");
+        setTimeout(() => resetUpload(), 3000);
       } catch (error) {
         const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Unable to upload audio.";
+          error instanceof Error
+            ? error.message
+            : "Unable to upload audio.";
         toast.error(errorMessage);
+        resetUpload();
       } finally {
         event.target.value = "";
       }
     },
-    [getTrack, resetValidationResult, trackId, uploadTrackAudio],
+    [getTrack, resetUpload, resetValidationResult, trackId, uploadAudio],
   );
 
   const handleDeleteAudio = useCallback(
@@ -337,47 +345,47 @@ const ManageReleaseTrack = () => {
             validationResult={validationResult}
           />
 
-          <section className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.9fr)]">
-            <article className="flex flex-col gap-4">
-              <TrackDetailsForm
-                control={control}
-                stateLabel={detailStateLabel}
-                onPersistField={persistFieldUpdate}
-              />
-              <TrackRightsForm
-                control={control}
-                stateLabel={rightsStateLabel}
-                onPersistField={persistFieldUpdate}
-              />
-            </article>
+          <TrackDetailsForm
+            control={control}
+            stateLabel={detailStateLabel}
+            onPersistField={persistFieldUpdate}
+          />
 
-            <aside className="flex flex-col gap-4">
-              <TrackAudioPanel
-                track={track}
-                isUploadingAudio={isUploadingAudio}
-                isDeletingAudio={isDeletingAudio}
-                onAudioUpload={handleAudioUpload}
-                onDeleteAudio={handleDeleteAudio}
-              />
-              <TrackContributorsPanel
-                contributorSearchTerm={contributorSearchTerm}
-                contributorSearchResults={contributorSearchResults}
-                selectedContributorId={selectedContributorId}
-                selectedContributorRole={selectedContributorRole}
-                trackContributors={trackContributorsData?.data ?? []}
-                isSearchingContributors={
-                  isContributorSearchPending || isSearchingContributors
-                }
-                isCreatingContributor={isCreatingContributor}
-                isDeletingContributor={isDeletingContributor}
-                onContributorSearchChange={handleContributorSearchChange}
-                onSelectContributor={handleSelectContributor}
-                onSelectRole={setSelectedContributorRole}
-                onAddContributor={handleAddContributor}
-                onDeleteContributor={handleDeleteContributor}
-              />
-            </aside>
-          </section>
+          <TrackRightsForm
+            control={control}
+            stateLabel={rightsStateLabel}
+            onPersistField={persistFieldUpdate}
+          />
+
+          <TrackAudioPanel
+            track={track}
+            isUploadingAudio={isUploadingAudio}
+            isDeletingAudio={isDeletingAudio}
+            uploadProgress={uploadProgress}
+            uploadPhase={uploadPhase}
+            isUploadComplete={isUploadComplete}
+            uploadFileName={uploadFileName}
+            onAudioUpload={handleAudioUpload}
+            onDeleteAudio={handleDeleteAudio}
+          />
+
+          <TrackContributorsPanel
+            contributorSearchTerm={contributorSearchTerm}
+            contributorSearchResults={contributorSearchResults}
+            selectedContributorId={selectedContributorId}
+            selectedContributorRole={selectedContributorRole}
+            trackContributors={trackContributorsData?.data ?? []}
+            isSearchingContributors={
+              isContributorSearchPending || isSearchingContributors
+            }
+            isCreatingContributor={isCreatingContributor}
+            isDeletingContributor={isDeletingContributor}
+            onContributorSearchChange={handleContributorSearchChange}
+            onSelectContributor={handleSelectContributor}
+            onSelectRole={setSelectedContributorRole}
+            onAddContributor={handleAddContributor}
+            onDeleteContributor={handleDeleteContributor}
+          />
 
           {isUpdatingTrack && (
             <p className="text-[12px] text-[color:var(--lens-ink)]/55">
@@ -385,6 +393,7 @@ const ManageReleaseTrack = () => {
             </p>
           )}
         </article>
+
         <footer className="flex w-full items-center justify-between gap-3">
           <Button
             onClick={(event) => {

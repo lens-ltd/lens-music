@@ -6,15 +6,15 @@ import { Contributor } from "@/types/models/contributor.types";
 import { ContributorRole } from "@/types/models/releaseContributor.types";
 import { TrackContributor } from "@/types/models/track.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { faExternalLinkAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExternalLinkAlt,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { Check } from "lucide-react";
 import { FormEvent } from "react";
-import { Link } from "react-router-dom";
-import {
-  MIN_CONTRIBUTOR_SEARCH_CHARS,
-  toTitleCase,
-} from "./trackForm.helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MIN_CONTRIBUTOR_SEARCH_CHARS, toTitleCase } from "./trackForm.helpers";
 
 type TrackContributorsPanelProps = {
   contributorSearchTerm: string;
@@ -84,141 +84,137 @@ const TrackContributorsPanel = ({
       </header>
 
       <form
-        className="mt-4 space-y-3"
+        className="w-full flex flex-col gap-4 my-4"
         onSubmit={(event) => void onAddContributor(event)}
       >
-        <label className="flex flex-col gap-2">
-          <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
-            Contributor
-          </span>
-          <div className="relative">
-            <Input
-              value={contributorSearchTerm}
-              onChange={(event) =>
-                onContributorSearchChange(event.target.value)
-              }
-              placeholder="Search contributors by name, email, phone, or country"
-              prefixIcon={faSearch}
-            />
-            {contributorSearchTerm.trim().length > 0 && (
-              <div className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
-                {isSearchingContributors ? (
-                  <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
-                    <Loader
-                      size="small"
-                      className="text-[color:var(--lens-ink)]/40"
-                    />
-                    Searching contributors...
-                  </span>
-                ) : contributorSearchTerm.trim().length <
-                  MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                  <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
-                    Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters to
-                    search.
-                  </p>
-                ) : contributorSearchResults.length ? (
-                  <ul className="max-h-56 overflow-y-auto py-1">
-                    {contributorSearchResults.map((contributor) => {
-                      const isSelected =
-                        selectedContributorId === contributor.id;
-                      return (
-                        <li key={contributor.id}>
-                          <button
-                            type="button"
-                            onClick={() => onSelectContributor(contributor)}
-                            className={`flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-[color:var(--lens-sand)]/20 ${
-                              isSelected
-                                ? "border-l-2 border-l-primary bg-[color:var(--lens-sand)]/40"
-                                : ""
-                            }`}
-                          >
-                            <span className="flex flex-col items-start">
-                              <span className="text-[12px] text-[color:var(--lens-ink)]">
-                                {getContributorLabel(contributor)}
-                              </span>
-                              <span className="text-[11px] text-[color:var(--lens-ink)]/55">
-                                {[
-                                  contributor.email,
-                                  contributor.phoneNumber,
-                                  contributor.country,
-                                ]
-                                  .filter(Boolean)
-                                  .join(" · ") || "No extra details"}
-                              </span>
-                            </span>
-                            {isSelected && (
-                              <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                            )}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  !(isSearchingContributors || selectedContributorId) && (
+        <section className="w-full grid grid-cols-2 gap-4">
+          <label className="flex flex-col gap-2">
+            <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+              Contributor
+            </span>
+            <search className="relative">
+              <Input
+                value={contributorSearchTerm}
+                onChange={(event) =>
+                  onContributorSearchChange(event.target.value)
+                }
+                placeholder="Search contributors by name, email, phone, or country"
+                prefixIcon={faSearch}
+              />
+              {contributorSearchTerm?.trim()?.length > 0 && (
+                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
+                  {isSearchingContributors ? (
+                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                      <Loader
+                        size="small"
+                        className="text-[color:var(--lens-ink)]/40"
+                      />
+                      Searching contributors...
+                    </span>
+                  ) : contributorSearchTerm?.trim()?.length <
+                    MIN_CONTRIBUTOR_SEARCH_CHARS ? (
                     <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
-                      No contributors found.
+                      Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters to
+                      search.
                     </p>
-                  )
-                )}
-              </div>
-            )}
-          </div>
-        </label>
+                  ) : contributorSearchResults?.length ? (
+                    <ul className="max-h-56 overflow-y-auto py-1">
+                      {contributorSearchResults?.map((contributor) => {
+                        const isSelected =
+                          selectedContributorId === contributor?.id;
+                        return (
+                          <li key={contributor?.id}>
+                            <button
+                              type="button"
+                              onClick={() => onSelectContributor(contributor)}
+                              className={`flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-[color:var(--lens-sand)]/20`}
+                            >
+                              <p className="flex flex-col items-start">
+                                <span className="text-[12px] text-[color:var(--lens-ink)]">
+                                  {getContributorLabel(contributor)}
+                                </span>
+                                <span className="text-[11px] text-[color:var(--lens-ink)]/55">
+                                  {[
+                                    contributor?.email,
+                                    contributor?.phoneNumber,
+                                    contributor?.country,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(" · ") || "No extra details"}
+                                </span>
+                              </p>
+                              {isSelected && (
+                                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                              )}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    !(isSearchingContributors || selectedContributorId) && (
+                      <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                        No contributors found.
+                      </p>
+                    )
+                  )}
+                </aside>
+              )}
+            </search>
+          </label>
 
-        <label className="flex flex-col gap-2">
-          <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
-            Role
-          </span>
-          <Combobox
-            options={roleOptions}
-            value={selectedContributorRole}
-            onChange={(value) => onSelectRole(value as ContributorRole)}
-            readOnly={isSearchingContributors}
-          />
-        </label>
+          <label className="flex flex-col gap-2">
+            <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+              Role
+            </span>
+            <Combobox
+              options={roleOptions}
+              value={selectedContributorRole}
+              onChange={(value) => onSelectRole(value as ContributorRole)}
+              readOnly={isSearchingContributors}
+            />
+          </label>
+        </section>
 
         <Button
           submit
           type="submit"
           primary
           isLoading={isCreatingContributor}
-          className="w-full"
+          className="w-fit self-end"
         >
           Add contributor
         </Button>
       </form>
 
       <ul className="mt-4 flex list-none flex-col gap-2 p-0">
-        {trackContributors.length ? (
-          trackContributors.map((trackContributor) => (
+        {trackContributors?.length ? (
+          trackContributors?.map((trackContributor) => (
             <li
-              key={trackContributor.id}
-              className="flex items-start justify-between gap-3 rounded-md border border-[color:var(--lens-sand)]/70 p-3"
+              key={trackContributor?.id}
+              className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
             >
-              <section>
+              <section className="flex flex-col gap-0.5">
                 <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
-                  {trackContributor.contributor?.name ||
-                    trackContributor.contributor?.displayName ||
+                  {trackContributor?.contributor?.name ||
+                    trackContributor?.contributor?.displayName ||
                     "Unknown contributor"}
                 </p>
                 <p className="text-[11px] text-[color:var(--lens-ink)]/55">
-                  {toTitleCase(trackContributor.role)}
+                  {toTitleCase(trackContributor?.role)}
                 </p>
               </section>
               {isDeletingContributor ? (
                 <Loader className="text-primary" />
               ) : (
-                <Link
-                  to="#"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    void onDeleteContributor(trackContributor.id);
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void onDeleteContributor(trackContributor?.id ?? "");
                   }}
-                  className="text-[12px] text-red-600 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Remove
-                </Link>
+                  className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                />
               )}
             </li>
           ))

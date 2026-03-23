@@ -88,8 +88,7 @@ const CreateReleaseTrack = () => {
               <Input
                 {...field}
                 placeholder="Enter track title version"
-                label="Title Version"
-                required
+                label="Title Version (Optional)"
               />
             )}
           />

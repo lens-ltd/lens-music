@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
@@ -24,9 +25,35 @@ export interface UploadedAudioResult {
 
 @Injectable()
 export class CloudinaryAudioUploaderService {
+  private readonly logger = new Logger(CloudinaryAudioUploaderService.name);
   private readonly cloudName = process.env.CLOUDINARY_CLOUD_NAME;
   private readonly apiKey = process.env.CLOUDINARY_API_KEY;
   private readonly apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+  /**
+   * Removes an asset from Cloudinary. Swallows errors so callers can continue
+   * (e.g. after a successful replacement upload).
+   */
+  async destroyAudio(publicId: string): Promise<void> {
+    const trimmed = publicId?.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    try {
+      this.validateConfiguration();
+      cloudinary.config({
+        cloud_name: this.cloudName,
+        api_key: this.apiKey,
+        api_secret: this.apiSecret,
+      });
+      await cloudinary.uploader.destroy(trimmed, { resource_type: 'video' });
+    } catch (error) {
+      this.logger.warn(
+        `Cloudinary destroy failed for public_id=${trimmed}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
 
   async uploadAudio({ file, folder }: UploadAudioInput): Promise<UploadedAudioResult> {
     this.validateConfiguration();

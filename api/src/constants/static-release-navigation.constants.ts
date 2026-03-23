@@ -16,9 +16,9 @@ export const RELEASE_STATIC_NAVIGATION_STEPS = [
         stepOrder: 1,
     },
     {
-        tabName: 'TRACKS',
-        tabDescription: 'Tracks',
-        tabOrder: 2,
+        tabName: 'OVERVIEW',
+        tabDescription: 'Overview',
+        tabOrder: 1,
         stepName: 'MANAGE_CONTRIBUTIONS',
         stepDescription: 'Manage Contributions',
         stepOrder: 2,

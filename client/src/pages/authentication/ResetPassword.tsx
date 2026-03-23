@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Link, useNavigate, useParams } from 'react-router-dom';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
@@ -57,10 +57,7 @@ const ResetPassword = () => {
     }
   }, [confirmationState.error, confirmationState.isError, confirmationState.isSuccess, navigate]);
 
-  const unavailable = useMemo(
-    () => validationState.isError || (!token && !validationState.isLoading),
-    [token, validationState.isError, validationState.isLoading],
-  );
+  const unavailable = validationState.isError || (!token && !validationState.isLoading);
 
   return (
     <main className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>

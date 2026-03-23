@@ -26,6 +26,7 @@ export interface AudioFile extends AbstractEntity {
   trackId: string;
   fileType: AudioFileType;
   storagePath: string;
+  cloudinaryPublicId?: string;
   fileSizeBytes?: number;
   checksumSha256?: string;
   sampleRate?: number;

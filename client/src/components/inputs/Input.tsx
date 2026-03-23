@@ -100,37 +100,47 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     if (type === 'checkbox') {
       return (
-        <label className={cn('inline-flex w-fit items-center gap-2 text-[12px] font-normal', labelClassName)}>
-          <Checkbox
-            className="border-secondary/50"
-            onCheckedChange={onChange as unknown as ((checked: CheckedState) => void) | undefined}
-            name={name}
-            checked={checked}
-            defaultChecked={defaultChecked}
-          />
-          {label && <span className="text-[12px] font-normal">{label}</span>}
-        </label>
+        <div className={cn('flex w-full flex-col gap-1', labelClassName)}>
+          <label className="inline-flex w-fit items-center gap-2 text-[12px] font-normal">
+            <Checkbox
+              className="border-secondary/50"
+              onCheckedChange={onChange as unknown as ((checked: CheckedState) => void) | undefined}
+              name={name}
+              checked={checked}
+              defaultChecked={defaultChecked}
+            />
+            {label && <span className="text-[12px] font-normal">{label}</span>}
+          </label>
+          {errorMessage && (
+            <InputErrorMessage message={errorMessage} className="mt-0.5 pl-0.5" />
+          )}
+        </div>
       );
     }
 
     if (type === 'radio') {
       return (
-        <label className={cn('inline-flex items-center gap-2 text-[12px] font-normal', labelClassName)}>
-          <input
-            id={inputId}
-            type="radio"
-            name={name}
-            value={value as string | number | readonly string[] | undefined}
-            defaultChecked={defaultChecked}
-            checked={checked}
-            onChange={onChange}
-            className={cn(
-              'h-4 w-4 cursor-pointer accent-primary border-secondary/50',
-              className
-            )}
-          />
-          {label && <span className="text-[12px] font-normal">{label}</span>}
-        </label>
+        <div className={cn('flex w-full flex-col gap-1', labelClassName)}>
+          <label className="inline-flex items-center gap-2 text-[12px] font-normal">
+            <input
+              id={inputId}
+              type="radio"
+              name={name}
+              value={value as string | number | readonly string[] | undefined}
+              defaultChecked={defaultChecked}
+              checked={checked}
+              onChange={onChange}
+              className={cn(
+                'h-4 w-4 cursor-pointer accent-primary border-secondary/50',
+                className
+              )}
+            />
+            {label && <span className="text-[12px] font-normal">{label}</span>}
+          </label>
+          {errorMessage && (
+            <InputErrorMessage message={errorMessage} className="mt-0.5 pl-0.5" />
+          )}
+        </div>
       );
     }
 
@@ -161,6 +171,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             className="hidden"
             name={name}
           />
+          {errorMessage && (
+            <InputErrorMessage message={errorMessage} className="mt-2" />
+          )}
         </div>
       );
     }
@@ -185,6 +198,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             }
             value={(value || defaultValue) as Date | undefined}
           />
+          {errorMessage && (
+            <InputErrorMessage message={errorMessage} className="mt-0.5" />
+          )}
         </label>
       );
     }

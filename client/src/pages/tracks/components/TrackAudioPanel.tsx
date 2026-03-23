@@ -3,11 +3,19 @@ import { capitalizeString } from "@/utils/strings.helper";
 import { ChangeEvent } from "react";
 import { Track } from "@/types/models/track.types";
 import { formatDuration } from "./trackForm.helpers";
+import type { TrackAudioUploadPhase } from "@/hooks/tracks/useTrackAudioUpload";
+import TrackUploadProgress from "./TrackUploadProgress";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 type TrackAudioPanelProps = {
   track?: Track;
   isUploadingAudio: boolean;
   isDeletingAudio: boolean;
+  uploadProgress: number;
+  uploadPhase: TrackAudioUploadPhase;
+  isUploadComplete: boolean;
+  uploadFileName: string;
   onAudioUpload: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
   onDeleteAudio: (audioFileId: string) => Promise<void>;
 };
@@ -16,6 +24,10 @@ const TrackAudioPanel = ({
   track,
   isUploadingAudio,
   isDeletingAudio,
+  uploadProgress,
+  uploadPhase,
+  isUploadComplete,
+  uploadFileName,
   onAudioUpload,
   onDeleteAudio,
 }: TrackAudioPanelProps) => (
@@ -28,37 +40,45 @@ const TrackAudioPanel = ({
     </header>
 
     <dl className="mt-3 grid gap-2 rounded-md bg-[color:var(--lens-sand)]/10 p-3">
-      <div className="flex items-center justify-between gap-3">
+      <figure className="flex items-center justify-between gap-3">
         <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
           Duration
         </dt>
         <dd className="text-[12px] text-[color:var(--lens-ink)]">
           {formatDuration(track?.durationMs)}
         </dd>
-      </div>
-      <div className="flex items-center justify-between gap-3">
+      </figure>
+      <figure className="flex items-center justify-between gap-3">
         <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
           Status
         </dt>
         <dd className="text-[12px] text-[color:var(--lens-ink)]">
           {capitalizeString(track?.status)}
         </dd>
-      </div>
+      </figure>
     </dl>
 
-    <section className="mt-4">
+    <fieldset className="mt-4 border-none p-0">
       <Input
         type="file"
         label={track?.audioFiles?.length ? "Replace audio" : "Upload audio"}
         accept="audio/*"
         onChange={(event) => void onAudioUpload(event)}
+        readOnly={isUploadingAudio}
       />
-      {(isUploadingAudio || isDeletingAudio) && (
+      <TrackUploadProgress
+        progress={uploadProgress}
+        phase={uploadPhase}
+        isUploading={isUploadingAudio}
+        isComplete={isUploadComplete}
+        fileName={uploadFileName}
+      />
+      {isDeletingAudio && (
         <p className="mt-2 text-[12px] text-[color:var(--lens-ink)]/55">
-          {isUploadingAudio ? "Uploading audio..." : "Updating audio..."}
+          Updating audio...
         </p>
       )}
-    </section>
+    </fieldset>
 
     <ul className="mt-4 flex list-none flex-col gap-2 p-0">
       {track?.audioFiles?.length ? (
@@ -84,14 +104,14 @@ const TrackAudioPanel = ({
                   </p>
                 )}
               </section>
-              <button
-                type="button"
-                onClick={() => void onDeleteAudio(audioFile.id)}
-                disabled={isDeletingAudio}
-                className="text-[12px] text-red-600 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Remove
-              </button>
+              <FontAwesomeIcon
+                icon={faTrash}
+                onClick={(event) => {
+                  event.preventDefault();
+                  void onDeleteAudio(audioFile.id);
+                }}
+                className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+              />
             </header>
             <a
               href={audioFile.storagePath}

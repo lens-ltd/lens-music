@@ -141,17 +141,28 @@ export class TrackService {
       throw new NotFoundException('Track not found');
     }
 
+    const previousAudioFiles = await this.audioFileRepository.find({
+      where: { trackId },
+    });
+
     const uploadResult = await this.cloudinaryAudioUploaderService.uploadAudio({
       file,
       folder: `tracks/${trackId}/audio`,
     });
 
-    await this.audioFileRepository.update({ trackId }, { isPrimary: false });
+    for (const prev of previousAudioFiles) {
+      if (prev.cloudinaryPublicId) {
+        await this.cloudinaryAudioUploaderService.destroyAudio(prev.cloudinaryPublicId);
+      }
+    }
+
+    await this.audioFileRepository.delete({ trackId });
 
     const audioFile = this.audioFileRepository.create({
       trackId,
       fileType: AudioFileType.ORIGINAL,
       storagePath: uploadResult.secureUrl,
+      cloudinaryPublicId: uploadResult.publicId,
       fileSizeBytes: uploadResult.bytes,
       durationMs: uploadResult.durationMs,
       isPrimary: true,
@@ -182,6 +193,12 @@ export class TrackService {
     }
 
     const deletedPrimary = audioFile.isPrimary;
+
+    if (audioFile.cloudinaryPublicId) {
+      await this.cloudinaryAudioUploaderService.destroyAudio(
+        audioFile.cloudinaryPublicId,
+      );
+    }
 
     await this.audioFileRepository.delete(audioFileId);
 

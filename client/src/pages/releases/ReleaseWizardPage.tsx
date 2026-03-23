@@ -93,10 +93,10 @@ const ReleaseWizardPage = () => {
         const stepName = activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName || '';
 
         if (stepName === 'OVERVIEW') {
-            return <ReleaseWizardOverview nextStepName={'UPLOAD_TRACKS'} previousStepName={undefined} />;
+            return <ReleaseWizardOverview nextStepName={'MANAGE_CONTRIBUTIONS'} previousStepName={undefined} />;
         }
         if (stepName === 'UPLOAD_TRACKS') {
-            return <ReleaseWizardUploadTracks nextStepName={'MANAGE_CONTRIBUTIONS'} previousStepName={'OVERVIEW'} />;
+            return <ReleaseWizardUploadTracks nextStepName={'REGIONS'} previousStepName={'MANAGE_CONTRIBUTIONS'} />;
         }
 
         return (

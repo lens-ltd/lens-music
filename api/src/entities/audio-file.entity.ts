@@ -33,6 +33,10 @@ export class AudioFile extends AbstractEntity {
   @Column({ name: "storage_path", type: "text", nullable: false })
   storagePath!: string;
 
+  // CLOUDINARY PUBLIC ID (for delete/replace)
+  @Column({ name: "cloudinary_public_id", type: "varchar", length: 512, nullable: true })
+  cloudinaryPublicId?: string;
+
   // FILE SIZE BYTES
   @Column({ name: "file_size_bytes", type: "bigint", nullable: true })
   fileSizeBytes?: number;
