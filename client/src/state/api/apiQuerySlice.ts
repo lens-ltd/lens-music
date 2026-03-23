@@ -209,6 +209,19 @@ export const apiQuerySlice = createApi({
           };
         },
       }),
+
+      // FETCH RELEASE CONTRIBUTORS
+      fetchReleaseContributors: builder.query({
+        query: ({ releaseId }: { releaseId: string }) => {
+          return {
+            url: "/release-contributors",
+            method: "GET",
+            params: {
+              releaseId,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -228,5 +241,6 @@ export const {
   useLazyFetchTracksQuery,
   useLazyGetTrackQuery,
   useLazyFetchTrackContributorsQuery,
+  useLazyFetchReleaseContributorsQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

@@ -1,4 +1,4 @@
-import { Column, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from "typeorm";
 import { AbstractEntity } from "./abstract.entity";
 import { UUID } from "../types/common.types";
 import { ContributorRole } from "../constants/contributor.constants";
@@ -6,6 +6,8 @@ import { User } from "./user.entity";
 import { Release } from "./release.entity";
 import { Contributor } from "./contributor.entity";
 
+@Entity("release_contributors")
+@Unique(["releaseId", "contributorId", "role"])
 export class ReleaseContributor extends AbstractEntity {
     // RELEASE ID
     @Column({ name: 'release_id', type: 'uuid', nullable: false })

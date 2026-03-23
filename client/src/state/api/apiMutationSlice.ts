@@ -277,6 +277,21 @@ export const apiMutationSlice = createApi({
           method: "DELETE",
         }),
       }),
+
+      createReleaseContributor: builder.mutation({
+        query: (body: { releaseId: string; contributorId: string; role: string }) => ({
+          url: "/release-contributors",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      deleteReleaseContributor: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/release-contributors/${id}`,
+          method: "DELETE",
+        }),
+      }),
     };
   },
 });
@@ -312,5 +327,7 @@ export const {
   useValidateTrackMutation,
   useCreateTrackContributorMutation,
   useDeleteTrackContributorMutation,
+  useCreateReleaseContributorMutation,
+  useDeleteReleaseContributorMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

@@ -14,6 +14,7 @@ import { capitalizeString } from '@/utils/strings.helper';
 import { useParams } from 'react-router-dom';
 import ReleaseWizardOverview from './wizard-steps/ReleaseWizardOverview';
 import ReleaseWizardUploadTracks from './wizard-steps/ReleaseWizardUploadTracks';
+import ReleaseWizardManageContributions from './wizard-steps/ReleaseWizardManageContributions';
 
 export interface ReleaseWizardStepProps {
     currentStepName?: string;
@@ -94,6 +95,9 @@ const ReleaseWizardPage = () => {
 
         if (stepName === 'OVERVIEW') {
             return <ReleaseWizardOverview nextStepName={'MANAGE_CONTRIBUTIONS'} previousStepName={undefined} />;
+        }
+        if (stepName === 'MANAGE_CONTRIBUTIONS') {
+            return <ReleaseWizardManageContributions nextStepName={'UPLOAD_TRACKS'} previousStepName={'OVERVIEW'} />;
         }
         if (stepName === 'UPLOAD_TRACKS') {
             return <ReleaseWizardUploadTracks nextStepName={'REGIONS'} previousStepName={'MANAGE_CONTRIBUTIONS'} />;
