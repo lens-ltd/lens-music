@@ -5,8 +5,9 @@ import { Track } from '../../entities/track.entity';
 import { AudioFile, AudioFileType } from '../../entities/audio-file.entity';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { RegisterAudioDto } from './dto/register-audio.dto';
 import { UUID } from '../../types/common.types';
-import { CloudinaryAudioUploaderService } from '../uploads/cloudinary-audio-uploader.service';
+import { CloudinaryAudioUploaderService, UploadSignatureResult } from '../uploads/cloudinary-audio-uploader.service';
 import { TrackStatus } from '../../entities/track.entity';
 
 @Injectable()
@@ -176,6 +177,69 @@ export class TrackService {
 
     if (uploadResult.durationMs) {
       nextTrackUpdate.durationMs = uploadResult.durationMs;
+    }
+
+    await this.trackRepository.update(trackId, nextTrackUpdate);
+
+    return this.audioFileRepository.save(audioFile);
+  }
+
+  async getUploadSignature(trackId: UUID): Promise<UploadSignatureResult> {
+    const track = await this.trackRepository.findOne({
+      where: { id: trackId },
+    });
+
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+
+    return this.cloudinaryAudioUploaderService.generateUploadSignature(
+      `tracks/${trackId}/audio`,
+    );
+  }
+
+  async registerUploadedAudio(
+    trackId: UUID,
+    dto: RegisterAudioDto,
+    userId: UUID,
+  ): Promise<AudioFile> {
+    const track = await this.trackRepository.findOne({
+      where: { id: trackId },
+    });
+
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+
+    const previousAudioFiles = await this.audioFileRepository.find({
+      where: { trackId },
+    });
+
+    for (const prev of previousAudioFiles) {
+      if (prev.cloudinaryPublicId) {
+        await this.cloudinaryAudioUploaderService.destroyAudio(prev.cloudinaryPublicId);
+      }
+    }
+
+    await this.audioFileRepository.delete({ trackId });
+
+    const audioFile = this.audioFileRepository.create({
+      trackId,
+      fileType: AudioFileType.ORIGINAL,
+      storagePath: dto.secureUrl,
+      cloudinaryPublicId: dto.publicId,
+      fileSizeBytes: dto.bytes,
+      durationMs: dto.durationMs,
+      isPrimary: true,
+      uploadedById: userId,
+    });
+
+    const nextTrackUpdate: Partial<Track> = {
+      status: TrackStatus.DRAFT,
+    };
+
+    if (dto.durationMs) {
+      nextTrackUpdate.durationMs = dto.durationMs;
     }
 
     await this.trackRepository.update(trackId, nextTrackUpdate);

@@ -21,8 +21,8 @@ const TrackUploadProgress = ({
 
   const statusLabel = isComplete
     ? null
-    : phase === "finalizing"
-      ? "Finalizing upload…"
+    : phase === "registering"
+      ? "Saving…"
       : `${progress}%`;
 
   return (
@@ -43,9 +43,9 @@ const TrackUploadProgress = ({
         </output>
       </figcaption>
 
-      {phase === "finalizing" && !isComplete ? (
+      {phase === "registering" && !isComplete ? (
         <p className="mt-2 text-[11px] text-[color:var(--lens-ink)]/55">
-          Processing on server…
+          Saving file details…
         </p>
       ) : null}
 

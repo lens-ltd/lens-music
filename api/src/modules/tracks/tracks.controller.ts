@@ -21,6 +21,7 @@ import {
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
+import { RegisterAudioDto } from "./dto/register-audio.dto";
 import { TrackService } from "./tracks.service";
 import { TrackQueryService } from "./tracks-query.service";
 import { UUID } from "../../types/common.types";
@@ -54,6 +55,30 @@ export class TracksController {
   async validateTrack(@Param("id") id: string) {
     const result = await this.trackService.validateTrack(id as UUID);
     return { message: "Track validation completed", data: result };
+  }
+
+  @Get(":id/audio/sign")
+  async getAudioUploadSignature(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const signature = await this.trackService.getUploadSignature(id as UUID);
+    return { message: "Upload signature generated", data: signature };
+  }
+
+  @Post(":id/audio/register")
+  @HttpCode(HttpStatus.CREATED)
+  async registerAudio(
+    @Param("id") id: string,
+    @Body() dto: RegisterAudioDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const audioFile = await this.trackService.registerUploadedAudio(
+      id as UUID,
+      dto,
+      user.id,
+    );
+    return { message: "Audio file registered successfully", data: audioFile };
   }
 
   @Post(":id/audio")

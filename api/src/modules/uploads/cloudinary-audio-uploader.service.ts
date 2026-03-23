@@ -23,6 +23,14 @@ export interface UploadedAudioResult {
   resourceType: string;
 }
 
+export interface UploadSignatureResult {
+  signature: string;
+  timestamp: number;
+  cloudName: string;
+  apiKey: string;
+  folder: string;
+}
+
 @Injectable()
 export class CloudinaryAudioUploaderService {
   private readonly logger = new Logger(CloudinaryAudioUploaderService.name);
@@ -53,6 +61,25 @@ export class CloudinaryAudioUploaderService {
         `Cloudinary destroy failed for public_id=${trimmed}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  }
+
+  generateUploadSignature(folder: string): UploadSignatureResult {
+    this.validateConfiguration();
+
+    const timestamp = Math.round(Date.now() / 1000);
+    const params = { timestamp, folder };
+    const signature = cloudinary.utils.api_sign_request(
+      params,
+      this.apiSecret!,
+    );
+
+    return {
+      signature,
+      timestamp,
+      cloudName: this.cloudName!,
+      apiKey: this.apiKey!,
+      folder,
+    };
   }
 
   async uploadAudio({ file, folder }: UploadAudioInput): Promise<UploadedAudioResult> {

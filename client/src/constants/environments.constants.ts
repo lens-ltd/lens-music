@@ -5,4 +5,6 @@ export const {
     SITE_URL = '',
   VITE_APP_OG_IMAGE_URL:
     DEFAULT_OG_IMAGE_URL = '/logo.png',
+  VITE_CLOUDINARY_CLOUD_NAME:
+    CLOUDINARY_CLOUD_NAME = '',
 } = import.meta.env;
