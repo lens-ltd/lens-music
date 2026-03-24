@@ -9,6 +9,7 @@ import { UUID } from '../common.types';
 import { User } from '../../entities/user.entity';
 import { Track } from '../../entities/track.entity';
 import { ReleaseGenre } from '../../entities/release-genre.entity';
+import { ReleaseLabel } from '../../entities/release-label.entity';
 
 export interface ReleaseModel {
   id: UUID;
@@ -36,4 +37,5 @@ export interface ReleaseModel {
   createdBy?: User | null;
   tracks: Track[];
   genres: ReleaseGenre[];
+  labels: ReleaseLabel[];
 }

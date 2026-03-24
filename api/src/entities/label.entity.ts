@@ -1,10 +1,12 @@
 import {
   Column,
   Entity,
+  OneToMany,
   Unique,
 } from 'typeorm';
 import { countriesList } from '../constants/location.constant';
 import { AbstractEntity } from './abstract.entity';
+import { ReleaseLabel } from './release-label.entity';
 
 @Entity('labels')
 @Unique(['id'])
@@ -30,4 +32,8 @@ export class Label extends AbstractEntity {
     default: 'RW',
   })
   country?: string;
+
+  // RELEASE LABELS
+  @OneToMany(() => ReleaseLabel, (releaseLabel) => releaseLabel.label)
+  releaseLabels!: ReleaseLabel[];
 }

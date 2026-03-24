@@ -18,6 +18,9 @@ import Modal from "@/components/modals/Modal";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  useAddReleaseLabel,
+  useDeleteReleaseLabel,
+  useGetRelease,
   useUpdateReleaseOverview,
   useUploadReleaseCoverArt,
 } from "@/hooks/releases/release.hooks";
@@ -28,6 +31,7 @@ import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
 import { Genre } from "@/types/models/genre.types";
 import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
+import { useLazyFetchLabelsQuery } from "@/state/api/apiQuerySlice";
 
 interface ReleaseOverviewFormValues {
   type: ReleaseType;
@@ -107,6 +111,16 @@ const ReleaseWizardOverview = ({
   );
   const { fetchGenres, data: genresResponse } = useFetchGenres();
   const { upsertReleaseGenre } = useUpsertReleaseGenre();
+  const [selectedLabelId, setSelectedLabelId] = useState<string>("");
+  const [isPrimaryLabel, setIsPrimaryLabel] = useState<boolean>(false);
+  const [labelError, setLabelError] = useState<string | undefined>(undefined);
+
+  const [fetchLabels, { data: labelsResponse }] = useLazyFetchLabelsQuery();
+  const { addReleaseLabel, isLoading: isAddingReleaseLabel } =
+    useAddReleaseLabel();
+  const { deleteReleaseLabel, isLoading: isDeletingReleaseLabel } =
+    useDeleteReleaseLabel();
+  const { getRelease } = useGetRelease();
 
   // REACT HOOK FORM
   const {
@@ -231,6 +245,72 @@ const ReleaseWizardOverview = ({
     label: genre.name,
     value: genre.id,
   }));
+  useEffect(() => {
+    fetchLabels({ size: 100, page: 0 });
+  }, [fetchLabels]);
+
+  const refreshRelease = async () => {
+    if (release?.id) {
+      await getRelease({ id: release.id });
+    }
+  };
+
+  const handleAddReleaseLabel = async () => {
+    if (!release?.id) {
+      setLabelError("Release is not available yet");
+      return;
+    }
+
+    if (!selectedLabelId) {
+      setLabelError("Please choose a label");
+      return;
+    }
+
+    try {
+      setLabelError(undefined);
+      const response = await addReleaseLabel({
+        id: release.id,
+        labelId: selectedLabelId,
+        isPrimary: isPrimaryLabel,
+      }).unwrap();
+      toast.success(response?.message || "Release label saved");
+      setSelectedLabelId("");
+      setIsPrimaryLabel(false);
+      await refreshRelease();
+    } catch (error) {
+      setLabelError(getMutationErrorMessage(error));
+    }
+  };
+
+  const handleSetPrimaryLabel = async (labelId: string) => {
+    if (!release?.id) return;
+
+    try {
+      setLabelError(undefined);
+      const response = await addReleaseLabel({
+        id: release.id,
+        labelId,
+        isPrimary: true,
+      }).unwrap();
+      toast.success(response?.message || "Primary label updated");
+      await refreshRelease();
+    } catch (error) {
+      setLabelError(getMutationErrorMessage(error));
+    }
+  };
+
+  const handleDeleteReleaseLabel = async (labelId: string) => {
+    if (!release?.id) return;
+
+    try {
+      setLabelError(undefined);
+      const response = await deleteReleaseLabel({ id: release.id, labelId }).unwrap();
+      toast.success(response?.message || "Release label removed");
+      await refreshRelease();
+    } catch (error) {
+      setLabelError(getMutationErrorMessage(error));
+    }
+  };
 
   const closeCoverArtModal = () => {
     setCoverArtModalOpen(false);
@@ -605,6 +685,80 @@ const ReleaseWizardOverview = ({
             />
           </fieldset>
         </menu>
+        <menu className="w-full flex flex-col gap-3">
+          <Heading type="h3">Labels</Heading>
+          <article className="w-full rounded-md border border-secondary/20 bg-white p-4 sm:p-5 flex flex-col gap-4">
+            <fieldset className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-3 items-end">
+              <Combobox
+                value={selectedLabelId}
+                onChange={(value) => setSelectedLabelId(String(value || ""))}
+                label="Label"
+                placeholder="Select a label"
+                options={(labelsResponse?.data?.rows || []).map((label: { id: string; name: string }) => ({
+                  label: label.name,
+                  value: label.id,
+                }))}
+              />
+              <label className="inline-flex items-center gap-2 text-[12px]">
+                <input
+                  type="checkbox"
+                  checked={isPrimaryLabel}
+                  onChange={(e) => setIsPrimaryLabel(e.target.checked)}
+                />
+                Set as primary
+              </label>
+              <Button
+                type="button"
+                primary
+                onClick={handleAddReleaseLabel}
+                isLoading={isAddingReleaseLabel}
+                disabled={isAddingReleaseLabel || !release?.id}
+              >
+                Save label
+              </Button>
+            </fieldset>
+
+            {release?.labels?.length ? (
+              <menu className="flex flex-col gap-2">
+                {release.labels.map((releaseLabel) => (
+                  <article
+                    key={releaseLabel.id}
+                    className="flex items-center justify-between rounded-md border border-secondary/20 px-3 py-2"
+                  >
+                    <p className="text-[13px]">
+                      {releaseLabel.label?.name || "Unknown label"}
+                      {releaseLabel.isPrimary ? " (Primary)" : ""}
+                    </p>
+                    <menu className="flex items-center gap-2">
+                      {!releaseLabel.isPrimary && (
+                        <Button
+                          type="button"
+                          onClick={() => handleSetPrimaryLabel(releaseLabel.labelId)}
+                        >
+                          Set primary
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        onClick={() => handleDeleteReleaseLabel(releaseLabel.labelId)}
+                        disabled={isDeletingReleaseLabel}
+                      >
+                        Remove
+                      </Button>
+                    </menu>
+                  </article>
+                ))}
+              </menu>
+            ) : (
+              <p className="text-[12px] text-secondary/80">No labels added yet.</p>
+            )}
+
+            {labelError && (
+              <InputErrorMessage message={labelError} className="mt-[-2px]" />
+            )}
+          </article>
+        </menu>
+
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}

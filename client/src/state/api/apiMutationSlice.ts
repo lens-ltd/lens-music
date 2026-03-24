@@ -283,6 +283,37 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+
+      addReleaseLabel: builder.mutation({
+        query: ({
+          id,
+          labelId,
+          isPrimary,
+        }: {
+          id: string;
+          labelId: string;
+          isPrimary: boolean;
+        }) => ({
+          url: `/releases/${id}/labels`,
+          method: "POST",
+          body: { labelId, isPrimary },
+        }),
+      }),
+
+      deleteReleaseLabel: builder.mutation({
+        query: ({
+          id,
+          labelId,
+        }: {
+          id: string;
+          labelId: string;
+        }) => ({
+          url: `/releases/${id}/labels`,
+          method: "DELETE",
+          body: { labelId },
+        }),
+      }),
+
       validateRelease: builder.mutation({
         query: ({ id }: { id: string }) => ({
           url: `/releases/${id}/validate`,
@@ -399,6 +430,8 @@ export const {
   useDeleteReleaseContributorMutation,
   useAssignReleaseStoresMutation,
   useDeleteReleaseStoreMutation,
+  useAddReleaseLabelMutation,
+  useDeleteReleaseLabelMutation,
   useCreateLyricsMutation,
   useUpdateLyricsMutation,
   useDeleteLyricsMutation,

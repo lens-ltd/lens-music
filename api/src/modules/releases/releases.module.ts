@@ -8,9 +8,11 @@ import { ReleaseContributor } from '../../entities/release-contributor.entity';
 import { ReleaseGenre } from '../../entities/release-genre.entity';
 import { Genre } from '../../entities/genre.entity';
 import { UploadsModule } from '../uploads/uploads.module';
+import { ReleaseLabel } from '../../entities/release-label.entity';
+import { Label } from '../../entities/label.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Release, ReleaseContributor, ReleaseGenre, Genre]), UploadsModule],
+  imports: [TypeOrmModule.forFeature([Release, ReleaseContributor, ReleaseLabel, Label]), UploadsModule],
   controllers: [ReleasesController],
   providers: [ReleaseService, ReleaseQueryService],
 })

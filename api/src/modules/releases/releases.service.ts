@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
@@ -17,6 +17,8 @@ import { ContributorRole } from '../../constants/contributor.constants';
 import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
 import { UpdateReleaseTerritoriesDto } from './dto/update-release-territories.dto';
 import { UpsertReleaseGenreDto } from './dto/upsert-release-genre.dto';
+import { ReleaseLabel } from '../../entities/release-label.entity';
+import { Label } from '../../entities/label.entity';
 
 @Injectable()
 export class ReleaseService {
@@ -31,6 +33,10 @@ export class ReleaseService {
     private readonly releaseGenreRepository: Repository<ReleaseGenre>,
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
+    @InjectRepository(ReleaseLabel)
+    private readonly releaseLabelRepository: Repository<ReleaseLabel>,
+    @InjectRepository(Label)
+    private readonly labelRepository: Repository<Label>,
     private readonly cloudinaryImageUploaderService: CloudinaryImageUploaderService,
   ) { }
 
@@ -111,6 +117,85 @@ export class ReleaseService {
     return this.releaseRepository.save(release);
   }
 
+  async addReleaseLabel(
+    releaseId: UUID,
+    labelId: UUID,
+    isPrimary: boolean,
+    user: AuthUser,
+  ): Promise<ReleaseLabel> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const label = await this.labelRepository.findOne({ where: { id: labelId } });
+    if (!label) {
+      throw new NotFoundException('Label not found');
+    }
+
+    let releaseLabel = await this.releaseLabelRepository.findOne({
+      where: { releaseId, labelId },
+      relations: { label: true },
+    });
+
+    if (!releaseLabel) {
+      releaseLabel = this.releaseLabelRepository.create({
+        releaseId,
+        labelId,
+        isPrimary,
+        createdById: user.id,
+      });
+    } else {
+      releaseLabel.isPrimary = isPrimary;
+    }
+
+    if (isPrimary) {
+      await this.releaseLabelRepository.update(
+        { releaseId, isPrimary: true },
+        { isPrimary: false },
+      );
+    }
+
+    const saved = await this.releaseLabelRepository.save(releaseLabel);
+    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+
+    return this.releaseLabelRepository.findOneOrFail({
+      where: { id: saved.id },
+      relations: { label: true },
+    });
+  }
+
+  async getReleaseLabels(releaseId: UUID, user: AuthUser): Promise<ReleaseLabel[]> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    return this.releaseLabelRepository.find({
+      where: { releaseId },
+      relations: { label: true },
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  async removeReleaseLabel(
+    releaseId: UUID,
+    labelId: UUID,
+    user: AuthUser,
+  ): Promise<void> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const releaseLabel = await this.releaseLabelRepository.findOne({
+      where: { releaseId, labelId },
+    });
+
+    if (!releaseLabel) {
+      throw new NotFoundException('Release label not found');
+    }
+
+    const remainingCount = await this.releaseLabelRepository.count({ where: { releaseId } });
+    if (releaseLabel.isPrimary && remainingCount > 1) {
+      throw new ConflictException('Set another primary label before removing this label');
+    }
+
+    await this.releaseLabelRepository.delete({ releaseId, labelId });
+    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+  }
+
   // DELETE RELEASE
   async deleteRelease(id: UUID): Promise<void> {
     const result = await this.releaseRepository.delete(id);
@@ -130,6 +215,7 @@ export class ReleaseService {
       relations: {
         tracks: { audioFiles: true, trackContributors: true },
         genres: { genre: true },
+        labels: { label: true },
       },
     });
 
@@ -208,6 +294,13 @@ export class ReleaseService {
           errors.push(`Track "${track.title}" is not validated`);
         }
       }
+    }
+
+    const hasPrimaryLabel =
+      release.labels?.some((releaseLabel) => releaseLabel.isPrimary) ?? false;
+
+    if (!hasPrimaryLabel) {
+      errors.push('At least one primary label is required');
     }
 
     const primaryArtist = await this.releaseContributorRepository.findOne({

@@ -28,6 +28,7 @@ import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
 import { UpsertReleaseGenreDto } from "./dto/upsert-release-genre.dto";
 import { ReleaseGenreType } from "../../constants/release.constants";
+import { AddReleaseLabelDto, DeleteReleaseLabelDto } from "./dto/manage-release-label.dto";
 
 @Controller("releases")
 @UseGuards(JwtAuthGuard)
@@ -117,6 +118,48 @@ export class ReleasesController {
   ) {
     await this.releaseService.deleteReleaseGenreByType(id, type, user);
     return { message: "Release genre removed successfully" };
+  }
+  @Post(":id/labels")
+  @HttpCode(HttpStatus.CREATED)
+  async addReleaseLabel(
+    @Param("id") id: string,
+    @Body() dto: AddReleaseLabelDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const releaseLabel = await this.releaseService.addReleaseLabel(
+      id,
+      dto.labelId,
+      dto.isPrimary,
+      user,
+    );
+
+    return {
+      message: "Release label upserted successfully",
+      data: releaseLabel,
+    };
+  }
+
+  @Get(":id/labels")
+  async getReleaseLabels(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const labels = await this.releaseService.getReleaseLabels(id, user);
+    return {
+      message: "Release labels fetched successfully",
+      data: labels,
+    };
+  }
+
+  @Delete(":id/labels")
+  @HttpCode(HttpStatus.OK)
+  async removeReleaseLabel(
+    @Param("id") id: string,
+    @Body() dto: DeleteReleaseLabelDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.releaseService.removeReleaseLabel(id, dto.labelId, user);
+    return { message: "Release label removed successfully" };
   }
 
   @Post(":id/validate")

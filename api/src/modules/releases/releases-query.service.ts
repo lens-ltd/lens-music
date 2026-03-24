@@ -43,6 +43,7 @@ export class ReleaseQueryService {
         createdBy: true,
         tracks: { audioFiles: true, trackContributors: { contributor: true } },
         genres: { genre: { parent: true } },
+        labels: { label: true },
       },
     });
   }

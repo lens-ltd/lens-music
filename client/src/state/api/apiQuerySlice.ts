@@ -231,6 +231,14 @@ export const apiQuerySlice = createApi({
           method: 'GET',
         }),
       }),
+      // FETCH RELEASE LABELS
+      fetchReleaseLabels: builder.query({
+        query: ({ releaseId }: { releaseId: string }) => ({
+          url: `/releases/${releaseId}/labels`,
+          method: "GET",
+        }),
+      }),
+
       // FETCH RELEASE CONTRIBUTORS
       fetchReleaseContributors: builder.query({
         query: ({ releaseId }: { releaseId: string }) => {
@@ -286,6 +294,7 @@ export const {
   useLazyFetchReleaseContributorsQuery,
   useLazyFetchStoresQuery,
   useLazyFetchReleaseStoresQuery,
+  useLazyFetchReleaseLabelsQuery,
   useLazyFetchLyricsQuery,
   useLazyGetLyricsQuery,
 } = apiQuerySlice;

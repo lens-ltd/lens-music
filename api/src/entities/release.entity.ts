@@ -10,6 +10,7 @@ import {
   ReleaseStatus,
   ReleaseType,
 } from "../constants/release.constants";
+import { ReleaseLabel } from "./release-label.entity";
 
 @Entity("releases")
 @Unique([
@@ -170,4 +171,7 @@ export class Release extends AbstractEntity {
   // RELEASE STORES
   @OneToMany(() => ReleaseStore, (releaseStore) => releaseStore.release)
   releaseStores!: ReleaseStore[];
+  // RELEASE LABELS
+  @OneToMany(() => ReleaseLabel, (releaseLabel) => releaseLabel.release)
+  labels!: ReleaseLabel[];
 }

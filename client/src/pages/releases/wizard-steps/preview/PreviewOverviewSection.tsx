@@ -95,6 +95,23 @@ const PreviewOverviewSection = ({ release }: PreviewOverviewSectionProps) => {
           <Input label="P-Line Year" value={release.pLine?.year || "—"} readOnly />
           <Input label="P-Line Owner" value={release.pLine?.owner || "—"} readOnly />
         </fieldset>
+
+        <fieldset className="mt-4 grid grid-cols-1 gap-3 border-t border-[color:var(--lens-sand)]/50 pt-4">
+          <legend className="sr-only">Labels</legend>
+          <Input
+            label="Labels"
+            value={
+              release.labels?.length
+                ? release.labels
+                    .map((releaseLabel) =>
+                      `${releaseLabel.label?.name || "Unknown"}${releaseLabel.isPrimary ? " (Primary)" : ""}`,
+                    )
+                    .join(", ")
+                : "—"
+            }
+            readOnly
+          />
+        </fieldset>
       </DashboardSection>
     </motion.article>
   );

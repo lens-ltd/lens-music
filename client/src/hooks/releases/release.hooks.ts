@@ -1,5 +1,17 @@
-import { useCreateReleaseMutation, useDeleteReleaseMutation, useUpdateReleaseOverviewMutation, useUpdateReleaseTerritoriesMutation, useUploadReleaseCoverArtMutation, useValidateReleaseMutation } from "@/state/api/apiMutationSlice";
-import { useLazyFetchReleasesQuery, useLazyGetReleaseQuery } from "@/state/api/apiQuerySlice";
+import {
+  useAddReleaseLabelMutation,
+  useCreateReleaseMutation,
+  useDeleteReleaseLabelMutation,
+  useDeleteReleaseMutation,
+  useUpdateReleaseOverviewMutation,
+  useUpdateReleaseTerritoriesMutation,
+  useUploadReleaseCoverArtMutation,
+  useValidateReleaseMutation,
+} from "@/state/api/apiMutationSlice";
+import {
+  useLazyFetchReleasesQuery,
+  useLazyGetReleaseQuery,
+} from "@/state/api/apiQuerySlice";
 import { setRelease, setReleasesList } from "@/state/features/releaseSlice";
 import { useAppDispatch } from "@/state/hooks";
 import { useEffect } from "react";
@@ -7,100 +19,140 @@ import { usePagination } from "../common/pagination.hooks";
 
 // CREATE RELEASE
 export const useCreateRelease = () => {
-    const [createRelease, { isLoading, reset, data, isSuccess }] = useCreateReleaseMutation();
+  const [createRelease, { isLoading, reset, data, isSuccess }] =
+    useCreateReleaseMutation();
 
-    return { createRelease, isLoading, reset, data, isSuccess };
+  return { createRelease, isLoading, reset, data, isSuccess };
 };
 
 // DELETE RELEASE
 export const useDeleteRelease = () => {
-    const [deleteRelease, { isLoading, reset, data, isSuccess }] = useDeleteReleaseMutation();
+  const [deleteRelease, { isLoading, reset, data, isSuccess }] =
+    useDeleteReleaseMutation();
 
-    return { deleteRelease, isLoading, reset, data, isSuccess };
+  return { deleteRelease, isLoading, reset, data, isSuccess };
 };
 
 // UPLOAD RELEASE COVER ART
 export const useUploadReleaseCoverArt = () => {
-    const dispatch = useAppDispatch();
-    const [uploadReleaseCoverArt, { isLoading, reset, data, isSuccess, error }] = useUploadReleaseCoverArtMutation();
+  const dispatch = useAppDispatch();
+  const [uploadReleaseCoverArt, { isLoading, reset, data, isSuccess, error }] =
+    useUploadReleaseCoverArtMutation();
 
-    useEffect(() => {
-        if (isSuccess && data?.data) {
-            dispatch(setRelease(data.data));
-        }
-    }, [isSuccess, data, dispatch]);
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      dispatch(setRelease(data.data));
+    }
+  }, [isSuccess, data, dispatch]);
 
-    return { uploadReleaseCoverArt, isLoading, reset, data, isSuccess, error };
+  return { uploadReleaseCoverArt, isLoading, reset, data, isSuccess, error };
 };
 
 // UPDATE RELEASE OVERVIEW
 export const useUpdateReleaseOverview = () => {
-    const dispatch = useAppDispatch();
-    const [updateReleaseOverview, { isLoading, reset, data, isSuccess, error }] = useUpdateReleaseOverviewMutation();
+  const dispatch = useAppDispatch();
+  const [updateReleaseOverview, { isLoading, reset, data, isSuccess, error }] =
+    useUpdateReleaseOverviewMutation();
 
-    useEffect(() => {
-        if (isSuccess && data?.data) {
-            dispatch(setRelease(data.data));
-        }
-    }, [isSuccess, data, dispatch]);
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      dispatch(setRelease(data.data));
+    }
+  }, [isSuccess, data, dispatch]);
 
-    return { updateReleaseOverview, isLoading, reset, data, isSuccess, error };
+  return { updateReleaseOverview, isLoading, reset, data, isSuccess, error };
 };
-
 
 // UPDATE RELEASE TERRITORIES
 export const useUpdateReleaseTerritories = () => {
-    const dispatch = useAppDispatch();
-    const [updateReleaseTerritories, { isLoading, reset, data, isSuccess, error }] = useUpdateReleaseTerritoriesMutation();
+  const dispatch = useAppDispatch();
+  const [updateReleaseTerritories, { isLoading, reset, data, isSuccess, error }] =
+    useUpdateReleaseTerritoriesMutation();
 
-    useEffect(() => {
-        if (isSuccess && data?.data) {
-            dispatch(setRelease(data.data));
-        }
-    }, [isSuccess, data, dispatch]);
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      dispatch(setRelease(data.data));
+    }
+  }, [isSuccess, data, dispatch]);
 
-    return { updateReleaseTerritories, isLoading, reset, data, isSuccess, error };
+  return { updateReleaseTerritories, isLoading, reset, data, isSuccess, error };
+};
+
+// ADD RELEASE LABEL
+export const useAddReleaseLabel = () => {
+  const [addReleaseLabel, { isLoading, reset, data, isSuccess, error }] =
+    useAddReleaseLabelMutation();
+
+  return { addReleaseLabel, isLoading, reset, data, isSuccess, error };
+};
+
+// DELETE RELEASE LABEL
+export const useDeleteReleaseLabel = () => {
+  const [deleteReleaseLabel, { isLoading, reset, data, isSuccess, error }] =
+    useDeleteReleaseLabelMutation();
+
+  return { deleteReleaseLabel, isLoading, reset, data, isSuccess, error };
 };
 
 // FETCH RELEASES
 export const useFetchReleases = () => {
+  const dispatch = useAppDispatch();
 
-    const dispatch = useAppDispatch();
+  const {
+    page,
+    size,
+    totalCount,
+    totalPages,
+    setPage,
+    setSize,
+    setTotalCount,
+    setTotalPages,
+  } = usePagination();
 
-    const { page, size, totalCount, totalPages, setPage, setSize, setTotalCount, setTotalPages } = usePagination();
+  const [fetchReleases, { isFetching, data, isSuccess }] =
+    useLazyFetchReleasesQuery();
 
-    const [fetchReleases, { isFetching, data, isSuccess }] = useLazyFetchReleasesQuery();
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setReleasesList(data?.data?.rows));
+      setTotalCount(data?.data?.totalCount);
+      setTotalPages(data?.data?.totalPages);
+    }
+  }, [isSuccess, data, dispatch, setTotalCount, setTotalPages]);
 
-    useEffect(() => {
-        if (isSuccess) {
-            dispatch(setReleasesList(data?.data?.rows));
-            setTotalCount(data?.data?.totalCount);
-            setTotalPages(data?.data?.totalPages);
-        }
-    }, [isSuccess, data, dispatch, setTotalCount, setTotalPages]);
-
-    return { fetchReleases, isFetching, page, size, totalCount, totalPages, setPage, setSize, setTotalCount, setTotalPages };
+  return {
+    fetchReleases,
+    isFetching,
+    page,
+    size,
+    totalCount,
+    totalPages,
+    setPage,
+    setSize,
+    setTotalCount,
+    setTotalPages,
+  };
 };
 
 // GET RELEASE
 export const useGetRelease = () => {
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    const [getRelease, { isFetching, data, isSuccess }] = useLazyGetReleaseQuery();
+  const [getRelease, { isFetching, data, isSuccess }] = useLazyGetReleaseQuery();
 
-    useEffect(() => {
-        if (isSuccess && data?.data) {
-            dispatch(setRelease(data.data));
-        }
-    }, [isSuccess, data, dispatch]);
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      dispatch(setRelease(data.data));
+    }
+  }, [isSuccess, data, dispatch]);
 
-    return { getRelease, isFetching, data, isSuccess };
+  return { getRelease, isFetching, data, isSuccess };
 };
 
 // VALIDATE RELEASE
 export const useValidateRelease = () => {
-    const [validateRelease, { isLoading, reset, data, isSuccess, isError, error }] =
-        useValidateReleaseMutation();
+  const [validateRelease, { isLoading, reset, data, isSuccess, isError, error }] =
+    useValidateReleaseMutation();
 
-    return { validateRelease, isLoading, reset, data, isSuccess, isError, error };
+  return { validateRelease, isLoading, reset, data, isSuccess, isError, error };
 };
