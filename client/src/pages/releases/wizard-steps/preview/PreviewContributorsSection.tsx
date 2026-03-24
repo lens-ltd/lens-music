@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Table from "@/components/table/Table";
 import DashboardSection from "@/pages/dashboard/components/DashboardSection";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
-import { ReleaseContributor } from "@/types/models/releaseContributor.types";
+import { ContributorRole, ReleaseContributor } from "@/types/models/releaseContributor.types";
 import { capitalizeString, formatDate } from "@/utils/strings.helper";
 import CustomPopover from "@/components/inputs/CustomPopover";
 import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +14,8 @@ import { ellipsisHClassName } from "@/constants/input.constants";
 
 interface PreviewContributorsSectionProps {
   releaseId: string;
+  contributors?: ReleaseContributor[];
+  isLoading?: boolean;
 }
 
 const columns: ColumnDef<ReleaseContributor, string>[] = [
@@ -22,8 +24,11 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
     header: "Name",
     cell: ({ row }) => {
       const contributor = row.original.contributor;
+      const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
-        <span className="text-[12px]">
+        <span
+          className={`text-[12px] ${isPrimaryArtist ? "font-semibold text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/85"}`}
+        >
           {contributor?.displayName || contributor?.name || contributor?.email || "—"}
         </span>
       );
@@ -32,11 +37,20 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
   {
     accessorKey: "role",
     header: "Role",
-    cell: ({ row }) => (
-      <span className="rounded-full border border-[color:var(--lens-sand)] px-2 py-0.5 text-[11px]">
-        {capitalizeString(row.original.role)}
-      </span>
-    ),
+    cell: ({ row }) => {
+      const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
+      return (
+        <span
+          className={`rounded-full px-2 py-0.5 text-[11px] ${
+            isPrimaryArtist
+              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-semibold text-[color:var(--lens-ink)]"
+              : "border border-[color:var(--lens-sand)] text-[color:var(--lens-ink)]/90"
+          }`}
+        >
+          {isPrimaryArtist ? "Primary Artist" : capitalizeString(row.original.role)}
+        </span>
+      );
+    },
   },
   {
     accessorKey: `createdBy`,
@@ -77,17 +91,20 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
 
 const PreviewContributorsSection = ({
   releaseId,
+  contributors: contributorsFromProps,
+  isLoading: isLoadingFromProps = false,
 }: PreviewContributorsSectionProps) => {
   const { fetchReleaseContributors, data, isFetching } =
     useFetchReleaseContributors();
 
   useEffect(() => {
-    if (releaseId) {
+    if (!contributorsFromProps && releaseId) {
       fetchReleaseContributors({ releaseId });
     }
-  }, [fetchReleaseContributors, releaseId]);
+  }, [contributorsFromProps, fetchReleaseContributors, releaseId]);
 
-  const contributors: ReleaseContributor[] = data?.data ?? [];
+  const contributors: ReleaseContributor[] = contributorsFromProps ?? data?.data ?? [];
+  const contributorsAreLoading = contributorsFromProps ? isLoadingFromProps : isFetching;
 
   return (
     <motion.article
@@ -99,7 +116,7 @@ const PreviewContributorsSection = ({
         {contributors.length > 0 ? (
           <Table
             columns={columns}
-            isLoading={isFetching}
+            isLoading={contributorsAreLoading}
             data={contributors}
             showPagination={false}
             containerClassName="border-0"

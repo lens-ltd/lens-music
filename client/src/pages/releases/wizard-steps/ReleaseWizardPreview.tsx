@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useValidateRelease } from "@/hooks/releases/release.hooks";
+import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import PreviewValidationBanner from "./preview/PreviewValidationBanner";
@@ -23,6 +24,8 @@ const ReleaseWizardPreview = ({
   const { createReleaseNavigationFlow, isLoading: isNavigating } =
     useCreateReleaseNavigationFlow();
   const { validateRelease, isLoading: isValidating } = useValidateRelease();
+  const { fetchReleaseContributors, data: releaseContributorsData, isFetching: areContributorsFetching } =
+    useFetchReleaseContributors();
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
 
@@ -44,6 +47,12 @@ const ReleaseWizardPreview = ({
     }
   }, [release?.id, validateRelease, navigate]);
 
+  useEffect(() => {
+    if (release?.id) {
+      fetchReleaseContributors({ releaseId: release.id });
+    }
+  }, [fetchReleaseContributors, release?.id]);
+
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
@@ -53,6 +62,8 @@ const ReleaseWizardPreview = ({
       </section>
     );
   }
+
+  const releaseContributors = releaseContributorsData?.data ?? [];
 
   return (
     <section className="flex w-full flex-col gap-5">
@@ -71,8 +82,12 @@ const ReleaseWizardPreview = ({
       <PreviewValidationBanner validationResult={validationResult} />
 
       <section className="flex flex-col gap-4">
-        <PreviewOverviewSection release={release} />
-        <PreviewContributorsSection releaseId={release.id} />
+        <PreviewOverviewSection release={release} contributors={releaseContributors} />
+        <PreviewContributorsSection
+          releaseId={release.id}
+          contributors={releaseContributors}
+          isLoading={areContributorsFetching}
+        />
         <PreviewTracksSection
           tracks={release.tracks ?? []}
           releaseId={release.id}
