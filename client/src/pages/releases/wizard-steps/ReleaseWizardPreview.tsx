@@ -12,6 +12,7 @@ import PreviewOverviewSection from "./preview/PreviewOverviewSection";
 import PreviewContributorsSection from "./preview/PreviewContributorsSection";
 import PreviewTracksSection from "./preview/PreviewTracksSection";
 import PreviewTerritoriesSection from "./preview/PreviewTerritoriesSection";
+import PreviewStoresSection from "./preview/PreviewStoresSection";
 
 type ValidationResult = { valid: boolean; errors: string[] };
 
@@ -94,6 +95,7 @@ const ReleaseWizardPreview = ({
           isLoading={releaseIsFetching ?? false}
         />
         <PreviewTerritoriesSection territories={release.territories ?? []} />
+        <PreviewStoresSection releaseId={release.id} />
       </section>
 
       <footer className="flex w-full items-center justify-between gap-3">

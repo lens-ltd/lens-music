@@ -320,6 +320,21 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+
+      assignReleaseStores: builder.mutation({
+        query: ({ id, storeIds }: { id: string; storeIds: string[] }) => ({
+          url: `/releases/${id}/stores`,
+          method: 'POST',
+          body: { storeIds },
+        }),
+      }),
+
+      deleteReleaseStore: builder.mutation({
+        query: ({ id, releaseStoreId }: { id: string; releaseStoreId: string }) => ({
+          url: `/releases/${id}/stores/${releaseStoreId}`,
+          method: 'DELETE',
+        }),
+      }),
       createLyrics: builder.mutation({
         query: (body: Record<string, unknown>) => ({
           url: "/lyrics",
@@ -382,6 +397,8 @@ export const {
   useDeleteTrackContributorMutation,
   useCreateReleaseContributorMutation,
   useDeleteReleaseContributorMutation,
+  useAssignReleaseStoresMutation,
+  useDeleteReleaseStoreMutation,
   useCreateLyricsMutation,
   useUpdateLyricsMutation,
   useDeleteLyricsMutation,
