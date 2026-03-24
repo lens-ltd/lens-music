@@ -2,6 +2,7 @@ import Button from "@/components/inputs/Button";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
 import {
+  useCompleteReleaseNavigationFlow,
   useCreateReleaseNavigationFlow,
 } from "@/hooks/releases/navigation.hooks";
 import { useUpdateReleaseTerritories } from "@/hooks/releases/release.hooks";
@@ -33,11 +34,15 @@ const getErrorMessage = (error: unknown) => {
 };
 
 const ReleaseWizardRegions = ({
+  currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow } = useCreateReleaseNavigationFlow();
+  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
+    useCreateReleaseNavigationFlow();
+  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
+    useCompleteReleaseNavigationFlow();
   const {
     updateReleaseTerritories,
     isLoading: isSavingTerritories,
@@ -122,8 +127,14 @@ const ReleaseWizardRegions = ({
 
       toast.success(response?.message || "Territories updated successfully");
 
+      if (currentStepName) {
+        await completeReleaseNavigationFlow({
+          staticReleaseNavigationStepName: currentStepName,
+          isCompleted: true,
+        });
+      }
       if (nextStepName) {
-        createReleaseNavigationFlow({
+        await createReleaseNavigationFlow({
           releaseId: release.id,
           staticReleaseNavigationStepName: nextStepName,
         });
@@ -217,7 +228,12 @@ const ReleaseWizardRegions = ({
           <Button
             type="button"
             onClick={handleGoBack}
-            disabled={!previousStepName || isSavingTerritories}
+            disabled={
+              !previousStepName ||
+              isSavingTerritories ||
+              createNavigationFlowIsLoading ||
+              completeNavigationFlowIsLoading
+            }
           >
             Back
           </Button>
@@ -226,8 +242,17 @@ const ReleaseWizardRegions = ({
             type="button"
             primary
             onClick={handleSaveAndContinue}
-            disabled={selectedTerritories.length === 0 || isSavingTerritories}
-            isLoading={isSavingTerritories}
+            disabled={
+              selectedTerritories.length === 0 ||
+              isSavingTerritories ||
+              createNavigationFlowIsLoading ||
+              completeNavigationFlowIsLoading
+            }
+            isLoading={
+              isSavingTerritories ||
+              createNavigationFlowIsLoading ||
+              completeNavigationFlowIsLoading
+            }
           >
             Save & continue
           </Button>

@@ -126,7 +126,7 @@ const ReleaseProgressNavigation = ({
                     }`}
                 >
                   {navigationTab?.completed ? (
-                    <FontAwesomeIcon icon={faCheck} />
+                    <FontAwesomeIcon icon={faCheck} className='text-white text-[10px]' />
                   ) : <p className="text-xs font-normal">{index + 1}</p>}
                 </span>
                 <p className="truncate text-sm font-normal">

@@ -2,7 +2,7 @@ import Button from "@/components/inputs/Button";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
-import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Heading } from "@/components/text/Headings";
 import Input from "@/components/inputs/Input";
@@ -76,6 +76,7 @@ const normalizeOptionalString = (value?: string) => {
 const ReleaseWizardOverview = ({
   nextStepName,
   previousStepName,
+  currentStepName,
 }: ReleaseWizardStepProps) => {
   // STATE
   const { release } = useAppSelector((state) => state.release);
@@ -91,7 +92,13 @@ const ReleaseWizardOverview = ({
   const navigate = useNavigate();
 
   // CREATE NAVIGATION FLOW
-  const { createReleaseNavigationFlow } = useCreateReleaseNavigationFlow();
+  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } = useCreateReleaseNavigationFlow();
+
+  // COMPLETE NAVIGATION FLOW
+  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
+    useCompleteReleaseNavigationFlow();
+
+  // UPLOAD COVER ART
   const {
     uploadReleaseCoverArt,
     isLoading: isUploadingCoverArt,
@@ -170,8 +177,15 @@ const ReleaseWizardOverview = ({
         response?.message || "Release overview updated successfully",
       );
 
+      if (currentStepName) {
+        await completeReleaseNavigationFlow({
+          staticReleaseNavigationStepName: currentStepName,
+          isCompleted: true,
+        });
+      }
+
       if (nextStepName) {
-        createReleaseNavigationFlow({
+        await createReleaseNavigationFlow({
           releaseId: release.id,
           staticReleaseNavigationStepName: nextStepName,
         });
@@ -627,7 +641,7 @@ const ReleaseWizardOverview = ({
           <Button
             primary
             submit
-            isLoading={isUpdatingReleaseOverview}
+            isLoading={isUpdatingReleaseOverview || createNavigationFlowIsLoading || completeNavigationFlowIsLoading}
             disabled={isUpdatingReleaseOverview}
           >
             Save and continue

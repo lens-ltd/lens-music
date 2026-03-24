@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import Button from '@/components/inputs/Button';
-import { useCreateReleaseNavigationFlow } from '@/hooks/releases/navigation.hooks';
+import {
+  useCompleteReleaseNavigationFlow,
+  useCreateReleaseNavigationFlow,
+} from '@/hooks/releases/navigation.hooks';
 import { useFetchStores } from '@/hooks/stores/store.hooks';
 import {
   useAssignReleaseStores,
@@ -13,6 +16,7 @@ import { Input as UiInput } from '@/components/ui/input';
 import { ReleaseWizardStepProps } from '../ReleaseWizardPage';
 
 const ReleaseWizardStores = ({
+  currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
@@ -21,8 +25,10 @@ const ReleaseWizardStores = ({
   const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
   const [storesError, setStoresError] = useState<string | undefined>(undefined);
 
-  const { createReleaseNavigationFlow, isLoading: isNavigating } =
+  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
     useCreateReleaseNavigationFlow();
+  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
+    useCompleteReleaseNavigationFlow();
   const { fetchStores, data: storesResponse, isFetching: storesIsFetching } =
     useFetchStores();
   const {
@@ -82,7 +88,13 @@ const ReleaseWizardStores = ({
         storeIds: selectedStoreIds,
       }).unwrap();
 
-      createReleaseNavigationFlow({
+      if (currentStepName) {
+        await completeReleaseNavigationFlow({
+          staticReleaseNavigationStepName: currentStepName,
+          isCompleted: true,
+        });
+      }
+      await createReleaseNavigationFlow({
         releaseId: release.id,
         staticReleaseNavigationStepName: nextStepName,
       });
@@ -178,7 +190,10 @@ const ReleaseWizardStores = ({
 
       <footer className="w-full flex items-center justify-between gap-3">
         <Button
-          isLoading={isNavigating}
+          isLoading={createNavigationFlowIsLoading}
+          disabled={
+            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+          }
           onClick={(event) => {
             event.preventDefault();
             if (previousStepName && release?.id) {
@@ -192,9 +207,18 @@ const ReleaseWizardStores = ({
           Back
         </Button>
         <Button
-          isLoading={isAssigning || isNavigating}
+          isLoading={
+            isAssigning ||
+            createNavigationFlowIsLoading ||
+            completeNavigationFlowIsLoading
+          }
           primary
-          disabled={selectedStoreIds.length === 0}
+          disabled={
+            selectedStoreIds.length === 0 ||
+            isAssigning ||
+            createNavigationFlowIsLoading ||
+            completeNavigationFlowIsLoading
+          }
           onClick={(event) => {
             event.preventDefault();
             void saveAndContinue();

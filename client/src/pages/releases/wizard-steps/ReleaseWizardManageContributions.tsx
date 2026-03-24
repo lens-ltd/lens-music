@@ -8,7 +8,10 @@ import {
   useCreateReleaseContributor,
   useDeleteReleaseContributor,
 } from "@/hooks/releases/release-contributor.hooks";
-import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import {
+  useCompleteReleaseNavigationFlow,
+  useCreateReleaseNavigationFlow,
+} from "@/hooks/releases/navigation.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 import { Contributor } from "@/types/models/contributor.types";
@@ -38,11 +41,15 @@ const getContributorLabel = (contributor: Contributor) =>
   "Unnamed contributor";
 
 const ReleaseWizardManageContributions = ({
+  currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow } = useCreateReleaseNavigationFlow();
+  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
+    useCreateReleaseNavigationFlow();
+  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
+    useCompleteReleaseNavigationFlow();
 
   const { fetchReleaseContributors, data: releaseContributorsData } =
     useFetchReleaseContributors();
@@ -415,14 +422,25 @@ const ReleaseWizardManageContributions = ({
         </Button>
         <Button
           primary
-          onClick={(e) => {
+          isLoading={
+            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+          }
+          disabled={
+            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+          }
+          onClick={async (e) => {
             e.preventDefault();
-            nextStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release.id,
-                staticReleaseNavigationStepName: nextStepName,
+            if (!nextStepName || !release?.id) return;
+            if (currentStepName) {
+              await completeReleaseNavigationFlow({
+                staticReleaseNavigationStepName: currentStepName,
+                isCompleted: true,
               });
+            }
+            await createReleaseNavigationFlow({
+              releaseId: release.id,
+              staticReleaseNavigationStepName: nextStepName,
+            });
           }}
         >
           Save and continue

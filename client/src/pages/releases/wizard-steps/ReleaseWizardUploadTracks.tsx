@@ -1,6 +1,9 @@
 import Button from "@/components/inputs/Button";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
-import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import {
+  useCompleteReleaseNavigationFlow,
+  useCreateReleaseNavigationFlow,
+} from "@/hooks/releases/navigation.hooks";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { setCreateReleaseTrackModal } from "@/state/features/trackSlice";
@@ -12,6 +15,7 @@ import { RelaxedHeading } from "@/components/text/Headings";
 import { useNavigate } from "react-router-dom";
 
 const ReleaseWizardUploadTracks = ({
+  currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
@@ -23,8 +27,10 @@ const ReleaseWizardUploadTracks = ({
   // NAVIGATION
   const navigate = useNavigate();
 
-  // CREATE NAVIGATION FLOW
-  const { createReleaseNavigationFlow } = useCreateReleaseNavigationFlow();
+  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
+    useCreateReleaseNavigationFlow();
+  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
+    useCompleteReleaseNavigationFlow();
 
   // FETCH TRACKS
   const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
@@ -94,7 +100,6 @@ const ReleaseWizardUploadTracks = ({
 
       <footer className="w-full flex items-center gap-3 justify-between">
         <Button
-          route="/releases"
           onClick={(e) => {
             e.preventDefault();
             previousStepName &&
@@ -109,14 +114,25 @@ const ReleaseWizardUploadTracks = ({
         </Button>
         <Button
           primary
-          onClick={(e) => {
+          isLoading={
+            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+          }
+          disabled={
+            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+          }
+          onClick={async (e) => {
             e.preventDefault();
-            nextStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release?.id,
-                staticReleaseNavigationStepName: nextStepName,
+            if (!nextStepName || !release?.id) return;
+            if (currentStepName) {
+              await completeReleaseNavigationFlow({
+                staticReleaseNavigationStepName: currentStepName,
+                isCompleted: true,
               });
+            }
+            await createReleaseNavigationFlow({
+              releaseId: release.id,
+              staticReleaseNavigationStepName: nextStepName,
+            });
           }}
         >
           Save and continue

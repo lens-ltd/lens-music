@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
-import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
 import {
@@ -24,6 +24,7 @@ type ValidationResult = { valid: boolean; errors: string[] };
 const ReleaseWizardPreview = ({
   previousStepName,
   releaseIsFetching,
+  currentStepName,
 }: ReleaseWizardStepProps) => {
   const dispatch = useAppDispatch();
   const { release } = useAppSelector((state) => state.release);
@@ -36,6 +37,9 @@ const ReleaseWizardPreview = ({
     useState<ValidationResult | null>(null);
   const [validationSuccessMessage, setValidationSuccessMessage] =
     useState<string | undefined>(undefined);
+
+    // COMPLETE NAVIGATION FLOW
+    const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } = useCompleteReleaseNavigationFlow();
 
   const handleValidateRelease = useCallback(async () => {
     if (!release?.id) return;
@@ -51,6 +55,12 @@ const ReleaseWizardPreview = ({
         );
         dispatch(setSelectedRelease(response.data.release));
         dispatch(setSubmitReleaseModal(true));
+        if (currentStepName) {
+          await completeReleaseNavigationFlow({
+            staticReleaseNavigationStepName: currentStepName,
+            isCompleted: true,
+          });
+        }
       }
     } catch (error) {
       const errorMessage =
@@ -58,7 +68,7 @@ const ReleaseWizardPreview = ({
         "Release validation failed.";
       toast.error(errorMessage);
     }
-  }, [release?.id, validateRelease, dispatch]);
+  }, [release?.id, validateRelease, dispatch, currentStepName, completeReleaseNavigationFlow]);
 
   const handleOpenSubmitRelease = useCallback(() => {
     if (!release) return;
@@ -139,7 +149,7 @@ const ReleaseWizardPreview = ({
         <Button
           primary
           submit
-          isLoading={isValidating}
+          isLoading={isValidating || completeNavigationFlowIsLoading}
           onClick={
             release.status === ReleaseStatus.VALIDATED
               ? handleOpenSubmitRelease

@@ -12,6 +12,7 @@ import { useAppSelector } from "@/state/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faCopy } from "@fortawesome/free-regular-svg-icons";
 import { toast } from "sonner";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 type ReleaseNavigationPanelProps = {
   children: ReactNode;
@@ -110,7 +111,7 @@ const ReleaseNavigationPanel = ({
                               : "bg-gray-100 text-gray-500"
                       }`}
                     >
-                      {isCompleted ? "Done" : `${index + 1}`.padStart(2, "0")}
+                      {isCompleted ? <FontAwesomeIcon icon={faCheck} className="text-white text-[10px]" /> : `${index + 1}`.padStart(2, "0")}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span

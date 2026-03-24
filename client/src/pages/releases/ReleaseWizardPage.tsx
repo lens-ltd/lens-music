@@ -114,6 +114,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardOverview
           nextStepName={"MANAGE_CONTRIBUTIONS"}
           previousStepName={undefined}
+          currentStepName="OVERVIEW"
         />
       );
     }
@@ -122,6 +123,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardManageContributions
           nextStepName={"UPLOAD_TRACKS"}
           previousStepName={"OVERVIEW"}
+          currentStepName="MANAGE_CONTRIBUTIONS"
         />
       );
     }
@@ -130,6 +132,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardUploadTracks
           nextStepName={"REGIONS"}
           previousStepName={"MANAGE_CONTRIBUTIONS"}
+          currentStepName="UPLOAD_TRACKS"
         />
       );
     }
@@ -138,6 +141,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardRegions
           nextStepName={"STORES"}
           previousStepName={"UPLOAD_TRACKS"}
+          currentStepName="REGIONS"
         />
       );
     }
@@ -146,6 +150,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardStores
           nextStepName={"PREVIEW"}
           previousStepName={"REGIONS"}
+          currentStepName="STORES"
         />
       );
     }
@@ -154,6 +159,7 @@ const ReleaseWizardPage = () => {
         <ReleaseWizardPreview
           previousStepName={"STORES"}
           releaseIsFetching={releaseIsFetching}
+          currentStepName="PREVIEW"
         />
       );
     }
