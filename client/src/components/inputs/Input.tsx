@@ -5,17 +5,22 @@ import {
   ReactNode,
   useId,
   useRef,
-} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Checkbox } from '../ui/checkbox';
-import { CheckedState } from '@radix-ui/react-checkbox';
-import DatePicker from './DatePicker';
-import { Input as ShadcnInput } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { InputErrorMessage } from '../feedbacks/ErrorLabels';
-import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
+} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { Checkbox } from "../ui/checkbox";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import DatePicker from "./DatePicker";
+import { Input as ShadcnInput } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { InputErrorMessage } from "../feedbacks/ErrorLabels";
+import {
+  FieldError,
+  FieldErrorsImpl,
+  FieldValues,
+  Merge,
+} from "react-hook-form";
 
 interface InputProps {
   label?: string;
@@ -45,26 +50,31 @@ interface InputProps {
   fromDate?: Date;
   toDate?: Date;
   checked?: boolean;
-  selectionType?: 'date' | 'month' | 'year' | 'recurringDate';
+  selectionType?: "date" | "month" | "year" | "recurringDate";
   onBlur?: ((e: React.FocusEvent<HTMLInputElement>) => void) | undefined;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
+  errorMessage?:
+    | string
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<FieldValues>>
+    | undefined;
 }
 
-const fieldLabelClasses = 'text-[12px] leading-none text-[color:var(--lens-ink)] font-normal';
-const helperRequiredClasses = 'text-[12px] leading-none text-red-600';
+const fieldLabelClasses =
+  "text-[12px] leading-none text-[color:var(--lens-ink)] font-normal";
+const helperRequiredClasses = "text-[12px] leading-none text-red-600";
 const baseInputClasses =
-  'h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[12px] font-normal shadow-none placeholder:text-[12px] placeholder:font-light placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary';
+  "h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[11px] font-normal shadow-none placeholder:text-[11px] placeholder:font-light placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      type = 'text',
+      type = "text",
       label,
       placeholder,
       className,
       required = false,
-      value = '',
+      value = "",
       onChange,
       defaultValue,
       suffixIcon,
@@ -75,10 +85,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       prefixText,
       defaultChecked,
       name,
-      accept = 'application/pdf',
+      accept = "application/pdf",
       min,
       readOnly = false,
-      labelClassName = '',
+      labelClassName = "",
       multiple = false,
       fromDate,
       toDate,
@@ -88,23 +98,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       onKeyPress,
       errorMessage,
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const inputId = name || generatedId;
     const hiddenFileInput = useRef<HTMLInputElement>(null);
     const normalizedDefaultValue =
       defaultValue instanceof Date ? defaultValue.toISOString() : defaultValue;
-    const normalizedValue =
-      value instanceof Date ? value.toISOString() : value;
+    const normalizedValue = value instanceof Date ? value.toISOString() : value;
 
-    if (type === 'checkbox') {
+    if (type === "checkbox") {
       return (
-        <div className={cn('flex w-full flex-col gap-1', labelClassName)}>
+        <div className={cn("flex w-full flex-col gap-1", labelClassName)}>
           <label className="inline-flex w-fit items-center gap-2 text-[12px] font-normal">
             <Checkbox
               className="border-secondary/50"
-              onCheckedChange={onChange as unknown as ((checked: CheckedState) => void) | undefined}
+              onCheckedChange={
+                onChange as unknown as
+                  | ((checked: CheckedState) => void)
+                  | undefined
+              }
               name={name}
               checked={checked}
               defaultChecked={defaultChecked}
@@ -112,15 +125,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {label && <span className="text-[12px] font-normal">{label}</span>}
           </label>
           {errorMessage && (
-            <InputErrorMessage message={errorMessage} className="mt-0.5 pl-0.5" />
+            <InputErrorMessage
+              message={errorMessage}
+              className="mt-0.5 pl-0.5"
+            />
           )}
         </div>
       );
     }
 
-    if (type === 'radio') {
+    if (type === "radio") {
       return (
-        <div className={cn('flex w-full flex-col gap-1', labelClassName)}>
+        <div className={cn("flex w-full flex-col gap-1", labelClassName)}>
           <label className="inline-flex items-center gap-2 text-[12px] font-normal">
             <input
               id={inputId}
@@ -131,36 +147,40 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               checked={checked}
               onChange={onChange}
               className={cn(
-                'h-4 w-4 cursor-pointer accent-primary border-secondary/50',
-                className
+                "h-4 w-4 cursor-pointer accent-primary border-secondary/50",
+                className,
               )}
             />
             {label && <span className="text-[12px] font-normal">{label}</span>}
           </label>
           {errorMessage && (
-            <InputErrorMessage message={errorMessage} className="mt-0.5 pl-0.5" />
+            <InputErrorMessage
+              message={errorMessage}
+              className="mt-0.5 pl-0.5"
+            />
           )}
         </div>
       );
     }
 
-    if (type === 'file') {
+    if (type === "file") {
       return (
-        <div className={cn('w-fit', labelClassName)}>
+        <div className={cn("w-fit", labelClassName)}>
           {label && (
-            <p className={cn(fieldLabelClasses, 'mb-2')}>
-              {label} {required && <span className={helperRequiredClasses}>*</span>}
+            <p className={cn(fieldLabelClasses, "mb-2")}>
+              {label}{" "}
+              {required && <span className={helperRequiredClasses}>*</span>}
             </p>
           )}
           <button
             type="button"
             onClick={() => hiddenFileInput.current?.click()}
             className={cn(
-              'inline-flex h-9 cursor-pointer items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]',
-              className
+              "inline-flex h-9 cursor-pointer items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]",
+              className,
             )}
           >
-            Choose file{multiple ? 's' : ''}
+            Choose file{multiple ? "s" : ""}
           </button>
           <input
             ref={hiddenFileInput}
@@ -178,12 +198,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       );
     }
 
-    if (type === 'date') {
+    if (type === "date") {
       return (
-        <label className={cn('flex w-full flex-col gap-2', labelClassName)}>
+        <label className={cn("flex w-full flex-col gap-2", labelClassName)}>
           {label && (
             <span className={fieldLabelClasses}>
-              {label} {required && <span className={helperRequiredClasses}>*</span>}
+              {label}{" "}
+              {required && <span className={helperRequiredClasses}>*</span>}
             </span>
           )}
           <DatePicker
@@ -193,8 +214,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             selectionType={selectionType}
             onChange={
               onChange as
-              | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
-              | undefined
+                | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
+                | undefined
             }
             value={(value || defaultValue) as Date | undefined}
           />
@@ -208,33 +229,43 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const textInput = (
       <ShadcnInput
         id={inputId}
-        defaultValue={normalizedDefaultValue as string | number | readonly string[] | undefined}
+        defaultValue={
+          normalizedDefaultValue as
+            | string
+            | number
+            | readonly string[]
+            | undefined
+        }
         min={min}
-        value={normalizedValue as string | number | readonly string[] | undefined}
-        type={type || 'text'}
+        value={
+          normalizedValue as string | number | readonly string[] | undefined
+        }
+        type={type || "text"}
         readOnly={readOnly}
         name={name}
         ref={ref}
         onChange={onChange}
         onBlur={onBlur}
         onKeyPress={onKeyPress}
-        placeholder={readOnly ? '' : placeholder}
+        placeholder={readOnly ? "" : placeholder}
         className={cn(
           baseInputClasses,
-          readOnly && 'border-background bg-background/40 text-secondary cursor-default',
-          prefixIcon && 'pl-10',
-          prefixText && 'pl-14',
-          suffixIcon && 'pr-11',
-          className
+          readOnly &&
+            "border-background bg-background/40 text-secondary cursor-default",
+          prefixIcon && "pl-10",
+          prefixText && "pl-14",
+          suffixIcon && "pr-11",
+          className,
         )}
       />
     );
 
     return (
-      <label className={cn('flex w-full flex-col gap-2', labelClassName)}>
+      <label className={cn("flex w-full flex-col gap-2", labelClassName)}>
         {label && (
-          <span className={cn(fieldLabelClasses, 'pl-0.5')}>
-            {label} {required && <span className={helperRequiredClasses}>*</span>}
+          <span className={cn(fieldLabelClasses, "pl-0.5")}>
+            {label}{" "}
+            {required && <span className={helperRequiredClasses}>*</span>}
           </span>
         )}
         <div className="relative w-full">
@@ -243,13 +274,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={prefixIconHandler}
               className={cn(
-                'absolute inset-y-0 left-0 flex items-center px-3 text-secondary',
-                !prefixIconHandler && 'pointer-events-none'
+                "absolute inset-y-0 left-0 flex items-center px-3 text-secondary",
+                !prefixIconHandler && "pointer-events-none",
               )}
-              aria-label={typeof prefixText === 'string' ? prefixText : label || 'Prefix action'}
+              aria-label={
+                typeof prefixText === "string"
+                  ? prefixText
+                  : label || "Prefix action"
+              }
             >
               {prefixIcon && <FontAwesomeIcon icon={prefixIcon} />}
-              {prefixText && <span className="text-[12px] font-normal">{prefixText}</span>}
+              {prefixText && (
+                <span className="text-[12px] font-normal">{prefixText}</span>
+              )}
             </button>
           )}
 
@@ -260,12 +297,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={suffixIconHandler}
               className={cn(
-                'absolute inset-y-0 right-0 flex h-full items-center justify-center rounded-r-lg border-l px-3 text-[12px]',
+                "absolute inset-y-0 right-0 flex h-full items-center justify-center rounded-r-lg border-l px-3 text-[12px]",
                 suffixIconPrimary
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-secondary/30 bg-white text-primary'
+                  ? "border-primary bg-primary text-white"
+                  : "border-secondary/30 bg-white text-primary",
               )}
-              aria-label={`${label || 'Input'} action`}
+              aria-label={`${label || "Input"} action`}
             >
               <FontAwesomeIcon icon={suffixIcon || faSearch} />
             </button>
@@ -276,9 +313,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </label>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export default Input;
