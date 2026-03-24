@@ -23,6 +23,7 @@ import UpdateContributorPage from "./pages/contributors/UpdateContributorPage";
 import ContributorDetailsPage from "./pages/contributors/ContributorDetailsPage";
 import ContributorMembershipsPage from "./pages/contributors/ContributorMembershipsPage";
 import ManageReleaseTrack from "./pages/tracks/ManageReleaseTrack";
+import TrackDetailsPage from "./pages/tracks/TrackDetailsPage";
 import Seo, { SeoProps } from "@/components/seo/Seo";
 import UsersPage from "./pages/users/UsersPage";
 import UserInvitationsPage from "./pages/users/UserInvitationsPage";
@@ -75,6 +76,11 @@ const routeSeo = {
     title: "Manage Release Track",
     description:
       "Edit track details, contributors, rights, and metadata for a release track in Lens Music.",
+  },
+  trackDetails: {
+    title: "Track Details",
+    description:
+      "View track metadata, audio files, contributors, and lyrics for a release track in Lens Music.",
   },
   contributors: {
     title: "Contributors",
@@ -198,6 +204,10 @@ const Router = () => {
             <Route
               path=":id/manage-tracks/:trackId"
               element={withSeo(<ManageReleaseTrack />, routeSeo.manageTrack)}
+            />
+            <Route
+              path=":id/tracks/:trackId"
+              element={withSeo(<TrackDetailsPage />, routeSeo.trackDetails)}
             />
           </Route>
 

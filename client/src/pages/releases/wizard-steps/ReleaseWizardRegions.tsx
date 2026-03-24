@@ -6,6 +6,7 @@ import {
 } from "@/hooks/releases/navigation.hooks";
 import { useUpdateReleaseTerritories } from "@/hooks/releases/release.hooks";
 import { useAppSelector } from "@/state/hooks";
+import type { CheckedState } from "@radix-ui/react-checkbox";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
@@ -70,6 +71,12 @@ const ReleaseWizardRegions = ({
     () => new Set(selectedTerritories),
     [selectedTerritories],
   );
+
+  const selectAllCheckedState: CheckedState = useMemo(() => {
+    if (selectedTerritories.length === 0) return false;
+    if (selectedTerritories.length === COUNTRIES_LIST.length) return true;
+    return "indeterminate";
+  }, [selectedTerritories]);
 
   const toggleTerritory = (code: string) => {
     setTerritoriesError(undefined);
@@ -146,6 +153,26 @@ const ReleaseWizardRegions = ({
           setCountrySearchQuery(e.target.value)
         }
       />
+
+      <section className="flex flex-col gap-2">
+        <Input
+          label="Select all countries"
+          name="release-wizard-regions-select-all-countries"
+          type="checkbox"
+          className="w-fit cursor-pointer"
+          checked={selectAllCheckedState}
+          onChange={
+            ((state: CheckedState) => {
+              setTerritoriesError(undefined);
+              if (state === true) {
+                setSelectedTerritories(ALL_COUNTRY_CODES);
+              } else {
+                setSelectedTerritories([]);
+              }
+            }) as unknown as (e: ChangeEvent<HTMLInputElement>) => void
+          }
+        />
+      </section>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (

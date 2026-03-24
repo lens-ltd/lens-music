@@ -1,4 +1,4 @@
-import { useCreateReleaseMutation, useDeleteReleaseMutation, useUpdateReleaseOverviewMutation, useUpdateReleaseTerritoriesMutation, useUploadReleaseCoverArtMutation } from "@/state/api/apiMutationSlice";
+import { useCreateReleaseMutation, useDeleteReleaseMutation, useUpdateReleaseOverviewMutation, useUpdateReleaseTerritoriesMutation, useUploadReleaseCoverArtMutation, useValidateReleaseMutation } from "@/state/api/apiMutationSlice";
 import { useLazyFetchReleasesQuery, useLazyGetReleaseQuery } from "@/state/api/apiQuerySlice";
 import { setRelease, setReleasesList } from "@/state/features/releaseSlice";
 import { useAppDispatch } from "@/state/hooks";
@@ -95,4 +95,12 @@ export const useGetRelease = () => {
     }, [isSuccess, data, dispatch]);
 
     return { getRelease, isFetching, data, isSuccess };
+};
+
+// VALIDATE RELEASE
+export const useValidateRelease = () => {
+    const [validateRelease, { isLoading, reset, data, isSuccess, isError, error }] =
+        useValidateReleaseMutation();
+
+    return { validateRelease, isLoading, reset, data, isSuccess, isError, error };
 };

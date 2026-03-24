@@ -4,10 +4,11 @@ import { ReleasesController } from './releases.controller';
 import { ReleaseService } from './releases.service';
 import { ReleaseQueryService } from './releases-query.service';
 import { Release } from '../../entities/release.entity';
+import { ReleaseContributor } from '../../entities/release-contributor.entity';
 import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Release]), UploadsModule],
+  imports: [TypeOrmModule.forFeature([Release, ReleaseContributor]), UploadsModule],
   controllers: [ReleasesController],
   providers: [ReleaseService, ReleaseQueryService],
 })

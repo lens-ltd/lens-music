@@ -23,11 +23,13 @@ export interface ReleaseWizardStepProps {
   currentStepName?: string;
   nextStepName?: string;
   previousStepName?: string;
+  releaseIsFetching?: boolean;
 }
 
 const ReleaseWizardPage = () => {
   const { releaseNavigationFlows, activeReleaseNavigationFlow, staticSteps } =
     useAppSelector((state) => state.navigation);
+    const { release } = useAppSelector((state) => state.release);
   const { id } = useParams<{ id: UUID }>();
 
   const { getRelease, isFetching: releaseIsFetching } = useGetRelease();
@@ -55,8 +57,6 @@ const ReleaseWizardPage = () => {
   useEffect(() => {
     if (id) {
       getRelease({ id });
-      fetchReleaseNavigationFlows({ releaseId: id });
-      fetchStaticReleaseNavigation({});
     }
   }, [
     id,
@@ -64,6 +64,13 @@ const ReleaseWizardPage = () => {
     fetchReleaseNavigationFlows,
     fetchStaticReleaseNavigation,
   ]);
+
+  useEffect(() => {
+    if (release?.id) {
+      fetchReleaseNavigationFlows({ releaseId: release?.id });
+      fetchStaticReleaseNavigation({});
+    }
+  }, [release?.id, fetchReleaseNavigationFlows, fetchStaticReleaseNavigation]);
 
   useEffect(() => {
     if (
@@ -146,6 +153,7 @@ const ReleaseWizardPage = () => {
       return (
         <ReleaseWizardPreview
           previousStepName={"STORES"}
+          releaseIsFetching={releaseIsFetching}
         />
       );
     }
@@ -166,7 +174,7 @@ const ReleaseWizardPage = () => {
         </p>
       </article>
     );
-  }, [activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName]);
+  }, [activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName, releaseIsFetching]);
 
   return (
     <UserLayout>

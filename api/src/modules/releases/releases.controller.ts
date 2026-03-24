@@ -86,6 +86,16 @@ export class ReleasesController {
     };
   }
 
+  @Post(":id/validate")
+  @HttpCode(HttpStatus.OK)
+  async validateRelease(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const result = await this.releaseService.validateRelease(id, user);
+    return { message: "Release validation completed", data: result };
+  }
+
   @Get()
   async fetchAllReleases(
     @CurrentUser() user: AuthUser,

@@ -1,18 +1,110 @@
-import { capitalizeString } from "@/utils/strings.helper";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import Button from "@/components/inputs/Button";
+import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useValidateRelease } from "@/hooks/releases/release.hooks";
+import { useAppSelector } from "@/state/hooks";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
+import PreviewValidationBanner from "./preview/PreviewValidationBanner";
+import PreviewOverviewSection from "./preview/PreviewOverviewSection";
+import PreviewContributorsSection from "./preview/PreviewContributorsSection";
+import PreviewTracksSection from "./preview/PreviewTracksSection";
+import PreviewTerritoriesSection from "./preview/PreviewTerritoriesSection";
+
+type ValidationResult = { valid: boolean; errors: string[] };
 
 const ReleaseWizardPreview = ({
   previousStepName,
+  releaseIsFetching,
 }: ReleaseWizardStepProps) => {
+  const navigate = useNavigate();
+  const { release } = useAppSelector((state) => state.release);
+  const { createReleaseNavigationFlow, isLoading: isNavigating } =
+    useCreateReleaseNavigationFlow();
+  const { validateRelease, isLoading: isValidating } = useValidateRelease();
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
+
+  const handleValidateRelease = useCallback(async () => {
+    if (!release?.id) return;
+    setValidationResult(null);
+    try {
+      const response = await validateRelease({ id: release.id }).unwrap();
+      setValidationResult(response.data);
+      if (response.data?.valid) {
+        toast.success("Release validated successfully.");
+        navigate("/releases");
+      }
+    } catch (error) {
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "Release validation failed.";
+      toast.error(errorMessage);
+    }
+  }, [release?.id, validateRelease, navigate]);
+
+  if (!release) {
+    return (
+      <section className="flex items-center justify-center p-8">
+        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          Loading release data...
+        </p>
+      </section>
+    );
+  }
+
   return (
-    <section className="rounded-2xl border border-dashed border-primary/20 bg-gradient-to-br from-primary/[0.03] to-white p-6 sm:p-8">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-primary/70">
-        Coming Next
-      </p>
-      <h2 className="mt-3 text-xl font-semibold text-gray-900">{capitalizeString(previousStepName)}</h2>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500">
-        {capitalizeString(previousStepName)}
-      </p>
+    <section className="flex w-full flex-col gap-5">
+      <header>
+        <h2
+          className="text-[18px] leading-tight text-[color:var(--lens-ink)]"
+          style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
+        >
+          Review &amp; Submit
+        </h2>
+        <p className="mt-1 text-[12px] font-normal text-[color:var(--lens-ink)]/50">
+          Review all release information before submitting for distribution.
+        </p>
+      </header>
+
+      <PreviewValidationBanner validationResult={validationResult} />
+
+      <section className="flex flex-col gap-4">
+        <PreviewOverviewSection release={release} />
+        <PreviewContributorsSection releaseId={release.id} />
+        <PreviewTracksSection
+          tracks={release.tracks ?? []}
+          releaseId={release.id}
+          isLoading={releaseIsFetching ?? false}
+        />
+        <PreviewTerritoriesSection territories={release.territories ?? []} />
+      </section>
+
+      <footer className="flex w-full items-center justify-between gap-3">
+        <Button
+          isLoading={isNavigating}
+          onClick={(event) => {
+            event.preventDefault();
+            if (previousStepName && release.id) {
+              createReleaseNavigationFlow({
+                releaseId: release.id,
+                staticReleaseNavigationStepName: previousStepName,
+              });
+            }
+          }}
+        >
+          Back
+        </Button>
+        <Button
+          primary
+          submit
+          isLoading={isValidating}
+          onClick={handleValidateRelease}
+        >
+          Validate &amp; Submit
+        </Button>
+      </footer>
     </section>
   );
 };

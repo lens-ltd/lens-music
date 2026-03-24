@@ -36,6 +36,13 @@ export class ReleaseQueryService {
   }
 
   async getReleaseById(id: UUID): Promise<Release | null> {
-    return this.releaseRepository.findOne({ where: { id }, relations: { createdBy: true } });
+    return this.releaseRepository.findOne({
+      where: { id },
+      relations: {
+        createdBy: true,
+        tracks: { audioFiles: true, trackContributors: { contributor: true } },
+        artists: { artist: true },
+      },
+    });
   }
 }

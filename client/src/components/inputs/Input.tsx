@@ -49,7 +49,8 @@ interface InputProps {
   range?: boolean;
   fromDate?: Date;
   toDate?: Date;
-  checked?: boolean;
+  /** For `type="checkbox"`, Radix `indeterminate` = partial selection. */
+  checked?: CheckedState;
   selectionType?: "date" | "month" | "year" | "recurringDate";
   onBlur?: ((e: React.FocusEvent<HTMLInputElement>) => void) | undefined;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -65,6 +66,9 @@ const fieldLabelClasses =
 const helperRequiredClasses = "text-[12px] leading-none text-red-600";
 const baseInputClasses =
   "h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[11px] font-normal shadow-none placeholder:text-[11px] placeholder:font-light placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary";
+
+const inputTextClasses =
+  "text-[11px] font-normal placeholder:text-[11px] placeholder:font-light placeholder:text-secondary/70";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -112,7 +116,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className={cn("flex w-full flex-col gap-1", labelClassName)}>
           <label className="inline-flex w-fit items-center gap-2 text-[12px] font-normal">
             <Checkbox
-              className="border-secondary/50"
+              className="border-secondary/50 cursor-pointer"
               onCheckedChange={
                 onChange as unknown as
                   | ((checked: CheckedState) => void)
@@ -144,7 +148,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               name={name}
               value={value as string | number | readonly string[] | undefined}
               defaultChecked={defaultChecked}
-              checked={checked}
+              checked={checked as boolean}
               onChange={onChange}
               className={cn(
                 "h-4 w-4 cursor-pointer accent-primary border-secondary/50",
@@ -226,39 +230,80 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       );
     }
 
-    const textInput = (
+    const sharedInputProps = {
+      id: inputId,
+      defaultValue: normalizedDefaultValue as
+        | string
+        | number
+        | readonly string[]
+        | undefined,
+      min,
+      value: normalizedValue as string | number | readonly string[] | undefined,
+      type: type || "text",
+      readOnly,
+      name,
+      ref,
+      onChange,
+      onBlur,
+      onKeyPress,
+      placeholder: readOnly ? "" : placeholder,
+    };
+
+    const readOnlyInputClasses = readOnly
+      ? "border-background bg-background/40 text-secondary cursor-default"
+      : "";
+
+    const prefixPaddingClasses = cn(
+      prefixIcon && "pl-10",
+      prefixText && "pl-14",
+    );
+
+    const textInputPlain = (
       <ShadcnInput
-        id={inputId}
-        defaultValue={
-          normalizedDefaultValue as
-            | string
-            | number
-            | readonly string[]
-            | undefined
-        }
-        min={min}
-        value={
-          normalizedValue as string | number | readonly string[] | undefined
-        }
-        type={type || "text"}
-        readOnly={readOnly}
-        name={name}
-        ref={ref}
-        onChange={onChange}
-        onBlur={onBlur}
-        onKeyPress={onKeyPress}
-        placeholder={readOnly ? "" : placeholder}
+        {...sharedInputProps}
         className={cn(
           baseInputClasses,
-          readOnly &&
-            "border-background bg-background/40 text-secondary cursor-default",
-          prefixIcon && "pl-10",
-          prefixText && "pl-14",
-          suffixIcon && "pr-11",
+          readOnlyInputClasses,
+          prefixPaddingClasses,
           className,
         )}
       />
     );
+
+    const textInputWithSuffix = (
+      <div
+        className={cn(
+          "flex w-full overflow-hidden rounded-lg border-[1.5px] border-secondary/40 bg-white transition-[border-color] focus-within:border-primary",
+          readOnly && "border-background bg-background/40",
+        )}
+      >
+        <ShadcnInput
+          {...sharedInputProps}
+          className={cn(
+            "h-10 min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 shadow-none focus-visible:ring-0 focus-visible:outline-none",
+            inputTextClasses,
+            readOnly && "cursor-default text-secondary",
+            prefixPaddingClasses,
+            className,
+          )}
+        />
+        <button
+          type="button"
+          onClick={suffixIconHandler}
+          className={cn(
+            "flex shrink-0 items-center justify-center self-stretch border-l-[1.5px] px-3 text-[12px]",
+            suffixIconPrimary
+              ? "border-l-primary bg-primary text-white"
+              : "border-l-secondary/40 bg-white text-primary",
+          )}
+          aria-label={`${label || "Input"} action`}
+        >
+          <FontAwesomeIcon className="text-[11px] cursor-pointer" icon={suffixIcon || faSearch} />
+        </button>
+      </div>
+    );
+
+    const textInput = suffixIcon ? textInputWithSuffix : textInputPlain;
 
     return (
       <label className={cn("flex w-full flex-col gap-2", labelClassName)}>
@@ -283,7 +328,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                   : label || "Prefix action"
               }
             >
-              {prefixIcon && <FontAwesomeIcon icon={prefixIcon} />}
+              {prefixIcon && <FontAwesomeIcon className="text-[11px]" icon={prefixIcon} />}
               {prefixText && (
                 <span className="text-[12px] font-normal">{prefixText}</span>
               )}
@@ -291,22 +336,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
 
           {textInput}
-
-          {suffixIcon && (
-            <button
-              type="button"
-              onClick={suffixIconHandler}
-              className={cn(
-                "absolute inset-y-0 right-0 flex h-full items-center justify-center rounded-r-lg border-l px-3 text-[12px]",
-                suffixIconPrimary
-                  ? "border-primary bg-primary text-white"
-                  : "border-secondary/30 bg-white text-primary",
-              )}
-              aria-label={`${label || "Input"} action`}
-            >
-              <FontAwesomeIcon icon={suffixIcon || faSearch} />
-            </button>
-          )}
         </div>
         {errorMessage && (
           <InputErrorMessage message={errorMessage} className="mt-0.5" />
