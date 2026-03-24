@@ -17,8 +17,11 @@ export interface UploadedImageResult {
   publicId: string;
   originalName: string;
   bytes: number;
+  width: number;
+  height: number;
   format?: string;
   resourceType: string;
+  colorMode?: string;
 }
 
 @Injectable()
@@ -48,8 +51,11 @@ export class CloudinaryImageUploaderService {
         publicId: result.public_id,
         originalName: file.originalname,
         bytes: result.bytes,
+        width: result.width,
+        height: result.height,
         format: result.format,
         resourceType: result.resource_type,
+        colorMode: this.extractColorMode(result.metadata),
       };
     } catch (error) {
       throw new InternalServerErrorException('Failed to upload image');
@@ -95,5 +101,16 @@ export class CloudinaryImageUploaderService {
 
       stream.end(buffer);
     });
+  }
+
+  private extractColorMode(metadata: unknown): string | undefined {
+    if (!metadata || typeof metadata !== 'object') {
+      return undefined;
+    }
+
+    const metadataRecord = metadata as Record<string, unknown>;
+    const colorMode = metadataRecord.color_mode ?? metadataRecord.color_space;
+
+    return typeof colorMode === 'string' ? colorMode : undefined;
   }
 }
