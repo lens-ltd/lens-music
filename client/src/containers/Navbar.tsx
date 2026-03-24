@@ -67,14 +67,14 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
               aria-expanded={dropdownOpen}
             >
               <span className="relative inline-block h-8 w-8 overflow-hidden rounded-full">
-                {user?.avatar ? (
+                {user?.avatarUrl ? (
                   <img
-                    src={user.avatar}
+                    src={user.avatarUrl}
                     className="h-full w-full object-cover"
                     alt="User avatar"
                   />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center bg-primary text-sm text-white">
+                  <span className="flex h-fu  ll w-full items-center justify-center bg-primary text-sm text-white">
                     {user?.name?.charAt(0) || 'U'}
                   </span>
                 )}

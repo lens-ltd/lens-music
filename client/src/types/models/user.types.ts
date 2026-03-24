@@ -15,4 +15,5 @@ export interface User extends Person {
   artists: Artist[];
   releases: Release[];
   status: UserStatus;
+  avatarUrl?: string;
 }

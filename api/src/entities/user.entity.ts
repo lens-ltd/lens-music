@@ -31,4 +31,8 @@ export class User extends Person {
     select: false,
   })
   password!: string;
+
+  // AVATAR URL
+  @Column({ name: 'avatar_url', type: 'varchar', length: 255, nullable: true })
+  avatarUrl?: string;
 }

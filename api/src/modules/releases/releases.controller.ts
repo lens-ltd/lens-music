@@ -13,17 +13,20 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { CreateReleaseDto } from './dto/create-release.dto';
-import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
-import { ReleaseService } from './releases.service';
-import { ReleaseQueryService } from './releases-query.service';
-import { memoryStorage } from 'multer';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import {
+  CurrentUser,
+  AuthUser,
+} from "../../common/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { CreateReleaseDto } from "./dto/create-release.dto";
+import { UpdateReleaseOverviewDto } from "./dto/update-release-overview.dto";
+import { ReleaseService } from "./releases.service";
+import { ReleaseQueryService } from "./releases-query.service";
+import { memoryStorage } from "multer";
 
-@Controller('releases')
+@Controller("releases")
 @UseGuards(JwtAuthGuard)
 export class ReleasesController {
   constructor(
@@ -32,62 +35,69 @@ export class ReleasesController {
   ) {}
 
   @Post()
-  async createRelease(@Body() dto: CreateReleaseDto, @CurrentUser() user: AuthUser) {
+  async createRelease(
+    @Body() dto: CreateReleaseDto,
+    @CurrentUser() user: AuthUser,
+  ) {
     const release = await this.releaseService.createRelease(dto, user.id);
-    return { message: 'Release created successfully', data: release };
+    return { message: "Release created successfully", data: release };
   }
 
-  @Patch(':id/overview')
+  @Patch(":id/overview")
   async updateReleaseOverview(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() dto: UpdateReleaseOverviewDto,
     @CurrentUser() user: AuthUser,
   ) {
     const release = await this.releaseService.updateOverview(id, dto, user);
-    return { message: 'Release overview updated successfully', data: release };
+    return { message: "Release overview updated successfully", data: release };
   }
 
-  @Post(':id/cover-art')
+  @Post(":id/cover-art")
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor("file", {
       storage: memoryStorage(),
     }),
   )
   async uploadReleaseCoverArt(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @UploadedFile() file: Express.Multer.File | undefined,
     @CurrentUser() user: AuthUser,
   ) {
     const release = await this.releaseService.uploadCoverArt(id, file, user);
-    return { message: 'Release cover art uploaded successfully', data: release };
+    return {
+      message: "Release cover art uploaded successfully",
+      data: release,
+    };
   }
 
   @Get()
   async fetchAllReleases(
-    @Query('createdById') createdById?: string,
-    @Query('size') size = '10',
-    @Query('page') page = '0',
+    @CurrentUser() user: AuthUser,
+    @Query("createdById") createdById?: string,
+    @Query("size") size = "10",
+    @Query("page") page = "0",
   ) {
     const releases = await this.releaseQueryService.fetchAllReleases({
-      createdById,
+      createdById: createdById || user.id,
       size: Number(size),
       page: Number(page),
     });
-    return { message: 'Releases fetched successfully', data: releases };
+    return { message: "Releases fetched successfully", data: releases };
   }
 
-  @Get(':id')
-  async getReleaseById(@Param('id') id: string) {
+  @Get(":id")
+  async getReleaseById(@Param("id") id: string) {
     const release = await this.releaseQueryService.getReleaseById(id);
     if (!release) {
-      throw new NotFoundException('Release not found');
+      throw new NotFoundException("Release not found");
     }
-    return { message: 'Release fetched successfully', data: release };
+    return { message: "Release fetched successfully", data: release };
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteRelease(@Param('id') id: string) {
+  async deleteRelease(@Param("id") id: string) {
     await this.releaseService.deleteRelease(id);
   }
 }
