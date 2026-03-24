@@ -40,6 +40,12 @@ export class Release extends AbstractEntity {
   @Column({ name: 'cover_art_url', type: 'varchar', length: 1024, nullable: true })
   coverArtUrl?: string;
 
+  @Column({ name: 'cover_art_width', type: 'integer', nullable: true })
+  coverArtWidth?: number;
+
+  @Column({ name: 'cover_art_height', type: 'integer', nullable: true })
+  coverArtHeight?: number;
+
   // PRODUCTION YEAR
   @Column({ name: 'production_year', type: 'integer', nullable: true })
   productionYear: number;

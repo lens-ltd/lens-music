@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
@@ -17,6 +17,8 @@ import { UpdateReleaseTerritoriesDto } from './dto/update-release-territories.dt
 
 @Injectable()
 export class ReleaseService {
+  private static readonly MIN_COVER_ART_DIMENSION = 3000;
+
   constructor(
     @InjectRepository(Release)
     private readonly releaseRepository: Repository<Release>,
@@ -91,6 +93,12 @@ export class ReleaseService {
     });
 
     release.coverArtUrl = uploadedCoverArt.secureUrl;
+    release.coverArtWidth = uploadedCoverArt.width;
+    release.coverArtHeight = uploadedCoverArt.height;
+
+    if (uploadedCoverArt.colorMode && uploadedCoverArt.colorMode.toLowerCase() !== 'rgb') {
+      throw new BadRequestException('Cover art must use RGB color mode');
+    }
 
     return this.releaseRepository.save(release);
   }
@@ -144,6 +152,21 @@ export class ReleaseService {
 
     if (!release.coverArtUrl) {
       errors.push('Cover art is required');
+    }
+
+    if (!release.coverArtWidth || !release.coverArtHeight) {
+      errors.push('Cover art dimensions are required');
+    } else {
+      if (
+        release.coverArtWidth < ReleaseService.MIN_COVER_ART_DIMENSION
+        || release.coverArtHeight < ReleaseService.MIN_COVER_ART_DIMENSION
+      ) {
+        errors.push('Cover art must be at least 3000x3000 pixels');
+      }
+
+      if (release.coverArtWidth !== release.coverArtHeight) {
+        errors.push('Cover art must have a square aspect ratio');
+      }
     }
 
     if (!release.originalReleaseDate) {
