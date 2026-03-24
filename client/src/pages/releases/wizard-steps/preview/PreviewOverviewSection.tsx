@@ -11,7 +11,6 @@ interface PreviewOverviewSectionProps {
   contributors?: ReleaseContributor[];
 }
 
-<<<<<<< HEAD
 const getContributorName = (contributor?: ReleaseContributor["contributor"]) =>
   contributor?.displayName || contributor?.name || contributor?.email || "";
 
@@ -33,15 +32,13 @@ const PreviewOverviewSection = ({
     primaryArtists.length > 0
       ? `${primaryArtists.join(", ")}${featuredArtists.length > 0 ? ` feat. ${featuredArtists.join(", ")}` : ""}`
       : "—";
-=======
-const PreviewOverviewSection = ({ release }: PreviewOverviewSectionProps) => {
+
   const primaryGenre =
     release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)?.genre
       ?.name || "—";
   const secondaryGenre =
     release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)?.genre
       ?.name || "—";
->>>>>>> 3662ec7 (Add release genre system with genre APIs and wizard integration)
 
   return (
     <motion.article
