@@ -64,4 +64,10 @@ export const seedRoles = async (dataSource: DataSource) => {
     { role: SUPER_ADMIN_ROLE_NAME, permissionsAssigned: created, permissionsAlreadyAssigned: skipped },
     'Roles seed complete',
   );
+
+  await userRepo.update({ id: adminUser.id }, { roleId: superAdminRole.id });
+  seedLog.info(
+    { userId: adminUser.id, role: SUPER_ADMIN_ROLE_NAME },
+    'Assigned role to admin user',
+  );
 };

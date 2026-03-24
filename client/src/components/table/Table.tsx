@@ -44,6 +44,10 @@ interface DataTableProps<TData, TValue> {
   noDataMessage?: string | ReactNode;
   rowClassName?: string | ((row: TData) => string);
   manualPagination?: boolean;
+  containerClassName?: string;
+  tableClassName?: string;
+  headerCellClassName?: string;
+  cellClassName?: string;
 }
 
 export default function Table<TData, TValue>({
@@ -61,6 +65,10 @@ export default function Table<TData, TValue>({
   noDataMessage = 'No results.',
   rowClassName = '',
   manualPagination,
+  containerClassName = '',
+  tableClassName = '',
+  headerCellClassName = '',
+  cellClassName = '',
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -128,15 +136,15 @@ export default function Table<TData, TValue>({
 
   return (
     <>
-      <section className="w-full border rounded-md">
-        <DataTable>
+      <section className={`w-full border rounded-md ${containerClassName}`}>
+        <DataTable className={tableClassName}>
           <TableHeader className="px-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className="text-[12px] text-black p-4"
+                      className={`text-[12px] text-black p-4 ${headerCellClassName}`}
                       key={header.id}
                       colSpan={header.colSpan}
                     >
@@ -191,7 +199,7 @@ export default function Table<TData, TValue>({
                     return (
                       <TableCell
                         className={`${preventAction ? '!cursor-auto' : ''
-                          } text-[12px] text-black p-4`}
+                          } text-[12px] text-black p-4 ${cellClassName}`}
                         key={cell.id}
                         onClick={(e) => {
                           if (preventAction) {

@@ -18,6 +18,12 @@ import { UserService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
 import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
 
+/** User fields returned to the client (includes role permissions from seeds, e.g. SUPER_ADMIN). */
+export type AuthResponseUser = Omit<User, 'password' | 'assignedRole'> & {
+  permissions: string[];
+  roleName?: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -71,22 +77,45 @@ export class AuthService {
     return error instanceof Error ? error.message : String(error);
   }
 
+  private collectPermissionNames(user: User): string[] {
+    return (
+      user.assignedRole?.permissions
+        ?.map((rp) => rp.permission?.name)
+        .filter((name): name is string => Boolean(name)) ?? []
+    );
+  }
+
+  private toPublicAuthUser(user: User): AuthResponseUser {
+    const permissions = this.collectPermissionNames(user);
+    const roleName = user.assignedRole?.name;
+    const { password: _password, assignedRole: _assignedRole, ...rest } = user;
+    return { ...rest, permissions, roleName };
+  }
+
+  private async loadUserWithRoleForAuth(email: string): Promise<User | null> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.assignedRole', 'role')
+      .leftJoinAndSelect('role.permissions', 'rolePermission')
+      .leftJoinAndSelect('rolePermission.permission', 'permission')
+      .where('user.email = :email', { email })
+      .addSelect('user.password')
+      .getOne();
+  }
+
   async login({
     email,
     password,
   }: {
     email: string;
     password: string;
-  }): Promise<{ user: User; accessToken: string }> {
+  }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     if (!email) throw new ValidationError('Email is required', 'AUTH SERVICE');
     if (!password) {
       throw new ValidationError('Password is required', 'AUTH SERVICE');
     }
 
-    const userExists = await this.userRepository.findOne({
-      where: { email },
-      select: ['id', 'email', 'password', 'name', 'phoneNumber', 'status'],
-    });
+    const userExists = await this.loadUserWithRoleForAuth(email);
 
     if (!userExists || !userExists.password) {
       throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
@@ -102,7 +131,7 @@ export class AuthService {
     }
 
     const accessToken = this.signToken(userExists);
-    return { user: userExists, accessToken };
+    return { user: this.toPublicAuthUser(userExists), accessToken };
   }
 
   async createInvitation(email: string, createdById?: string) {
@@ -243,7 +272,7 @@ export class AuthService {
     name: string;
     phoneNumber?: string;
     password: string;
-  }): Promise<{ user: User; accessToken: string }> {
+  }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     this.validatePassword(password);
 
     const invitation = await this.getInvitationByToken(token);
@@ -266,8 +295,11 @@ export class AuthService {
     invitation.completedAt = new Date();
     await this.userInvitationRepository.save(invitation);
 
+    const userWithRole =
+      (await this.loadUserWithRoleForAuth(user.email!)) ?? user;
+
     return {
-      user,
+      user: this.toPublicAuthUser(userWithRole),
       accessToken: this.signToken(user),
     };
   }

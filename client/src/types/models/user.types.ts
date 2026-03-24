@@ -6,7 +6,10 @@ import type { Person } from './person.types';
 import { UserStatus } from './contributor.types';
 
 export interface User extends Person {
-  password: string;
+  password?: string;
+  /** From API after login / invitation complete (role.permissions). */
+  permissions?: string[];
+  roleName?: string;
   role: keyof typeof ROLES;
   labels: Label[];
   artists: Artist[];

@@ -4,13 +4,13 @@ import {
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion, useAnimation } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/state/store';
 import { setSidebarOpen } from '@/state/features/sidebarSlice';
-import { sidebarNavigation } from '@/constants/sidebar.constants';
+import { getSidebarNavigationForUser } from '@/constants/sidebar.constants';
 
 const matchesPath = (pathname: string, targetPath: string) =>
   pathname === targetPath || pathname.startsWith(`${targetPath}/`);
@@ -20,6 +20,13 @@ const Sidebar = () => {
   const dispatch: AppDispatch = useDispatch();
   const { isOpen: sidebarOpen } = useSelector(
     (state: RootState) => state.sidebar,
+  );
+  const permissions = useSelector(
+    (state: RootState) => state.user.user?.permissions,
+  );
+  const sidebarNavItems = useMemo(
+    () => getSidebarNavigationForUser(permissions),
+    [permissions],
   );
   const [openCategories, setOpenCategories] = useState<string[]>([]);
   const textControls = useAnimation();
@@ -53,7 +60,7 @@ const Sidebar = () => {
   useEffect(() => {
     if (!sidebarOpen) return;
 
-    const activeCategories = sidebarNavigation
+    const activeCategories = sidebarNavItems
       .filter((nav) =>
         nav.subCategories?.some((subCategory) =>
           matchesPath(pathname, subCategory.path),
@@ -64,7 +71,7 @@ const Sidebar = () => {
     if (activeCategories.length) {
       setOpenCategories((prev) => Array.from(new Set([...prev, ...activeCategories])));
     }
-  }, [pathname, sidebarOpen]);
+  }, [pathname, sidebarOpen, sidebarNavItems]);
 
   const toggleCategory = useCallback((title: string) => {
     setOpenCategories((prev) =>
@@ -114,7 +121,7 @@ const Sidebar = () => {
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3">
         <ul className="flex flex-col gap-2">
-          {sidebarNavigation.map((nav) => {
+          {sidebarNavItems.map((nav) => {
             const selected = pathname === nav.path;
             const hasSubcategories =
               !!nav.subCategories && nav.subCategories.length > 0;

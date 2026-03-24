@@ -7,7 +7,8 @@ import { seedUsers } from './user.seeds';
 import { seedRoles } from './role.seeds';
 import { seedStaticReleaseNavigation } from './static-release-navigation.seeds';
 
-const seeds = [seedPermissions, seedRoles, seedUsers, seedStaticReleaseNavigation];
+/** Users before roles so SUPER_ADMIN seed can attach permissions and assign the admin user. */
+const seeds = [seedPermissions, seedUsers, seedRoles, seedStaticReleaseNavigation];
 
 const runSeeds = async () => {
   logger.info('Connecting to database...');

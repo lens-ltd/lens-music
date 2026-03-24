@@ -32,9 +32,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
     const { user, accessToken } = await this.authService.login(dto);
-    const { password: _password, ...userWithoutPassword } = user as User & {
-      password?: string;
-    };
+    const { ...userWithoutPassword } = user as unknown as User;
 
     return {
       message: 'You have logged in successfully!',
@@ -108,9 +106,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async completeInvitation(@Body() dto: CompleteUserInvitationDto) {
     const { user, accessToken } = await this.authService.completeInvitation(dto);
-    const { password: _password, ...userWithoutPassword } = user as User & {
-      password?: string;
-    };
+    const { ...userWithoutPassword } = user as unknown as User;
 
     return {
       message: 'Your account has been created successfully!',
