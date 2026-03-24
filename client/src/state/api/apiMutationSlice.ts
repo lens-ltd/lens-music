@@ -95,28 +95,11 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      listArtists: builder.query({
-        query: ({ size, page }) => ({
-          url: "/artists",
-          method: "GET",
-          params: { size, page },
-        }),
-      }),
-
       listLabels: builder.query({
         query: ({ size, page }) => ({
           url: "/labels",
           method: "GET",
           params: { size, page },
-        }),
-      }),
-
-      createArtist: builder.mutation({
-        query: ({ formData }) => ({
-          url: "/artists",
-          method: "POST",
-          body: formData,
-          formData: true,
         }),
       }),
 
@@ -350,9 +333,7 @@ export const {
   useRequestPasswordResetMutation,
   useValidatePasswordResetTokenMutation,
   useConfirmPasswordResetMutation,
-  useLazyListArtistsQuery,
   useLazyListLabelsQuery,
-  useCreateArtistMutation,
   useCreateReleaseMutation,
   useDeleteReleaseMutation,
   useUploadReleaseCoverArtMutation,

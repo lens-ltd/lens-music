@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import apiMutationSlice from './api/apiMutationSlice';
 import authSlice from './features/authSlice';
 import userSlice from './features/userSlice';
-import artistSlice from './features/artistSlice';
 import labelSlice from './features/labelSlice';
 import sidebarSlice from './features/sidebarSlice';
 import apiQuerySlice from './api/apiQuerySlice';
@@ -20,7 +19,6 @@ export const store = configureStore({
     [apiQuerySlice.reducerPath]: apiQuerySlice.reducer,
     auth: authSlice,
     user: userSlice,
-    artist: artistSlice,
     label: labelSlice,
     sidebar: sidebarSlice,
     release: releaseSlice,

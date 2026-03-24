@@ -113,7 +113,6 @@ export class ReleaseService {
       where: { id },
       relations: {
         tracks: { audioFiles: true, trackContributors: true },
-        artists: true,
       },
     });
 
