@@ -41,7 +41,6 @@ export class ReleaseQueryService {
       relations: {
         createdBy: true,
         tracks: { audioFiles: true, trackContributors: { contributor: true } },
-        artists: { artist: true },
       },
     });
   }

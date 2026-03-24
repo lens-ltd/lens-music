@@ -6,7 +6,6 @@ import ForgotPassword from "./pages/authentication/ForgotPassword";
 import ResetPassword from "./pages/authentication/ResetPassword";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import AuthenticatedRoutes from "./outlets/AuthenticatedRoutes";
-import ListArtists from "./pages/artists/ListArtists";
 import ListLabels from "./pages/labels/ListLabels";
 import ReleasesPage from "./pages/releases/ReleasesPage";
 import CreateRelase from "./pages/releases/CreateRelase";
@@ -51,11 +50,6 @@ const routeSeo = {
     title: "Dashboard Overview",
     description:
       "Monitor release performance, streams, downloads, and revenue trends from your Lens Music dashboard.",
-  },
-  artists: {
-    title: "Artists",
-    description:
-      "Manage artist profiles and organize the creative roster connected to your Lens Music catalog.",
   },
   labels: {
     title: "Labels",
@@ -177,14 +171,6 @@ const Router = () => {
             path="/dashboard"
             element={withSeo(<UserDashboard />, routeSeo.dashboard)}
           />
-
-          {/* ARTIST ROUTES */}
-          <Route path="/artists">
-            <Route
-              path=""
-              element={withSeo(<ListArtists />, routeSeo.artists)}
-            />
-          </Route>
 
           {/* LABEL ROUTES */}
           <Route path="/labels">

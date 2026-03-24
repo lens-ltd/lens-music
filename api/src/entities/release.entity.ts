@@ -4,7 +4,6 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
-import { ReleaseArtist } from './release-artist.entity';
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
 import { ReleaseNavigationFlow } from './release-navigation-flow.entity';
@@ -119,9 +118,6 @@ export class Release extends AbstractEntity {
   @OneToMany(() => Track, (track) => track.release)
   tracks!: Track[];
 
-  // RELEASE ARTISTS
-  @OneToMany(() => ReleaseArtist, (releaseArtist) => releaseArtist.release)
-  artists!: ReleaseArtist[];
 
   // RELEASE NAVIGATION FLOWS
   @OneToMany(

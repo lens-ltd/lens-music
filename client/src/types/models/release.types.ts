@@ -1,6 +1,5 @@
 import { AbstractEntity } from './index.types';
 import { User } from './user.types';
-import { ReleaseArtist } from './releaseArtist.types';
 import { Track } from './track.types';
 
 export enum ReleaseType {
@@ -53,5 +52,4 @@ export interface Release extends AbstractEntity {
   createdById?: string;
   createdBy?: User | null;
   tracks: Track[];
-  artists: ReleaseArtist[];
 }

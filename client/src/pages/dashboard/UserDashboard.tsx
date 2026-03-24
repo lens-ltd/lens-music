@@ -4,7 +4,6 @@ import Button from '../../components/inputs/Button';
 import DashboardChart from '../../components/graphs/DashboardChart';
 import UserLayout from '../../containers/UserLayout';
 import DashboardCard from '../../containers/DashboardCard';
-import AddArtist from '../artists/AddArtist';
 import DashboardSection from './components/DashboardSection';
 import DashboardTableSection from './components/DashboardTableSection';
 import MetricBarList from './components/MetricBarList';
@@ -200,7 +199,6 @@ const UserDashboard = () => {
           />
         </motion.div>
       </main>
-      <AddArtist />
     </UserLayout>
   );
 };

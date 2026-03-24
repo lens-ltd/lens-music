@@ -17,20 +17,6 @@ export const apiQuerySlice = createApi({
   }),
   endpoints: (builder) => {
     return {
-      // LIST ALL ARTISTS
-      fetchArtists: builder.query({
-        query: ({ size, page }) => {
-          return {
-            url: "/artists",
-            method: "GET",
-            params: {
-              size,
-              page,
-            },
-          };
-        },
-      }),
-
       // LIST LABELS
       fetchLabels: builder.query({
         query: ({ size, page }) => {
@@ -249,7 +235,6 @@ export const apiQuerySlice = createApi({
 export const {
   useLazyFetchInvitationsQuery,
   useLazyFetchUsersQuery,
-  useLazyFetchArtistsQuery,
   useLazyFetchLabelsQuery,
   useLazyFetchReleasesQuery,
   useLazyFetchStaticReleaseNavigationQuery,
