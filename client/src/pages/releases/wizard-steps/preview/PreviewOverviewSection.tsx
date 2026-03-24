@@ -1,14 +1,37 @@
 import { motion } from "framer-motion";
 import Input from "@/components/inputs/Input";
 import DashboardSection from "@/pages/dashboard/components/DashboardSection";
+import { ContributorRole, ReleaseContributor } from "@/types/models/releaseContributor.types";
 import { Release } from "@/types/models/release.types";
 import { capitalizeString, formatDate } from "@/utils/strings.helper";
 
 interface PreviewOverviewSectionProps {
   release: Release;
+  contributors?: ReleaseContributor[];
 }
 
-const PreviewOverviewSection = ({ release }: PreviewOverviewSectionProps) => {
+const getContributorName = (contributor?: ReleaseContributor["contributor"]) =>
+  contributor?.displayName || contributor?.name || contributor?.email || "";
+
+const PreviewOverviewSection = ({
+  release,
+  contributors = [],
+}: PreviewOverviewSectionProps) => {
+  const primaryArtists = contributors
+    .filter((contributor) => contributor.role === ContributorRole.PRIMARY_ARTIST)
+    .map((contributor) => getContributorName(contributor.contributor))
+    .filter(Boolean);
+
+  const featuredArtists = contributors
+    .filter((contributor) => contributor.role === ContributorRole.FEATURED_ARTIST)
+    .map((contributor) => getContributorName(contributor.contributor))
+    .filter(Boolean);
+
+  const displayArtist =
+    primaryArtists.length > 0
+      ? `${primaryArtists.join(", ")}${featuredArtists.length > 0 ? ` feat. ${featuredArtists.join(", ")}` : ""}`
+      : "—";
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 12 }}
@@ -38,6 +61,7 @@ const PreviewOverviewSection = ({ release }: PreviewOverviewSectionProps) => {
 
           <section className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Input label="Title" value={release.title || ""} readOnly />
+            <Input label="Display Artist" value={displayArtist} readOnly />
             <Input label="Title Version" value={release.titleVersion || "—"} readOnly />
             <Input label="Type" value={capitalizeString(release.type) || "—"} readOnly />
             <Input label="Language" value={release.primaryLanguage?.toUpperCase() || "—"} readOnly />
