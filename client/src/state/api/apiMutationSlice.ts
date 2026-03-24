@@ -290,6 +290,13 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      submitRelease: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/releases/${id}/submit`,
+          method: "POST",
+        }),
+      }),
+
       createTrackContributor: builder.mutation({
         query: (body: { trackId: string; contributorId: string; role: string }) => ({
           url: "/track-contributors",
@@ -393,6 +400,7 @@ export const {
   useDeleteTrackAudioMutation,
   useValidateTrackMutation,
   useValidateReleaseMutation,
+  useSubmitReleaseMutation,
   useCreateTrackContributorMutation,
   useDeleteTrackContributorMutation,
   useCreateReleaseContributorMutation,

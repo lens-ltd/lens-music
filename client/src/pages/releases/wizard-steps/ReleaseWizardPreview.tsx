@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import { useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
-import { useAppSelector } from "@/state/hooks";
+import {
+  setSelectedRelease,
+  setSubmitReleaseModal,
+} from "@/state/features/releaseSlice";
+import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { ReleaseStatus } from "@/types/models/release.types";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
+import SubmitRelease from "../SubmitRelease";
 import PreviewValidationBanner from "./preview/PreviewValidationBanner";
 import PreviewOverviewSection from "./preview/PreviewOverviewSection";
 import PreviewContributorsSection from "./preview/PreviewContributorsSection";
@@ -20,7 +25,7 @@ const ReleaseWizardPreview = ({
   previousStepName,
   releaseIsFetching,
 }: ReleaseWizardStepProps) => {
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { release } = useAppSelector((state) => state.release);
   const { createReleaseNavigationFlow, isLoading: isNavigating } =
     useCreateReleaseNavigationFlow();
@@ -29,16 +34,23 @@ const ReleaseWizardPreview = ({
     useFetchReleaseContributors();
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
+  const [validationSuccessMessage, setValidationSuccessMessage] =
+    useState<string | undefined>(undefined);
 
   const handleValidateRelease = useCallback(async () => {
     if (!release?.id) return;
     setValidationResult(null);
+    setValidationSuccessMessage(undefined);
     try {
       const response = await validateRelease({ id: release.id }).unwrap();
       setValidationResult(response.data);
       if (response.data?.valid) {
         toast.success("Release validated successfully.");
-        navigate("/releases");
+        setValidationSuccessMessage(
+          "Release validated successfully. It is now ready to submit for review.",
+        );
+        dispatch(setSelectedRelease(response.data.release));
+        dispatch(setSubmitReleaseModal(true));
       }
     } catch (error) {
       const errorMessage =
@@ -46,7 +58,15 @@ const ReleaseWizardPreview = ({
         "Release validation failed.";
       toast.error(errorMessage);
     }
-  }, [release?.id, validateRelease, navigate]);
+  }, [release?.id, validateRelease, dispatch]);
+
+  const handleOpenSubmitRelease = useCallback(() => {
+    if (!release) return;
+    setValidationResult(null);
+    setValidationSuccessMessage(undefined);
+    dispatch(setSelectedRelease(release));
+    dispatch(setSubmitReleaseModal(true));
+  }, [dispatch, release]);
 
   useEffect(() => {
     if (release?.id) {
@@ -79,9 +99,7 @@ const ReleaseWizardPreview = ({
           Review all release information before submitting for distribution.
         </p>
       </header>
-
-      <PreviewValidationBanner validationResult={validationResult} />
-
+  
       <section className="flex flex-col gap-4">
         <PreviewOverviewSection release={release} contributors={releaseContributors} />
         <PreviewContributorsSection
@@ -97,6 +115,11 @@ const ReleaseWizardPreview = ({
         <PreviewTerritoriesSection territories={release.territories ?? []} />
         <PreviewStoresSection releaseId={release.id} />
       </section>
+      <PreviewValidationBanner
+        validationResult={validationResult}
+        successMessage={validationSuccessMessage}
+      />
+
 
       <footer className="flex w-full items-center justify-between gap-3">
         <Button
@@ -117,11 +140,18 @@ const ReleaseWizardPreview = ({
           primary
           submit
           isLoading={isValidating}
-          onClick={handleValidateRelease}
+          onClick={
+            release.status === ReleaseStatus.VALIDATED
+              ? handleOpenSubmitRelease
+              : handleValidateRelease
+          }
         >
-          Validate &amp; Submit
+          {release.status === ReleaseStatus.VALIDATED
+            ? "Submit for Review"
+            : "Validate Release"}
         </Button>
       </footer>
+      <SubmitRelease />
     </section>
   );
 };

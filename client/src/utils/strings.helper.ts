@@ -149,6 +149,10 @@ export const getStatusBackgroundColor = (status?: string) => {
       bgColor =
         'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
+    case 'VALIDATED':
+      bgColor =
+        'bg-emerald-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
+      break;
     case 'APPROVED':
     case 'VERIFIED':
     case 'ACTIVE':

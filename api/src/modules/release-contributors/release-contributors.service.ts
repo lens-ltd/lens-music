@@ -64,9 +64,7 @@ export class ReleaseContributorsService {
     const savedReleaseContributor =
       await this.releaseContributorRepository.save(releaseContributor);
 
-    await this.releaseRepository.update(dto.releaseId, {
-      status: ReleaseStatus.DRAFT,
-    });
+    await this.resetValidatedReleaseToDraft(dto.releaseId);
 
     return savedReleaseContributor;
   }
@@ -93,8 +91,16 @@ export class ReleaseContributorsService {
       throw new NotFoundException("Release contributor not found");
     }
 
-    await this.releaseRepository.update(releaseContributor.releaseId, {
-      status: ReleaseStatus.DRAFT,
-    });
+    await this.resetValidatedReleaseToDraft(releaseContributor.releaseId);
+  }
+
+  private async resetValidatedReleaseToDraft(releaseId: UUID): Promise<void> {
+    const release = await this.releaseRepository.findOne({ where: { id: releaseId } });
+
+    if (release?.status === ReleaseStatus.VALIDATED) {
+      await this.releaseRepository.update(releaseId, {
+        status: ReleaseStatus.DRAFT,
+      });
+    }
   }
 }

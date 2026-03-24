@@ -27,7 +27,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
         <span
-          className={`text-[12px] ${isPrimaryArtist ? "font-semibold text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/85"}`}
+          className={`text-[12px] ${isPrimaryArtist ? "font-medium text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/85"}`}
         >
           {contributor?.displayName || contributor?.name || contributor?.email || "—"}
         </span>
@@ -41,10 +41,10 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
         <span
-          className={`rounded-full px-2 py-0.5 text-[11px] ${
+          className={`rounded-md px-2 py-0.5 text-[11px] ${
             isPrimaryArtist
-              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-semibold text-[color:var(--lens-ink)]"
-              : "border border-[color:var(--lens-sand)] text-[color:var(--lens-ink)]/90"
+              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-medium text-[color:var(--lens-ink)]"
+              : "border border-[color:var(--lens-sand)]/50 bg-[color:var(--lens-sand)]/10 text-[color:var(--lens-ink)]/85"
           }`}
         >
           {isPrimaryArtist ? "Primary Artist" : capitalizeString(row.original.role)}

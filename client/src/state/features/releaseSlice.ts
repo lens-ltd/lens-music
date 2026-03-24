@@ -7,12 +7,14 @@ const initialState: {
   selectedRelease?: Release;
   createReleaseModal: boolean;
   deleteReleaseModal: boolean;
+  submitReleaseModal: boolean;
 } = {
   releasesList: [],
   release: undefined,
   selectedRelease: undefined,
   createReleaseModal: false,
   deleteReleaseModal: false,
+  submitReleaseModal: false,
 };
 
 const releaseSlice = createSlice({
@@ -34,6 +36,9 @@ const releaseSlice = createSlice({
     setDeleteReleaseModal: (state, action) => {
       state.deleteReleaseModal = action.payload;
     },
+    setSubmitReleaseModal: (state, action) => {
+      state.submitReleaseModal = action.payload;
+    },
   },
 });
 
@@ -43,6 +48,7 @@ export const {
   setSelectedRelease,
   setCreateReleaseModal,
   setDeleteReleaseModal,
+  setSubmitReleaseModal,
 } = releaseSlice.actions;
 
 export default releaseSlice.reducer;

@@ -75,7 +75,9 @@ export class TrackService {
 
   private async extractAudioMetadata(
     file: Express.Multer.File,
-  ): Promise<Pick<AudioFile, 'sampleRate' | 'bitDepth' | 'channels' | 'durationMs'>> {
+  ): Promise<
+    Partial<Pick<AudioFile, 'sampleRate' | 'bitDepth' | 'channels' | 'durationMs'>>
+  > {
     try {
       const metadata = await this.parseAudioBuffer(file);
       if (!metadata) {

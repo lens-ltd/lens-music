@@ -29,7 +29,7 @@ const PreviewTerritoriesSection = ({
           <section>
             <p className="text-[12px] text-[color:var(--lens-ink)]/70">
               {isWorldwide ? (
-                <span className="rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-[11px] font-medium text-green-800">
+                <span className="rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-[11px] font-normal text-green-900">
                   Worldwide
                 </span>
               ) : (

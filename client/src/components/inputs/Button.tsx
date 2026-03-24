@@ -74,7 +74,7 @@ const Button: FC<ButtonProps> = ({
       >
         {isLoading ? (
           <Loader
-            className={primary ? 'text-white' : 'text-[color:var(--lens-blue)]'}
+            className={primary ? 'text-primary' : 'text-[color:var(--lens-blue)]'}
           />
         ) : (
           <>
@@ -103,7 +103,7 @@ const Button: FC<ButtonProps> = ({
     >
       {isLoading ? (
         <Loader
-          className={primary ? 'text-white' : 'text-[color:var(--lens-blue)]'}
+          className={primary ? 'text-primary' : 'text-[color:var(--lens-blue)]'}
         />
       ) : (
         <>

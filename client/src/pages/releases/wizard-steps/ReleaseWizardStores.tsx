@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import Button from '@/components/inputs/Button';
-import Input from '@/components/inputs/Input';
 import { useCreateReleaseNavigationFlow } from '@/hooks/releases/navigation.hooks';
 import { useFetchStores } from '@/hooks/stores/store.hooks';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@/hooks/releases/release-store.hooks';
 import { useAppSelector } from '@/state/hooks';
 import { Store } from '@/types/models/store.types';
+import { Input as UiInput } from '@/components/ui/input';
 import { ReleaseWizardStepProps } from '../ReleaseWizardPage';
 
 const ReleaseWizardStores = ({
@@ -19,6 +19,7 @@ const ReleaseWizardStores = ({
   const { release } = useAppSelector((state) => state.release);
 
   const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
+  const [storesError, setStoresError] = useState<string | undefined>(undefined);
 
   const { createReleaseNavigationFlow, isLoading: isNavigating } =
     useCreateReleaseNavigationFlow();
@@ -45,6 +46,7 @@ const ReleaseWizardStores = ({
     const assignedStoreIds =
       releaseStoresResponse?.data?.map((releaseStore: { storeId: string }) => releaseStore.storeId) ?? [];
     setSelectedStoreIds(assignedStoreIds);
+    setStoresError(undefined);
   }, [releaseStoresResponse]);
 
   const stores: Store[] = storesResponse?.data ?? [];
@@ -55,6 +57,7 @@ const ReleaseWizardStores = ({
   );
 
   const toggleStoreSelection = (storeId: string, checked: boolean) => {
+    setStoresError(undefined);
     setSelectedStoreIds((current) => {
       if (checked) {
         return current.includes(storeId) ? current : [...current, storeId];
@@ -65,6 +68,11 @@ const ReleaseWizardStores = ({
 
   const saveAndContinue = async () => {
     if (!release?.id || !nextStepName) {
+      return;
+    }
+
+    if (selectedStoreIds.length === 0) {
+      setStoresError('Select at least one store before continuing.');
       return;
     }
 
@@ -95,47 +103,66 @@ const ReleaseWizardStores = ({
         </p>
       </header>
 
-      <section className="flex flex-wrap items-center gap-2">
-        <Button
-          onClick={(event) => {
-            event.preventDefault();
-            setSelectedStoreIds(stores.map((store) => store.id));
-          }}
-        >
-          Select all
-        </Button>
-        <Button
-          onClick={(event) => {
-            event.preventDefault();
-            setSelectedStoreIds([]);
-          }}
-        >
-          Deselect all
-        </Button>
+      <section className="flex flex-col gap-3">
+        <menu className="grid grid-cols-1 gap-3">
+          <label
+            htmlFor="select-all-stores"
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+          >
+            <UiInput
+              type="checkbox"
+              id="select-all-stores"
+              checked={allSelected}
+              onChange={(event) => {
+                setStoresError(undefined);
+                if (event.target.checked) {
+                  setSelectedStoreIds(stores.map((store) => store.id));
+                } else {
+                  setSelectedStoreIds([]);
+                }
+              }}
+              className="h-4 w-4 cursor-pointer accent-primary"
+            />
+            <span className="text-xs leading-5 text-[color:var(--lens-ink)]">
+              Select all stores
+            </span>
+          </label>
+        </menu>
         <span className="text-[12px] text-[color:var(--lens-ink)]/60">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
       </section>
 
-      <section className="grid grid-cols-1 gap-3 rounded-xl border border-[color:var(--lens-sand)]/70 p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-3 rounded-xl border border-[color:var(--lens-sand)]/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {storesIsFetching || releaseStoresIsFetching ? (
           <p className="text-[12px] text-[color:var(--lens-ink)]/55">Loading stores...</p>
         ) : stores.length === 0 ? (
           <p className="text-[12px] text-[color:var(--lens-ink)]/55">No stores available.</p>
         ) : (
-          stores.map((store) => (
-            <article
+          stores.map((store) => {
+            const isSelected = selectedStoreIds.includes(store.id);
+
+            return (
+            <label
               key={store.id}
-              className="rounded-lg border border-[color:var(--lens-sand)]/60 bg-white px-3 py-2"
+              htmlFor={`store-${store.id}`}
+              className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
             >
-              <Input
+              <UiInput
                 type="checkbox"
-                label={store.name}
-                checked={selectedStoreIds.includes(store.id)}
-                onChange={(checked) => toggleStoreSelection(store.id, Boolean(checked))}
+                id={`store-${store.id}`}
+                checked={isSelected}
+                onChange={(event) =>
+                  toggleStoreSelection(store.id, event.target.checked)
+                }
+                className="h-4 w-4 cursor-pointer accent-primary"
               />
-            </article>
-          ))
+              <span className="text-xs leading-5 text-[color:var(--lens-ink)]">
+                {store.name}
+              </span>
+            </label>
+          );
+          })
         )}
       </section>
 
@@ -144,6 +171,10 @@ const ReleaseWizardStores = ({
           Tip: Use Select all for global distribution, then deselect stores you do not want.
         </p>
       )}
+
+      {storesError ? (
+        <p className="text-[11px] text-red-600">{storesError}</p>
+      ) : null}
 
       <footer className="w-full flex items-center justify-between gap-3">
         <Button
@@ -163,6 +194,7 @@ const ReleaseWizardStores = ({
         <Button
           isLoading={isAssigning || isNavigating}
           primary
+          disabled={selectedStoreIds.length === 0}
           onClick={(event) => {
             event.preventDefault();
             void saveAndContinue();

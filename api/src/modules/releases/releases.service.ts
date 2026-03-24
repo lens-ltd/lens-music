@@ -71,6 +71,7 @@ export class ReleaseService {
     };
     release.parentalAdvisory = dto.parentalAdvisory;
     release.primaryLanguage = dto.primaryLanguage.trim();
+    this.resetValidatedReleaseToDraft(release);
 
     return this.releaseRepository.save(release);
   }
@@ -84,6 +85,7 @@ export class ReleaseService {
     const release = await this.getAuthorizedRelease(id, user);
 
     release.territories = dto.territories;
+    this.resetValidatedReleaseToDraft(release);
 
     return this.releaseRepository.save(release);
   }
@@ -107,6 +109,7 @@ export class ReleaseService {
     if (uploadedCoverArt.colorMode && uploadedCoverArt.colorMode.toLowerCase() !== 'rgb') {
       throw new BadRequestException('Cover art must use RGB color mode');
     }
+    this.resetValidatedReleaseToDraft(release);
 
     return this.releaseRepository.save(release);
   }
@@ -122,7 +125,126 @@ export class ReleaseService {
   async validateRelease(
     id: UUID,
     user: AuthUser,
-  ): Promise<{ valid: boolean; errors: string[] }> {
+  ): Promise<{ valid: boolean; errors: string[]; release?: Release }> {
+    const { release, errors } = await this.validateReleaseContent(id, user);
+
+    if (errors.length === 0) {
+      release.status = ReleaseStatus.VALIDATED;
+      const savedRelease = await this.releaseRepository.save(release);
+      return { valid: true, errors, release: savedRelease };
+    }
+
+    return { valid: false, errors };
+  }
+
+  async submitRelease(
+    id: UUID,
+    user: AuthUser,
+  ): Promise<{ valid: boolean; errors: string[]; release?: Release }> {
+    const { release, errors } = await this.validateReleaseContent(id, user);
+
+    if (errors.length === 0) {
+      release.status = ReleaseStatus.REVIEW;
+      const savedRelease = await this.releaseRepository.save(release);
+      return { valid: true, errors, release: savedRelease };
+    }
+
+    return { valid: false, errors };
+  }
+
+
+  async upsertReleaseGenre(
+    releaseId: UUID,
+    dto: UpsertReleaseGenreDto,
+    user: AuthUser,
+  ): Promise<ReleaseGenre> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const genre = await this.genreRepository.findOne({ where: { id: dto.genreId } });
+    if (!genre) {
+      throw new NotFoundException('Genre not found');
+    }
+
+    const existingByType = await this.releaseGenreRepository.findOne({
+      where: { releaseId, type: dto.type },
+    });
+
+    if (existingByType) {
+      existingByType.genreId = dto.genreId;
+      existingByType.createdById = existingByType.createdById || user.id;
+      const updated = await this.releaseGenreRepository.save(existingByType);
+      await this.resetValidatedReleaseToDraftById(releaseId);
+      return this.releaseGenreRepository.findOneOrFail({
+        where: { id: updated.id },
+        relations: { genre: true },
+      });
+    }
+
+    const releaseGenre = this.releaseGenreRepository.create({
+      releaseId,
+      genreId: dto.genreId,
+      type: dto.type,
+      createdById: user.id,
+    });
+
+    const saved = await this.releaseGenreRepository.save(releaseGenre);
+    await this.resetValidatedReleaseToDraftById(releaseId);
+
+    return this.releaseGenreRepository.findOneOrFail({
+      where: { id: saved.id },
+      relations: { genre: true },
+    });
+  }
+
+  async getReleaseGenres(releaseId: UUID, user: AuthUser): Promise<ReleaseGenre[]> {
+    await this.getAuthorizedRelease(releaseId, user);
+    return this.releaseGenreRepository.find({
+      where: { releaseId },
+      relations: { genre: true },
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  async deleteReleaseGenreByType(
+    releaseId: UUID,
+    type: ReleaseGenreType,
+    user: AuthUser,
+  ): Promise<void> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const existing = await this.releaseGenreRepository.findOne({
+      where: { releaseId, type },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Release genre not found');
+    }
+
+    await this.releaseGenreRepository.delete(existing.id);
+    await this.resetValidatedReleaseToDraftById(releaseId);
+  }
+
+  private async getAuthorizedRelease(id: UUID, user: AuthUser): Promise<Release> {
+    const release = await this.releaseRepository.findOne({ where: { id } });
+
+    if (!release) {
+      throw new NotFoundException('Release not found');
+    }
+
+    const isOwner = release.createdById === user.id;
+    const isAdmin = user.role === ROLES.ADMIN;
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Forbidden');
+    }
+
+    return release;
+  }
+
+  private async validateReleaseContent(
+    id: UUID,
+    user: AuthUser,
+  ): Promise<{ release: Release; errors: string[] }> {
     await this.getAuthorizedRelease(id, user);
 
     const release = await this.releaseRepository.findOne({
@@ -130,6 +252,7 @@ export class ReleaseService {
       relations: {
         tracks: { audioFiles: true, trackContributors: true },
         genres: { genre: true },
+        releaseStores: true,
       },
     });
 
@@ -200,6 +323,10 @@ export class ReleaseService {
       errors.push('At least one territory is required');
     }
 
+    if (!release.releaseStores || release.releaseStores.length === 0) {
+      errors.push('At least one store is required');
+    }
+
     if (!release.tracks || release.tracks.length === 0) {
       errors.push('At least one track is required');
     } else {
@@ -226,100 +353,23 @@ export class ReleaseService {
       errors.push('A primary genre is required');
     }
 
-    if (errors.length === 0) {
-      release.status = ReleaseStatus.REVIEW;
-      await this.releaseRepository.save(release);
-    }
-
-    return { valid: errors.length === 0, errors };
+    return { release, errors };
   }
 
-
-  async upsertReleaseGenre(
-    releaseId: UUID,
-    dto: UpsertReleaseGenreDto,
-    user: AuthUser,
-  ): Promise<ReleaseGenre> {
-    await this.getAuthorizedRelease(releaseId, user);
-
-    const genre = await this.genreRepository.findOne({ where: { id: dto.genreId } });
-    if (!genre) {
-      throw new NotFoundException('Genre not found');
+  private resetValidatedReleaseToDraft(release: Release): void {
+    if (release.status === ReleaseStatus.VALIDATED) {
+      release.status = ReleaseStatus.DRAFT;
     }
-
-    const existingByType = await this.releaseGenreRepository.findOne({
-      where: { releaseId, type: dto.type },
-    });
-
-    if (existingByType) {
-      existingByType.genreId = dto.genreId;
-      existingByType.createdById = existingByType.createdById || user.id;
-      const updated = await this.releaseGenreRepository.save(existingByType);
-      await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
-      return this.releaseGenreRepository.findOneOrFail({
-        where: { id: updated.id },
-        relations: { genre: true },
-      });
-    }
-
-    const releaseGenre = this.releaseGenreRepository.create({
-      releaseId,
-      genreId: dto.genreId,
-      type: dto.type,
-      createdById: user.id,
-    });
-
-    const saved = await this.releaseGenreRepository.save(releaseGenre);
-    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
-
-    return this.releaseGenreRepository.findOneOrFail({
-      where: { id: saved.id },
-      relations: { genre: true },
-    });
   }
 
-  async getReleaseGenres(releaseId: UUID, user: AuthUser): Promise<ReleaseGenre[]> {
-    await this.getAuthorizedRelease(releaseId, user);
-    return this.releaseGenreRepository.find({
-      where: { releaseId },
-      relations: { genre: true },
-      order: { createdAt: 'ASC' },
-    });
-  }
+  private async resetValidatedReleaseToDraftById(releaseId: UUID): Promise<void> {
+    const release = await this.releaseRepository.findOne({ where: { id: releaseId } });
 
-  async deleteReleaseGenreByType(
-    releaseId: UUID,
-    type: ReleaseGenreType,
-    user: AuthUser,
-  ): Promise<void> {
-    await this.getAuthorizedRelease(releaseId, user);
-
-    const existing = await this.releaseGenreRepository.findOne({
-      where: { releaseId, type },
-    });
-
-    if (!existing) {
-      throw new NotFoundException('Release genre not found');
+    if (release) {
+      this.resetValidatedReleaseToDraft(release);
+      if (release.status === ReleaseStatus.DRAFT) {
+        await this.releaseRepository.save(release);
+      }
     }
-
-    await this.releaseGenreRepository.delete(existing.id);
-    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
-  }
-
-  private async getAuthorizedRelease(id: UUID, user: AuthUser): Promise<Release> {
-    const release = await this.releaseRepository.findOne({ where: { id } });
-
-    if (!release) {
-      throw new NotFoundException('Release not found');
-    }
-
-    const isOwner = release.createdById === user.id;
-    const isAdmin = user.role === ROLES.ADMIN;
-
-    if (!isOwner && !isAdmin) {
-      throw new ForbiddenException('Forbidden');
-    }
-
-    return release;
   }
 }

@@ -20,6 +20,7 @@ export enum ReleaseParentalAdvisory {
 
 export enum ReleaseStatus {
   DRAFT = 'DRAFT',
+  VALIDATED = 'VALIDATED',
   REVIEW = 'REVIEW',
   APPROVED = 'APPROVED',
   DELIVERED = 'DELIVERED',

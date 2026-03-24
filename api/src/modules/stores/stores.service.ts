@@ -78,7 +78,7 @@ export class StoresService {
       await this.releaseStoreRepository.delete(toDeleteIds);
     }
 
-    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+    await this.resetValidatedReleaseToDraft(releaseId);
 
     return this.findReleaseStores(releaseId);
   }
@@ -112,6 +112,14 @@ export class StoresService {
     }
 
     await this.releaseStoreRepository.delete(releaseStoreId);
-    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+    await this.resetValidatedReleaseToDraft(releaseId);
+  }
+
+  private async resetValidatedReleaseToDraft(releaseId: UUID): Promise<void> {
+    const release = await this.releaseRepository.findOne({ where: { id: releaseId } });
+
+    if (release?.status === ReleaseStatus.VALIDATED) {
+      await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+    }
   }
 }
