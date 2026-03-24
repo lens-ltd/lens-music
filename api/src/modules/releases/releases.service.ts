@@ -6,7 +6,7 @@ import { ReleaseContributor } from '../../entities/release-contributor.entity';
 import { TrackStatus } from '../../entities/track.entity';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { UUID } from '../../types/common.types';
-import { generateCatalogNumber } from '../../helpers/releases.helper';
+import { generateCatalogNumber, isValidUpc } from '../../helpers/releases.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
@@ -47,6 +47,7 @@ export class ReleaseService {
     release.type = dto.type;
     release.titleVersion = dto.titleVersion?.trim() || undefined;
     release.version = dto.version?.trim() || undefined;
+    release.upc = dto.upc?.trim() || undefined;
     release.productionYear = dto.productionYear;
     release.originalReleaseDate = dto.originalReleaseDate;
     release.digitalReleaseDate = dto.digitalReleaseDate;
@@ -133,6 +134,12 @@ export class ReleaseService {
 
     if (!release.primaryLanguage) {
       errors.push('Primary language is required');
+    }
+
+    if (!release.upc) {
+      errors.push('UPC is required');
+    } else if (!isValidUpc(release.upc)) {
+      errors.push('UPC format is invalid');
     }
 
     if (!release.cLine?.year || !release.cLine?.owner) {

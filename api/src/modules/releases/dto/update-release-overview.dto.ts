@@ -45,6 +45,11 @@ export class UpdateReleaseOverviewDto {
   @MaxLength(255)
   version?: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(14)
+  upc?: string;
+
   @Type(() => Number)
   @IsInt()
   productionYear!: number;

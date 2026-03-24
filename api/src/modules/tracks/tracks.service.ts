@@ -9,6 +9,7 @@ import { RegisterAudioDto } from './dto/register-audio.dto';
 import { UUID } from '../../types/common.types';
 import { CloudinaryAudioUploaderService, UploadSignatureResult } from '../uploads/cloudinary-audio-uploader.service';
 import { TrackStatus } from '../../entities/track.entity';
+import { isValidIsrc, normalizeIsrc } from '../../helpers/tracks.helper';
 
 @Injectable()
 export class TrackService {
@@ -23,6 +24,10 @@ export class TrackService {
   private normalizeTrackStringFields<T extends Partial<Track>>(track: T): T {
     if (typeof track.primaryLanguage === 'string') {
       track.primaryLanguage = track.primaryLanguage.trim() as T['primaryLanguage'];
+    }
+
+    if (typeof track.isrc === 'string') {
+      track.isrc = normalizeIsrc(track.isrc) as T['isrc'];
     }
 
     return track;
@@ -95,6 +100,16 @@ export class TrackService {
 
     if (!track.primaryLanguage) {
       errors.push('Primary language is required');
+    }
+
+    const normalizedIsrc = typeof track.isrc === 'string' ? normalizeIsrc(track.isrc) : undefined;
+
+    if (!normalizedIsrc) {
+      errors.push('ISRC is required');
+    } else if (!isValidIsrc(normalizedIsrc)) {
+      errors.push('ISRC format is invalid');
+    } else if (track.isrc !== normalizedIsrc) {
+      track.isrc = normalizedIsrc;
     }
 
     if (!track.cLineYear) {
