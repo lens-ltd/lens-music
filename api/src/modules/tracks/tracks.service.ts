@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Track } from '../../entities/track.entity';
@@ -12,6 +12,8 @@ import { TrackStatus } from '../../entities/track.entity';
 
 @Injectable()
 export class TrackService {
+  private readonly logger = new Logger(TrackService.name);
+
   constructor(
     @InjectRepository(Track)
     private readonly trackRepository: Repository<Track>,
@@ -26,6 +28,80 @@ export class TrackService {
     }
 
     return track;
+  }
+
+  private async parseAudioBuffer(
+    file: Express.Multer.File,
+  ): Promise<{
+    format: {
+      sampleRate?: number;
+      bitsPerSample?: number;
+      numberOfChannels?: number;
+      duration?: number;
+    };
+  } | null> {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const musicMetadata = require('music-metadata') as {
+        parseBuffer: (
+          buffer: Buffer,
+          mimeType?: string,
+          options?: { duration?: boolean },
+        ) => Promise<{
+          format: {
+            sampleRate?: number;
+            bitsPerSample?: number;
+            numberOfChannels?: number;
+            duration?: number;
+          };
+        }>;
+      };
+
+      return musicMetadata.parseBuffer(file.buffer, file.mimetype, {
+        duration: true,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `music-metadata parser unavailable for ${file.originalname}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
+  }
+
+  private async extractAudioMetadata(
+    file: Express.Multer.File,
+  ): Promise<Pick<AudioFile, 'sampleRate' | 'bitDepth' | 'channels' | 'durationMs'>> {
+    try {
+      const metadata = await this.parseAudioBuffer(file);
+      if (!metadata) {
+        return {};
+      }
+      const format = metadata.format;
+
+      return {
+        sampleRate:
+          typeof format.sampleRate === 'number' && Number.isFinite(format.sampleRate)
+            ? Math.round(format.sampleRate)
+            : undefined,
+        bitDepth:
+          typeof format.bitsPerSample === 'number' && Number.isFinite(format.bitsPerSample)
+            ? Math.round(format.bitsPerSample)
+            : undefined,
+        channels:
+          typeof format.numberOfChannels === 'number' && Number.isFinite(format.numberOfChannels)
+            ? Math.round(format.numberOfChannels)
+            : undefined,
+        durationMs:
+          typeof format.duration === 'number' && Number.isFinite(format.duration)
+            ? Math.round(format.duration * 1000)
+            : undefined,
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to extract audio metadata from ${file.originalname}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return {};
+    }
   }
 
   async createTrack(dto: CreateTrackDto, userId: UUID): Promise<Track> {
@@ -115,6 +191,21 @@ export class TrackService {
 
     if (!track.audioFiles || track.audioFiles.length === 0) {
       errors.push('At least one audio file is required');
+    } else {
+      const primaryAudioFile =
+        track.audioFiles.find((audioFile) => audioFile.isPrimary) ?? track.audioFiles[0];
+
+      if (!primaryAudioFile.sampleRate) {
+        errors.push('Primary audio file sample rate is required');
+      } else if (primaryAudioFile.sampleRate < 44100) {
+        errors.push('Primary audio file sample rate must be at least 44100 Hz');
+      }
+
+      if (!primaryAudioFile.bitDepth) {
+        errors.push('Primary audio file bit depth is required');
+      } else if (primaryAudioFile.bitDepth < 16) {
+        errors.push('Primary audio file bit depth must be at least 16-bit');
+      }
     }
 
     if (!track.trackContributors || track.trackContributors.length === 0) {
@@ -150,6 +241,7 @@ export class TrackService {
       file,
       folder: `tracks/${trackId}/audio`,
     });
+    const extractedMetadata = await this.extractAudioMetadata(file);
 
     for (const prev of previousAudioFiles) {
       if (prev.cloudinaryPublicId) {
@@ -165,7 +257,10 @@ export class TrackService {
       storagePath: uploadResult.secureUrl,
       cloudinaryPublicId: uploadResult.publicId,
       fileSizeBytes: uploadResult.bytes,
-      durationMs: uploadResult.durationMs,
+      durationMs: extractedMetadata.durationMs ?? uploadResult.durationMs,
+      sampleRate: extractedMetadata.sampleRate,
+      bitDepth: extractedMetadata.bitDepth,
+      channels: extractedMetadata.channels ?? 2,
       isPrimary: true,
       uploadedById: userId,
     });
@@ -175,8 +270,10 @@ export class TrackService {
       status: TrackStatus.DRAFT,
     };
 
-    if (uploadResult.durationMs) {
-      nextTrackUpdate.durationMs = uploadResult.durationMs;
+    const canonicalDurationMs = extractedMetadata.durationMs ?? uploadResult.durationMs;
+
+    if (canonicalDurationMs) {
+      nextTrackUpdate.durationMs = canonicalDurationMs;
     }
 
     await this.trackRepository.update(trackId, nextTrackUpdate);
@@ -230,6 +327,9 @@ export class TrackService {
       cloudinaryPublicId: dto.publicId,
       fileSizeBytes: dto.bytes,
       durationMs: dto.durationMs,
+      sampleRate: dto.sampleRate,
+      bitDepth: dto.bitDepth,
+      channels: dto.channels ?? 2,
       isPrimary: true,
       uploadedById: userId,
     });
