@@ -4,12 +4,14 @@ import DashboardSection from "@/pages/dashboard/components/DashboardSection";
 import { ContributorRole, ReleaseContributor } from "@/types/models/releaseContributor.types";
 import { Release } from "@/types/models/release.types";
 import { capitalizeString, formatDate } from "@/utils/strings.helper";
+import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 
 interface PreviewOverviewSectionProps {
   release: Release;
   contributors?: ReleaseContributor[];
 }
 
+<<<<<<< HEAD
 const getContributorName = (contributor?: ReleaseContributor["contributor"]) =>
   contributor?.displayName || contributor?.name || contributor?.email || "";
 
@@ -31,6 +33,15 @@ const PreviewOverviewSection = ({
     primaryArtists.length > 0
       ? `${primaryArtists.join(", ")}${featuredArtists.length > 0 ? ` feat. ${featuredArtists.join(", ")}` : ""}`
       : "—";
+=======
+const PreviewOverviewSection = ({ release }: PreviewOverviewSectionProps) => {
+  const primaryGenre =
+    release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)?.genre
+      ?.name || "—";
+  const secondaryGenre =
+    release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)?.genre
+      ?.name || "—";
+>>>>>>> 3662ec7 (Add release genre system with genre APIs and wizard integration)
 
   return (
     <motion.article
@@ -72,6 +83,8 @@ const PreviewOverviewSection = ({
             <Input label="Preorder Date" value={formatDate(release.preorderDate) || "—"} readOnly />
             <Input label="Catalog Number" value={release.catalogNumber || "—"} readOnly />
             <Input label="UPC" value={release.upc || "—"} readOnly />
+            <Input label="Primary Genre" value={primaryGenre} readOnly />
+            <Input label="Secondary Genre" value={secondaryGenre} readOnly />
           </section>
         </section>
 

@@ -26,6 +26,8 @@ import { UpdateReleaseTerritoriesDto } from "./dto/update-release-territories.dt
 import { ReleaseService } from "./releases.service";
 import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
+import { UpsertReleaseGenreDto } from "./dto/upsert-release-genre.dto";
+import { ReleaseGenreType } from "../../constants/release.constants";
 
 @Controller("releases")
 @UseGuards(JwtAuthGuard)
@@ -84,6 +86,37 @@ export class ReleasesController {
       message: "Release cover art uploaded successfully",
       data: release,
     };
+  }
+
+
+  @Post(":id/genres")
+  async upsertReleaseGenre(
+    @Param("id") id: string,
+    @Body() dto: UpsertReleaseGenreDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const releaseGenre = await this.releaseService.upsertReleaseGenre(id, dto, user);
+    return { message: "Release genre saved successfully", data: releaseGenre };
+  }
+
+  @Get(":id/genres")
+  async getReleaseGenres(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const releaseGenres = await this.releaseService.getReleaseGenres(id, user);
+    return { message: "Release genres fetched successfully", data: releaseGenres };
+  }
+
+  @Delete(":id/genres")
+  @HttpCode(HttpStatus.OK)
+  async deleteReleaseGenre(
+    @Param("id") id: string,
+    @Query("type") type: ReleaseGenreType,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.releaseService.deleteReleaseGenreByType(id, type, user);
+    return { message: "Release genre removed successfully" };
   }
 
   @Post(":id/validate")

@@ -14,6 +14,7 @@ import { ContributorsModule } from './modules/contributors/contributors.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { TrackContributorsModule } from './modules/track-contributors/track-contributors.module';
 import { ReleaseContributorsModule } from './modules/release-contributors/release-contributors.module';
+import { GenresModule } from './modules/genres/genres.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ReleaseContributorsModule } from './modules/release-contributors/releas
     TracksModule,
     TrackContributorsModule,
     ReleaseContributorsModule,
+    GenresModule,
   ],
 })
 export class AppModule {}

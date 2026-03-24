@@ -21,6 +21,12 @@ export enum ReleaseStatus {
   TAKENDOWN = 'TAKENDOWN',
 }
 
+
+export enum ReleaseGenreType {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
+
 export interface ReleaseRightsLine {
   year: number;
   owner: string;
