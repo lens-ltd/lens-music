@@ -9,6 +9,7 @@ import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uplo
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
 import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
+import { UpdateReleaseTerritoriesDto } from './dto/update-release-territories.dto';
 
 @Injectable()
 export class ReleaseService {
@@ -54,6 +55,19 @@ export class ReleaseService {
     };
     release.parentalAdvisory = dto.parentalAdvisory;
     release.primaryLanguage = dto.primaryLanguage.trim();
+
+    return this.releaseRepository.save(release);
+  }
+
+
+  async updateTerritories(
+    id: UUID,
+    dto: UpdateReleaseTerritoriesDto,
+    user: AuthUser,
+  ): Promise<Release> {
+    const release = await this.getAuthorizedRelease(id, user);
+
+    release.territories = dto.territories;
 
     return this.releaseRepository.save(release);
   }

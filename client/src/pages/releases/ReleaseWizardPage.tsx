@@ -129,8 +129,8 @@ const ReleaseWizardPage = () => {
     if (stepName === "REGIONS") {
       return (
         <ReleaseWizardRegions
-          nextStepName={"UPLOAD_TRACKS"}
-          previousStepName={"MANAGE_CONTRIBUTIONS"}
+          nextStepName={"STORES"}
+          previousStepName={"UPLOAD_TRACKS"}
         />
       );
     }

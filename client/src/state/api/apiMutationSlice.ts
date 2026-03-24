@@ -158,6 +158,20 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      updateReleaseTerritories: builder.mutation({
+        query: ({
+          id,
+          territories,
+        }: {
+          id: string;
+          territories: string[];
+        }) => ({
+          url: `/releases/${id}/territories`,
+          method: "PATCH",
+          body: { territories },
+        }),
+      }),
+
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
           url: "/release-navigation-flows",
@@ -336,6 +350,7 @@ export const {
   useDeleteReleaseMutation,
   useUploadReleaseCoverArtMutation,
   useUpdateReleaseOverviewMutation,
+  useUpdateReleaseTerritoriesMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
   useCreateContributorMutation,

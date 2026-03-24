@@ -22,6 +22,7 @@ import {
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { CreateReleaseDto } from "./dto/create-release.dto";
 import { UpdateReleaseOverviewDto } from "./dto/update-release-overview.dto";
+import { UpdateReleaseTerritoriesDto } from "./dto/update-release-territories.dto";
 import { ReleaseService } from "./releases.service";
 import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
@@ -51,6 +52,20 @@ export class ReleasesController {
   ) {
     const release = await this.releaseService.updateOverview(id, dto, user);
     return { message: "Release overview updated successfully", data: release };
+  }
+
+
+  @Patch(":id/territories")
+  async updateReleaseTerritories(
+    @Param("id") id: string,
+    @Body() dto: UpdateReleaseTerritoriesDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const release = await this.releaseService.updateTerritories(id, dto, user);
+    return {
+      message: "Release territories updated successfully",
+      data: release,
+    };
   }
 
   @Post(":id/cover-art")
