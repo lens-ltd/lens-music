@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UUID } from "../types/common.types";
-import { User } from "./user.entity";
+import type { User } from "./user.entity";
 
 export abstract class AbstractEntity {
   // ID
@@ -32,8 +32,11 @@ export abstract class AbstractEntity {
    * RELATIONS
    */
 
-  // CREATED BY
-  @ManyToOne(() => User, { onDelete: 'SET NULL', onUpdate: 'CASCADE', nullable: true })
+  // CREATED BY (lazy require avoids circular import: AbstractEntity → User → Person → AbstractEntity)
+  @ManyToOne(
+    () => require('./user.entity').User,
+    { onDelete: 'SET NULL', onUpdate: 'CASCADE', nullable: true },
+  )
   @JoinColumn({ name: 'created_by_id' })
   createdBy: User;
 }
