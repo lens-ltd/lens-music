@@ -19,6 +19,21 @@ export class RegisterAudioDto {
   durationMs?: number;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  sampleRate?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  bitDepth?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  channels?: number;
+
+  @IsOptional()
   @IsString()
   format?: string;
 
