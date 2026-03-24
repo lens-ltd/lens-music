@@ -7,6 +7,7 @@ import {
 import { AbstractEntity } from './abstract.entity';
 import { Track } from './track.entity';
 import { ReleaseNavigationFlow } from './release-navigation-flow.entity';
+import { ReleaseGenre } from './release-genre.entity';
 import {
   ReleaseParentalAdvisory,
   ReleaseRightsLine,
@@ -131,4 +132,8 @@ export class Release extends AbstractEntity {
     (releaseNavigationFlow) => releaseNavigationFlow.release,
   )
   releaseNavigationFlows!: ReleaseNavigationFlow[];
+
+  // RELEASE GENRES
+  @OneToMany(() => ReleaseGenre, (releaseGenre) => releaseGenre.release)
+  genres!: ReleaseGenre[];
 }

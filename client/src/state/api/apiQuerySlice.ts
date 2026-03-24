@@ -68,6 +68,17 @@ export const apiQuerySlice = createApi({
         }),
       }),
 
+      // FETCH GENRES
+      fetchGenres: builder.query({
+        query: ({ parentId }: { parentId?: string } = {}) => ({
+          url: '/genres',
+          method: 'GET',
+          params: {
+            ...(parentId ? { parentId } : {}),
+          },
+        }),
+      }),
+
       // FETCH RELEASES
       fetchReleases: builder.query({
         query: ({ size, page }) => {
@@ -80,6 +91,14 @@ export const apiQuerySlice = createApi({
             },
           };
         },
+      }),
+
+      // FETCH RELEASE GENRES
+      fetchReleaseGenres: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/releases/${id}/genres`,
+          method: 'GET',
+        }),
       }),
 
       // GET RELEASE
@@ -236,9 +255,11 @@ export const {
   useLazyFetchInvitationsQuery,
   useLazyFetchUsersQuery,
   useLazyFetchLabelsQuery,
+  useLazyFetchGenresQuery,
   useLazyFetchReleasesQuery,
   useLazyFetchStaticReleaseNavigationQuery,
   useLazyFetchReleaseNavigationFlowsQuery,
+  useLazyFetchReleaseGenresQuery,
   useLazyGetReleaseQuery,
   useLazyGetContributorQuery,
   useLazyFetchContributorsQuery,

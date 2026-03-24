@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
 import { ReleaseContributor } from '../../entities/release-contributor.entity';
+import { ReleaseGenre } from '../../entities/release-genre.entity';
+import { Genre } from '../../entities/genre.entity';
 import { TrackStatus } from '../../entities/track.entity';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { UUID } from '../../types/common.types';
@@ -10,10 +12,11 @@ import { generateCatalogNumber, isValidUpc } from '../../helpers/releases.helper
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
-import { ReleaseStatus } from '../../constants/release.constants';
+import { ReleaseGenreType, ReleaseStatus } from '../../constants/release.constants';
 import { ContributorRole } from '../../constants/contributor.constants';
 import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
 import { UpdateReleaseTerritoriesDto } from './dto/update-release-territories.dto';
+import { UpsertReleaseGenreDto } from './dto/upsert-release-genre.dto';
 
 @Injectable()
 export class ReleaseService {
@@ -24,6 +27,10 @@ export class ReleaseService {
     private readonly releaseRepository: Repository<Release>,
     @InjectRepository(ReleaseContributor)
     private readonly releaseContributorRepository: Repository<ReleaseContributor>,
+    @InjectRepository(ReleaseGenre)
+    private readonly releaseGenreRepository: Repository<ReleaseGenre>,
+    @InjectRepository(Genre)
+    private readonly genreRepository: Repository<Genre>,
     private readonly cloudinaryImageUploaderService: CloudinaryImageUploaderService,
   ) { }
 
@@ -122,6 +129,7 @@ export class ReleaseService {
       where: { id },
       relations: {
         tracks: { audioFiles: true, trackContributors: true },
+        genres: { genre: true },
       },
     });
 
@@ -210,12 +218,92 @@ export class ReleaseService {
       errors.push('At least one primary artist contributor is required');
     }
 
+    const hasPrimaryGenre = (release.genres || []).some(
+      (releaseGenre) => releaseGenre.type === ReleaseGenreType.PRIMARY,
+    );
+
+    if (!hasPrimaryGenre) {
+      errors.push('A primary genre is required');
+    }
+
     if (errors.length === 0) {
       release.status = ReleaseStatus.REVIEW;
       await this.releaseRepository.save(release);
     }
 
     return { valid: errors.length === 0, errors };
+  }
+
+
+  async upsertReleaseGenre(
+    releaseId: UUID,
+    dto: UpsertReleaseGenreDto,
+    user: AuthUser,
+  ): Promise<ReleaseGenre> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const genre = await this.genreRepository.findOne({ where: { id: dto.genreId } });
+    if (!genre) {
+      throw new NotFoundException('Genre not found');
+    }
+
+    const existingByType = await this.releaseGenreRepository.findOne({
+      where: { releaseId, type: dto.type },
+    });
+
+    if (existingByType) {
+      existingByType.genreId = dto.genreId;
+      existingByType.createdById = existingByType.createdById || user.id;
+      const updated = await this.releaseGenreRepository.save(existingByType);
+      await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+      return this.releaseGenreRepository.findOneOrFail({
+        where: { id: updated.id },
+        relations: { genre: true },
+      });
+    }
+
+    const releaseGenre = this.releaseGenreRepository.create({
+      releaseId,
+      genreId: dto.genreId,
+      type: dto.type,
+      createdById: user.id,
+    });
+
+    const saved = await this.releaseGenreRepository.save(releaseGenre);
+    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
+
+    return this.releaseGenreRepository.findOneOrFail({
+      where: { id: saved.id },
+      relations: { genre: true },
+    });
+  }
+
+  async getReleaseGenres(releaseId: UUID, user: AuthUser): Promise<ReleaseGenre[]> {
+    await this.getAuthorizedRelease(releaseId, user);
+    return this.releaseGenreRepository.find({
+      where: { releaseId },
+      relations: { genre: true },
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  async deleteReleaseGenreByType(
+    releaseId: UUID,
+    type: ReleaseGenreType,
+    user: AuthUser,
+  ): Promise<void> {
+    await this.getAuthorizedRelease(releaseId, user);
+
+    const existing = await this.releaseGenreRepository.findOne({
+      where: { releaseId, type },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Release genre not found');
+    }
+
+    await this.releaseGenreRepository.delete(existing.id);
+    await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
   }
 
   private async getAuthorizedRelease(id: UUID, user: AuthUser): Promise<Release> {

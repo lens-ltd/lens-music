@@ -103,6 +103,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      createGenre: builder.mutation({
+        query: (body: { name: string; parentId?: string }) => ({
+          url: '/genres',
+          method: 'POST',
+          body,
+        }),
+      }),
+
       createRelease: builder.mutation({
         query: ({ title, type }) => ({
           url: "/releases",
@@ -150,11 +158,26 @@ export const apiMutationSlice = createApi({
           territories: string[];
         }) => ({
           url: `/releases/${id}/territories`,
-          method: "PATCH",
+          method: 'PATCH',
           body: { territories },
         }),
       }),
 
+      upsertReleaseGenre: builder.mutation({
+        query: ({ id, genreId, type }: { id: string; genreId: string; type: string }) => ({
+          url: `/releases/${id}/genres`,
+          method: 'POST',
+          body: { genreId, type },
+        }),
+      }),
+
+      deleteReleaseGenre: builder.mutation({
+        query: ({ id, type }: { id: string; type: string }) => ({
+          url: `/releases/${id}/genres`,
+          method: 'DELETE',
+          params: { type },
+        }),
+      }),
       createReleaseNavigationFlow: builder.mutation({
         query: ({ releaseId, staticReleaseNavigationId }) => ({
           url: "/release-navigation-flows",
@@ -334,11 +357,14 @@ export const {
   useValidatePasswordResetTokenMutation,
   useConfirmPasswordResetMutation,
   useLazyListLabelsQuery,
+  useCreateGenreMutation,
   useCreateReleaseMutation,
   useDeleteReleaseMutation,
   useUploadReleaseCoverArtMutation,
   useUpdateReleaseOverviewMutation,
   useUpdateReleaseTerritoriesMutation,
+  useUpsertReleaseGenreMutation,
+  useDeleteReleaseGenreMutation,
   useCreateReleaseNavigationFlowMutation,
   useCompleteReleaseNavigationFlowMutation,
   useCreateContributorMutation,

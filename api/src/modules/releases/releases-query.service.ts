@@ -29,6 +29,7 @@ export class ReleaseQueryService {
       skip,
       relations: {
         createdBy: true,
+        genres: { genre: true },
       }
     });
 
@@ -41,6 +42,7 @@ export class ReleaseQueryService {
       relations: {
         createdBy: true,
         tracks: { audioFiles: true, trackContributors: { contributor: true } },
+        genres: { genre: { parent: true } },
       },
     });
   }

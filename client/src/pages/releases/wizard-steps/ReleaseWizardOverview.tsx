@@ -25,6 +25,9 @@ import { toast } from "sonner";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
+import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
+import { Genre } from "@/types/models/genre.types";
+import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 
 interface ReleaseOverviewFormValues {
   type: ReleaseType;
@@ -45,6 +48,8 @@ interface ReleaseOverviewFormValues {
   };
   parentalAdvisory: ReleaseParentalAdvisory;
   primaryLanguage: string;
+  primaryGenreId: string;
+  secondaryGenreId?: string;
 }
 
 const getMutationErrorMessage = (error: unknown) => {
@@ -100,6 +105,8 @@ const ReleaseWizardOverview = ({
   const [overviewError, setOverviewError] = useState<string | undefined>(
     undefined,
   );
+  const { fetchGenres, data: genresResponse } = useFetchGenres();
+  const { upsertReleaseGenre } = useUpsertReleaseGenre();
 
   // REACT HOOK FORM
   const {
@@ -141,6 +148,20 @@ const ReleaseWizardOverview = ({
     };
 
     try {
+      await upsertReleaseGenre({
+        id: release.id,
+        genreId: data.primaryGenreId,
+        type: ReleaseGenreType.PRIMARY,
+      }).unwrap();
+
+      if (data.secondaryGenreId?.trim()) {
+        await upsertReleaseGenre({
+          id: release.id,
+          genreId: data.secondaryGenreId,
+          type: ReleaseGenreType.SECONDARY,
+        }).unwrap();
+      }
+
       const response = await updateReleaseOverview({
         id: release.id,
         body: payload,
@@ -161,6 +182,10 @@ const ReleaseWizardOverview = ({
   };
 
   // SET DEFAULT VALUES
+  useEffect(() => {
+    fetchGenres({});
+  }, [fetchGenres]);
+
   useEffect(() => {
     if (release) {
       setValue("type", release.type || ReleaseType.ALBUM);
@@ -189,8 +214,23 @@ const ReleaseWizardOverview = ({
         release.parentalAdvisory || ReleaseParentalAdvisory.NOT_EXPLICIT,
       );
       setValue("primaryLanguage", release.primaryLanguage || "");
+      setValue(
+        "primaryGenreId",
+        release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)
+          ?.genreId || "",
+      );
+      setValue(
+        "secondaryGenreId",
+        release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)
+          ?.genreId || "",
+      );
     }
   }, [release, setValue]);
+
+  const genreOptions = (genresResponse?.data ?? []).map((genre: Genre) => ({
+    label: genre.name,
+    value: genre.id,
+  }));
 
   const closeCoverArtModal = () => {
     setCoverArtModalOpen(false);
@@ -533,6 +573,33 @@ const ReleaseWizardOverview = ({
                   }))}
                   required
                   errorMessage={errors?.primaryLanguage?.message}
+                />
+              )}
+            />
+            <Controller
+              name="primaryGenreId"
+              control={control}
+              rules={{ required: "Please select a primary genre" }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  label="Primary Genre"
+                  placeholder="Select the primary genre"
+                  options={genreOptions}
+                  required
+                  errorMessage={errors?.primaryGenreId?.message}
+                />
+              )}
+            />
+            <Controller
+              name="secondaryGenreId"
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  label="Secondary Genre (optional)"
+                  placeholder="Select the secondary genre"
+                  options={genreOptions}
                 />
               )}
             />
