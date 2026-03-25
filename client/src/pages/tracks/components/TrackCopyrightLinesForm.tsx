@@ -4,7 +4,7 @@ import { getProductionYearOptions } from "@/utils/releases.helper";
 import { Control, Controller } from "react-hook-form";
 import { FormField, FormValues } from "./trackForm.helpers";
 
-type TrackRightsFormProps = {
+type TrackCopyrightLinesFormProps = {
   control: Control<FormValues>;
   stateLabel: string | null;
   onPersistField: (field: FormField, value?: string | boolean) => Promise<void>;
@@ -15,19 +15,23 @@ const yearOptions = getProductionYearOptions().map((year) => ({
   label: year.label,
 }));
 
-const TrackRightsForm = ({
+/**
+ * C-line / P-line and track flags. (Named for copyright lines — not DDEX TrackRightsController.)
+ */
+const TrackCopyrightLinesForm = ({
   control,
   stateLabel,
   onPersistField,
-}: TrackRightsFormProps) => (
+}: TrackCopyrightLinesFormProps) => (
   <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
     <header className="flex items-center justify-between gap-3">
       <section>
         <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
-          Rights metadata
+          Copyright lines and flags
         </h2>
         <p className="text-[12px] text-[color:var(--lens-ink)]/55">
-          The validation step expects the rights fields below.
+          C-line and P-line are required before validation. Use “Rights controllers”
+          below for DDEX making-available rights.
         </p>
       </section>
       {stateLabel && (
@@ -146,4 +150,4 @@ const TrackRightsForm = ({
   </section>
 );
 
-export default TrackRightsForm;
+export default TrackCopyrightLinesForm;

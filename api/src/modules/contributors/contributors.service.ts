@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
@@ -11,6 +11,7 @@ import { UUID } from "../../types/common.types";
 import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { ContributorMembership } from "../../entities/contributor-membership.entity";
+import { isValidIsni, normalizeIsni } from "../../helpers/releases.helper";
 
 @Injectable()
 export class ContributorService {
@@ -37,6 +38,12 @@ export class ContributorService {
     dto: CreateContributorDto,
     createdById: UUID,
   ): Promise<Contributor> {
+    if (dto.isni?.trim()) {
+      if (!isValidIsni(dto.isni)) {
+        throw new BadRequestException("ISNI format is invalid");
+      }
+      dto.isni = normalizeIsni(dto.isni);
+    }
     const prioritizedName = this.getPrioritizedContributorName({
       displayName: dto.displayName,
       name: dto.name,
@@ -124,6 +131,17 @@ export class ContributorService {
     });
     if (!contributor) {
       throw new NotFoundException("Contributor not found");
+    }
+
+    if (dto.isni !== undefined) {
+      if (dto.isni?.trim()) {
+        if (!isValidIsni(dto.isni)) {
+          throw new BadRequestException("ISNI format is invalid");
+        }
+        dto.isni = normalizeIsni(dto.isni);
+      } else {
+        dto.isni = undefined;
+      }
     }
 
     if (dto.displayName !== undefined)

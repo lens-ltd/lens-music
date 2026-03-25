@@ -93,3 +93,19 @@ export const normalizeIsni = (isni: string): string => {
 export const isValidIsni = (isni: string): boolean => {
     return /^\d{16}$/.test(normalizeIsni(isni));
 };
+
+/** DDEX display order: lower sequence first; missing sequence sorts after explicit values. */
+export const sortContributorsForDisplay = <
+    T extends { sequenceNumber?: number | null; createdAt: Date | string },
+>(
+    items: T[],
+): T[] => {
+    return [...items].sort((a, b) => {
+        const sa = a.sequenceNumber ?? Number.MAX_SAFE_INTEGER;
+        const sb = b.sequenceNumber ?? Number.MAX_SAFE_INTEGER;
+        if (sa !== sb) {
+            return sa - sb;
+        }
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+};

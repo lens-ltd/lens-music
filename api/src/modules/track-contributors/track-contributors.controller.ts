@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -17,6 +18,7 @@ import {
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { TrackContributorsService } from "./track-contributors.service";
 import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
+import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("track-contributors")
@@ -38,6 +40,21 @@ export class TrackContributorsController {
     );
     return {
       message: "Track contributor added successfully",
+      data: trackContributor,
+    };
+  }
+
+  @Patch(":id")
+  async update(
+    @Param("id") id: string,
+    @Body() dto: UpdateTrackContributorDto,
+  ) {
+    const trackContributor = await this.trackContributorsService.update(
+      id as UUID,
+      dto,
+    );
+    return {
+      message: "Track contributor updated successfully",
       data: trackContributor,
     };
   }

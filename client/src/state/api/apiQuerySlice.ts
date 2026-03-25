@@ -202,6 +202,16 @@ export const apiQuerySlice = createApi({
         query: ({ id }) => `/tracks/${id}`,
       }),
 
+      fetchReleaseDeals: builder.query({
+        query: ({ releaseId }: { releaseId: string }) =>
+          `/releases/${releaseId}/deals`,
+      }),
+
+      fetchTrackRightsControllers: builder.query({
+        query: ({ trackId }: { trackId: string }) =>
+          `/tracks/${trackId}/rights-controllers`,
+      }),
+
       // FETCH TRACK CONTRIBUTORS
       fetchTrackContributors: builder.query({
         query: ({ trackId }: { trackId: string }) => {
@@ -282,6 +292,8 @@ export const {
   useLazyFetchContributorMembershipsQuery,
   useLazyFetchTracksQuery,
   useLazyGetTrackQuery,
+  useLazyFetchReleaseDealsQuery,
+  useLazyFetchTrackRightsControllersQuery,
   useLazyFetchTrackContributorsQuery,
   useLazyFetchReleaseContributorsQuery,
   useLazyFetchStoresQuery,

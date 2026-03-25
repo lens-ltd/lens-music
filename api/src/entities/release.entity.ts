@@ -6,6 +6,8 @@ import { ReleaseGenre } from "./release-genre.entity";
 import { ReleaseStore } from "./release-store.entity";
 import { ReleaseLabel } from "./release-label.entity";
 import { Deal } from "./deal.entity";
+import { ReleaseTerritoryDetail } from "./release-territory-detail.entity";
+import { RelatedRelease } from "./related-release.entity";
 import {
   ReleaseParentalAdvisory,
   ReleaseRightsLine,
@@ -180,6 +182,12 @@ export class Release extends AbstractEntity {
   // DEALS
   @OneToMany(() => Deal, (deal) => deal.release)
   deals!: Deal[];
+
+  @OneToMany(() => ReleaseTerritoryDetail, (d) => d.release)
+  territoryDetails!: ReleaseTerritoryDetail[];
+
+  @OneToMany(() => RelatedRelease, (r) => r.release)
+  outgoingRelatedReleases!: RelatedRelease[];
 
   // GRid (Global Release Identifier)
   @Column({ name: "grid", type: "varchar", length: 18, nullable: true, unique: true })

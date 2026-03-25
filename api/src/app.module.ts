@@ -19,6 +19,9 @@ import { StoresModule } from './modules/stores/stores.module';
 import { ReleaseLabelsModule } from './modules/release-labels/release-labels.module';
 import { DealsModule } from './modules/deals/deals.module';
 import { TrackRightsControllersModule } from './modules/track-rights-controllers/track-rights-controllers.module';
+import { ReleaseTerritoryDetailsModule } from './modules/release-territory-details/release-territory-details.module';
+import { RelatedReleasesModule } from './modules/related-releases/related-releases.module';
+import { DdexModule } from './modules/ddex/ddex.module';
 
 @Module({
   imports: [
@@ -62,6 +65,9 @@ import { TrackRightsControllersModule } from './modules/track-rights-controllers
     ReleaseLabelsModule,
     DealsModule,
     TrackRightsControllersModule,
+    ReleaseTerritoryDetailsModule,
+    RelatedReleasesModule,
+    DdexModule,
   ],
 })
 export class AppModule {}

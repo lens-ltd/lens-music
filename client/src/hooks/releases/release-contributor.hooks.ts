@@ -2,6 +2,7 @@ import { useLazyFetchReleaseContributorsQuery } from "@/state/api/apiQuerySlice"
 import {
   useCreateReleaseContributorMutation,
   useDeleteReleaseContributorMutation,
+  useUpdateReleaseContributorMutation,
 } from "@/state/api/apiMutationSlice";
 
 // FETCH RELEASE CONTRIBUTORS
@@ -26,4 +27,9 @@ export const useDeleteReleaseContributor = () => {
     useDeleteReleaseContributorMutation();
 
   return { deleteReleaseContributor, isLoading, reset, data, isSuccess, isError, error };
+};
+
+export const useUpdateReleaseContributor = () => {
+  const [updateReleaseContributor, meta] = useUpdateReleaseContributorMutation();
+  return { updateReleaseContributor, ...meta };
 };

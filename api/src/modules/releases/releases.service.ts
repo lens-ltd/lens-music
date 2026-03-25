@@ -15,7 +15,9 @@ import {
   isValidIso3166Alpha2,
   isValidIso639Language,
   isValidUpc,
+  sortContributorsForDisplay,
 } from '../../helpers/releases.helper';
+import { releaseStoreHasDealCoverage } from '../../helpers/deals.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
@@ -34,7 +36,7 @@ import { UpsertReleaseGenreDto } from './dto/upsert-release-genre.dto';
 import { Deal } from '../../entities/deal.entity';
 import { TrackRightsController } from '../../entities/track-rights-controller.entity';
 import { RightType } from '../../constants/ddex.constants';
-import { createHash } from 'crypto';
+import { BinaryLike, createHash } from 'crypto';
 
 @Injectable()
 export class ReleaseService {
@@ -96,6 +98,21 @@ export class ReleaseService {
     release.parentalAdvisory = dto.parentalAdvisory;
     release.primaryLanguage = dto.primaryLanguage.trim();
     release.metadataLanguage = dto.metadataLanguage?.trim() || undefined;
+    release.grid = dto.grid?.trim() || undefined;
+    release.description = dto.description?.trim() || undefined;
+    if (dto.keywords !== undefined) {
+      release.keywords = dto.keywords.map((k) => k.trim()).filter(Boolean);
+    }
+    release.marketingComment = dto.marketingComment?.trim() || undefined;
+    if (dto.grid !== undefined) {
+      const trimmed = dto.grid?.trim();
+      release.grid = trimmed || undefined;
+      if (release.grid && !isValidGRid(release.grid)) {
+        throw new BadRequestException(
+          'GRid format is invalid (must be 18 alphanumeric characters)',
+        );
+      }
+    }
     this.resetValidatedReleaseToDraft(release);
 
     return this.releaseRepository.save(release);
@@ -131,8 +148,9 @@ export class ReleaseService {
     release.coverArtWidth = uploadedCoverArt.width;
     release.coverArtHeight = uploadedCoverArt.height;
     release.coverArtFileSizeBytes = uploadedCoverArt.bytes;
+    const coverBytes = (file?.buffer ?? Buffer.alloc(0)) as BinaryLike;
     release.coverArtChecksumSha256 = createHash('sha256')
-      .update(file?.buffer ?? Buffer.alloc(0))
+      .update(coverBytes)
       .digest('hex');
 
     if (uploadedCoverArt.colorMode && uploadedCoverArt.colorMode.toLowerCase() !== 'rgb') {
@@ -287,7 +305,7 @@ export class ReleaseService {
       relations: {
         tracks: { audioFiles: true, trackContributors: { contributor: true } },
         genres: { genre: true },
-        releaseStores: true,
+        releaseStores: { store: true },
         releaseLabels: { label: true },
       },
     });
@@ -431,6 +449,15 @@ export class ReleaseService {
 
     if (!release.releaseStores || release.releaseStores.length === 0) {
       errors.push('At least one store is required');
+    } else {
+      for (const rs of release.releaseStores) {
+        const storeName = rs.store?.name ?? 'Unknown store';
+        if (!rs.store?.ddexPartyId?.trim()) {
+          errors.push(
+            `Store "${storeName}" is missing a DDEX Party ID (required for delivery)`,
+          );
+        }
+      }
     }
 
     if (release.grid && !isValidGRid(release.grid)) {
@@ -439,6 +466,10 @@ export class ReleaseService {
 
     if (!release.coverArtChecksumSha256) {
       errors.push('Cover art checksum is required');
+    }
+
+    if (release.coverArtUrl && release.coverArtFileSizeBytes == null) {
+      errors.push('Cover art file size is required');
     }
 
     // --- Tracks ---
@@ -540,6 +571,16 @@ export class ReleaseService {
           }
         }
       }
+      if (release.releaseStores?.length) {
+        for (const rs of release.releaseStores) {
+          if (!releaseStoreHasDealCoverage(rs.storeId, deals)) {
+            const storeName = rs.store?.name ?? rs.storeId;
+            errors.push(
+              `No active deal covers store "${storeName}" (add a global deal or a deal for this store)`,
+            );
+          }
+        }
+      }
     }
 
     return { release, errors };
@@ -568,11 +609,12 @@ export class ReleaseService {
    * Not stored on entity — computed on demand to maintain normalization.
    */
   async computeDisplayArtistName(releaseId: UUID): Promise<string> {
-    const contributors = await this.releaseContributorRepository.find({
-      where: { releaseId },
-      relations: ['contributor'],
-      order: { createdAt: 'ASC' },
-    });
+    const contributors = sortContributorsForDisplay(
+      await this.releaseContributorRepository.find({
+        where: { releaseId },
+        relations: ['contributor'],
+      }),
+    );
 
     const primaryNames = contributors
       .filter((rc) => rc.role === ContributorRole.PRIMARY_ARTIST)

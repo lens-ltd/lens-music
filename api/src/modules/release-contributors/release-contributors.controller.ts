@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -17,6 +18,7 @@ import {
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { ReleaseContributorsService } from "./release-contributors.service";
 import { CreateReleaseContributorDto } from "./dto/create-release-contributor.dto";
+import { UpdateReleaseContributorDto } from "./dto/update-release-contributor.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("release-contributors")
@@ -38,6 +40,21 @@ export class ReleaseContributorsController {
     );
     return {
       message: "Release contributor added successfully",
+      data: releaseContributor,
+    };
+  }
+
+  @Patch(":id")
+  async update(
+    @Param("id") id: string,
+    @Body() dto: UpdateReleaseContributorDto,
+  ) {
+    const releaseContributor = await this.releaseContributorsService.update(
+      id as UUID,
+      dto,
+    );
+    return {
+      message: "Release contributor updated successfully",
       data: releaseContributor,
     };
   }

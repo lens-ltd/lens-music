@@ -59,6 +59,7 @@ export interface CreateContributorPayload {
   type?: ContributorType;
   ipn?: string;
   ipi?: string;
+  isni?: string;
   parentContributorId?: string;
 }
 
@@ -74,6 +75,7 @@ export interface Contributor extends Person {
   type?: ContributorType;
   ipn?: string;
   ipi?: string;
+  isni?: string;
   verifiedBy: User;
 }
 

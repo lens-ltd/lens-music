@@ -30,6 +30,11 @@ type TrackContributorsPanelProps = {
   onSelectRole: (value: ContributorRole) => void;
   onAddContributor: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   onDeleteContributor: (trackContributorId: string) => Promise<void>;
+  onUpdateSequence?: (
+    trackContributorId: string,
+    sequenceNumber: number | undefined,
+  ) => Promise<void>;
+  isUpdatingSequence?: boolean;
 };
 
 const roleOptions = Object.values(ContributorRole).map((role) => ({
@@ -57,6 +62,8 @@ const TrackContributorsPanel = ({
   onSelectRole,
   onAddContributor,
   onDeleteContributor,
+  onUpdateSequence,
+  isUpdatingSequence,
 }: TrackContributorsPanelProps) => {
   return (
     <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
@@ -203,6 +210,26 @@ const TrackContributorsPanel = ({
                 <p className="text-[11px] text-[color:var(--lens-ink)]/55">
                   {toTitleCase(trackContributor?.role)}
                 </p>
+                {onUpdateSequence ? (
+                  <label className="mt-1 flex items-center gap-2 text-[11px] text-[color:var(--lens-ink)]/70">
+                    <span className="shrink-0">Order</span>
+                    <input
+                      type="number"
+                      min={0}
+                      className="w-16 rounded border border-[color:var(--lens-sand)]/60 px-1 py-0.5 text-[11px]"
+                      defaultValue={
+                        trackContributor.sequenceNumber ?? ""
+                      }
+                      disabled={isUpdatingSequence}
+                      onBlur={(e) => {
+                        const v = e.target.value.trim();
+                        const n = v === "" ? undefined : Number(v);
+                        if (n !== undefined && Number.isNaN(n)) return;
+                        void onUpdateSequence(trackContributor.id, n);
+                      }}
+                    />
+                  </label>
+                ) : null}
               </section>
               {isDeletingContributor ? (
                 <Loader className="text-primary" />

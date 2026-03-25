@@ -50,6 +50,11 @@ interface ReleaseOverviewFormValues {
   primaryLanguage: string;
   primaryGenreId: string;
   secondaryGenreId?: string;
+  metadataLanguage?: string;
+  grid?: string;
+  description?: string;
+  keywords?: string;
+  marketingComment?: string;
 }
 
 const getMutationErrorMessage = (error: unknown) => {
@@ -152,6 +157,14 @@ const ReleaseWizardOverview = ({
       },
       parentalAdvisory: data.parentalAdvisory,
       primaryLanguage: data.primaryLanguage,
+      metadataLanguage: normalizeOptionalString(data.metadataLanguage),
+      grid: normalizeOptionalString(data.grid),
+      description: normalizeOptionalString(data.description),
+      keywords: data.keywords
+        ?.split(/[,\n]/)
+        .map((k) => k.trim())
+        .filter(Boolean),
+      marketingComment: normalizeOptionalString(data.marketingComment),
     };
 
     try {
@@ -238,6 +251,14 @@ const ReleaseWizardOverview = ({
         release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)
           ?.genreId || "",
       );
+      setValue("metadataLanguage", release.metadataLanguage || "");
+      setValue("grid", release.grid || "");
+      setValue("description", release.description || "");
+      setValue(
+        "keywords",
+        release.keywords?.length ? release.keywords.join(", ") : "",
+      );
+      setValue("marketingComment", release.marketingComment || "");
     }
   }, [release, setValue]);
 
@@ -614,6 +635,68 @@ const ReleaseWizardOverview = ({
                   label="Secondary Genre (optional)"
                   placeholder="Select the secondary genre"
                   options={genreOptions}
+                />
+              )}
+            />
+            <Controller
+              name="metadataLanguage"
+              control={control}
+              rules={{ required: "Metadata language is required for distribution" }}
+              render={({ field }) => (
+                <Combobox
+                  {...field}
+                  label="Metadata language"
+                  placeholder="ISO 639-1 for ERN"
+                  options={LANGUAGES_LIST.map((language) => ({
+                    label: language.name,
+                    value: language.code,
+                  }))}
+                  required
+                  errorMessage={errors?.metadataLanguage?.message}
+                />
+              )}
+            />
+            <Controller
+              name="grid"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="GRid (optional)"
+                  placeholder="18 alphanumeric characters"
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Description (optional)"
+                  placeholder="Release description"
+                />
+              )}
+            />
+            <Controller
+              name="keywords"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Keywords (optional)"
+                  placeholder="Comma-separated"
+                />
+              )}
+            />
+            <Controller
+              name="marketingComment"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Marketing comment (optional)"
+                  placeholder="Notes for partners"
                 />
               )}
             />

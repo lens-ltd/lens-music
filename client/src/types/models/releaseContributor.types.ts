@@ -19,6 +19,11 @@ export enum ContributorRole {
   MASTERING_ENGINEER = 'MASTERING_ENGINEER',
   RECORDING_ENGINEER = 'RECORDING_ENGINEER',
   ARRANGER = 'ARRANGER',
+  REMIXER = 'REMIXER',
+  DJ = 'DJ',
+  CONDUCTOR = 'CONDUCTOR',
+  CHOIR_MASTER = 'CHOIR_MASTER',
+  NARRATOR = 'NARRATOR',
   PUBLISHER = 'PUBLISHER',
   COPYRIGHT_OWNER = 'COPYRIGHT_OWNER',
 }
@@ -27,6 +32,7 @@ export interface ReleaseContributor extends AbstractEntity {
   releaseId: string;
   contributorId: string;
   role: ContributorRole;
+  sequenceNumber?: number;
   createdById: string;
   release: Release;
   contributor: Contributor;

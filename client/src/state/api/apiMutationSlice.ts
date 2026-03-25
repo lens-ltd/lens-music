@@ -6,6 +6,14 @@ import type {
   CreateContributorMembershipPayload,
   UpdateContributorPayload,
 } from "@/types/models/contributor.types";
+import type {
+  CreateDealPayload,
+  UpdateDealPayload,
+} from "@/types/models/deal.types";
+import type {
+  CreateTrackRightsControllerPayload,
+  UpdateTrackRightsControllerPayload,
+} from "@/types/models/trackRightsController.types";
 
 export const apiMutationSlice = createApi({
   reducerPath: "apiMutation",
@@ -298,9 +306,28 @@ export const apiMutationSlice = createApi({
       }),
 
       createTrackContributor: builder.mutation({
-        query: (body: { trackId: string; contributorId: string; role: string }) => ({
+        query: (body: {
+          trackId: string;
+          contributorId: string;
+          role: string;
+          sequenceNumber?: number;
+        }) => ({
           url: "/track-contributors",
           method: "POST",
+          body,
+        }),
+      }),
+
+      updateTrackContributor: builder.mutation({
+        query: ({
+          id,
+          body,
+        }: {
+          id: string;
+          body: { sequenceNumber?: number };
+        }) => ({
+          url: `/track-contributors/${id}`,
+          method: "PATCH",
           body,
         }),
       }),
@@ -313,9 +340,28 @@ export const apiMutationSlice = createApi({
       }),
 
       createReleaseContributor: builder.mutation({
-        query: (body: { releaseId: string; contributorId: string; role: string }) => ({
+        query: (body: {
+          releaseId: string;
+          contributorId: string;
+          role: string;
+          sequenceNumber?: number;
+        }) => ({
           url: "/release-contributors",
           method: "POST",
+          body,
+        }),
+      }),
+
+      updateReleaseContributor: builder.mutation({
+        query: ({
+          id,
+          body,
+        }: {
+          id: string;
+          body: { sequenceNumber?: number };
+        }) => ({
+          url: `/release-contributors/${id}`,
+          method: "PATCH",
           body,
         }),
       }),
@@ -323,6 +369,92 @@ export const apiMutationSlice = createApi({
       deleteReleaseContributor: builder.mutation({
         query: ({ id }: { id: string }) => ({
           url: `/release-contributors/${id}`,
+          method: "DELETE",
+        }),
+      }),
+
+      createReleaseDeal: builder.mutation({
+        query: ({
+          releaseId,
+          body,
+        }: {
+          releaseId: string;
+          body: CreateDealPayload;
+        }) => ({
+          url: `/releases/${releaseId}/deals`,
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateReleaseDeal: builder.mutation({
+        query: ({
+          releaseId,
+          dealId,
+          body,
+        }: {
+          releaseId: string;
+          dealId: string;
+          body: UpdateDealPayload;
+        }) => ({
+          url: `/releases/${releaseId}/deals/${dealId}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteReleaseDeal: builder.mutation({
+        query: ({
+          releaseId,
+          dealId,
+        }: {
+          releaseId: string;
+          dealId: string;
+        }) => ({
+          url: `/releases/${releaseId}/deals/${dealId}`,
+          method: "DELETE",
+        }),
+      }),
+
+      createTrackRightsController: builder.mutation({
+        query: ({
+          trackId,
+          body,
+        }: {
+          trackId: string;
+          body: CreateTrackRightsControllerPayload;
+        }) => ({
+          url: `/tracks/${trackId}/rights-controllers`,
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateTrackRightsController: builder.mutation({
+        query: ({
+          trackId,
+          trcId,
+          body,
+        }: {
+          trackId: string;
+          trcId: string;
+          body: UpdateTrackRightsControllerPayload;
+        }) => ({
+          url: `/tracks/${trackId}/rights-controllers/${trcId}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteTrackRightsController: builder.mutation({
+        query: ({
+          trackId,
+          trcId,
+        }: {
+          trackId: string;
+          trcId: string;
+        }) => ({
+          url: `/tracks/${trackId}/rights-controllers/${trcId}`,
           method: "DELETE",
         }),
       }),
@@ -402,9 +534,17 @@ export const {
   useValidateReleaseMutation,
   useSubmitReleaseMutation,
   useCreateTrackContributorMutation,
+  useUpdateTrackContributorMutation,
   useDeleteTrackContributorMutation,
   useCreateReleaseContributorMutation,
+  useUpdateReleaseContributorMutation,
   useDeleteReleaseContributorMutation,
+  useCreateReleaseDealMutation,
+  useUpdateReleaseDealMutation,
+  useDeleteReleaseDealMutation,
+  useCreateTrackRightsControllerMutation,
+  useUpdateTrackRightsControllerMutation,
+  useDeleteTrackRightsControllerMutation,
   useAssignReleaseStoresMutation,
   useDeleteReleaseStoreMutation,
   useCreateLyricsMutation,

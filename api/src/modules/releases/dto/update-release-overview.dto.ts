@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsDateString,
   IsDefined,
   IsEnum,
@@ -85,4 +87,23 @@ export class UpdateReleaseOverviewDto {
   @IsString()
   @IsNotEmpty()
   metadataLanguage?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(18)
+  grid?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMaxSize(100)
+  keywords?: string[];
+
+  @IsOptional()
+  @IsString()
+  marketingComment?: string;
 }
