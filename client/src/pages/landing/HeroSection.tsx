@@ -51,9 +51,12 @@ export default function HeroSection() {
           </p>
 
           <menu className="flex flex-wrap items-center gap-3 p-0 m-0">
-            <Button route="/auth/login" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+            <Button route="/auth/request-invitation" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
               <FontAwesomeIcon icon={faRocket} />
-              Start uploading
+              Request invitation
+            </Button>
+            <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+              Sign in
             </Button>
           </menu>
 

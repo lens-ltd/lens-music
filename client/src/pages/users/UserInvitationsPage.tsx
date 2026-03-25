@@ -11,7 +11,7 @@ import {
 } from '@/hooks/users/userInvitations.hooks';
 import { useAppSelector } from '@/state/hooks';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const UserInvitationsPage = () => {
   // STATE
@@ -30,19 +30,33 @@ const UserInvitationsPage = () => {
     setSize,
   } = useFetchUserInvitations();
 
-  // TABLE ACTIONS
-  const { handleRevoke, handleRetry, isRevoking, isRetrying } =
-    useUserInvitationTableActions();
-
-  // FETCH INVITATIONS
-  useEffect(() => {
+  const refreshInvitations = useCallback(() => {
     fetchInvitations({ page, size, ...(statusFilter ? { status: statusFilter } : {}) });
   }, [fetchInvitations, page, size, statusFilter]);
 
+  // TABLE ACTIONS
+  const {
+    handleApprove,
+    handleRevoke,
+    handleRetry,
+    isApproving,
+    isRevoking,
+    isRetrying,
+  } = useUserInvitationTableActions({
+    onSuccess: refreshInvitations,
+  });
+
+  // FETCH INVITATIONS
+  useEffect(() => {
+    refreshInvitations();
+  }, [refreshInvitations]);
+
   // COLUMNS
   const { userInvitationColumns } = useUserInvitationColumns({
+    onApprove: (id) => void handleApprove(id),
     onRevoke: (id) => void handleRevoke(id),
     onRetry: (email) => void handleRetry(email),
+    isApproving,
     isRevoking,
     isRetrying,
   });

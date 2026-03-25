@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { ReactElement } from "react";
 import Login from "./pages/authentication/Login";
+import RequestInvitation from "./pages/authentication/RequestInvitation";
 import CompleteInvitation from "./pages/authentication/CompleteInvitation";
 import ForgotPassword from "./pages/authentication/ForgotPassword";
 import ResetPassword from "./pages/authentication/ResetPassword";
@@ -45,6 +46,11 @@ const routeSeo = {
     title: "Create Account",
     description:
       "Create your Lens Music account and start distributing music, organizing contributors, and managing releases.",
+  },
+  requestInvitation: {
+    title: "Request Invitation",
+    description:
+      "Request access to Lens Music so an admin can review and send you an invitation.",
   },
   dashboard: {
     title: "Dashboard Overview",
@@ -157,6 +163,10 @@ const Router = () => {
 
         {/* AUTHENTICATION */}
         <Route path="/auth/login" element={<Login />} />
+        <Route
+          path="/auth/request-invitation"
+          element={withSeo(<RequestInvitation />, routeSeo.requestInvitation)}
+        />
         <Route
           path="/auth/invitation/:token"
           element={<CompleteInvitation />}

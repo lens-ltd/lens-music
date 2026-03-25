@@ -134,15 +134,23 @@ const Login = () => {
             <Button
               primary
               submit
-              className="w-full py-3 text-[13px] tracking-[0.03em] shadow-none mt-1 font-normal"
+              className="w-full py-3 text-[12px] tracking-[0.04em] shadow-none mt-1 font-normal"
             >
               {isLoading ? <Loader /> : 'Sign in'}
             </Button>
           </form>
 
-          <p className="text-center text-[11px] mt-5 text-[color:var(--lens-ink)]/40 font-normal">
-            Lens Music is invite-only. Reach out to your admin if you need access.
-          </p>
+          <div className="mt-5 text-center">
+            <p className="text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
+              Lens Music is invite-only. Reach out to your admin if you need access.
+            </p>
+            <Link
+              to="/auth/request-invitation"
+              className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+            >
+              Request an invitation
+            </Link>
+          </div>
         </article>
       </section>
 

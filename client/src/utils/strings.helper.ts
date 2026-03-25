@@ -146,6 +146,7 @@ export const getStatusBackgroundColor = (status?: string) => {
         'bg-yellow-800 text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;
     case 'REVIEW':
+    case 'REQUESTED':
       bgColor =
         'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
       break;

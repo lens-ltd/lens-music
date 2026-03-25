@@ -49,6 +49,15 @@ export class AuthService {
     return randomBytes(32).toString('hex');
   }
 
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+  }
+
+  private normalizeOptionalString(value?: string | null): string | null {
+    const normalized = value?.trim();
+    return normalized ? normalized : null;
+  }
+
   private getAppUrl(): string {
     return process.env.APP_URL || 'http://localhost:5173';
   }
@@ -75,6 +84,38 @@ export class AuthService {
 
   private getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
+  }
+
+  private getInvitationExpiryDate(): Date {
+    const expiresInDays = this.getInvitationExpiryDays();
+    return new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
+  }
+
+  private async sendInvitationEmail(invitation: UserInvitation): Promise<UserInvitation> {
+    if (!invitation.token || !invitation.expiresAt) {
+      throw new ValidationError(
+        'Invitation must have a token and expiry date before sending',
+        'AUTH SERVICE',
+      );
+    }
+
+    try {
+      await this.emailService.sendInvitationEmail({
+        to: invitation.email,
+        invitationUrl: `${this.getAppUrl()}/auth/invitation/${invitation.token}`,
+        expiresInDays: this.getInvitationExpiryDays(),
+      });
+    } catch (error) {
+      await this.userInvitationRepository.save({
+        ...invitation,
+        status: InvitationStatus.FAILED,
+      });
+      throw new BadGatewayException(
+        this.getErrorMessage(error) || 'Failed to send invitation email',
+      );
+    }
+
+    return invitation;
   }
 
   private collectPermissionNames(user: User): string[] {
@@ -135,17 +176,17 @@ export class AuthService {
   }
 
   async createInvitation(email: string, createdById?: string) {
-    const existingUser = await this.userService.findUserByEmail(email);
+    const normalizedEmail = this.normalizeEmail(email);
+    const existingUser = await this.userService.findUserByEmail(normalizedEmail);
     if (existingUser) {
-      throw new ConflictError('User already exists', { email }, 'AUTH SERVICE');
+      throw new ConflictError('User already exists', { email: normalizedEmail }, 'AUTH SERVICE');
     }
 
     const token = this.createToken();
-    const expiresInDays = this.getInvitationExpiryDays();
-    const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
+    const expiresAt = this.getInvitationExpiryDate();
 
     const existingInvitation = await this.userInvitationRepository.findOne({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     const invitation = existingInvitation
@@ -159,7 +200,7 @@ export class AuthService {
         })
       : await this.userInvitationRepository.save(
           this.userInvitationRepository.create({
-            email,
+            email: normalizedEmail,
             token,
             expiresAt,
             status: InvitationStatus.PENDING,
@@ -168,23 +209,57 @@ export class AuthService {
           }),
         );
 
-    try {
-      await this.emailService.sendInvitationEmail({
-        to: email,
-        invitationUrl: `${this.getAppUrl()}/auth/invitation/${token}`,
-        expiresInDays,
-      });
-    } catch (error) {
-      await this.userInvitationRepository.save({
-        ...invitation,
-        status: InvitationStatus.FAILED,
-      });
-      throw new BadGatewayException(
-        this.getErrorMessage(error) || 'Failed to send invitation email',
-      );
+    return this.sendInvitationEmail(invitation);
+  }
+
+  async requestInvitation({
+    name,
+    email,
+    phoneNumber,
+  }: {
+    name: string;
+    email: string;
+    phoneNumber?: string;
+  }): Promise<void> {
+    const normalizedEmail = this.normalizeEmail(email);
+    const normalizedName = name.trim();
+    const normalizedPhoneNumber = this.normalizeOptionalString(phoneNumber);
+
+    const existingUser = await this.userService.findUserByEmail(normalizedEmail);
+    if (existingUser) {
+      return;
     }
 
-    return invitation;
+    const existingInvitation = await this.userInvitationRepository.findOne({
+      where: { email: normalizedEmail },
+    });
+
+    if (!existingInvitation) {
+      await this.userInvitationRepository.save(
+        this.userInvitationRepository.create({
+          name: normalizedName,
+          email: normalizedEmail,
+          phoneNumber: normalizedPhoneNumber,
+          token: null,
+          expiresAt: null,
+          status: InvitationStatus.REQUESTED,
+          completedAt: null,
+        }),
+      );
+      return;
+    }
+
+    if (existingInvitation.status === InvitationStatus.REVOKED) {
+      await this.userInvitationRepository.save({
+        ...existingInvitation,
+        name: normalizedName,
+        phoneNumber: normalizedPhoneNumber,
+        token: null,
+        expiresAt: null,
+        status: InvitationStatus.REQUESTED,
+        completedAt: null,
+      });
+    }
   }
 
   async createBulkInvitations(
@@ -220,7 +295,9 @@ export class AuthService {
     const data = await this.userInvitationRepository.findAndCount({
       select: [
         'id',
+        'name',
         'email',
+        'phoneNumber',
         'expiresAt',
         'status',
         'completedAt',
@@ -239,11 +316,44 @@ export class AuthService {
   async revokeInvitation(id: string): Promise<UserInvitation> {
     const invitation = await this.userInvitationRepository.findOne({ where: { id } });
     if (!invitation) throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
-    if (invitation.status !== InvitationStatus.PENDING) {
-      throw new ValidationError('Only pending invitations can be revoked', 'AUTH SERVICE');
+    if (![InvitationStatus.PENDING, InvitationStatus.REQUESTED].includes(invitation.status)) {
+      throw new ValidationError(
+        'Only pending or requested invitations can be revoked',
+        'AUTH SERVICE',
+      );
     }
     invitation.status = InvitationStatus.REVOKED;
+    invitation.token = null;
+    invitation.expiresAt = null;
     return this.userInvitationRepository.save(invitation);
+  }
+
+  async approveInvitation(id: string, createdById?: string): Promise<UserInvitation> {
+    const invitation = await this.userInvitationRepository.findOne({ where: { id } });
+    if (!invitation) throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
+
+    if (invitation.status !== InvitationStatus.REQUESTED) {
+      throw new ValidationError(
+        'Only requested invitations can be approved',
+        'AUTH SERVICE',
+      );
+    }
+
+    const existingUser = await this.userService.findUserByEmail(invitation.email);
+    if (existingUser) {
+      throw new ConflictError('User already exists', { email: invitation.email }, 'AUTH SERVICE');
+    }
+
+    const approvedInvitation = await this.userInvitationRepository.save({
+      ...invitation,
+      token: this.createToken(),
+      expiresAt: this.getInvitationExpiryDate(),
+      status: InvitationStatus.PENDING,
+      completedAt: null,
+      createdById: createdById || invitation.createdById,
+    });
+
+    return this.sendInvitationEmail(approvedInvitation);
   }
 
   async getInvitationByToken(token: string): Promise<UserInvitation> {
@@ -251,6 +361,10 @@ export class AuthService {
 
     if (!invitation) {
       throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
+    }
+
+    if (!invitation.expiresAt) {
+      throw new ValidationError('Invitation has expired', 'AUTH SERVICE');
     }
 
     this.ensureFutureDate(invitation.expiresAt, 'Invitation has expired');

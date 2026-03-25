@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { usePagination } from '@/hooks/common/pagination.hooks';
 import { useLazyFetchInvitationsQuery } from '@/state/api/apiQuerySlice';
 import {
+  useApproveInvitationMutation,
   useCreateBulkInvitationsMutation,
   useCreateInvitationMutation,
   useRevokeInvitationMutation,
@@ -120,21 +121,43 @@ export const useCreateUserInvitations = () => {
   };
 };
 
-// USER INVITATION TABLE ACTIONS
-export const useUserInvitationTableActions = () => {
+export const useUserInvitationTableActions = ({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+} = {}) => {
+  const [approveInvitation, approveState] = useApproveInvitationMutation();
   const [createInvitation, createState] = useCreateInvitationMutation();
   const [revokeInvitation, revokeState] = useRevokeInvitationMutation();
+
+  const runOnSuccess = useCallback(() => {
+    if (onSuccess) onSuccess();
+  }, [onSuccess]);
+
+  const handleApprove = useCallback(
+    async (id: string) => {
+      try {
+        await approveInvitation(id).unwrap();
+        toast.success('Invitation approved and email sent.');
+        runOnSuccess();
+      } catch (err) {
+        toast.error(apiMessage(err, 'Could not approve invitation.'));
+      }
+    },
+    [approveInvitation, runOnSuccess],
+  );
 
   const handleRevoke = useCallback(
     async (id: string) => {
       try {
         await revokeInvitation(id).unwrap();
         toast.success('Invitation revoked.');
+        runOnSuccess();
       } catch (err) {
         toast.error(apiMessage(err, 'Could not revoke invitation.'));
       }
     },
-    [revokeInvitation],
+    [revokeInvitation, runOnSuccess],
   );
 
   const handleRetry = useCallback(
@@ -142,16 +165,19 @@ export const useUserInvitationTableActions = () => {
       try {
         await createInvitation({ email }).unwrap();
         toast.success('Invitation sent.');
+        runOnSuccess();
       } catch (err) {
         toast.error(apiMessage(err, 'Could not resend invitation.'));
       }
     },
-    [createInvitation],
+    [createInvitation, runOnSuccess],
   );
 
   return {
+    handleApprove,
     handleRevoke,
     handleRetry,
+    isApproving: approveState.isLoading,
     isRevoking: revokeState.isLoading,
     isRetrying: createState.isLoading,
   };

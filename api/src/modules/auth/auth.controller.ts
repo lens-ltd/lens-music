@@ -22,6 +22,7 @@ import { ListInvitationsQueryDto } from './dto/list-invitations-query.dto';
 import { CompleteUserInvitationDto } from './dto/complete-user-invitation.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
+import { RequestUserInvitationDto } from './dto/request-user-invitation.dto';
 import { User } from '../../entities/user.entity';
 
 @Controller('auth')
@@ -59,6 +60,20 @@ export class AuthController {
         expiresAt: invitation.expiresAt,
         status: invitation.status,
       },
+    };
+  }
+
+  @Post('invitations/request')
+  @HttpCode(HttpStatus.OK)
+  async requestInvitation(@Body() dto: RequestUserInvitationDto) {
+    const { error } = validateEmail(dto.email);
+    if (error) throw new BadRequestException(error.message);
+
+    await this.authService.requestInvitation(dto);
+
+    return {
+      message:
+        'If your request can be approved, you will receive an invitation email shortly.',
     };
   }
 
@@ -121,6 +136,25 @@ export class AuthController {
     return {
       message: 'Invitation revoked.',
       data: { id: invitation.id, email: invitation.email, status: invitation.status },
+    };
+  }
+
+  @Post('invitations/:id/approve')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  async approveInvitation(
+    @Param('id') id: string,
+    @CurrentUser() user: { id: string },
+  ) {
+    const invitation = await this.authService.approveInvitation(id, user?.id);
+
+    return {
+      message: 'Invitation approved and email sent.',
+      data: {
+        id: invitation.id,
+        email: invitation.email,
+        expiresAt: invitation.expiresAt,
+        status: invitation.status,
+      },
     };
   }
 

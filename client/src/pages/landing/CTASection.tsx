@@ -23,8 +23,11 @@ export default function CTASection() {
                 Create your Lens account to distribute to 150+ stores and monitor earnings with a clear analytics dashboard.
               </p>
               <menu className="mt-7 flex flex-wrap justify-center gap-3 p-0 m-0">
-                <Button route="/auth/login" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
-                  Start uploading
+                <Button route="/auth/request-invitation" primary className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                  Request invitation
+                </Button>
+                <Button route="/auth/login" className="px-6 py-2.5 text-[12px] tracking-[0.04em] font-normal">
+                  Sign in
                 </Button>
               </menu>
             </header>
