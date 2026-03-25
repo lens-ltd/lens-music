@@ -38,6 +38,20 @@ const TrackDetailsSummary = ({ track }: TrackDetailsSummaryProps) => {
           readOnly
         />
         <Input
+          label="Preview Duration (ms)"
+          value={track.previewDurationMs ?? "—"}
+          readOnly
+        />
+        <Input
+          label="Sound Recording Type"
+          value={
+            track.soundRecordingType
+              ? toTitleCase(track.soundRecordingType.replace(/_/g, " ").toLowerCase())
+              : "—"
+          }
+          readOnly
+        />
+        <Input
           label="Status"
           value={capitalizeString(track.status)}
           readOnly

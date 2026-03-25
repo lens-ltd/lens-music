@@ -14,6 +14,14 @@ import type {
   CreateTrackRightsControllerPayload,
   UpdateTrackRightsControllerPayload,
 } from "@/types/models/trackRightsController.types";
+import type { LabelPayload } from "@/types/models/label.types";
+import type {
+  CreateReleaseLabelPayload,
+  UpdateReleaseLabelPayload,
+} from "@/types/models/releaseLabel.types";
+import type { RelatedReleasePayload } from "@/types/models/relatedRelease.types";
+import type { ReleaseTerritoryDetailPayload } from "@/types/models/releaseTerritoryDetail.types";
+import type { UpdateStorePayload } from "@/types/models/store.types";
 
 export const apiMutationSlice = createApi({
   reducerPath: "apiMutation",
@@ -123,6 +131,28 @@ export const apiMutationSlice = createApi({
           url: "/labels",
           method: "GET",
           params: { size, page },
+        }),
+      }),
+
+      createLabel: builder.mutation({
+        query: (body: LabelPayload) => ({
+          url: "/labels",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateLabel: builder.mutation({
+        query: ({
+          id,
+          body,
+        }: {
+          id: string;
+          body: Partial<LabelPayload>;
+        }) => ({
+          url: `/labels/${id}`,
+          method: "PATCH",
+          body,
         }),
       }),
 
@@ -431,6 +461,135 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      createReleaseLabel: builder.mutation({
+        query: ({
+          releaseId,
+          body,
+        }: {
+          releaseId: string;
+          body: CreateReleaseLabelPayload;
+        }) => ({
+          url: `/releases/${releaseId}/labels`,
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateReleaseLabel: builder.mutation({
+        query: ({
+          releaseId,
+          releaseLabelId,
+          body,
+        }: {
+          releaseId: string;
+          releaseLabelId: string;
+          body: UpdateReleaseLabelPayload;
+        }) => ({
+          url: `/releases/${releaseId}/labels/${releaseLabelId}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteReleaseLabel: builder.mutation({
+        query: ({
+          releaseId,
+          releaseLabelId,
+        }: {
+          releaseId: string;
+          releaseLabelId: string;
+        }) => ({
+          url: `/releases/${releaseId}/labels/${releaseLabelId}`,
+          method: "DELETE",
+        }),
+      }),
+
+      createRelatedRelease: builder.mutation({
+        query: ({
+          releaseId,
+          body,
+        }: {
+          releaseId: string;
+          body: RelatedReleasePayload;
+        }) => ({
+          url: `/releases/${releaseId}/related-releases`,
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateRelatedRelease: builder.mutation({
+        query: ({
+          releaseId,
+          relatedReleaseId,
+          body,
+        }: {
+          releaseId: string;
+          relatedReleaseId: string;
+          body: RelatedReleasePayload;
+        }) => ({
+          url: `/releases/${releaseId}/related-releases/${relatedReleaseId}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteRelatedRelease: builder.mutation({
+        query: ({
+          releaseId,
+          relatedReleaseId,
+        }: {
+          releaseId: string;
+          relatedReleaseId: string;
+        }) => ({
+          url: `/releases/${releaseId}/related-releases/${relatedReleaseId}`,
+          method: "DELETE",
+        }),
+      }),
+
+      createReleaseTerritoryDetail: builder.mutation({
+        query: ({
+          releaseId,
+          body,
+        }: {
+          releaseId: string;
+          body: ReleaseTerritoryDetailPayload;
+        }) => ({
+          url: `/releases/${releaseId}/territory-details`,
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateReleaseTerritoryDetail: builder.mutation({
+        query: ({
+          releaseId,
+          detailId,
+          body,
+        }: {
+          releaseId: string;
+          detailId: string;
+          body: ReleaseTerritoryDetailPayload;
+        }) => ({
+          url: `/releases/${releaseId}/territory-details/${detailId}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteReleaseTerritoryDetail: builder.mutation({
+        query: ({
+          releaseId,
+          detailId,
+        }: {
+          releaseId: string;
+          detailId: string;
+        }) => ({
+          url: `/releases/${releaseId}/territory-details/${detailId}`,
+          method: "DELETE",
+        }),
+      }),
+
       createTrackRightsController: builder.mutation({
         query: ({
           trackId,
@@ -483,6 +642,20 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      updateStore: builder.mutation({
+        query: ({
+          id,
+          body,
+        }: {
+          id: string;
+          body: UpdateStorePayload;
+        }) => ({
+          url: `/stores/${id}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
       deleteReleaseStore: builder.mutation({
         query: ({ id, releaseStoreId }: { id: string; releaseStoreId: string }) => ({
           url: `/releases/${id}/stores/${releaseStoreId}`,
@@ -528,6 +701,8 @@ export const {
   useValidatePasswordResetTokenMutation,
   useConfirmPasswordResetMutation,
   useLazyListLabelsQuery,
+  useCreateLabelMutation,
+  useUpdateLabelMutation,
   useCreateGenreMutation,
   useCreateReleaseMutation,
   useDeleteReleaseMutation,
@@ -559,10 +734,20 @@ export const {
   useCreateReleaseDealMutation,
   useUpdateReleaseDealMutation,
   useDeleteReleaseDealMutation,
+  useCreateReleaseLabelMutation,
+  useUpdateReleaseLabelMutation,
+  useDeleteReleaseLabelMutation,
+  useCreateRelatedReleaseMutation,
+  useUpdateRelatedReleaseMutation,
+  useDeleteRelatedReleaseMutation,
+  useCreateReleaseTerritoryDetailMutation,
+  useUpdateReleaseTerritoryDetailMutation,
+  useDeleteReleaseTerritoryDetailMutation,
   useCreateTrackRightsControllerMutation,
   useUpdateTrackRightsControllerMutation,
   useDeleteTrackRightsControllerMutation,
   useAssignReleaseStoresMutation,
+  useUpdateStoreMutation,
   useDeleteReleaseStoreMutation,
   useCreateLyricsMutation,
   useUpdateLyricsMutation,

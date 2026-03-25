@@ -28,6 +28,8 @@ import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
 import { Genre } from "@/types/models/genre.types";
 import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
+import ReleaseLabelsSection from "./components/ReleaseLabelsSection";
+import RelatedReleasesSection from "./components/RelatedReleasesSection";
 
 interface ReleaseOverviewFormValues {
   type: ReleaseType;
@@ -702,6 +704,8 @@ const ReleaseWizardOverview = ({
             />
           </fieldset>
         </menu>
+        {release?.id ? <ReleaseLabelsSection releaseId={release.id} /> : null}
+        {release?.id ? <RelatedReleasesSection releaseId={release.id} /> : null}
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}

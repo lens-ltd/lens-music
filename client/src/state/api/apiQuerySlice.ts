@@ -234,11 +234,39 @@ export const apiQuerySlice = createApi({
         }),
       }),
 
+      getLabel: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/labels/${id}`,
+          method: "GET",
+        }),
+      }),
+
       // FETCH RELEASE STORES
       fetchReleaseStores: builder.query({
         query: ({ releaseId }: { releaseId: string }) => ({
           url: `/releases/${releaseId}/stores`,
           method: 'GET',
+        }),
+      }),
+
+      fetchReleaseLabels: builder.query({
+        query: ({ releaseId }: { releaseId: string }) => ({
+          url: `/releases/${releaseId}/labels`,
+          method: "GET",
+        }),
+      }),
+
+      fetchRelatedReleases: builder.query({
+        query: ({ releaseId }: { releaseId: string }) => ({
+          url: `/releases/${releaseId}/related-releases`,
+          method: "GET",
+        }),
+      }),
+
+      fetchReleaseTerritoryDetails: builder.query({
+        query: ({ releaseId }: { releaseId: string }) => ({
+          url: `/releases/${releaseId}/territory-details`,
+          method: "GET",
         }),
       }),
       // FETCH RELEASE CONTRIBUTORS
@@ -297,7 +325,11 @@ export const {
   useLazyFetchTrackContributorsQuery,
   useLazyFetchReleaseContributorsQuery,
   useLazyFetchStoresQuery,
+  useLazyGetLabelQuery,
   useLazyFetchReleaseStoresQuery,
+  useLazyFetchReleaseLabelsQuery,
+  useLazyFetchRelatedReleasesQuery,
+  useLazyFetchReleaseTerritoryDetailsQuery,
   useLazyFetchLyricsQuery,
   useLazyGetLyricsQuery,
 } = apiQuerySlice;

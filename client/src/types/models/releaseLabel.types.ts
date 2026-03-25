@@ -15,3 +15,14 @@ export interface ReleaseLabel extends AbstractEntity {
   release: Release;
   label: Label;
 }
+
+export interface CreateReleaseLabelPayload {
+  labelId: string;
+  type?: ReleaseLabelType;
+  ownership?: string;
+}
+
+export interface UpdateReleaseLabelPayload {
+  type?: ReleaseLabelType;
+  ownership?: string;
+}

@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { AdminGuard } from '../../common/guards/admin.guard';
 import { StoresService } from './stores.service';
 import {
   AuthUser,
@@ -31,6 +32,7 @@ export class StoresController {
   }
 
   @Patch('stores/:id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async updateStore(
     @Param('id') id: string,
     @Body() dto: UpdateStoreDto,

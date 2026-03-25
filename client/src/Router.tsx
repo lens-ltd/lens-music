@@ -28,6 +28,7 @@ import Seo, { SeoProps } from "@/components/seo/Seo";
 import UsersPage from "./pages/users/UsersPage";
 import UserInvitationsPage from "./pages/users/UserInvitationsPage";
 import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
+import StoresPage from "./pages/stores/StoresPage";
 
 type RouteSeoConfig = Omit<SeoProps, "children">;
 
@@ -61,6 +62,11 @@ const routeSeo = {
     title: "Labels",
     description:
       "View and manage record label details connected to your Lens Music distribution workflow.",
+  },
+  stores: {
+    title: "Stores",
+    description:
+      "Configure store delivery metadata and DDEX destination settings for Lens Music distribution.",
   },
   releases: {
     title: "Releases",
@@ -186,6 +192,11 @@ const Router = () => {
           <Route path="/labels">
             <Route path="" element={withSeo(<ListLabels />, routeSeo.labels)} />
           </Route>
+
+          <Route
+            path="/stores"
+            element={withSeo(<StoresPage />, routeSeo.stores)}
+          />
 
           {/* RELEASE ROUTES */}
           <Route path="/releases">

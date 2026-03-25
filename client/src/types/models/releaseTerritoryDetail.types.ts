@@ -7,3 +7,10 @@ export interface ReleaseTerritoryDetail extends AbstractEntity {
   displayArtistName?: string;
   labelName?: string;
 }
+
+export interface ReleaseTerritoryDetailPayload {
+  territory?: string;
+  title?: string;
+  displayArtistName?: string;
+  labelName?: string;
+}

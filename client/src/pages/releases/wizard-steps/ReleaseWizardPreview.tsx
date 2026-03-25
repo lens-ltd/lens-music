@@ -17,7 +17,10 @@ import PreviewOverviewSection from "./preview/PreviewOverviewSection";
 import PreviewContributorsSection from "./preview/PreviewContributorsSection";
 import PreviewTracksSection from "./preview/PreviewTracksSection";
 import PreviewTerritoriesSection from "./preview/PreviewTerritoriesSection";
+import PreviewLabelsSection from "./preview/PreviewLabelsSection";
+import PreviewRelatedReleasesSection from "./preview/PreviewRelatedReleasesSection";
 import PreviewStoresSection from "./preview/PreviewStoresSection";
+import PreviewTerritoryDetailsSection from "./preview/PreviewTerritoryDetailsSection";
 
 type ValidationResult = { valid: boolean; errors: string[] };
 
@@ -123,6 +126,9 @@ const ReleaseWizardPreview = ({
           isLoading={releaseIsFetching ?? false}
         />
         <PreviewTerritoriesSection territories={release.territories ?? []} />
+        <PreviewLabelsSection releaseId={release.id} />
+        <PreviewRelatedReleasesSection releaseId={release.id} />
+        <PreviewTerritoryDetailsSection releaseId={release.id} />
         <PreviewStoresSection releaseId={release.id} />
       </section>
       <PreviewValidationBanner

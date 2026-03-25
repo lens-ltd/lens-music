@@ -1,10 +1,12 @@
 import Button from '@/components/inputs/Button';
 import Combobox from '@/components/inputs/Combobox';
 import Input from '@/components/inputs/Input';
+import Modal from '@/components/modals/Modal';
 import {
   useCreateTrackRightsController,
   useDeleteTrackRightsController,
   useFetchTrackRightsControllers,
+  useUpdateTrackRightsController,
 } from '@/hooks/tracks/track-rights-controllers.hooks';
 import {
   TrackRightType,
@@ -34,12 +36,18 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
     useFetchTrackRightsControllers();
   const { createTrackRightsController, isLoading: isCreating } =
     useCreateTrackRightsController();
+  const { updateTrackRightsController, isLoading: isUpdating } =
+    useUpdateTrackRightsController();
   const { deleteTrackRightsController, isLoading: isDeleting } =
     useDeleteTrackRightsController();
 
   const [controllerName, setControllerName] = useState('');
   const [rightType, setRightType] = useState(TrackRightType.MAKING_AVAILABLE_RIGHT);
   const [territoriesInput, setTerritoriesInput] = useState('');
+  const [editingRow, setEditingRow] = useState<TrackRightsController | null>(null);
+  const [editControllerName, setEditControllerName] = useState('');
+  const [editRightType, setEditRightType] = useState(TrackRightType.MAKING_AVAILABLE_RIGHT);
+  const [editTerritoriesInput, setEditTerritoriesInput] = useState('');
 
   useEffect(() => {
     if (trackId) {
@@ -95,6 +103,54 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
       const msg =
         (e as { data?: { message?: string } })?.data?.message ||
         'Could not remove.';
+      toast.error(msg);
+    }
+  };
+
+  const openEdit = (row: TrackRightsController) => {
+    setEditingRow(row);
+    setEditControllerName(row.controllerName);
+    setEditRightType(row.rightType);
+    setEditTerritoriesInput(row.territories.join(', '));
+  };
+
+  const closeEdit = () => {
+    setEditingRow(null);
+    setEditControllerName('');
+    setEditRightType(TrackRightType.MAKING_AVAILABLE_RIGHT);
+    setEditTerritoriesInput('');
+  };
+
+  const handleUpdate = async () => {
+    if (!trackId || !editingRow) return;
+
+    const territories = parseTerritories(editTerritoriesInput);
+    if (!editControllerName.trim()) {
+      toast.error('Controller name is required.');
+      return;
+    }
+    if (territories.length === 0) {
+      toast.error('Enter at least one territory code.');
+      return;
+    }
+
+    try {
+      await updateTrackRightsController({
+        trackId,
+        trcId: editingRow.id,
+        body: {
+          controllerName: editControllerName.trim(),
+          rightType: editRightType,
+          territories,
+        },
+      }).unwrap();
+      toast.success('Rights controller updated.');
+      closeEdit();
+      await fetchTrackRightsControllers({ trackId });
+    } catch (e) {
+      const msg =
+        (e as { data?: { message?: string } })?.data?.message ||
+        'Could not update rights controller.';
       toast.error(msg);
     }
   };
@@ -165,19 +221,63 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                     {row.rightType} · {row.territories.join(', ')}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  disabled={isDeleting}
-                  onClick={() => void handleDelete(row.id)}
-                  className="shrink-0 text-[11px] text-red-700 hover:underline"
-                >
-                  Remove
-                </button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openEdit(row)}
+                    className="text-[11px] text-[color:var(--lens-blue)] hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isDeleting}
+                    onClick={() => void handleDelete(row.id)}
+                    className="text-[11px] text-red-700 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      <Modal
+        isOpen={Boolean(editingRow)}
+        onClose={closeEdit}
+        heading="Edit rights controller"
+        className="min-w-[min(720px,92vw)]"
+      >
+        <section className="flex flex-col gap-4 p-1">
+          <Input
+            label="Controller name"
+            value={editControllerName}
+            onChange={(e) => setEditControllerName(e.target.value)}
+          />
+          <Combobox
+            label="Right type"
+            options={rightTypeOptions}
+            value={editRightType}
+            onChange={(v) => setEditRightType(v as TrackRightType)}
+          />
+          <Input
+            label="Territories"
+            value={editTerritoriesInput}
+            onChange={(e) => setEditTerritoriesInput(e.target.value)}
+            placeholder="ISO codes, comma-separated (e.g. US, GB)"
+          />
+          <footer className="flex items-center justify-between gap-3 pt-2">
+            <Button type="button" onClick={closeEdit}>
+              Cancel
+            </Button>
+            <Button type="button" primary onClick={() => void handleUpdate()} isLoading={isUpdating}>
+              Save
+            </Button>
+          </footer>
+        </section>
+      </Modal>
     </section>
   );
 };

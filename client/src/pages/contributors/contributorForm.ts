@@ -20,6 +20,9 @@ export type ContributorFormValues = {
     status?: UserStatus;
     verificationStatus?: ContributorVerificationStatus;
     type?: ContributorType;
+    ipn?: string;
+    ipi?: string;
+    isni?: string;
     parentContributorId?: string;
     homepage?: string;
     facebook?: string;
@@ -128,6 +131,9 @@ export const buildContributorPayload = (
         verificationStatus: formValues.verificationStatus,
         profileLinks: profileLinks.length ? profileLinks : undefined,
         type: formValues.type,
+        ipn: normalizeValue(formValues.ipn),
+        ipi: normalizeValue(formValues.ipi),
+        isni: normalizeValue(formValues.isni),
         parentContributorId: normalizeValue(formValues.parentContributorId),
     };
 };
@@ -147,6 +153,9 @@ export const getContributorFormDefaults = (
         verificationStatus:
             contributor?.verificationStatus || ContributorVerificationStatus.NOT_VERIFIED,
         type: contributor?.type || ContributorType.INDIVIDUAL,
+        ipn: contributor?.ipn || "",
+        ipi: contributor?.ipi || "",
+        isni: contributor?.isni || "",
     };
 
     contributor?.profileLinks?.forEach((profileLink) => {

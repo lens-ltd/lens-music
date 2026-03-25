@@ -267,6 +267,42 @@ const CreateContributorPage = () => {
                   />
                 )}
               />
+              <Controller
+                name="ipn"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="IPN"
+                    placeholder="Interested Party Number"
+                    {...field}
+                    errorMessage={errors?.ipn?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="ipi"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="IPI"
+                    placeholder="Interested Party Information number"
+                    {...field}
+                    errorMessage={errors?.ipi?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="isni"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    label="ISNI"
+                    placeholder="International Standard Name Identifier"
+                    {...field}
+                    errorMessage={errors?.isni?.message}
+                  />
+                )}
+              />
             </fieldset>
           </section>
 

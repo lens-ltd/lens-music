@@ -15,3 +15,9 @@ export interface Store extends AbstractEntity {
   deliveryProtocol?: StoreDeliveryProtocol;
   deliveryEndpoint?: string;
 }
+
+export interface UpdateStorePayload {
+  ddexPartyId?: string;
+  deliveryProtocol?: StoreDeliveryProtocol;
+  deliveryEndpoint?: string;
+}

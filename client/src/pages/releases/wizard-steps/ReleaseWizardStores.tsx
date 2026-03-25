@@ -57,6 +57,14 @@ const ReleaseWizardStores = ({
   }, [releaseStoresResponse]);
 
   const stores: Store[] = storesResponse?.data ?? [];
+  const selectedStores = useMemo(
+    () => stores.filter((store) => selectedStoreIds.includes(store.id)),
+    [selectedStoreIds, stores],
+  );
+  const storesMissingDdex = useMemo(
+    () => selectedStores.filter((store) => !store.ddexPartyId?.trim()),
+    [selectedStores],
+  );
 
   const allSelected = useMemo(
     () => stores.length > 0 && selectedStoreIds.length === stores.length,
@@ -144,6 +152,14 @@ const ReleaseWizardStores = ({
         <span className="text-[12px] text-[color:var(--lens-ink)]/60">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
+        {storesMissingDdex.length > 0 ? (
+          <p className="text-[11px] text-amber-700">
+            {storesMissingDdex.length} selected store
+            {storesMissingDdex.length > 1 ? "s are" : " is"} missing a DDEX
+            Party ID. An admin must configure this under `/stores` before
+            validation will pass.
+          </p>
+        ) : null}
       </section>
 
       <section className="grid grid-cols-1 gap-3 rounded-xl border border-[color:var(--lens-sand)]/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -172,6 +188,15 @@ const ReleaseWizardStores = ({
               />
               <span className="text-xs leading-5 text-[color:var(--lens-ink)]">
                 {store.name}
+              </span>
+              <span
+                className={`ml-auto rounded-full px-2 py-0.5 text-[10px] ${
+                  store.ddexPartyId?.trim()
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-700'
+                }`}
+              >
+                {store.ddexPartyId?.trim() ? 'DDEX ready' : 'Missing DDEX ID'}
               </span>
             </label>
           );

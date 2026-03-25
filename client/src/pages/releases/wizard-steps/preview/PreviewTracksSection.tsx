@@ -75,6 +75,30 @@ const PreviewTracksSection = ({
       ),
     },
     {
+      accessorKey: "soundRecordingType",
+      header: "Sound Recording",
+      cell: ({ row }) => (
+        <span className="text-[12px] text-[color:var(--lens-ink)]/60">
+          {row.original.soundRecordingType
+            ? capitalizeString(
+                row.original.soundRecordingType.replace(/_/g, " ").toLowerCase(),
+              )
+            : "—"}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "previewDurationMs",
+      header: "Preview",
+      cell: ({ row }) => (
+        <span className="text-[12px] text-[color:var(--lens-ink)]/60">
+          {row.original.previewDurationMs
+            ? formatDurationMs(row.original.previewDurationMs)
+            : "—"}
+        </span>
+      ),
+    },
+    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => (

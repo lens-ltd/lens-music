@@ -82,6 +82,23 @@ const PreviewOverviewSection = ({
             <Input label="UPC" value={release.upc || "—"} readOnly />
             <Input label="Primary Genre" value={primaryGenre} readOnly />
             <Input label="Secondary Genre" value={secondaryGenre} readOnly />
+            <Input
+              label="Metadata Language"
+              value={release.metadataLanguage?.toUpperCase() || "—"}
+              readOnly
+            />
+            <Input label="GRid" value={release.grid || "—"} readOnly />
+            <Input
+              label="Keywords"
+              value={release.keywords?.join(", ") || "—"}
+              readOnly
+            />
+            <Input
+              label="Marketing Comment"
+              value={release.marketingComment || "—"}
+              readOnly
+            />
+            <Input label="Description" value={release.description || "—"} readOnly />
           </section>
         </section>
 

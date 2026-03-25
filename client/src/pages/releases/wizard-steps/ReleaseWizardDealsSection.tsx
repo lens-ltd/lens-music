@@ -5,8 +5,10 @@ import {
   useCreateReleaseDeal,
   useDeleteReleaseDeal,
   useFetchReleaseDeals,
+  useUpdateReleaseDeal,
 } from '@/hooks/releases/release-deals.hooks';
 import { useFetchStores } from '@/hooks/stores/store.hooks';
+import Modal from '@/components/modals/Modal';
 import { useAppSelector } from '@/state/hooks';
 import {
   CommercialModelType,
@@ -45,6 +47,7 @@ const ReleaseWizardDealsSection = () => {
     useFetchReleaseDeals();
   const { fetchStores, data: storesResponse } = useFetchStores();
   const { createReleaseDeal, isLoading: isCreating } = useCreateReleaseDeal();
+  const { updateReleaseDeal, isLoading: isUpdating } = useUpdateReleaseDeal();
   const { deleteReleaseDeal, isLoading: isDeleting } = useDeleteReleaseDeal();
 
   const [commercialModelType, setCommercialModelType] = useState(
@@ -57,6 +60,17 @@ const ReleaseWizardDealsSection = () => {
   const [priceType, setPriceType] = useState<DealPriceType | ''>('');
   const [priceAmount, setPriceAmount] = useState('');
   const [priceCurrency, setPriceCurrency] = useState('');
+  const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
+  const [editCommercialModelType, setEditCommercialModelType] = useState(
+    CommercialModelType.SUBSCRIPTION,
+  );
+  const [editUseType, setEditUseType] = useState(DealUseType.ON_DEMAND_STREAM);
+  const [editTerritoriesInput, setEditTerritoriesInput] = useState('');
+  const [editStartDate, setEditStartDate] = useState('');
+  const [editStoreId, setEditStoreId] = useState('');
+  const [editPriceType, setEditPriceType] = useState<DealPriceType | ''>('');
+  const [editPriceAmount, setEditPriceAmount] = useState('');
+  const [editPriceCurrency, setEditPriceCurrency] = useState('');
 
   useEffect(() => {
     fetchStores({});
@@ -145,6 +159,69 @@ const ReleaseWizardDealsSection = () => {
       const msg =
         (e as { data?: { message?: string } })?.data?.message ||
         'Could not delete deal.';
+      toast.error(msg);
+    }
+  };
+
+  const openEditDeal = (deal: Deal) => {
+    setEditingDeal(deal);
+    setEditCommercialModelType(deal.commercialModelType);
+    setEditUseType(deal.useType);
+    setEditTerritoriesInput(deal.territories.join(', '));
+    setEditStartDate(deal.startDate?.slice(0, 10) || '');
+    setEditStoreId(deal.storeId || '');
+    setEditPriceType(deal.priceType || '');
+    setEditPriceAmount(deal.priceAmount || '');
+    setEditPriceCurrency(deal.priceCurrency || '');
+  };
+
+  const closeEditDeal = () => {
+    setEditingDeal(null);
+    setEditCommercialModelType(CommercialModelType.SUBSCRIPTION);
+    setEditUseType(DealUseType.ON_DEMAND_STREAM);
+    setEditTerritoriesInput('');
+    setEditStartDate('');
+    setEditStoreId('');
+    setEditPriceType('');
+    setEditPriceAmount('');
+    setEditPriceCurrency('');
+  };
+
+  const handleUpdate = async () => {
+    if (!release?.id || !editingDeal) return;
+
+    const territories = parseTerritories(editTerritoriesInput);
+    if (territories.length === 0) {
+      toast.error('Enter at least one territory (e.g. US, GB, or WW).');
+      return;
+    }
+    if (!editStartDate) {
+      toast.error('Start date is required.');
+      return;
+    }
+
+    try {
+      await updateReleaseDeal({
+        releaseId: release.id,
+        dealId: editingDeal.id,
+        body: {
+          commercialModelType: editCommercialModelType,
+          useType: editUseType,
+          territories,
+          startDate: editStartDate,
+          storeId: editStoreId || undefined,
+          priceType: editPriceType || undefined,
+          priceAmount: editPriceAmount.trim() || undefined,
+          priceCurrency: editPriceCurrency.trim().toUpperCase() || undefined,
+        },
+      }).unwrap();
+      toast.success('Deal updated.');
+      closeEditDeal();
+      await fetchReleaseDeals({ releaseId: release.id });
+    } catch (e) {
+      const msg =
+        (e as { data?: { message?: string } })?.data?.message ||
+        'Could not update deal.';
       toast.error(msg);
     }
   };
@@ -257,19 +334,97 @@ const ReleaseWizardDealsSection = () => {
                     {deal.isActive === false ? ' · inactive' : ''}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => void handleDelete(deal.id)}
-                  disabled={isDeleting}
-                  className="shrink-0 text-[11px] text-red-700 hover:underline"
-                >
-                  Remove
-                </button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openEditDeal(deal)}
+                    className="text-[11px] text-[color:var(--lens-blue)] hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete(deal.id)}
+                    disabled={isDeleting}
+                    className="text-[11px] text-red-700 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      <Modal
+        isOpen={Boolean(editingDeal)}
+        onClose={closeEditDeal}
+        heading="Edit deal"
+        className="min-w-[min(820px,92vw)]"
+      >
+        <section className="flex flex-col gap-4 p-1">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <Combobox
+              label="Commercial model"
+              options={commercialModelOptions}
+              value={editCommercialModelType}
+              onChange={(v) => setEditCommercialModelType(v as CommercialModelType)}
+            />
+            <Combobox
+              label="Use type"
+              options={useTypeOptions}
+              value={editUseType}
+              onChange={(v) => setEditUseType(v as DealUseType)}
+            />
+            <Combobox
+              label="Store scope"
+              options={storeOptions}
+              value={editStoreId}
+              onChange={(v) => setEditStoreId(v)}
+            />
+            <Input
+              label="Territories"
+              value={editTerritoriesInput}
+              onChange={(e) => setEditTerritoriesInput(e.target.value)}
+            />
+            <Input
+              label="Start date"
+              type="date"
+              value={editStartDate}
+              onChange={(e) => setEditStartDate(e.target.value)}
+            />
+            <Combobox
+              label="Price type (optional)"
+              options={[{ value: '', label: 'None' }, ...priceTypeOptions]}
+              value={editPriceType}
+              onChange={(v) => setEditPriceType((v as DealPriceType) || '')}
+            />
+            <Input
+              label="Price amount (optional)"
+              value={editPriceAmount}
+              onChange={(e) => setEditPriceAmount(e.target.value)}
+            />
+            <Input
+              label="Currency (ISO 4217, optional)"
+              value={editPriceCurrency}
+              onChange={(e) =>
+                setEditPriceCurrency(e.target.value.slice(0, 3).toUpperCase())
+              }
+              placeholder="USD"
+            />
+          </div>
+
+          <footer className="flex items-center justify-between gap-3 pt-2">
+            <Button type="button" onClick={closeEditDeal}>
+              Cancel
+            </Button>
+            <Button type="button" primary onClick={() => void handleUpdate()} isLoading={isUpdating}>
+              Save
+            </Button>
+          </footer>
+        </section>
+      </Modal>
     </section>
   );
 };

@@ -30,6 +30,12 @@ export const labelColumns = [
       getCountryName(row?.original?.country),
   },
   {
+    header: 'DDEX Party ID',
+    accessorKey: 'ddexPartyId',
+    cell: ({ row }: { row: Row<Label> }) =>
+      row?.original?.ddexPartyId || '-',
+  },
+  {
     header: 'Last Updated',
     accessorKey: 'updatedAt',
     cell: ({ row }: { row: Row<Label> }) =>

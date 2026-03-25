@@ -12,3 +12,11 @@ export interface Label extends AbstractEntity {
   user: User;
   releases: Release[];
 }
+
+export interface LabelPayload {
+  name: string;
+  email?: string;
+  description?: string;
+  country?: string;
+  ddexPartyId?: string;
+}

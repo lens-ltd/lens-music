@@ -15,3 +15,9 @@ export interface RelatedRelease extends AbstractEntity {
   externalId?: string;
   relatedRelease?: Release;
 }
+
+export interface RelatedReleasePayload {
+  relatedReleaseId?: string;
+  relationType?: RelatedReleaseRelationType;
+  externalId?: string;
+}

@@ -1,21 +1,26 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export const MarkdownComponents = {
-    code({ inline, className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || '');
-    return !inline && match ? (
-      <SyntaxHighlighter
-        style={vscDarkPlus}
-          language={match[1]}
-          PreTag="div"
-          {...props}
-        >
-          {String(children).replace(/\n$/, '')}
-        </SyntaxHighlighter>
-      ) : (
+  code({
+    className,
+    children,
+    ...props
+  }: HTMLAttributes<HTMLElement> & {
+    inline?: boolean;
+    children?: ReactNode;
+  }) {
+    const match = /language-(\w+)/.exec(className || '');
+    const content = String(children ?? '').replace(/\n$/, '');
+
+    return match ? (
+      <pre className="overflow-x-auto rounded-md bg-slate-950 p-4 text-xs text-slate-100">
         <code className={className} {...props}>
-          {children}
+          {content}
+        </code>
+      </pre>
+    ) : (
+      <code className={className} {...props}>
+        {children}
       </code>
     );
   },

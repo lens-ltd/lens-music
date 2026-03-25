@@ -35,7 +35,8 @@ const PreviewStoresSection = ({ releaseId }: PreviewStoresSectionProps) => {
                 key={releaseStore.id}
                 className="rounded-full border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 px-2.5 py-0.5 text-[11px] text-[color:var(--lens-ink)]/70"
               >
-                {releaseStore.store?.name || 'Unknown store'}
+                {releaseStore.store?.name || 'Unknown store'} ·{' '}
+                {releaseStore.store?.ddexPartyId?.trim() ? 'DDEX ready' : 'Missing DDEX ID'}
               </li>
             ))}
           </ul>

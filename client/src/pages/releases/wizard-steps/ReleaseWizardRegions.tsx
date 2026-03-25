@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { Input as UiInput } from "@/components/ui/input";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import ReleaseTerritoryDetailsSection from "./components/ReleaseTerritoryDetailsSection";
 
 const ALL_COUNTRY_CODES = COUNTRIES_LIST.map((country) => country.code);
 
@@ -214,6 +215,11 @@ const ReleaseWizardRegions = ({
           );
         })}
       </section>
+
+      <ReleaseTerritoryDetailsSection
+        releaseId={release?.id}
+        selectedTerritories={selectedTerritories}
+      />
 
       <footer className="mt-2 flex flex-col gap-3">
         <p className="text-xs text-gray-500">
