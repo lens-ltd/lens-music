@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
@@ -11,6 +11,7 @@ import { UUID } from "../../types/common.types";
 import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { ContributorMembership } from "../../entities/contributor-membership.entity";
+import { isValidIsni, normalizeIsni } from "../../helpers/releases.helper";
 
 @Injectable()
 export class ContributorService {
@@ -37,6 +38,12 @@ export class ContributorService {
     dto: CreateContributorDto,
     createdById: UUID,
   ): Promise<Contributor> {
+    if (dto.isni?.trim()) {
+      if (!isValidIsni(dto.isni)) {
+        throw new BadRequestException("ISNI format is invalid");
+      }
+      dto.isni = normalizeIsni(dto.isni);
+    }
     const prioritizedName = this.getPrioritizedContributorName({
       displayName: dto.displayName,
       name: dto.name,
@@ -54,6 +61,9 @@ export class ContributorService {
       status: dto.status,
       verificationStatus: dto.verificationStatus,
       type: dto.type,
+      ipn: dto.ipn,
+      ipi: dto.ipi,
+      isni: dto.isni,
       createdById,
     });
 
@@ -123,6 +133,17 @@ export class ContributorService {
       throw new NotFoundException("Contributor not found");
     }
 
+    if (dto.isni !== undefined) {
+      if (dto.isni?.trim()) {
+        if (!isValidIsni(dto.isni)) {
+          throw new BadRequestException("ISNI format is invalid");
+        }
+        dto.isni = normalizeIsni(dto.isni);
+      } else {
+        dto.isni = undefined;
+      }
+    }
+
     if (dto.displayName !== undefined)
       contributor.displayName = dto.displayName;
     if (dto.name !== undefined || dto.displayName !== undefined) {
@@ -150,6 +171,9 @@ export class ContributorService {
       contributor.verificationStatus = dto.verificationStatus;
     }
     if (dto.type !== undefined) contributor.type = dto.type;
+    if (dto.ipn !== undefined) contributor.ipn = dto.ipn;
+    if (dto.ipi !== undefined) contributor.ipi = dto.ipi;
+    if (dto.isni !== undefined) contributor.isni = dto.isni;
 
     return this.contributorRepository.save(contributor);
   }

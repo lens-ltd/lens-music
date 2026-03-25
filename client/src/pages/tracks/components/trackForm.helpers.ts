@@ -1,5 +1,5 @@
 import { ReleaseParentalAdvisory } from "@/types/models/release.types";
-import { Track } from "@/types/models/track.types";
+import { SoundRecordingType, Track } from "@/types/models/track.types";
 
 export type FormField =
   | "title"
@@ -13,6 +13,8 @@ export type FormField =
   | "parentalAdvisory"
   | "primaryLanguage"
   | "previewStartMs"
+  | "previewDurationMs"
+  | "soundRecordingType"
   | "isBonusTrack"
   | "isHiddenTrack"
   | "cLineYear"
@@ -42,6 +44,8 @@ export const defaultFormValues: FormValues = {
   parentalAdvisory: ReleaseParentalAdvisory.NOT_EXPLICIT,
   primaryLanguage: "",
   previewStartMs: "",
+  previewDurationMs: "",
+  soundRecordingType: SoundRecordingType.MUSICAL_WORK_SOUND_RECORDING,
   isBonusTrack: false,
   isHiddenTrack: false,
   cLineYear: "",
@@ -63,6 +67,7 @@ export const nullableStringFields: FormField[] = [
 
 export const nullableNumberFields: FormField[] = [
   "previewStartMs",
+  "previewDurationMs",
   "cLineYear",
   "pLineYear",
 ];
@@ -81,6 +86,8 @@ export const detailFields: FormField[] = [
   "parentalAdvisory",
   "primaryLanguage",
   "previewStartMs",
+  "previewDurationMs",
+  "soundRecordingType",
 ];
 
 export const rightsFields: FormField[] = [
@@ -127,6 +134,13 @@ export const getFormDefaults = (track?: Track): FormValues => ({
     track?.previewStartMs === null || track?.previewStartMs === undefined
       ? ""
       : String(track.previewStartMs),
+  previewDurationMs:
+    track?.previewDurationMs === null || track?.previewDurationMs === undefined
+      ? ""
+      : String(track.previewDurationMs),
+  soundRecordingType:
+    track?.soundRecordingType ??
+    SoundRecordingType.MUSICAL_WORK_SOUND_RECORDING,
   isBonusTrack: track?.isBonusTrack ?? false,
   isHiddenTrack: track?.isHiddenTrack ?? false,
   cLineYear:
@@ -165,6 +179,10 @@ export const normalizeFormFieldValue = (
     return value;
   }
 
+  if (field === "soundRecordingType") {
+    return String(value);
+  }
+
   return String(value);
 };
 
@@ -178,6 +196,10 @@ export const getTrackFieldValue = (track: Track | undefined, field: FormField) =
       return track.trackNumber;
     case "previewStartMs":
       return track.previewStartMs ?? null;
+    case "previewDurationMs":
+      return track.previewDurationMs ?? null;
+    case "soundRecordingType":
+      return track.soundRecordingType ?? null;
     case "cLineYear":
       return track.cLineYear ?? null;
     case "pLineYear":

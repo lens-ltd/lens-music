@@ -14,6 +14,7 @@ import { useAppSelector } from '@/state/hooks';
 import { Store } from '@/types/models/store.types';
 import { Input as UiInput } from '@/components/ui/input';
 import { ReleaseWizardStepProps } from '../ReleaseWizardPage';
+import ReleaseWizardDealsSection from './ReleaseWizardDealsSection';
 
 const ReleaseWizardStores = ({
   currentStepName,
@@ -187,6 +188,8 @@ const ReleaseWizardStores = ({
       {storesError ? (
         <p className="text-[11px] text-red-600">{storesError}</p>
       ) : null}
+
+      <ReleaseWizardDealsSection />
 
       <footer className="w-full flex items-center justify-between gap-3">
         <Button

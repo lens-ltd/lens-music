@@ -7,6 +7,7 @@ import {
   useFetchReleaseContributors,
   useCreateReleaseContributor,
   useDeleteReleaseContributor,
+  useUpdateReleaseContributor,
 } from "@/hooks/releases/release-contributor.hooks";
 import {
   useCompleteReleaseNavigationFlow,
@@ -57,6 +58,8 @@ const ReleaseWizardManageContributions = ({
     useCreateReleaseContributor();
   const { deleteReleaseContributor, isLoading: isDeletingContributor } =
     useDeleteReleaseContributor();
+  const { updateReleaseContributor, isLoading: isUpdatingReleaseContributorSequence } =
+    useUpdateReleaseContributor();
   const [fetchContributors, { isFetching: isSearchingContributors }] =
     useLazyFetchContributorsQuery();
 
@@ -225,6 +228,35 @@ const ReleaseWizardManageContributions = ({
     [release?.id, deleteReleaseContributor, fetchReleaseContributors],
   );
 
+  const handleUpdateReleaseContributorSequence = useCallback(
+    async (releaseContributorId: string, sequenceNumber: number | undefined) => {
+      if (!release?.id || sequenceNumber === undefined || Number.isNaN(sequenceNumber)) {
+        return;
+      }
+      const existing = (releaseContributorsData?.data ?? []) as ReleaseContributor[];
+      const current = existing.find((rc) => rc.id === releaseContributorId);
+      if (current?.sequenceNumber === sequenceNumber) return;
+      try {
+        await updateReleaseContributor({
+          id: releaseContributorId,
+          body: { sequenceNumber },
+        }).unwrap();
+        await fetchReleaseContributors({ releaseId: release.id });
+      } catch (error) {
+        const errorMessage =
+          (error as { data?: { message?: string } })?.data?.message ||
+          "Unable to update order.";
+        toast.error(errorMessage);
+      }
+    },
+    [
+      fetchReleaseContributors,
+      release?.id,
+      releaseContributorsData?.data,
+      updateReleaseContributor,
+    ],
+  );
+
   const releaseContributors = (releaseContributorsData?.data ?? []) as ReleaseContributor[];
 
   return (
@@ -381,6 +413,25 @@ const ReleaseWizardManageContributions = ({
                   <p className="text-[11px] text-[color:var(--lens-ink)]/55">
                     {toTitleCase(releaseContributor?.role)}
                   </p>
+                  <label className="mt-1 flex items-center gap-2 text-[11px] text-[color:var(--lens-ink)]/70">
+                    <span className="shrink-0">Order</span>
+                    <input
+                      type="number"
+                      min={0}
+                      className="w-16 rounded border border-[color:var(--lens-sand)]/60 px-1 py-0.5 text-[11px]"
+                      defaultValue={releaseContributor.sequenceNumber ?? ""}
+                      disabled={isUpdatingReleaseContributorSequence}
+                      onBlur={(e) => {
+                        const v = e.target.value.trim();
+                        const n = v === "" ? undefined : Number(v);
+                        if (n !== undefined && Number.isNaN(n)) return;
+                        void handleUpdateReleaseContributorSequence(
+                          releaseContributor.id,
+                          n,
+                        );
+                      }}
+                    />
+                  </label>
                 </section>
                 {isDeletingContributor ? (
                   <Loader className="text-primary" />

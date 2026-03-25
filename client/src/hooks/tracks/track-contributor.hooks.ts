@@ -2,6 +2,7 @@ import { useLazyFetchTrackContributorsQuery } from "@/state/api/apiQuerySlice";
 import {
   useCreateTrackContributorMutation,
   useDeleteTrackContributorMutation,
+  useUpdateTrackContributorMutation,
 } from "@/state/api/apiMutationSlice";
 
 // FETCH TRACK CONTRIBUTORS
@@ -26,4 +27,9 @@ export const useDeleteTrackContributor = () => {
     useDeleteTrackContributorMutation();
 
   return { deleteTrackContributor, isLoading, reset, data, isSuccess, isError, error };
+};
+
+export const useUpdateTrackContributor = () => {
+  const [updateTrackContributor, meta] = useUpdateTrackContributorMutation();
+  return { updateTrackContributor, ...meta };
 };

@@ -1,5 +1,6 @@
 import { generateRandomNumber } from "./strings.helper";
 import { ReleaseType, RELEASE_TYPE_TRACK_LIMITS } from "../constants/release.constants";
+import { countriesList } from "../constants/location.constant";
 
 export const generateCatalogNumber = (length: number = 6, productionYear: number = new Date().getFullYear()) => {
     return `LNS${productionYear}${generateRandomNumber(length)}`;
@@ -67,4 +68,44 @@ export const isValidUpc = (upc: string): boolean => {
     const computedCheckDigit = (10 - (sum % 10)) % 10;
 
     return computedCheckDigit === checkDigit;
+};
+
+const ISO_3166_ALPHA_2 = new Set(
+    countriesList.map((country) => country.code.toUpperCase().trim()),
+);
+
+export const isValidIso3166Alpha2 = (code: string): boolean => {
+    return ISO_3166_ALPHA_2.has(code.toUpperCase().trim());
+};
+
+export const isValidGRid = (grid: string): boolean => {
+    return /^[A-Za-z0-9]{18}$/.test(grid.trim());
+};
+
+export const isValidIswc = (iswc: string): boolean => {
+    return /^T-\d{9}-\d$/.test(iswc.trim().toUpperCase());
+};
+
+export const normalizeIsni = (isni: string): string => {
+    return isni.replace(/[\s-]/g, "").trim();
+};
+
+export const isValidIsni = (isni: string): boolean => {
+    return /^\d{16}$/.test(normalizeIsni(isni));
+};
+
+/** DDEX display order: lower sequence first; missing sequence sorts after explicit values. */
+export const sortContributorsForDisplay = <
+    T extends { sequenceNumber?: number | null; createdAt: Date | string },
+>(
+    items: T[],
+): T[] => {
+    return [...items].sort((a, b) => {
+        const sa = a.sequenceNumber ?? Number.MAX_SAFE_INTEGER;
+        const sb = b.sequenceNumber ?? Number.MAX_SAFE_INTEGER;
+        if (sa !== sb) {
+            return sa - sb;
+        }
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
 };

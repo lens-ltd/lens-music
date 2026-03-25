@@ -13,6 +13,7 @@ import {
   useCreateTrackContributor,
   useDeleteTrackContributor,
   useFetchTrackContributors,
+  useUpdateTrackContributor,
 } from "@/hooks/tracks/track-contributor.hooks";
 import useTrackAudioUpload from "@/hooks/tracks/useTrackAudioUpload";
 import { useAppSelector } from "@/state/hooks";
@@ -36,7 +37,8 @@ import TrackAudioPanel from "./components/TrackAudioPanel";
 import TrackContributorsPanel from "./components/TrackContributorsPanel";
 import TrackDetailsForm from "./components/TrackDetailsForm";
 import TrackEditorHeader from "./components/TrackEditorHeader";
-import TrackRightsForm from "./components/TrackRightsForm";
+import TrackCopyrightLinesForm from "./components/TrackCopyrightLinesForm";
+import TrackRightsControllersPanel from "./components/TrackRightsControllersPanel";
 import {
   defaultFormValues,
   FormValues,
@@ -89,6 +91,8 @@ const ManageReleaseTrack = () => {
     useCreateTrackContributor();
   const { deleteTrackContributor, isLoading: isDeletingContributor } =
     useDeleteTrackContributor();
+  const { updateTrackContributor, isLoading: isUpdatingContributorSequence } =
+    useUpdateTrackContributor();
   const [deleteLyrics, { isLoading: isDeletingLyrics }] =
     useDeleteLyricsMutation();
   const [fetchContributors, { isFetching: isSearchingContributors }] =
@@ -330,6 +334,38 @@ const ManageReleaseTrack = () => {
     setContributorSearchResults([]);
   }, []);
 
+  const handleUpdateContributorSequence = useCallback(
+    async (trackContributorId: string, sequenceNumber: number | undefined) => {
+      if (!trackId || sequenceNumber === undefined || Number.isNaN(sequenceNumber)) {
+        return;
+      }
+      const current = trackContributorsData?.data?.find(
+        (tc: TrackContributor) => tc.id === trackContributorId,
+      );
+      if (current?.sequenceNumber === sequenceNumber) return;
+      resetValidationResult();
+      try {
+        await updateTrackContributor({
+          id: trackContributorId,
+          body: { sequenceNumber },
+        }).unwrap();
+        await fetchTrackContributors({ trackId });
+      } catch (error) {
+        const errorMessage =
+          (error as { data?: { message?: string } })?.data?.message ||
+          "Unable to update order.";
+        toast.error(errorMessage);
+      }
+    },
+    [
+      fetchTrackContributors,
+      resetValidationResult,
+      trackContributorsData?.data,
+      trackId,
+      updateTrackContributor,
+    ],
+  );
+
   const handleDeleteContributor = useCallback(
     async (trackContributorId: string) => {
       if (!trackId) return;
@@ -394,11 +430,13 @@ const ManageReleaseTrack = () => {
             onPersistField={persistFieldUpdate}
           />
 
-          <TrackRightsForm
+          <TrackCopyrightLinesForm
             control={control}
             stateLabel={rightsStateLabel}
             onPersistField={persistFieldUpdate}
           />
+
+          <TrackRightsControllersPanel trackId={trackId} />
 
           <TrackAudioPanel
             track={track}
@@ -432,6 +470,8 @@ const ManageReleaseTrack = () => {
             onSelectRole={setSelectedContributorRole}
             onAddContributor={handleAddContributor}
             onDeleteContributor={handleDeleteContributor}
+            onUpdateSequence={handleUpdateContributorSequence}
+            isUpdatingSequence={isUpdatingContributorSequence}
           />
 
           <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">

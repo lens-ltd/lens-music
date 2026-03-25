@@ -72,6 +72,10 @@ export class CreateContributorDto {
   ipi?: string;
 
   @IsOptional()
+  @IsString()
+  isni?: string;
+
+  @IsOptional()
   @IsUUID()
   parentContributorId?: UUID;
 }

@@ -13,6 +13,13 @@ export enum TrackStatus {
   TAKENDOWN = 'TAKENDOWN',
 }
 
+export enum SoundRecordingType {
+  MUSICAL_WORK_SOUND_RECORDING = 'MUSICAL_WORK_SOUND_RECORDING',
+  SPOKEN_WORD_SOUND_RECORDING = 'SPOKEN_WORD_SOUND_RECORDING',
+  SOUND_EFFECT = 'SOUND_EFFECT',
+  RINGTONE = 'RINGTONE',
+}
+
 export enum AudioFileType {
   ORIGINAL = 'ORIGINAL',
   WAV = 'WAV',
@@ -43,6 +50,7 @@ export interface TrackContributor extends AbstractEntity {
   trackId: string;
   contributorId: string;
   role: ContributorRole;
+  sequenceNumber?: number;
   contributor?: {
     id: string;
     name?: string;
@@ -65,6 +73,8 @@ export interface Track extends AbstractEntity {
   parentalAdvisory: ReleaseParentalAdvisory;
   primaryLanguage?: string;
   previewStartMs?: number;
+  previewDurationMs?: number;
+  soundRecordingType?: SoundRecordingType;
   isBonusTrack: boolean;
   isHiddenTrack: boolean;
   isInstrumental: boolean;

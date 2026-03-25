@@ -10,11 +10,14 @@ export const seedStores = async (dataSource: DataSource) => {
   for (const [index, store] of DEFAULT_DSP_STORES.entries()) {
     const existing = await storeRepo.findOne({ where: { slug: store.slug } });
 
+    const ddexPartyId = `PLACEHOLDER_${store.slug.replace(/-/g, '_').toUpperCase()}`;
+
     if (existing) {
       await storeRepo.update(existing.id, {
         name: store.name,
         sortOrder: index,
         isActive: true,
+        ddexPartyId,
       });
       continue;
     }
@@ -24,6 +27,7 @@ export const seedStores = async (dataSource: DataSource) => {
         ...store,
         sortOrder: index,
         isActive: true,
+        ddexPartyId,
       }),
     );
   }

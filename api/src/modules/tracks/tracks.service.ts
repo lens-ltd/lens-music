@@ -1,17 +1,25 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Track } from '../../entities/track.entity';
-import { AudioFile, AudioFileType } from '../../entities/audio-file.entity';
-import { TrackContributor } from '../../entities/track-contributor.entity';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
-import { RegisterAudioDto } from './dto/register-audio.dto';
-import { UUID } from '../../types/common.types';
-import { CloudinaryAudioUploaderService, UploadSignatureResult } from '../uploads/cloudinary-audio-uploader.service';
-import { TrackStatus } from '../../entities/track.entity';
-import { isValidIsrc, normalizeIsrc } from '../../helpers/tracks.helper';
-import { ContributorRole } from '../../constants/contributor.constants';
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Track } from "../../entities/track.entity";
+import { AudioFile, AudioFileType } from "../../entities/audio-file.entity";
+import { TrackContributor } from "../../entities/track-contributor.entity";
+import { CreateTrackDto } from "./dto/create-track.dto";
+import { UpdateTrackDto } from "./dto/update-track.dto";
+import { RegisterAudioDto } from "./dto/register-audio.dto";
+import { UUID } from "../../types/common.types";
+import {
+  CloudinaryAudioUploaderService,
+  UploadSignatureResult,
+} from "../uploads/cloudinary-audio-uploader.service";
+import { TrackStatus } from "../../entities/track.entity";
+import { isValidIsrc, normalizeIsrc } from "../../helpers/tracks.helper";
+import { ContributorRole } from "../../constants/contributor.constants";
+import {
+  isValidIswc,
+  sortContributorsForDisplay,
+} from "../../helpers/releases.helper";
+import { BinaryLike, createHash } from "crypto";
 
 @Injectable()
 export class TrackService {
@@ -28,20 +36,19 @@ export class TrackService {
   ) {}
 
   private normalizeTrackStringFields<T extends Partial<Track>>(track: T): T {
-    if (typeof track.primaryLanguage === 'string') {
-      track.primaryLanguage = track.primaryLanguage.trim() as T['primaryLanguage'];
+    if (typeof track.primaryLanguage === "string") {
+      track.primaryLanguage =
+        track.primaryLanguage.trim() as T["primaryLanguage"];
     }
 
-    if (typeof track.isrc === 'string') {
-      track.isrc = normalizeIsrc(track.isrc) as T['isrc'];
+    if (typeof track.isrc === "string") {
+      track.isrc = normalizeIsrc(track.isrc) as T["isrc"];
     }
 
     return track;
   }
 
-  private async parseAudioBuffer(
-    file: Express.Multer.File,
-  ): Promise<{
+  private async parseAudioBuffer(file: Express.Multer.File): Promise<{
     format: {
       sampleRate?: number;
       bitsPerSample?: number;
@@ -51,7 +58,7 @@ export class TrackService {
   } | null> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const musicMetadata = require('music-metadata') as {
+      const musicMetadata = require("music-metadata") as {
         parseBuffer: (
           buffer: Buffer,
           mimeType?: string,
@@ -80,7 +87,9 @@ export class TrackService {
   private async extractAudioMetadata(
     file: Express.Multer.File,
   ): Promise<
-    Partial<Pick<AudioFile, 'sampleRate' | 'bitDepth' | 'channels' | 'durationMs'>>
+    Partial<
+      Pick<AudioFile, "sampleRate" | "bitDepth" | "channels" | "durationMs">
+    >
   > {
     try {
       const metadata = await this.parseAudioBuffer(file);
@@ -91,19 +100,23 @@ export class TrackService {
 
       return {
         sampleRate:
-          typeof format.sampleRate === 'number' && Number.isFinite(format.sampleRate)
+          typeof format.sampleRate === "number" &&
+          Number.isFinite(format.sampleRate)
             ? Math.round(format.sampleRate)
             : undefined,
         bitDepth:
-          typeof format.bitsPerSample === 'number' && Number.isFinite(format.bitsPerSample)
+          typeof format.bitsPerSample === "number" &&
+          Number.isFinite(format.bitsPerSample)
             ? Math.round(format.bitsPerSample)
             : undefined,
         channels:
-          typeof format.numberOfChannels === 'number' && Number.isFinite(format.numberOfChannels)
+          typeof format.numberOfChannels === "number" &&
+          Number.isFinite(format.numberOfChannels)
             ? Math.round(format.numberOfChannels)
             : undefined,
         durationMs:
-          typeof format.duration === 'number' && Number.isFinite(format.duration)
+          typeof format.duration === "number" &&
+          Number.isFinite(format.duration)
             ? Math.round(format.duration * 1000)
             : undefined,
       };
@@ -118,10 +131,10 @@ export class TrackService {
   async createTrack(dto: CreateTrackDto, userId: UUID): Promise<Track> {
     const discNumber = 1;
     const raw = await this.trackRepository
-      .createQueryBuilder('track')
-      .select('MAX(track.track_number)', 'maxTrackNumber')
-      .where('track.release_id = :releaseId', { releaseId: dto.releaseId })
-      .andWhere('track.disc_number = :discNumber', { discNumber })
+      .createQueryBuilder("track")
+      .select("MAX(track.track_number)", "maxTrackNumber")
+      .where("track.release_id = :releaseId", { releaseId: dto.releaseId })
+      .andWhere("track.disc_number = :discNumber", { discNumber })
       .getRawOne<{ maxTrackNumber: string | null }>();
 
     const nextTrackNumber = Number(raw?.maxTrackNumber || 0) + 1;
@@ -143,7 +156,7 @@ export class TrackService {
     const track = await this.trackRepository.findOne({ where: { id } });
 
     if (!track) {
-      throw new NotFoundException('Track not found');
+      throw new NotFoundException("Track not found");
     }
 
     const normalizedDto = this.normalizeTrackStringFields({ ...dto });
@@ -167,70 +180,80 @@ export class TrackService {
   async validateTrack(id: UUID): Promise<{ valid: boolean; errors: string[] }> {
     const track = await this.trackRepository.findOne({
       where: { id },
-      relations: ['audioFiles', 'trackContributors'],
+      relations: ["audioFiles", "trackContributors"],
     });
 
     if (!track) {
-      throw new NotFoundException('Track not found');
+      throw new NotFoundException("Track not found");
     }
 
     const errors: string[] = [];
 
     if (!track.title) {
-      errors.push('Title is required');
+      errors.push("Title is required");
     }
 
     if (!track.primaryLanguage) {
-      errors.push('Primary language is required');
+      errors.push("Primary language is required");
     }
 
-    const normalizedIsrc = typeof track.isrc === 'string' ? normalizeIsrc(track.isrc) : undefined;
+    const normalizedIsrc =
+      typeof track.isrc === "string" ? normalizeIsrc(track.isrc) : undefined;
 
     if (!normalizedIsrc) {
-      errors.push('ISRC is required');
+      errors.push("ISRC is required");
     } else if (!isValidIsrc(normalizedIsrc)) {
-      errors.push('ISRC format is invalid');
+      errors.push("ISRC format is invalid");
     } else if (track.isrc !== normalizedIsrc) {
       track.isrc = normalizedIsrc;
     }
 
+    if (track.iswc && !isValidIswc(track.iswc)) {
+      errors.push("ISWC format is invalid");
+    }
+
     if (!track.cLineYear) {
-      errors.push('C-line year is required');
+      errors.push("C-line year is required");
     }
 
     if (!track.cLineOwner) {
-      errors.push('C-line owner is required');
+      errors.push("C-line owner is required");
     }
 
     if (!track.pLineYear) {
-      errors.push('P-line year is required');
+      errors.push("P-line year is required");
     }
 
     if (!track.pLineOwner) {
-      errors.push('P-line owner is required');
+      errors.push("P-line owner is required");
     }
 
     if (!track.audioFiles || track.audioFiles.length === 0) {
-      errors.push('At least one audio file is required');
+      errors.push("At least one audio file is required");
     } else {
       const primaryAudioFile =
-        track.audioFiles.find((audioFile) => audioFile.isPrimary) ?? track.audioFiles[0];
+        track.audioFiles.find((audioFile) => audioFile.isPrimary) ??
+        track.audioFiles[0];
 
       if (!primaryAudioFile.sampleRate) {
-        errors.push('Primary audio file sample rate is required');
+        errors.push("Primary audio file sample rate is required");
       } else if (primaryAudioFile.sampleRate < 44100) {
-        errors.push('Primary audio file sample rate must be at least 44100 Hz');
+        errors.push("Primary audio file sample rate must be at least 44100 Hz");
       }
 
       if (!primaryAudioFile.bitDepth) {
-        errors.push('Primary audio file bit depth is required');
+        errors.push("Primary audio file bit depth is required");
       } else if (primaryAudioFile.bitDepth < 16) {
-        errors.push('Primary audio file bit depth must be at least 16-bit');
+        errors.push("Primary audio file bit depth must be at least 16-bit");
+      }
+
+      if (!primaryAudioFile.checksumSha256) {
+        errors.push("Primary audio file checksum is required");
       }
     }
 
     if (!track.trackContributors || track.trackContributors.length === 0) {
-      errors.push('At least one contributor is required');
+      errors.push("At least one contributor is required");
     } else {
       const writingRoles = [
         ContributorRole.SONGWRITER,
@@ -241,7 +264,9 @@ export class TrackService {
         writingRoles.includes(tc.role),
       );
       if (!hasWritingCredit) {
-        errors.push('At least one songwriter, composer, or lyricist is required');
+        errors.push(
+          "At least one songwriter, composer, or lyricist is required",
+        );
       }
     }
 
@@ -249,10 +274,20 @@ export class TrackService {
     if (track.audioFiles && track.audioFiles.length > 0) {
       const primaryAudioFile =
         track.audioFiles.find((af) => af.isPrimary) ?? track.audioFiles[0];
-      const losslessTypes = [AudioFileType.WAV, AudioFileType.FLAC, AudioFileType.ORIGINAL];
+      const losslessTypes = [
+        AudioFileType.WAV,
+        AudioFileType.FLAC,
+        AudioFileType.ORIGINAL,
+      ];
       if (!losslessTypes.includes(primaryAudioFile.fileType)) {
-        errors.push('Primary audio file must be in a lossless format (WAV or FLAC)');
+        errors.push(
+          "Primary audio file must be in a lossless format (WAV or FLAC)",
+        );
       }
+    }
+
+    if (track.previewStartMs !== undefined && !track.previewDurationMs) {
+      track.previewDurationMs = 30000;
     }
 
     if (errors.length === 0) {
@@ -273,7 +308,7 @@ export class TrackService {
     });
 
     if (!track) {
-      throw new NotFoundException('Track not found');
+      throw new NotFoundException("Track not found");
     }
 
     const previousAudioFiles = await this.audioFileRepository.find({
@@ -288,7 +323,9 @@ export class TrackService {
 
     for (const prev of previousAudioFiles) {
       if (prev.cloudinaryPublicId) {
-        await this.cloudinaryAudioUploaderService.destroyAudio(prev.cloudinaryPublicId);
+        await this.cloudinaryAudioUploaderService.destroyAudio(
+          prev.cloudinaryPublicId,
+        );
       }
     }
 
@@ -300,6 +337,9 @@ export class TrackService {
       storagePath: uploadResult.secureUrl,
       cloudinaryPublicId: uploadResult.publicId,
       fileSizeBytes: uploadResult.bytes,
+      checksumSha256: createHash("sha256")
+        .update(file.buffer as BinaryLike)
+        .digest("hex"),
       durationMs: extractedMetadata.durationMs ?? uploadResult.durationMs,
       sampleRate: extractedMetadata.sampleRate,
       bitDepth: extractedMetadata.bitDepth,
@@ -313,7 +353,8 @@ export class TrackService {
       status: TrackStatus.DRAFT,
     };
 
-    const canonicalDurationMs = extractedMetadata.durationMs ?? uploadResult.durationMs;
+    const canonicalDurationMs =
+      extractedMetadata.durationMs ?? uploadResult.durationMs;
 
     if (canonicalDurationMs) {
       nextTrackUpdate.durationMs = canonicalDurationMs;
@@ -330,7 +371,7 @@ export class TrackService {
     });
 
     if (!track) {
-      throw new NotFoundException('Track not found');
+      throw new NotFoundException("Track not found");
     }
 
     return this.cloudinaryAudioUploaderService.generateUploadSignature(
@@ -348,7 +389,7 @@ export class TrackService {
     });
 
     if (!track) {
-      throw new NotFoundException('Track not found');
+      throw new NotFoundException("Track not found");
     }
 
     const previousAudioFiles = await this.audioFileRepository.find({
@@ -357,7 +398,9 @@ export class TrackService {
 
     for (const prev of previousAudioFiles) {
       if (prev.cloudinaryPublicId) {
-        await this.cloudinaryAudioUploaderService.destroyAudio(prev.cloudinaryPublicId);
+        await this.cloudinaryAudioUploaderService.destroyAudio(
+          prev.cloudinaryPublicId,
+        );
       }
     }
 
@@ -396,7 +439,7 @@ export class TrackService {
     });
 
     if (!audioFile) {
-      throw new NotFoundException('Audio file not found');
+      throw new NotFoundException("Audio file not found");
     }
 
     const deletedPrimary = audioFile.isPrimary;
@@ -412,7 +455,7 @@ export class TrackService {
     if (deletedPrimary) {
       const latestAudioFile = await this.audioFileRepository.findOne({
         where: { trackId },
-        order: { uploadedAt: 'DESC' },
+        order: { uploadedAt: "DESC" },
       });
 
       if (latestAudioFile) {
@@ -432,26 +475,27 @@ export class TrackService {
    * Not stored on entity — computed on demand to maintain normalization.
    */
   async computeTrackDisplayArtistName(trackId: UUID): Promise<string> {
-    const contributors = await this.trackContributorRepository.find({
-      where: { trackId },
-      relations: ['contributor'],
-      order: { createdAt: 'ASC' },
-    });
+    const contributors = sortContributorsForDisplay(
+      await this.trackContributorRepository.find({
+        where: { trackId },
+        relations: ["contributor"],
+      }),
+    );
 
     const primaryNames = contributors
       .filter((tc) => tc.role === ContributorRole.PRIMARY_ARTIST)
-      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || '')
+      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || "")
       .filter(Boolean);
 
     const featuredNames = contributors
       .filter((tc) => tc.role === ContributorRole.FEATURED_ARTIST)
-      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || '')
+      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || "")
       .filter(Boolean);
 
-    let displayName = primaryNames.join(', ');
+    let displayName = primaryNames.join(", ");
 
     if (featuredNames.length > 0) {
-      displayName += ` feat. ${featuredNames.join(', ')}`;
+      displayName += ` feat. ${featuredNames.join(", ")}`;
     }
 
     return displayName;

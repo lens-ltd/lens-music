@@ -7,6 +7,7 @@ import {
   MaxLength,
 } from "class-validator";
 import { ReleaseParentalAdvisory } from "../../../constants/release.constants";
+import { SoundRecordingType } from "../../../constants/ddex.constants";
 
 export class UpdateTrackDto {
   @IsOptional()
@@ -64,6 +65,10 @@ export class UpdateTrackDto {
   previewStartMs?: number;
 
   @IsOptional()
+  @IsInt()
+  previewDurationMs?: number;
+
+  @IsOptional()
   @IsBoolean()
   isBonusTrack?: boolean;
 
@@ -97,4 +102,8 @@ export class UpdateTrackDto {
   @IsString()
   @MaxLength(255)
   pLineOwner?: string;
+
+  @IsOptional()
+  @IsEnum(SoundRecordingType)
+  soundRecordingType?: SoundRecordingType;
 }

@@ -8,6 +8,14 @@ import {
 } from "./trackForm.helpers";
 import Combobox from "@/components/inputs/Combobox";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
+import { SoundRecordingType } from "@/types/models/track.types";
+
+const soundRecordingTypeOptions = Object.values(SoundRecordingType).map(
+  (v) => ({
+    value: v,
+    label: toTitleCase(v.replace(/_/g, " ").toLowerCase()),
+  }),
+);
 
 type TrackDetailsFormProps = {
   control: Control<FormValues>;
@@ -187,6 +195,35 @@ const TrackDetailsForm = ({
             min={0}
             placeholder="Optional"
             onBlur={() => void onPersistField("previewStartMs")}
+          />
+        )}
+      />
+      <Controller
+        name="previewDurationMs"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Preview duration (ms)"
+            type="number"
+            min={0}
+            placeholder="Optional (default 30000 if start set)"
+            onBlur={() => void onPersistField("previewDurationMs")}
+          />
+        )}
+      />
+      <Controller
+        name="soundRecordingType"
+        control={control}
+        render={({ field }) => (
+          <Combobox
+            label="Sound recording type (DDEX)"
+            options={soundRecordingTypeOptions}
+            value={String(field.value)}
+            onChange={(value) => {
+              field.onChange(value);
+              void onPersistField("soundRecordingType", value);
+            }}
           />
         )}
       />

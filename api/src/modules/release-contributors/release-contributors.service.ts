@@ -1,8 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { sortContributorsForDisplay } from "../../helpers/releases.helper";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ReleaseContributor } from "../../entities/release-contributor.entity";
 import { CreateReleaseContributorDto } from "./dto/create-release-contributor.dto";
+import { UpdateReleaseContributorDto } from "./dto/update-release-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { Release } from "../../entities/release.entity";
 import { ReleaseStatus } from "../../constants/release.constants";
@@ -58,6 +60,7 @@ export class ReleaseContributorsService {
       releaseId: dto.releaseId,
       contributorId: dto.contributorId,
       role: dto.role,
+      sequenceNumber: dto.sequenceNumber,
       createdById,
     });
 
@@ -69,12 +72,35 @@ export class ReleaseContributorsService {
     return savedReleaseContributor;
   }
 
+  async update(
+    id: UUID,
+    dto: UpdateReleaseContributorDto,
+  ): Promise<ReleaseContributor> {
+    const releaseContributor = await this.releaseContributorRepository.findOne({
+      where: { id },
+    });
+
+    if (!releaseContributor) {
+      throw new NotFoundException("Release contributor not found");
+    }
+
+    if (dto.sequenceNumber !== undefined) {
+      releaseContributor.sequenceNumber = dto.sequenceNumber;
+    }
+
+    const saved = await this.releaseContributorRepository.save(releaseContributor);
+
+    await this.resetValidatedReleaseToDraft(releaseContributor.releaseId);
+
+    return saved;
+  }
+
   async findByReleaseId(releaseId: UUID): Promise<ReleaseContributor[]> {
-    return this.releaseContributorRepository.find({
+    const rows = await this.releaseContributorRepository.find({
       where: { releaseId },
       relations: ["contributor"],
-      order: { createdAt: "ASC" },
     });
+    return sortContributorsForDisplay(rows);
   }
 
   async delete(id: UUID): Promise<void> {

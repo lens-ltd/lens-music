@@ -1,8 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { sortContributorsForDisplay } from "../../helpers/releases.helper";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { TrackContributor } from "../../entities/track-contributor.entity";
 import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
+import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { Track, TrackStatus } from "../../entities/track.entity";
 import { Contributor } from "../../entities/contributor.entity";
@@ -57,6 +59,7 @@ export class TrackContributorsService {
       trackId: dto.trackId,
       contributorId: dto.contributorId,
       role: dto.role,
+      sequenceNumber: dto.sequenceNumber,
       createdById,
     });
 
@@ -70,12 +73,37 @@ export class TrackContributorsService {
     return savedTrackContributor;
   }
 
+  async update(
+    id: UUID,
+    dto: UpdateTrackContributorDto,
+  ): Promise<TrackContributor> {
+    const trackContributor = await this.trackContributorRepository.findOne({
+      where: { id },
+    });
+
+    if (!trackContributor) {
+      throw new NotFoundException("Track contributor not found");
+    }
+
+    if (dto.sequenceNumber !== undefined) {
+      trackContributor.sequenceNumber = dto.sequenceNumber;
+    }
+
+    const saved = await this.trackContributorRepository.save(trackContributor);
+
+    await this.trackRepository.update(trackContributor.trackId, {
+      status: TrackStatus.DRAFT,
+    });
+
+    return saved;
+  }
+
   async findByTrackId(trackId: UUID): Promise<TrackContributor[]> {
-    return this.trackContributorRepository.find({
+    const rows = await this.trackContributorRepository.find({
       where: { trackId },
       relations: ["contributor"],
-      order: { createdAt: "ASC" },
     });
+    return sortContributorsForDisplay(rows);
   }
 
   async delete(id: UUID): Promise<void> {

@@ -10,7 +10,7 @@ const TrackRightsSummary = ({ track }: TrackRightsSummaryProps) => {
   if (!track) return null;
 
   return (
-    <DashboardSection title="Rights Metadata" label="Rights">
+    <DashboardSection title="Copyright lines" label="Copyright">
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Input label="C-Line Year" value={track.cLineYear ?? "—"} readOnly />
         <Input label="C-Line Owner" value={track.cLineOwner || "—"} readOnly />
