@@ -27,6 +27,10 @@ export class TrackContributor extends AbstractEntity {
   })
   role!: ContributorRole;
 
+  // SEQUENCE NUMBER (display ordering for DDEX)
+  @Column({ name: "sequence_number", type: "integer", nullable: true })
+  sequenceNumber?: number;
+
   /**
    * RELATIONS
    */

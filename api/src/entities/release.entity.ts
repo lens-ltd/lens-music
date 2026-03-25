@@ -4,6 +4,8 @@ import { Track } from "./track.entity";
 import { ReleaseNavigationFlow } from "./release-navigation-flow.entity";
 import { ReleaseGenre } from "./release-genre.entity";
 import { ReleaseStore } from "./release-store.entity";
+import { ReleaseLabel } from "./release-label.entity";
+import { Deal } from "./deal.entity";
 import {
   ReleaseParentalAdvisory,
   ReleaseRightsLine,
@@ -170,4 +172,36 @@ export class Release extends AbstractEntity {
   // RELEASE STORES
   @OneToMany(() => ReleaseStore, (releaseStore) => releaseStore.release)
   releaseStores!: ReleaseStore[];
+
+  // RELEASE LABELS
+  @OneToMany(() => ReleaseLabel, (releaseLabel) => releaseLabel.release)
+  releaseLabels!: ReleaseLabel[];
+
+  // DEALS
+  @OneToMany(() => Deal, (deal) => deal.release)
+  deals!: Deal[];
+
+  // GRid (Global Release Identifier)
+  @Column({ name: "grid", type: "varchar", length: 18, nullable: true, unique: true })
+  grid?: string;
+
+  // COVER ART CHECKSUM (SHA-256)
+  @Column({ name: "cover_art_checksum_sha256", type: "char", length: 64, nullable: true })
+  coverArtChecksumSha256?: string;
+
+  // COVER ART FILE SIZE (BYTES)
+  @Column({ name: "cover_art_file_size_bytes", type: "bigint", nullable: true })
+  coverArtFileSizeBytes?: number;
+
+  // DESCRIPTION
+  @Column({ name: "description", type: "text", nullable: true })
+  description?: string;
+
+  // KEYWORDS
+  @Column({ name: "keywords", type: "jsonb", nullable: true, default: () => "'[]'" })
+  keywords?: string[];
+
+  // MARKETING COMMENT
+  @Column({ name: "marketing_comment", type: "text", nullable: true })
+  marketingComment?: string;
 }

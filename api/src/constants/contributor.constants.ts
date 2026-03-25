@@ -21,6 +21,11 @@ export enum ContributorRole {
 
     // Creative
     ARRANGER = 'ARRANGER',
+    REMIXER = 'REMIXER',
+    DJ = 'DJ',
+    CONDUCTOR = 'CONDUCTOR',
+    CHOIR_MASTER = 'CHOIR_MASTER',
+    NARRATOR = 'NARRATOR',
 
     // Business
     PUBLISHER = 'PUBLISHER',

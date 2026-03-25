@@ -32,3 +32,14 @@ export interface ReleaseRightsLine {
   year: number;
   owner: string;
 }
+
+export const RELEASE_TYPE_TRACK_LIMITS: Record<
+  ReleaseType,
+  { min: number; max: number }
+> = {
+  [ReleaseType.SINGLE]: { min: 1, max: 3 },
+  [ReleaseType.EP]: { min: 4, max: 6 },
+  [ReleaseType.ALBUM]: { min: 7, max: Infinity },
+  [ReleaseType.COMPILATION]: { min: 1, max: Infinity },
+  [ReleaseType.MIXTAPE]: { min: 1, max: Infinity },
+};

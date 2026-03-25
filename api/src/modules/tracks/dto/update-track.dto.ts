@@ -72,6 +72,15 @@ export class UpdateTrackDto {
   isHiddenTrack?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  isInstrumental?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  audioLanguage?: string;
+
+  @IsOptional()
   @IsInt()
   cLineYear?: number;
 

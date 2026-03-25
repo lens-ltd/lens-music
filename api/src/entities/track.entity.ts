@@ -13,6 +13,7 @@ import { Lyrics } from "./lyrics.entity";
 import { AudioFile } from "./audio-file.entity";
 import { TrackContributor } from "./track-contributor.entity";
 import { ReleaseParentalAdvisory } from "../constants/release.constants";
+import { SoundRecordingType } from "../constants/ddex.constants";
 
 export enum TrackStatus {
   DRAFT = "DRAFT",
@@ -92,6 +93,14 @@ export class Track extends AbstractEntity {
   @Column({ name: "is_hidden_track", type: "boolean", nullable: false, default: false })
   isHiddenTrack!: boolean;
 
+  // INSTRUMENTAL FLAG
+  @Column({ name: "is_instrumental", type: "boolean", nullable: false, default: false })
+  isInstrumental!: boolean;
+
+  // AUDIO LANGUAGE (distinct from primaryLanguage which is lyrics language)
+  @Column({ name: "audio_language", type: "varchar", length: 5, nullable: true })
+  audioLanguage?: string;
+
   // C LINE YEAR
   @Column({ name: "c_line_year", type: "integer", nullable: true })
   cLineYear?: number;
@@ -107,6 +116,20 @@ export class Track extends AbstractEntity {
   // P LINE OWNER
   @Column({ name: "p_line_owner", type: "varchar", length: 255, nullable: true })
   pLineOwner?: string;
+
+  // SOUND RECORDING TYPE (DDEX)
+  @Column({
+    name: "sound_recording_type",
+    type: "enum",
+    enum: SoundRecordingType,
+    nullable: false,
+    default: SoundRecordingType.MUSICAL_WORK_SOUND_RECORDING,
+  })
+  soundRecordingType!: SoundRecordingType;
+
+  // PREVIEW DURATION (MILLISECONDS)
+  @Column({ name: "preview_duration_ms", type: "integer", nullable: true })
+  previewDurationMs?: number;
 
   // STATUS
   @Column({

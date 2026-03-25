@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Track } from '../../entities/track.entity';
 import { AudioFile, AudioFileType } from '../../entities/audio-file.entity';
+import { TrackContributor } from '../../entities/track-contributor.entity';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { RegisterAudioDto } from './dto/register-audio.dto';
@@ -10,6 +11,7 @@ import { UUID } from '../../types/common.types';
 import { CloudinaryAudioUploaderService, UploadSignatureResult } from '../uploads/cloudinary-audio-uploader.service';
 import { TrackStatus } from '../../entities/track.entity';
 import { isValidIsrc, normalizeIsrc } from '../../helpers/tracks.helper';
+import { ContributorRole } from '../../constants/contributor.constants';
 
 @Injectable()
 export class TrackService {
@@ -20,6 +22,8 @@ export class TrackService {
     private readonly trackRepository: Repository<Track>,
     @InjectRepository(AudioFile)
     private readonly audioFileRepository: Repository<AudioFile>,
+    @InjectRepository(TrackContributor)
+    private readonly trackContributorRepository: Repository<TrackContributor>,
     private readonly cloudinaryAudioUploaderService: CloudinaryAudioUploaderService,
   ) {}
 
@@ -227,6 +231,28 @@ export class TrackService {
 
     if (!track.trackContributors || track.trackContributors.length === 0) {
       errors.push('At least one contributor is required');
+    } else {
+      const writingRoles = [
+        ContributorRole.SONGWRITER,
+        ContributorRole.COMPOSER,
+        ContributorRole.LYRICIST,
+      ];
+      const hasWritingCredit = track.trackContributors.some((tc) =>
+        writingRoles.includes(tc.role),
+      );
+      if (!hasWritingCredit) {
+        errors.push('At least one songwriter, composer, or lyricist is required');
+      }
+    }
+
+    // Primary audio must be lossless (WAV or FLAC)
+    if (track.audioFiles && track.audioFiles.length > 0) {
+      const primaryAudioFile =
+        track.audioFiles.find((af) => af.isPrimary) ?? track.audioFiles[0];
+      const losslessTypes = [AudioFileType.WAV, AudioFileType.FLAC, AudioFileType.ORIGINAL];
+      if (!losslessTypes.includes(primaryAudioFile.fileType)) {
+        errors.push('Primary audio file must be in a lossless format (WAV or FLAC)');
+      }
     }
 
     if (errors.length === 0) {
@@ -398,5 +424,36 @@ export class TrackService {
     await this.trackRepository.update(trackId, {
       status: TrackStatus.DRAFT,
     });
+  }
+
+  /**
+   * Derives a display artist name from track contributors.
+   * Format: "Primary1, Primary2 feat. Featured1, Featured2"
+   * Not stored on entity — computed on demand to maintain normalization.
+   */
+  async computeTrackDisplayArtistName(trackId: UUID): Promise<string> {
+    const contributors = await this.trackContributorRepository.find({
+      where: { trackId },
+      relations: ['contributor'],
+      order: { createdAt: 'ASC' },
+    });
+
+    const primaryNames = contributors
+      .filter((tc) => tc.role === ContributorRole.PRIMARY_ARTIST)
+      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || '')
+      .filter(Boolean);
+
+    const featuredNames = contributors
+      .filter((tc) => tc.role === ContributorRole.FEATURED_ARTIST)
+      .map((tc) => tc.contributor?.displayName || tc.contributor?.name || '')
+      .filter(Boolean);
+
+    let displayName = primaryNames.join(', ');
+
+    if (featuredNames.length > 0) {
+      displayName += ` feat. ${featuredNames.join(', ')}`;
+    }
+
+    return displayName;
   }
 }

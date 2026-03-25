@@ -16,6 +16,9 @@ import { TrackContributorsModule } from './modules/track-contributors/track-cont
 import { ReleaseContributorsModule } from './modules/release-contributors/release-contributors.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { StoresModule } from './modules/stores/stores.module';
+import { ReleaseLabelsModule } from './modules/release-labels/release-labels.module';
+import { DealsModule } from './modules/deals/deals.module';
+import { TrackRightsControllersModule } from './modules/track-rights-controllers/track-rights-controllers.module';
 
 @Module({
   imports: [
@@ -56,6 +59,9 @@ import { StoresModule } from './modules/stores/stores.module';
     ReleaseContributorsModule,
     GenresModule,
     StoresModule,
+    ReleaseLabelsModule,
+    DealsModule,
+    TrackRightsControllersModule,
   ],
 })
 export class AppModule {}

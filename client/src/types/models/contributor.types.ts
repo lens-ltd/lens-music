@@ -57,6 +57,8 @@ export interface CreateContributorPayload {
   status?: UserStatus;
   verificationStatus?: ContributorVerificationStatus;
   type?: ContributorType;
+  ipn?: string;
+  ipi?: string;
   parentContributorId?: string;
 }
 
@@ -70,6 +72,8 @@ export interface Contributor extends Person {
   profileLinks?: ContributorProfileLink[];
   status: UserStatus;
   type?: ContributorType;
+  ipn?: string;
+  ipi?: string;
   verifiedBy: User;
 }
 

@@ -56,6 +56,18 @@ export class Contributor extends Person {
     url?: string;
   }[];
 
+  // IPN (International Performer Number)
+  @Column({ name: "ipn", type: "varchar", length: 50, nullable: true })
+  ipn?: string;
+
+  // IPI (Interested Parties Information)
+  @Column({ name: "ipi", type: "varchar", length: 50, nullable: true })
+  ipi?: string;
+
+  // ISNI (International Standard Name Identifier)
+  @Column({ name: "isni", type: "varchar", length: 16, nullable: true })
+  isni?: string;
+
   // STATUS
   @Column({
     name: "status",

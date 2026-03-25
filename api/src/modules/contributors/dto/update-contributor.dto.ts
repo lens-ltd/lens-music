@@ -62,4 +62,12 @@ export class UpdateContributorDto {
   @IsOptional()
   @IsEnum(ContributorType)
   type?: ContributorType;
+
+  @IsOptional()
+  @IsString()
+  ipn?: string;
+
+  @IsOptional()
+  @IsString()
+  ipi?: string;
 }

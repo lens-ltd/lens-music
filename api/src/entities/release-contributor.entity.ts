@@ -21,6 +21,10 @@ export class ReleaseContributor extends AbstractEntity {
     @Column({ name: 'role', type: 'enum', enum: ContributorRole, nullable: false })
     role!: ContributorRole;
 
+    // SEQUENCE NUMBER (display ordering for DDEX)
+    @Column({ name: 'sequence_number', type: 'integer', nullable: true })
+    sequenceNumber?: number;
+
     // CREATED BY ID
     @Column({ name: 'created_by_id', nullable: true, type: 'uuid' })
     createdById: UUID;

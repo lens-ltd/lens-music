@@ -67,6 +67,8 @@ export interface Track extends AbstractEntity {
   previewStartMs?: number;
   isBonusTrack: boolean;
   isHiddenTrack: boolean;
+  isInstrumental: boolean;
+  audioLanguage?: string;
   cLineYear?: number;
   cLineOwner?: string;
   pLineYear?: number;

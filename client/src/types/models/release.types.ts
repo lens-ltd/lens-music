@@ -3,6 +3,7 @@ import { User } from './user.types';
 import { Track } from './track.types';
 import { ReleaseGenre } from './releaseGenre.types';
 import { ReleaseStore } from './releaseStore.types';
+import { ReleaseLabel } from './releaseLabel.types';
 
 export enum ReleaseType {
   ALBUM = 'ALBUM',
@@ -57,4 +58,5 @@ export interface Release extends AbstractEntity {
   tracks: Track[];
   genres: ReleaseGenre[];
   releaseStores?: ReleaseStore[];
+  releaseLabels?: ReleaseLabel[];
 }
