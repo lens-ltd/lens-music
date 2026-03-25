@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
   CurrentUser,
 } from '../../common/decorators/current-user.decorator';
 import { AssignReleaseStoresDto } from './dto/assign-release-stores.dto';
+import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -26,6 +28,15 @@ export class StoresController {
   async fetchStores() {
     const stores = await this.storesService.fetchStores();
     return { message: 'Stores fetched successfully', data: stores };
+  }
+
+  @Patch('stores/:id')
+  async updateStore(
+    @Param('id') id: string,
+    @Body() dto: UpdateStoreDto,
+  ) {
+    const store = await this.storesService.updateStore(id, dto);
+    return { message: 'Store updated successfully', data: store };
   }
 
   @Post('releases/:id/stores')

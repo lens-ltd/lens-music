@@ -9,6 +9,7 @@ import { Release } from '../../entities/release.entity';
 import { ReleaseStore } from '../../entities/release-store.entity';
 import { UUID } from '../../types/common.types';
 import { AssignReleaseStoresDto } from './dto/assign-release-stores.dto';
+import { UpdateStoreDto } from './dto/update-store.dto';
 import { ReleaseStatus } from '../../constants/release.constants';
 
 @Injectable()
@@ -27,6 +28,20 @@ export class StoresService {
       where: { isActive: true },
       order: { sortOrder: 'ASC', name: 'ASC' },
     });
+  }
+
+  async updateStore(id: UUID, dto: UpdateStoreDto): Promise<Store> {
+    const store = await this.storeRepository.findOne({ where: { id } });
+
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+
+    if (dto.ddexPartyId !== undefined) store.ddexPartyId = dto.ddexPartyId?.trim() || undefined;
+    if (dto.deliveryProtocol !== undefined) store.deliveryProtocol = dto.deliveryProtocol;
+    if (dto.deliveryEndpoint !== undefined) store.deliveryEndpoint = dto.deliveryEndpoint?.trim() || undefined;
+
+    return this.storeRepository.save(store);
   }
 
   async assignReleaseStores(

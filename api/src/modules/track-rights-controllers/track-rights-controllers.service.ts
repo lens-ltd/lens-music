@@ -7,6 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { TrackRightsController } from "../../entities/track-rights-controller.entity";
 import { Track } from "../../entities/track.entity";
+import { Release } from "../../entities/release.entity";
 import { Contributor } from "../../entities/contributor.entity";
 import { Label } from "../../entities/label.entity";
 import { CreateTrackRightsControllerDto } from "./dto/create-track-rights-controller.dto";
@@ -21,6 +22,8 @@ export class TrackRightsControllersService {
     private readonly trcRepository: Repository<TrackRightsController>,
     @InjectRepository(Track)
     private readonly trackRepository: Repository<Track>,
+    @InjectRepository(Release)
+    private readonly releaseRepository: Repository<Release>,
     @InjectRepository(Contributor)
     private readonly contributorRepository: Repository<Contributor>,
     @InjectRepository(Label)
@@ -171,15 +174,10 @@ export class TrackRightsControllersService {
   }
 
   private async resetValidatedReleaseToDraft(releaseId: UUID): Promise<void> {
-    const { Repository } = await import("typeorm");
-    const release = await this.trackRepository.manager
-      .getRepository("Release")
-      .findOne({ where: { id: releaseId } }) as { id: UUID; status: string } | null;
+    const release = await this.releaseRepository.findOne({ where: { id: releaseId } });
 
     if (release?.status === ReleaseStatus.VALIDATED) {
-      await this.trackRepository.manager
-        .getRepository("Release")
-        .update(releaseId, { status: ReleaseStatus.DRAFT });
+      await this.releaseRepository.update(releaseId, { status: ReleaseStatus.DRAFT });
     }
   }
 }

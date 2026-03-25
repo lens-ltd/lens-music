@@ -4,12 +4,13 @@ import { TrackRightsController } from "../../entities/track-rights-controller.en
 import { Track } from "../../entities/track.entity";
 import { Contributor } from "../../entities/contributor.entity";
 import { Label } from "../../entities/label.entity";
+import { Release } from "../../entities/release.entity";
 import { TrackRightsControllersController } from "./track-rights-controllers.controller";
 import { TrackRightsControllersService } from "./track-rights-controllers.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TrackRightsController, Track, Contributor, Label]),
+    TypeOrmModule.forFeature([TrackRightsController, Track, Contributor, Label, Release]),
   ],
   controllers: [TrackRightsControllersController],
   providers: [TrackRightsControllersService],

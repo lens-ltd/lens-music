@@ -8,6 +8,7 @@ export interface Label extends AbstractEntity {
   description?: string;
   userId: string;
   country: string;
+  ddexPartyId?: string;
   user: User;
   releases: Release[];
 }
