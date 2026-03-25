@@ -54,6 +54,9 @@ export class ContributorService {
       status: dto.status,
       verificationStatus: dto.verificationStatus,
       type: dto.type,
+      ipn: dto.ipn,
+      ipi: dto.ipi,
+      isni: dto.isni,
       createdById,
     });
 
@@ -150,6 +153,9 @@ export class ContributorService {
       contributor.verificationStatus = dto.verificationStatus;
     }
     if (dto.type !== undefined) contributor.type = dto.type;
+    if (dto.ipn !== undefined) contributor.ipn = dto.ipn;
+    if (dto.ipi !== undefined) contributor.ipi = dto.ipi;
+    if (dto.isni !== undefined) contributor.isni = dto.isni;
 
     return this.contributorRepository.save(contributor);
   }

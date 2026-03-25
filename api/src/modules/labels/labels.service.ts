@@ -21,12 +21,14 @@ export class LabelService {
     description,
     createdById,
     country,
+    ddexPartyId,
   }: {
     name: string;
     email?: string;
     description?: string;
     createdById: UUID;
     country?: string;
+    ddexPartyId?: string;
   }): Promise<Label> {
     const userExists = await this.userService.findUserById(createdById);
     if (!userExists) throw new Error('User not found');
@@ -37,6 +39,7 @@ export class LabelService {
       description,
       createdById,
       country: country?.toUpperCase(),
+      ddexPartyId: ddexPartyId?.trim() || undefined,
     });
 
     return this.labelRepository.save(newLabel);
@@ -74,12 +77,14 @@ export class LabelService {
     email,
     description,
     country,
+    ddexPartyId,
   }: {
     id: UUID;
     name?: string;
     email?: string;
     description?: string;
     country?: string;
+    ddexPartyId?: string;
   }): Promise<Label | null> {
     const labelExists = await this.labelRepository.findOne({ where: { id } });
     if (!labelExists) return null;
@@ -88,6 +93,7 @@ export class LabelService {
     labelExists.email = email || labelExists.email;
     labelExists.description = description || labelExists.description;
     labelExists.country = country?.toUpperCase() || labelExists.country;
+    labelExists.ddexPartyId = ddexPartyId?.trim() || labelExists.ddexPartyId;
 
     return this.labelRepository.save(labelExists);
   }

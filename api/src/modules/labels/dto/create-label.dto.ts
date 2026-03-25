@@ -16,4 +16,8 @@ export class CreateLabelDto {
   @IsOptional()
   @IsString()
   country?: string;
+
+  @IsOptional()
+  @IsString()
+  ddexPartyId?: string;
 }

@@ -9,7 +9,13 @@ import { Genre } from '../../entities/genre.entity';
 import { TrackStatus } from '../../entities/track.entity';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { UUID } from '../../types/common.types';
-import { generateCatalogNumber, isValidUpc, isValidIso639Language } from '../../helpers/releases.helper';
+import {
+  generateCatalogNumber,
+  isValidGRid,
+  isValidIso3166Alpha2,
+  isValidIso639Language,
+  isValidUpc,
+} from '../../helpers/releases.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
 import { ROLES } from '../../constants/auth.constant';
@@ -25,6 +31,10 @@ import { ContributorRole } from '../../constants/contributor.constants';
 import { UpdateReleaseOverviewDto } from './dto/update-release-overview.dto';
 import { UpdateReleaseTerritoriesDto } from './dto/update-release-territories.dto';
 import { UpsertReleaseGenreDto } from './dto/upsert-release-genre.dto';
+import { Deal } from '../../entities/deal.entity';
+import { TrackRightsController } from '../../entities/track-rights-controller.entity';
+import { RightType } from '../../constants/ddex.constants';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class ReleaseService {
@@ -41,6 +51,10 @@ export class ReleaseService {
     private readonly releaseLabelRepository: Repository<ReleaseLabel>,
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
+    @InjectRepository(Deal)
+    private readonly dealRepository: Repository<Deal>,
+    @InjectRepository(TrackRightsController)
+    private readonly trackRightsControllerRepository: Repository<TrackRightsController>,
     private readonly cloudinaryImageUploaderService: CloudinaryImageUploaderService,
   ) { }
 
@@ -81,6 +95,7 @@ export class ReleaseService {
     };
     release.parentalAdvisory = dto.parentalAdvisory;
     release.primaryLanguage = dto.primaryLanguage.trim();
+    release.metadataLanguage = dto.metadataLanguage?.trim() || undefined;
     this.resetValidatedReleaseToDraft(release);
 
     return this.releaseRepository.save(release);
@@ -115,6 +130,10 @@ export class ReleaseService {
     release.coverArtUrl = uploadedCoverArt.secureUrl;
     release.coverArtWidth = uploadedCoverArt.width;
     release.coverArtHeight = uploadedCoverArt.height;
+    release.coverArtFileSizeBytes = uploadedCoverArt.bytes;
+    release.coverArtChecksumSha256 = createHash('sha256')
+      .update(file?.buffer ?? Buffer.alloc(0))
+      .digest('hex');
 
     if (uploadedCoverArt.colorMode && uploadedCoverArt.colorMode.toLowerCase() !== 'rgb') {
       throw new BadRequestException('Cover art must use RGB color mode');
@@ -294,7 +313,9 @@ export class ReleaseService {
       errors.push('Primary language must be a valid ISO 639-1 language code');
     }
 
-    if (release.metadataLanguage && !isValidIso639Language(release.metadataLanguage)) {
+    if (!release.metadataLanguage) {
+      errors.push('Metadata language is required');
+    } else if (!isValidIso639Language(release.metadataLanguage)) {
       errors.push('Metadata language must be a valid ISO 639-1 language code');
     }
 
@@ -400,10 +421,24 @@ export class ReleaseService {
     // --- Territories & Stores ---
     if (!release.territories || release.territories.length === 0) {
       errors.push('At least one territory is required');
+    } else {
+      for (const territory of release.territories) {
+        if (!isValidIso3166Alpha2(territory)) {
+          errors.push(`Invalid territory code: ${territory}`);
+        }
+      }
     }
 
     if (!release.releaseStores || release.releaseStores.length === 0) {
       errors.push('At least one store is required');
+    }
+
+    if (release.grid && !isValidGRid(release.grid)) {
+      errors.push('GRid format is invalid (must be 18 alphanumeric characters)');
+    }
+
+    if (!release.coverArtChecksumSha256) {
+      errors.push('Cover art checksum is required');
     }
 
     // --- Tracks ---
@@ -443,6 +478,19 @@ export class ReleaseService {
             `Track "${track.title}" must have at least one songwriter, composer, or lyricist`,
           );
         }
+
+        const hasMakingAvailableRight = await this.trackRightsControllerRepository.exist({
+          where: {
+            trackId: track.id,
+            rightType: RightType.MAKING_AVAILABLE_RIGHT,
+          },
+        });
+
+        if (!hasMakingAvailableRight) {
+          errors.push(
+            `Track "${track.title}" must have at least one rights controller with MAKING_AVAILABLE_RIGHT`,
+          );
+        }
       }
 
       // Parental advisory auto-derivation
@@ -475,6 +523,23 @@ export class ReleaseService {
 
     if (!hasPrimaryGenre) {
       errors.push('A primary genre is required');
+    }
+
+    const deals = await this.dealRepository.find({
+      where: { releaseId: id, isActive: true },
+    });
+
+    if (deals.length === 0) {
+      errors.push('At least one active deal is required');
+    } else {
+      for (const deal of deals) {
+        const allTerritories = [...(deal.territories || []), ...(deal.excludedTerritories || [])];
+        for (const territory of allTerritories) {
+          if (!isValidIso3166Alpha2(territory)) {
+            errors.push(`Invalid deal territory code: ${territory}`);
+          }
+        }
+      }
     }
 
     return { release, errors };

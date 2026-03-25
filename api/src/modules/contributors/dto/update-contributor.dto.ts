@@ -70,4 +70,8 @@ export class UpdateContributorDto {
   @IsOptional()
   @IsString()
   ipi?: string;
+
+  @IsOptional()
+  @IsString()
+  isni?: string;
 }

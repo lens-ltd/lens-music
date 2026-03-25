@@ -13,6 +13,7 @@ import { CreateDealDto } from "./dto/create-deal.dto";
 import { UpdateDealDto } from "./dto/update-deal.dto";
 import { UUID } from "../../types/common.types";
 import { ReleaseStatus } from "../../constants/release.constants";
+import { isValidIso3166Alpha2 } from "../../helpers/releases.helper";
 
 @Injectable()
 export class DealsService {
@@ -50,6 +51,7 @@ export class DealsService {
     if (dto.territories.length === 0) {
       throw new BadRequestException("At least one territory is required");
     }
+    this.ensureIsoTerritories(dto.territories, dto.excludedTerritories);
 
     if (dto.endDate && dto.startDate) {
       if (new Date(dto.endDate) <= new Date(dto.startDate)) {
@@ -62,6 +64,8 @@ export class DealsService {
         "Price currency is required when price amount is set",
       );
     }
+
+    await this.assertNoOverlappingDeals(releaseId, dto);
 
     const deal = this.dealRepository.create({
       releaseId,
@@ -131,6 +135,11 @@ export class DealsService {
       deal.territories = dto.territories;
     }
 
+    this.ensureIsoTerritories(
+      dto.territories ?? deal.territories,
+      dto.excludedTerritories ?? deal.excludedTerritories,
+    );
+
     const startDate = dto.startDate ?? deal.startDate;
     const endDate = dto.endDate ?? deal.endDate;
     if (endDate && startDate) {
@@ -151,6 +160,20 @@ export class DealsService {
     if (dto.takedownDate !== undefined) deal.takedownDate = dto.takedownDate || undefined;
     if (dto.takedownReason !== undefined) deal.takedownReason = dto.takedownReason?.trim() || undefined;
     if (dto.isActive !== undefined) deal.isActive = dto.isActive;
+
+    await this.assertNoOverlappingDeals(
+      releaseId,
+      {
+        storeId: deal.storeId,
+        commercialModelType: deal.commercialModelType,
+        useType: deal.useType,
+        territories: deal.territories,
+        excludedTerritories: deal.excludedTerritories,
+        startDate: deal.startDate,
+        endDate: deal.endDate,
+      },
+      deal.id,
+    );
 
     const saved = await this.dealRepository.save(deal);
     await this.resetValidatedReleaseToDraft(releaseId);
@@ -183,6 +206,87 @@ export class DealsService {
       await this.releaseRepository.update(releaseId, {
         status: ReleaseStatus.DRAFT,
       });
+    }
+  }
+
+  private ensureIsoTerritories(territories: string[], excludedTerritories?: string[]) {
+    const all = [...territories, ...(excludedTerritories ?? [])];
+    for (const territory of all) {
+      if (!isValidIso3166Alpha2(territory)) {
+        throw new BadRequestException(`Invalid territory code: ${territory}`);
+      }
+    }
+  }
+
+  private parseDateOrMax(value?: string): number {
+    return value ? new Date(value).getTime() : Number.POSITIVE_INFINITY;
+  }
+
+  private rangesOverlap(aStart: string, aEnd: string | undefined, bStart: string, bEnd: string | undefined): boolean {
+    const aStartTime = new Date(aStart).getTime();
+    const aEndTime = this.parseDateOrMax(aEnd);
+    const bStartTime = new Date(bStart).getTime();
+    const bEndTime = this.parseDateOrMax(bEnd);
+    return aStartTime <= bEndTime && bStartTime <= aEndTime;
+  }
+
+  private territoriesOverlap(
+    aTerritories: string[],
+    aExcluded: string[] | undefined,
+    bTerritories: string[],
+    bExcluded: string[] | undefined,
+  ): boolean {
+    const aExcludedSet = new Set((aExcluded ?? []).map((t) => t.toUpperCase()));
+    const bExcludedSet = new Set((bExcluded ?? []).map((t) => t.toUpperCase()));
+    const aIncluded = new Set(aTerritories.map((t) => t.toUpperCase()).filter((t) => !aExcludedSet.has(t)));
+    const bIncluded = new Set(bTerritories.map((t) => t.toUpperCase()).filter((t) => !bExcludedSet.has(t)));
+    for (const territory of aIncluded) {
+      if (bIncluded.has(territory)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private storeScopeOverlaps(aStoreId?: UUID, bStoreId?: UUID): boolean {
+    return !aStoreId || !bStoreId || aStoreId === bStoreId;
+  }
+
+  private async assertNoOverlappingDeals(
+    releaseId: UUID,
+    candidate: Pick<
+      Deal,
+      "storeId" | "commercialModelType" | "useType" | "territories" | "excludedTerritories" | "startDate" | "endDate"
+    >,
+    currentDealId?: UUID,
+  ): Promise<void> {
+    const existingDeals = await this.dealRepository.find({
+      where: { releaseId, isActive: true },
+    });
+
+    const hasConflict = existingDeals.some((deal) => {
+      if (currentDealId && deal.id === currentDealId) {
+        return false;
+      }
+      if (deal.commercialModelType !== candidate.commercialModelType || deal.useType !== candidate.useType) {
+        return false;
+      }
+      if (!this.storeScopeOverlaps(deal.storeId, candidate.storeId)) {
+        return false;
+      }
+      if (!this.rangesOverlap(deal.startDate, deal.endDate, candidate.startDate, candidate.endDate)) {
+        return false;
+      }
+      return this.territoriesOverlap(
+        deal.territories,
+        deal.excludedTerritories,
+        candidate.territories,
+        candidate.excludedTerritories,
+      );
+    });
+
+    if (hasConflict) {
+      throw new ConflictException("Overlapping deals are not allowed for the same scope");
     }
   }
 }

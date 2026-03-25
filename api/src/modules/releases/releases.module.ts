@@ -9,9 +9,22 @@ import { ReleaseGenre } from '../../entities/release-genre.entity';
 import { ReleaseLabel } from '../../entities/release-label.entity';
 import { Genre } from '../../entities/genre.entity';
 import { UploadsModule } from '../uploads/uploads.module';
+import { Deal } from '../../entities/deal.entity';
+import { TrackRightsController } from '../../entities/track-rights-controller.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Release, ReleaseContributor, ReleaseGenre, ReleaseLabel, Genre]), UploadsModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Release,
+      ReleaseContributor,
+      ReleaseGenre,
+      ReleaseLabel,
+      Genre,
+      Deal,
+      TrackRightsController,
+    ]),
+    UploadsModule,
+  ],
   controllers: [ReleasesController],
   providers: [ReleaseService, ReleaseQueryService],
 })

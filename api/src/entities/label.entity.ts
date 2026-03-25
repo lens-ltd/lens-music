@@ -30,4 +30,8 @@ export class Label extends AbstractEntity {
     default: 'RW',
   })
   country?: string;
+
+  // DDEX PARTY ID
+  @Column({ name: 'ddex_party_id', type: 'varchar', length: 50, nullable: true })
+  ddexPartyId?: string;
 }

@@ -16,4 +16,8 @@ export class UpdateLabelDto {
   @IsOptional()
   @IsString()
   country?: string;
+
+  @IsOptional()
+  @IsString()
+  ddexPartyId?: string;
 }

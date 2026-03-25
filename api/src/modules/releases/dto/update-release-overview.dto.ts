@@ -80,4 +80,9 @@ export class UpdateReleaseOverviewDto {
   @IsString()
   @IsNotEmpty()
   primaryLanguage!: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  metadataLanguage?: string;
 }

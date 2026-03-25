@@ -12,6 +12,8 @@ import { CloudinaryAudioUploaderService, UploadSignatureResult } from '../upload
 import { TrackStatus } from '../../entities/track.entity';
 import { isValidIsrc, normalizeIsrc } from '../../helpers/tracks.helper';
 import { ContributorRole } from '../../constants/contributor.constants';
+import { isValidIswc } from '../../helpers/releases.helper';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class TrackService {
@@ -194,6 +196,10 @@ export class TrackService {
       track.isrc = normalizedIsrc;
     }
 
+    if (track.iswc && !isValidIswc(track.iswc)) {
+      errors.push('ISWC format is invalid');
+    }
+
     if (!track.cLineYear) {
       errors.push('C-line year is required');
     }
@@ -227,6 +233,10 @@ export class TrackService {
       } else if (primaryAudioFile.bitDepth < 16) {
         errors.push('Primary audio file bit depth must be at least 16-bit');
       }
+
+      if (!primaryAudioFile.checksumSha256) {
+        errors.push('Primary audio file checksum is required');
+      }
     }
 
     if (!track.trackContributors || track.trackContributors.length === 0) {
@@ -253,6 +263,10 @@ export class TrackService {
       if (!losslessTypes.includes(primaryAudioFile.fileType)) {
         errors.push('Primary audio file must be in a lossless format (WAV or FLAC)');
       }
+    }
+
+    if (track.previewStartMs !== undefined && !track.previewDurationMs) {
+      track.previewDurationMs = 30000;
     }
 
     if (errors.length === 0) {
@@ -300,6 +314,7 @@ export class TrackService {
       storagePath: uploadResult.secureUrl,
       cloudinaryPublicId: uploadResult.publicId,
       fileSizeBytes: uploadResult.bytes,
+      checksumSha256: createHash('sha256').update(file.buffer).digest('hex'),
       durationMs: extractedMetadata.durationMs ?? uploadResult.durationMs,
       sampleRate: extractedMetadata.sampleRate,
       bitDepth: extractedMetadata.bitDepth,
