@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import store from "store";
 import Button from "@/components/inputs/Button";
 import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
+import { useFetchReleaseStores } from "@/hooks/releases/release-store.hooks";
 import {
   setSelectedRelease,
   setSubmitReleaseModal,
 } from "@/state/features/releaseSlice";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { ReleaseStatus } from "@/types/models/release.types";
+import { ReleaseStore } from "@/types/models/releaseStore.types";
+import { API_URL } from "@/constants/environments.constants";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import SubmitRelease from "../SubmitRelease";
 import PreviewValidationBanner from "./preview/PreviewValidationBanner";
@@ -36,10 +40,13 @@ const ReleaseWizardPreview = ({
   const { validateRelease, isLoading: isValidating } = useValidateRelease();
   const { fetchReleaseContributors, data: releaseContributorsData, isFetching: areContributorsFetching } =
     useFetchReleaseContributors();
+  const { fetchReleaseStores, data: releaseStoresData } =
+    useFetchReleaseStores();
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
   const [validationSuccessMessage, setValidationSuccessMessage] =
     useState<string | undefined>(undefined);
+  const [isDdexLoading, setIsDdexLoading] = useState(false);
 
     // COMPLETE NAVIGATION FLOW
     const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } = useCompleteReleaseNavigationFlow();
@@ -84,8 +91,54 @@ const ReleaseWizardPreview = ({
   useEffect(() => {
     if (release?.id) {
       fetchReleaseContributors({ releaseId: release.id });
+      fetchReleaseStores({ releaseId: release.id });
     }
-  }, [fetchReleaseContributors, release?.id]);
+  }, [fetchReleaseContributors, fetchReleaseStores, release?.id]);
+
+  const handleDownloadDdex = useCallback(async () => {
+    if (!release?.id) return;
+    const releaseStores: ReleaseStore[] = releaseStoresData?.data ?? [];
+    const firstStore = releaseStores.find(
+      (rs) => rs.store?.ddexPartyId?.trim()
+    );
+    if (!firstStore) {
+      toast.error("No DDEX-ready store found for this release.");
+      return;
+    }
+    setIsDdexLoading(true);
+    try {
+      const token = store.get("token");
+      const res = await fetch(
+        `${API_URL}/releases/${release.id}/ddex/ern?storeId=${firstStore.storeId}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || `Request failed (${res.status})`);
+      }
+      const json = await res.json();
+      const xml: string = json.data?.xml ?? "";
+      const blob = new Blob([xml], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ddex-ern-${release.title.replace(/\s+/g, "_")}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success("DDEX ERN payload downloaded.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to generate DDEX payload.";
+      toast.error(message);
+    } finally {
+      setIsDdexLoading(false);
+    }
+  }, [release?.id, release?.title, releaseStoresData]);
 
   if (!release) {
     return (
@@ -152,20 +205,31 @@ const ReleaseWizardPreview = ({
         >
           Back
         </Button>
-        <Button
-          primary
-          submit
-          isLoading={isValidating || completeNavigationFlowIsLoading}
-          onClick={
-            release.status === ReleaseStatus.VALIDATED
-              ? handleOpenSubmitRelease
-              : handleValidateRelease
-          }
-        >
-          {release.status === ReleaseStatus.VALIDATED
-            ? "Submit for Review"
-            : "Validate Release"}
-        </Button>
+        <div className="flex items-center gap-2">
+          {release.status === ReleaseStatus.VALIDATED && (
+            <Button
+              submit
+              isLoading={isDdexLoading}
+              onClick={handleDownloadDdex}
+            >
+              Download DDEX
+            </Button>
+          )}
+          <Button
+            primary
+            submit
+            isLoading={isValidating || completeNavigationFlowIsLoading}
+            onClick={
+              release.status === ReleaseStatus.VALIDATED
+                ? handleOpenSubmitRelease
+                : handleValidateRelease
+            }
+          >
+            {release.status === ReleaseStatus.VALIDATED
+              ? "Submit for Review"
+              : "Validate Release"}
+          </Button>
+        </div>
       </footer>
       <SubmitRelease />
     </section>
