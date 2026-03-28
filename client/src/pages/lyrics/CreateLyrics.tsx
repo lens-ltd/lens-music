@@ -12,7 +12,7 @@ import { useCreateLyricsMutation } from "@/state/api/apiMutationSlice";
 import { AppDispatch } from "@/state/store";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useCallback, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -46,6 +46,7 @@ const CreateLyrics = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<CreateLyricsFormValues>({
     defaultValues: {
       trackId: trackIdFromQuery,
@@ -61,6 +62,59 @@ const CreateLyrics = () => {
   }, [getTrack, setValue, trackIdFromQuery, track?.id, track?.title]);
 
   const { errors: validateErrors, validateLyrics } = useValidateLyrics();
+
+  const MAX_LINE_LENGTH = 70;
+
+  const cleanLyrics = useCallback(
+    (text: string) => {
+      const lines = text.split("\n");
+      const cleaned: string[] = [];
+      let consecutiveBlanks = 0;
+
+      for (const rawLine of lines) {
+        const trimmed = rawLine.trim();
+
+        if (trimmed === "") {
+          consecutiveBlanks++;
+          // Keep at most one blank line (stanza separator)
+          if (consecutiveBlanks <= 1) {
+            cleaned.push("");
+          }
+          continue;
+        }
+
+        consecutiveBlanks = 0;
+
+        if (trimmed.length <= MAX_LINE_LENGTH) {
+          cleaned.push(trimmed);
+        } else {
+          // Word-wrap long lines
+          let remaining = trimmed;
+          while (remaining.length > MAX_LINE_LENGTH) {
+            let breakAt = remaining.lastIndexOf(" ", MAX_LINE_LENGTH);
+            if (breakAt <= 0) {
+              breakAt = MAX_LINE_LENGTH;
+            }
+            cleaned.push(remaining.slice(0, breakAt).trimEnd());
+            remaining = remaining.slice(breakAt).trimStart();
+          }
+          if (remaining) {
+            cleaned.push(remaining);
+          }
+        }
+      }
+
+      // Remove leading/trailing blank lines
+      while (cleaned.length > 0 && cleaned[0] === "") cleaned.shift();
+      while (cleaned.length > 0 && cleaned[cleaned.length - 1] === "")
+        cleaned.pop();
+
+      const result = cleaned.join("\n");
+      setValue("content", result);
+      validateLyrics(result);
+    },
+    [setValue, validateLyrics],
+  );
 
   const onSubmit: SubmitHandler<CreateLyricsFormValues> = async (data) => {
     try {
@@ -169,6 +223,26 @@ const CreateLyrics = () => {
             </div>
 
             <div className="mt-4">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+                  Lyrics
+                </span>
+                <Button
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    const content = watch("content") || "";
+                    if (!content.trim()) {
+                      toast.error("No lyrics content to clean.");
+                      return;
+                    }
+                    cleanLyrics(content);
+                    toast.success("Lyrics cleaned.");
+                  }}
+                >
+                  Clean lyrics
+                </Button>
+              </div>
               <Controller
                 name="content"
                 control={control}
@@ -179,7 +253,6 @@ const CreateLyrics = () => {
                       resize
                       {...field}
                       rows={12}
-                      label="Lyrics"
                       placeholder="Enter one lyric line per row"
                       onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
                         field.onChange(event);
