@@ -48,9 +48,6 @@ export class DealsService {
       }
     }
 
-    if (dto.territories.length === 0) {
-      throw new BadRequestException("At least one territory is required");
-    }
     this.ensureIsoTerritories(dto.territories, dto.excludedTerritories);
 
     if (dto.endDate && dto.startDate) {
@@ -129,9 +126,6 @@ export class DealsService {
     }
 
     if (dto.territories !== undefined) {
-      if (dto.territories.length === 0) {
-        throw new BadRequestException("At least one territory is required");
-      }
       deal.territories = dto.territories;
     }
 

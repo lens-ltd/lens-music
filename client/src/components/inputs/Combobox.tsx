@@ -103,7 +103,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 <span
                                     className={`flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] ${value ?
                                             (selectedValueClassName || inputClassName || 'text-[12px]') :
-                                            `text-gray-500 ${inputClassName || 'text-[12px]'}`
+                                            `text-[color:var(--lens-ink)]/55 ${inputClassName || 'text-[12px]'}`
                                         }`}
                                 >
                                     {value ?

@@ -21,10 +21,9 @@ const Sidebar = () => {
   const { isOpen: sidebarOpen } = useSelector(
     (state: RootState) => state.sidebar,
   );
-  const permissions = useSelector(
-    (state: RootState) => state.user.user?.permissions,
-  );
-  const role = useSelector((state: RootState) => state.user.user?.role);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const permissions = user?.permissions;
+  const role = user?.role;
   const sidebarNavItems = useMemo(
     () => getSidebarNavigationForUser(permissions, role),
     [permissions, role],

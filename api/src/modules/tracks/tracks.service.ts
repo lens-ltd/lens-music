@@ -57,7 +57,6 @@ export class TrackService {
     };
   } | null> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const musicMetadata = require("music-metadata") as {
         parseBuffer: (
           buffer: Buffer,
@@ -416,6 +415,7 @@ export class TrackService {
       sampleRate: dto.sampleRate,
       bitDepth: dto.bitDepth,
       channels: dto.channels ?? 2,
+      checksumSha256: dto.checksumSha256,
       isPrimary: true,
       uploadedById: userId,
     });

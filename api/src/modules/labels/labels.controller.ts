@@ -50,12 +50,12 @@ export class LabelsController {
   async fetchLabels(
     @Query('size') size = '10',
     @Query('page') page = '0',
-    @Query() query: Record<string, string>,
+    @Query('searchKey') searchKey?: string,
   ) {
     const labels = await this.labelService.fetchLabels({
       size: Number(size),
       page: Number(page),
-      condition: { ...query, size: undefined, page: undefined },
+      searchKey,
     });
     return { message: 'Labels returned successfully', data: labels };
   }

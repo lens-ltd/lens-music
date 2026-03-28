@@ -57,7 +57,12 @@ export const useSyncLyricsPlayback = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
+    null,
+  );
+  const audioRef = useCallback((node: HTMLAudioElement | null) => {
+    setAudioElement(node);
+  }, []);
   const lyricsRef = useRef<HTMLDivElement | null>(null);
 
   const lyricLines = useMemo(
@@ -88,13 +93,12 @@ export const useSyncLyricsPlayback = () => {
   }, [lyricLines]);
 
   const handleTimeUpdate = useCallback(() => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
+    if (audioElement) {
+      setCurrentTime(audioElement.currentTime);
     }
-  }, []);
+  }, [audioElement]);
 
   useEffect(() => {
-    const audioElement = audioRef.current;
     if (!audioElement) {
       return undefined;
     }
@@ -111,7 +115,7 @@ export const useSyncLyricsPlayback = () => {
       audioElement.removeEventListener("pause", handlePause);
       audioElement.removeEventListener("play", handlePlay);
     };
-  }, [handleTimeUpdate]);
+  }, [audioElement, handleTimeUpdate]);
 
   useEffect(() => {
     if (!lyricsRef.current) {
@@ -129,24 +133,32 @@ export const useSyncLyricsPlayback = () => {
 
   useEffect(() => {
     const handleWindowKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "ArrowUp") {
+      const target = event.target as HTMLElement;
+      const isTextInput =
+        target.tagName === "TEXTAREA" || target.tagName === "INPUT";
+
+      if (event.code === "ArrowUp" && !isTextInput) {
         setCurrentLineIndex((previousIndex) => Math.max(previousIndex - 1, 0));
-      } else if (event.code === "ArrowDown") {
+      } else if (event.code === "ArrowDown" && !isTextInput) {
         setCurrentLineIndex((previousIndex) =>
           Math.min(previousIndex + 1, Math.max(lyricLines.length - 1, 0)),
         );
-      } else if (event.code === "Space" && isPlaying) {
+      } else if (event.code === "Space" && isPlaying && !isTextInput) {
         event.preventDefault();
+        const now = audioElement?.currentTime ?? 0;
         setSyncState((previousState) =>
           previousState.map((line) =>
             line.index === currentLineIndex
               ? {
                   ...line,
                   text: lyricLines[currentLineIndex] ?? "",
-                  time: Number(currentTime.toFixed(2)),
+                  time: Number(now.toFixed(2)),
                 }
               : line,
           ),
+        );
+        setCurrentLineIndex((previousIndex) =>
+          Math.min(previousIndex + 1, Math.max(lyricLines.length - 1, 0)),
         );
       }
     };
@@ -154,18 +166,21 @@ export const useSyncLyricsPlayback = () => {
     window.addEventListener("keydown", handleWindowKeyDown);
 
     return () => window.removeEventListener("keydown", handleWindowKeyDown);
-  }, [currentLineIndex, currentTime, isPlaying, lyricLines]);
+  }, [audioElement, currentLineIndex, isPlaying, lyricLines]);
 
-  const hydrateSyncState = useCallback((content: TimedLyricLine[]) => {
-    setPlainTextLyrics(content.map((line) => line.text).join("\n"));
-    setSyncState(toSyncLines(content));
-    setCurrentLineIndex(0);
-    setCurrentTime(0);
+  const hydrateSyncState = useCallback(
+    (content: TimedLyricLine[]) => {
+      setPlainTextLyrics(content.map((line) => line.text).join("\n"));
+      setSyncState(toSyncLines(content));
+      setCurrentLineIndex(0);
+      setCurrentTime(0);
 
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-    }
-  }, []);
+      if (audioElement) {
+        audioElement.currentTime = 0;
+      }
+    },
+    [audioElement],
+  );
 
   const clearSyncState = useCallback(() => {
     setPlainTextLyrics("");
@@ -174,36 +189,37 @@ export const useSyncLyricsPlayback = () => {
     setCurrentTime(0);
     setIsPlaying(false);
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.currentTime = 0;
     }
-  }, []);
+  }, [audioElement]);
 
   const resetPlayhead = useCallback(() => {
     setCurrentLineIndex(0);
     setCurrentTime(0);
 
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
+    if (audioElement) {
+      audioElement.currentTime = 0;
     }
-  }, []);
+  }, [audioElement]);
 
   const handleSync = useCallback(
     (index: number) => {
+      const now = audioElement?.currentTime ?? 0;
       setSyncState((previousState) =>
         previousState.map((line) =>
           line.index === index
             ? {
                 ...line,
                 text: lyricLines[index] ?? "",
-                time: Number(currentTime.toFixed(2)),
+                time: Number(now.toFixed(2)),
               }
             : line,
         ),
       );
     },
-    [currentTime, lyricLines],
+    [audioElement, lyricLines],
   );
 
   const handleResetLine = useCallback((index: number) => {

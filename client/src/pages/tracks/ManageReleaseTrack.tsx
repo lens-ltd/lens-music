@@ -48,6 +48,7 @@ import {
 } from "./components/trackForm.helpers";
 import useTrackMetadataAutosave from "./components/useTrackMetadataAutosave";
 import { Lyrics } from "@/types/models/lyrics.types";
+import { RelaxedHeading } from "@/components/text/Headings";
 
 const formatTrackLyricsLabel = (lyrics: Lyrics) => {
   const createdAt = lyrics.createdAt
@@ -336,7 +337,11 @@ const ManageReleaseTrack = () => {
 
   const handleUpdateContributorSequence = useCallback(
     async (trackContributorId: string, sequenceNumber: number | undefined) => {
-      if (!trackId || sequenceNumber === undefined || Number.isNaN(sequenceNumber)) {
+      if (
+        !trackId ||
+        sequenceNumber === undefined ||
+        Number.isNaN(sequenceNumber)
+      ) {
         return;
       }
       const current = trackContributorsData?.data?.find(
@@ -539,6 +544,36 @@ const ManageReleaseTrack = () => {
             </p>
           )}
         </article>
+
+        {validationResult && (
+          <aside
+            className={`relative rounded-md border px-4 py-3 text-[12px] ${
+              validationResult.valid
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-red-200 bg-red-50 text-red-700"
+            }`}
+            aria-live="polite"
+            id="validation-result"
+          >
+            <RelaxedHeading className="font-normal text-[color:var(--lens-ink)]">
+              {validationResult.valid
+                ? "Track is complete."
+                : "Track still needs a few required details."}
+            </RelaxedHeading>
+            {!validationResult.valid && (
+              <ul className="mt-2 list-disc space-y-1 pl-4">
+                {validationResult.errors.map((error) => (
+                  <li
+                    className="text-[12px] text-[color:var(--lens-ink)]/80"
+                    key={error}
+                  >
+                    {error}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </aside>
+        )}
 
         <footer className="flex w-full items-center justify-between gap-3">
           <Button

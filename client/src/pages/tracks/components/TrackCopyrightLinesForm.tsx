@@ -46,6 +46,7 @@ const TrackCopyrightLinesForm = ({
         render={({ field }) => (
           <Combobox
             label="C-line year"
+            required
             placeholder="Select year"
             options={yearOptions}
             value={String(field.value || "")}
@@ -63,6 +64,7 @@ const TrackCopyrightLinesForm = ({
           <Input
             {...field}
             label="C-line owner"
+            required
             placeholder="Copyright owner"
             onBlur={() => void onPersistField("cLineOwner")}
           />
@@ -74,6 +76,7 @@ const TrackCopyrightLinesForm = ({
         render={({ field }) => (
           <Combobox
             label="P-line year"
+            required
             placeholder="Select year"
             options={yearOptions}
             value={String(field.value || "")}
@@ -91,6 +94,7 @@ const TrackCopyrightLinesForm = ({
           <Input
             {...field}
             label="P-line owner"
+            required
             placeholder="Sound recording owner"
             onBlur={() => void onPersistField("pLineOwner")}
           />

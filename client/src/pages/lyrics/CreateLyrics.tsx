@@ -65,8 +65,8 @@ const CreateLyrics = () => {
   const onSubmit: SubmitHandler<CreateLyricsFormValues> = async (data) => {
     try {
       const payload = {
-        trackId: data.trackId.trim(),
-        language: data.language.trim() || "en",
+        trackId: trackIdFromQuery,
+        language: data.language || "en",
         content: data.content
           .split("\n")
           .map((line) => ({ text: line.trim() })),
@@ -74,7 +74,7 @@ const CreateLyrics = () => {
       const response = await createLyrics(payload).unwrap();
       toast.success("Lyrics created successfully.");
       navigate(
-        `/lyrics/sync?trackId=${payload.trackId}&lyricsId=${response.data.id}`,
+        `/lyrics/sync?trackId=${trackIdFromQuery}&lyricsId=${response.data.id}`,
       );
     } catch (error) {
       const errorMessage =

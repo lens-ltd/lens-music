@@ -105,10 +105,6 @@ const ReleaseWizardDealsSection = () => {
   const handleCreate = useCallback(async () => {
     if (!release?.id) return;
     const territories = parseTerritories(territoriesInput);
-    if (territories.length === 0) {
-      toast.error('Enter at least one territory (e.g. US, GB, or WW).');
-      return;
-    }
     if (!startDate) {
       toast.error('Start date is required.');
       return;
@@ -191,10 +187,6 @@ const ReleaseWizardDealsSection = () => {
     if (!release?.id || !editingDeal) return;
 
     const territories = parseTerritories(editTerritoriesInput);
-    if (territories.length === 0) {
-      toast.error('Enter at least one territory (e.g. US, GB, or WW).');
-      return;
-    }
     if (!editStartDate) {
       toast.error('Start date is required.');
       return;
@@ -234,8 +226,8 @@ const ReleaseWizardDealsSection = () => {
         </h3>
         <p className="text-[12px] text-[color:var(--lens-ink)]/55">
           At least one active deal is required before validation. Use a global
-          deal (all stores) or add a deal per DSP. Territories: ISO 3166-1
-          alpha-2 codes only (list each country), comma-separated.
+          deal (all stores) or add a deal per DSP. Leave territories empty for
+          worldwide, or enter ISO 3166-1 alpha-2 codes comma-separated.
         </p>
       </header>
 
@@ -262,7 +254,7 @@ const ReleaseWizardDealsSection = () => {
           label="Territories"
           value={territoriesInput}
           onChange={(e) => setTerritoriesInput(e.target.value)}
-          placeholder="e.g. US, CA, GB (ISO 3166-1 alpha-2)"
+          placeholder="Leave empty for worldwide, or e.g. US, CA, GB"
         />
         <Input
           label="Start date"
@@ -324,7 +316,7 @@ const ReleaseWizardDealsSection = () => {
                     {deal.commercialModelType} · {deal.useType}
                   </p>
                   <p className="text-[11px] text-[color:var(--lens-ink)]/55">
-                    {deal.territories.join(', ')}
+                    {deal.territories.length > 0 ? deal.territories.join(', ') : 'Worldwide'}
                     {deal.store?.name
                       ? ` · Store: ${deal.store.name}`
                       : ' · All stores'}

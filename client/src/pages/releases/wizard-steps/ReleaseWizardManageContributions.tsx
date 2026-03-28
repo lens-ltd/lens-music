@@ -16,9 +16,15 @@ import {
 import { useAppSelector } from "@/state/hooks";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 import { Contributor } from "@/types/models/contributor.types";
-import { ContributorRole, ReleaseContributor } from "@/types/models/releaseContributor.types";
+import {
+  ContributorRole,
+  ReleaseContributor,
+} from "@/types/models/releaseContributor.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { MIN_CONTRIBUTOR_SEARCH_CHARS, toTitleCase } from "@/pages/tracks/components/trackForm.helpers";
+import {
+  MIN_CONTRIBUTOR_SEARCH_CHARS,
+  toTitleCase,
+} from "@/pages/tracks/components/trackForm.helpers";
 import {
   faExternalLinkAlt,
   faSearch,
@@ -47,10 +53,14 @@ const ReleaseWizardManageContributions = ({
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
-    useCreateReleaseNavigationFlow();
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  const {
+    createReleaseNavigationFlow,
+    isLoading: createNavigationFlowIsLoading,
+  } = useCreateReleaseNavigationFlow();
+  const {
+    completeReleaseNavigationFlow,
+    isLoading: completeNavigationFlowIsLoading,
+  } = useCompleteReleaseNavigationFlow();
 
   const { fetchReleaseContributors, data: releaseContributorsData } =
     useFetchReleaseContributors();
@@ -58,19 +68,23 @@ const ReleaseWizardManageContributions = ({
     useCreateReleaseContributor();
   const { deleteReleaseContributor, isLoading: isDeletingContributor } =
     useDeleteReleaseContributor();
-  const { updateReleaseContributor, isLoading: isUpdatingReleaseContributorSequence } =
-    useUpdateReleaseContributor();
+  const {
+    updateReleaseContributor,
+    isLoading: isUpdatingReleaseContributorSequence,
+  } = useUpdateReleaseContributor();
   const [fetchContributors, { isFetching: isSearchingContributors }] =
     useLazyFetchContributorsQuery();
 
   const [selectedContributorId, setSelectedContributorId] = useState("");
-  const [selectedContributorRole, setSelectedContributorRole] = useState<ContributorRole>(
-    ContributorRole.PRIMARY_ARTIST,
-  );
+  const [selectedContributorRole, setSelectedContributorRole] =
+    useState<ContributorRole>(ContributorRole.PRIMARY_ARTIST);
   const [selectedContributorLabel, setSelectedContributorLabel] = useState("");
   const [contributorSearchTerm, setContributorSearchTerm] = useState("");
-  const [contributorSearchResults, setContributorSearchResults] = useState<Contributor[]>([]);
-  const [isContributorSearchPending, setIsContributorSearchPending] = useState(false);
+  const [contributorSearchResults, setContributorSearchResults] = useState<
+    Contributor[]
+  >([]);
+  const [isContributorSearchPending, setIsContributorSearchPending] =
+    useState(false);
   const latestSearchRequestRef = useRef(0);
 
   useEffect(() => {
@@ -88,7 +102,10 @@ const ReleaseWizardManageContributions = ({
       return;
     }
 
-    if (selectedContributorId && selectedContributorLabel === trimmedSearchTerm) {
+    if (
+      selectedContributorId &&
+      selectedContributorLabel === trimmedSearchTerm
+    ) {
       setIsContributorSearchPending(false);
       return;
     }
@@ -152,13 +169,16 @@ const ReleaseWizardManageContributions = ({
     setContributorSearchResults([]);
   }, []);
 
-  const handleContributorSearchChange = useCallback((value: string) => {
-    setContributorSearchTerm(value);
-    if (selectedContributorId) {
-      setSelectedContributorId("");
-      setSelectedContributorLabel("");
-    }
-  }, [selectedContributorId]);
+  const handleContributorSearchChange = useCallback(
+    (value: string) => {
+      setContributorSearchTerm(value);
+      if (selectedContributorId) {
+        setSelectedContributorId("");
+        setSelectedContributorLabel("");
+      }
+    },
+    [selectedContributorId],
+  );
 
   const handleAddContributor = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -168,7 +188,8 @@ const ReleaseWizardManageContributions = ({
         return;
       }
 
-      const existing = (releaseContributorsData?.data ?? []) as ReleaseContributor[];
+      const existing = (releaseContributorsData?.data ??
+        []) as ReleaseContributor[];
       const isDuplicate = existing.some(
         (rc) =>
           rc.contributorId === selectedContributorId &&
@@ -229,11 +250,19 @@ const ReleaseWizardManageContributions = ({
   );
 
   const handleUpdateReleaseContributorSequence = useCallback(
-    async (releaseContributorId: string, sequenceNumber: number | undefined) => {
-      if (!release?.id || sequenceNumber === undefined || Number.isNaN(sequenceNumber)) {
+    async (
+      releaseContributorId: string,
+      sequenceNumber: number | undefined,
+    ) => {
+      if (
+        !release?.id ||
+        sequenceNumber === undefined ||
+        Number.isNaN(sequenceNumber)
+      ) {
         return;
       }
-      const existing = (releaseContributorsData?.data ?? []) as ReleaseContributor[];
+      const existing = (releaseContributorsData?.data ??
+        []) as ReleaseContributor[];
       const current = existing.find((rc) => rc.id === releaseContributorId);
       if (current?.sequenceNumber === sequenceNumber) return;
       try {
@@ -257,7 +286,8 @@ const ReleaseWizardManageContributions = ({
     ],
   );
 
-  const releaseContributors = (releaseContributorsData?.data ?? []) as ReleaseContributor[];
+  const releaseContributors = (releaseContributorsData?.data ??
+    []) as ReleaseContributor[];
 
   return (
     <section className="flex w-full flex-col gap-4">
@@ -414,11 +444,11 @@ const ReleaseWizardManageContributions = ({
                     {toTitleCase(releaseContributor?.role)}
                   </p>
                   <label className="mt-1 flex items-center gap-2 text-[11px] text-[color:var(--lens-ink)]/70">
-                    <span className="shrink-0">Order</span>
+                    <span className="shrink-0 text-[11px]">Order</span>
                     <input
                       type="number"
                       min={0}
-                      className="w-16 rounded border border-[color:var(--lens-sand)]/60 px-1 py-0.5 text-[11px]"
+                      className="w-16 rounded border border-[color:var(--lens-sand)]/60 px-1 py-0.5 text-[11px] text-[color:var(--lens-ink)]/70"
                       defaultValue={releaseContributor.sequenceNumber ?? ""}
                       disabled={isUpdatingReleaseContributorSequence}
                       onBlur={(e) => {

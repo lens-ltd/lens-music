@@ -30,6 +30,7 @@ import { Genre } from "@/types/models/genre.types";
 import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 import ReleaseLabelsSection from "./components/ReleaseLabelsSection";
 import RelatedReleasesSection from "./components/RelatedReleasesSection";
+import moment from "moment";
 
 interface ReleaseOverviewFormValues {
   type: ReleaseType;
@@ -485,6 +486,7 @@ const ReleaseWizardOverview = ({
                   placeholder="Enter the digital release date"
                   type="date"
                   required
+                  fromDate={moment().add(1, 'day').toDate()}
                   errorMessage={errors?.digitalReleaseDate?.message}
                 />
               )}

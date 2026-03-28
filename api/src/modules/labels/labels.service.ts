@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, ILike, Repository } from 'typeorm';
 import { Label } from '../../entities/label.entity';
 import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
 import { UserService } from '../users/users.service';
@@ -47,15 +47,19 @@ export class LabelService {
 
   // FETCH LABELS
   async fetchLabels({
-    condition,
     size,
     page,
+    searchKey,
   }: {
-    condition?: object;
     size: number;
     page: number;
+    searchKey?: string;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
+    const condition: Record<string, unknown> = {};
+    if (searchKey) {
+      condition.name = ILike(`%${searchKey}%`);
+    }
     const labels = await this.labelRepository.findAndCount({
       where: condition,
       relations: ['createdBy'],

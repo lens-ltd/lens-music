@@ -25,7 +25,7 @@ const deliveryProtocolOptions = Object.values(StoreDeliveryProtocol).map(
 );
 
 const StoresPage = () => {
-  const user = useAppSelector((state) => state.user.user);
+  const { user } = useAppSelector((state) => state.auth);
   const { fetchStores, data, isFetching } = useFetchStores();
   const { updateStore, isLoading: isSaving } = useUpdateStore();
 

@@ -57,7 +57,7 @@ const SyncLyricsLinesPanel = ({
 
           return (
             <section
-              key={`${line.index}-${line.text}`}
+              key={line.index}
               className={`rounded-md border p-3 transition-colors ${
                 isActive
                   ? "border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)]/5"

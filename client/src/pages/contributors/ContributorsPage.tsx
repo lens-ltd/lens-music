@@ -8,10 +8,11 @@ import { useAppSelector } from "@/state/hooks";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import DeleteContributor from "./DeleteContributor";
+import VerifyContributor from "./VerifyContributor";
 
 const ContributorsPage = () => {
   // STATE
-  const { contributorsList, deleteContributorModal } = useAppSelector(
+  const { contributorsList, deleteContributorModal, verifyContributorModal } = useAppSelector(
     (state) => state.contributor,
   );
 
@@ -29,10 +30,10 @@ const ContributorsPage = () => {
 
   // FETCH CONTRIBUTORS
   useEffect(() => {
-    if (!deleteContributorModal) {
+    if (!deleteContributorModal && !verifyContributorModal) {
       fetchContributors({ page, size });
     }
-  }, [fetchContributors, page, size, deleteContributorModal]);
+  }, [fetchContributors, page, size, deleteContributorModal, verifyContributorModal]);
 
   // COLUMNS
   const { contributorColumns } = useContributorColumns();
@@ -59,6 +60,7 @@ const ContributorsPage = () => {
         />
       </main>
       <DeleteContributor />
+      <VerifyContributor />
     </UserLayout>
   );
 };

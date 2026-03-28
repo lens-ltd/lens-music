@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer';
 import {
-  ArrayNotEmpty,
   IsArray,
   IsIn,
   IsString,
@@ -11,7 +10,6 @@ const COUNTRY_CODES = countriesList.map((country) => country.code);
 
 export class UpdateReleaseTerritoriesDto {
   @IsArray()
-  @ArrayNotEmpty()
   @Transform(({ value }) => {
     if (!Array.isArray(value)) {
       return value;

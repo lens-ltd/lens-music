@@ -67,9 +67,7 @@ const ReleaseWizardRegions = ({
       .map((territory) => territory.toUpperCase())
       .filter((territory) => ALL_COUNTRY_CODES.includes(territory));
 
-    setSelectedTerritories(
-      normalizedTerritories.length > 0 ? normalizedTerritories : ALL_COUNTRY_CODES,
-    );
+    setSelectedTerritories(normalizedTerritories);
     setTerritoriesError(undefined);
   }, [release?.territories]);
 
@@ -112,11 +110,6 @@ const ReleaseWizardRegions = ({
       return;
     }
 
-    if (selectedTerritories.length === 0) {
-      setTerritoriesError("Select at least one country before continuing");
-      return;
-    }
-
     setTerritoriesError(undefined);
     resetUpdateReleaseTerritories();
 
@@ -150,8 +143,8 @@ const ReleaseWizardRegions = ({
       <header className="flex flex-col gap-1">
         <h2 className="text-xl font-semibold text-gray-900">Delivery regions</h2>
         <p className="text-sm leading-6 text-gray-500">
-          Countries selected here determine where this release can be delivered.
-          Deselect countries to exclude them.
+          Leave empty for worldwide availability, or select specific countries
+          to restrict delivery.
         </p>
       </header>
 
@@ -223,7 +216,9 @@ const ReleaseWizardRegions = ({
 
       <footer className="mt-2 flex flex-col gap-3">
         <p className="text-xs text-gray-500">
-          {selectedTerritories.length} of {COUNTRIES_LIST.length} countries selected.
+          {selectedTerritories.length === 0
+            ? "Worldwide (all countries)"
+            : `${selectedTerritories.length} of ${COUNTRIES_LIST.length} countries selected`}
         </p>
 
         {territoriesError ? (
@@ -249,7 +244,6 @@ const ReleaseWizardRegions = ({
             primary
             onClick={handleSaveAndContinue}
             disabled={
-              selectedTerritories.length === 0 ||
               isSavingTerritories ||
               createNavigationFlowIsLoading ||
               completeNavigationFlowIsLoading

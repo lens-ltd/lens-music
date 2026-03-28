@@ -122,7 +122,15 @@ const SyncLyrics = () => {
 
         <SyncLyricsFooter
           isBusy={page.isBusy}
-          onBack={() => navigate(-1)}
+          onBack={() => {
+            if (page?.track?.releaseId) {
+              navigate(
+                `/releases/${page?.track?.releaseId}/manage-tracks/${page?.track?.id}`,
+              );
+            } else {
+              navigate(-1);
+            }
+          }}
           onSave={() => void page.handleSave()}
         />
       </main>

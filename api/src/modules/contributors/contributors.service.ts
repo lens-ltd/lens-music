@@ -12,6 +12,7 @@ import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { ContributorMembership } from "../../entities/contributor-membership.entity";
 import { isValidIsni, normalizeIsni } from "../../helpers/releases.helper";
+import { ContributorVerificationStatus } from "../../constants/contributor.constants";
 
 @Injectable()
 export class ContributorService {
@@ -93,12 +94,16 @@ export class ContributorService {
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
 
-    let where: FindOptionsWhere<Contributor> | FindOptionsWhere<Contributor>[] | undefined;
+    let where:
+      | FindOptionsWhere<Contributor>
+      | FindOptionsWhere<Contributor>[]
+      | undefined;
 
     const normalizedSearchKey = searchKey || searchName;
 
     if (normalizedSearchKey) {
-      const baseCondition = (Array.isArray(condition) ? condition[0] : condition) || {};
+      const baseCondition =
+        (Array.isArray(condition) ? condition[0] : condition) || {};
       where = [
         { ...baseCondition, displayName: ILike(`%${normalizedSearchKey}%`) },
         { ...baseCondition, name: ILike(`%${normalizedSearchKey}%`) },
@@ -122,12 +127,20 @@ export class ContributorService {
   }
 
   async findOne(id: UUID): Promise<Contributor | null> {
-    return this.contributorRepository.findOne({ where: { id }, relations: {  } });
+    return this.contributorRepository.findOne({
+      where: { id },
+      relations: { parentMemberships: true, childMemberships: true },
+    });
   }
 
-  async update(id: UUID, dto: UpdateContributorDto): Promise<Contributor> {
+  async update(
+    id: UUID,
+    dto: UpdateContributorDto,
+    lastUpdatedById: UUID,
+  ): Promise<Contributor> {
     const contributor = await this.contributorRepository.findOne({
       where: { id },
+      relations: { parentMemberships: true, childMemberships: true },
     });
     if (!contributor) {
       throw new NotFoundException("Contributor not found");
@@ -175,6 +188,8 @@ export class ContributorService {
     if (dto.ipi !== undefined) contributor.ipi = dto.ipi;
     if (dto.isni !== undefined) contributor.isni = dto.isni;
 
+    contributor.lastUpdatedById = lastUpdatedById;
+
     return this.contributorRepository.save(contributor);
   }
 
@@ -183,5 +198,36 @@ export class ContributorService {
     if (result.affected === 0) {
       throw new NotFoundException("Contributor not found");
     }
+  }
+
+  async verify(id: UUID, verifiedById: UUID): Promise<Contributor> {
+    const contributor = await this.contributorRepository.findOne({
+      where: { id },
+    });
+    if (!contributor) {
+      throw new NotFoundException("Contributor not found");
+    }
+    contributor.verificationStatus = ContributorVerificationStatus.VERIFIED;
+    contributor.verifiedById = verifiedById;
+    contributor.verifiedAt = new Date();
+    contributor.lastUpdatedById = verifiedById;
+    return this.contributorRepository.save(contributor);
+  }
+
+  async requestVerification(
+    id: UUID,
+    requestedById: UUID,
+  ): Promise<Contributor> {
+    const contributor = await this.contributorRepository.findOne({
+      where: { id },
+    });
+    if (!contributor) {
+      throw new NotFoundException("Contributor not found");
+    }
+    contributor.verificationStatus =
+      ContributorVerificationStatus.PENDING_VERIFICATION;
+    contributor.lastUpdatedById = requestedById;
+
+    return this.contributorRepository.save(contributor);
   }
 }

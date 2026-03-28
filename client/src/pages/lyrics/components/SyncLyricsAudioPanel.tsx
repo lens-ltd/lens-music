@@ -1,9 +1,8 @@
-import type { Ref } from "react";
 import type { AudioFile } from "@/types/models/track.types";
 
 type SyncLyricsAudioPanelProps = {
   primaryAudio: AudioFile;
-  audioRef: Ref<HTMLAudioElement>;
+  audioRef: (node: HTMLAudioElement | null) => void;
   currentTime: number;
   currentLineIndex: number;
   syncedLinesCount: number;

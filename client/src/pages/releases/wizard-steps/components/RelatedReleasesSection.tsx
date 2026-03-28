@@ -17,10 +17,11 @@ import {
   RelatedReleasePayload,
   RelatedReleaseRelationType,
 } from "@/types/models/relatedRelease.types";
+import { capitalizeString } from "@/utils/strings.helper";
 
 const relationTypeOptions = Object.values(RelatedReleaseRelationType).map(
   (value) => ({
-    label: value,
+    label: capitalizeString(value),
     value,
   }),
 );
@@ -33,12 +34,17 @@ const EMPTY_FORM: RelatedReleasePayload = {
 
 const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
   const { fetchRelatedReleases, data, isFetching } = useFetchRelatedReleases();
-  const { createRelatedRelease, isLoading: isCreating } = useCreateRelatedRelease();
-  const { updateRelatedRelease, isLoading: isUpdating } = useUpdateRelatedRelease();
-  const { deleteRelatedRelease, isLoading: isDeleting } = useDeleteRelatedRelease();
-  const [fetchReleases, { data: releasesResponse }] = useLazyFetchReleasesQuery();
+  const { createRelatedRelease, isLoading: isCreating } =
+    useCreateRelatedRelease();
+  const { updateRelatedRelease, isLoading: isUpdating } =
+    useUpdateRelatedRelease();
+  const { deleteRelatedRelease, isLoading: isDeleting } =
+    useDeleteRelatedRelease();
+  const [fetchReleases, { data: releasesResponse }] =
+    useLazyFetchReleasesQuery();
 
-  const [createForm, setCreateForm] = useState<RelatedReleasePayload>(EMPTY_FORM);
+  const [createForm, setCreateForm] =
+    useState<RelatedReleasePayload>(EMPTY_FORM);
   const [editingRelatedRelease, setEditingRelatedRelease] =
     useState<RelatedRelease | null>(null);
   const [editForm, setEditForm] = useState<RelatedReleasePayload>(EMPTY_FORM);
@@ -46,12 +52,12 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
   const relatedReleases: RelatedRelease[] = data?.data ?? [];
   const releaseOptions = useMemo(
     () =>
-      (((releasesResponse?.data?.rows as Release[] | undefined) ?? [])
+      ((releasesResponse?.data?.rows as Release[] | undefined) ?? [])
         .filter((release) => release.id !== releaseId)
         .map((release) => ({
           label: release.title,
           value: release.id,
-        }))),
+        })),
     [releaseId, releasesResponse?.data?.rows],
   );
 
@@ -159,8 +165,8 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
             Related releases
           </h3>
           <p className="text-[12px] text-[color:var(--lens-ink)]/55">
-            Capture remasters, equivalent releases, and replacement relationships
-            directly in the release workflow.
+            Capture remasters, equivalent releases, and replacement
+            relationships directly in the release workflow.
           </p>
         </header>
 
@@ -202,7 +208,12 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
         </div>
 
         <div className="mt-4 flex justify-end">
-          <Button primary type="button" onClick={() => void handleCreate()} isLoading={isCreating}>
+          <Button
+            primary
+            type="button"
+            onClick={() => void handleCreate()}
+            isLoading={isCreating}
+          >
             Add related release
           </Button>
         </div>
@@ -225,7 +236,9 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                 >
                   <div className="space-y-0.5">
                     <p className="font-medium text-[color:var(--lens-ink)]">
-                      {row.relatedRelease?.title || row.externalId || "External release"}
+                      {row.relatedRelease?.title ||
+                        row.externalId ||
+                        "External release"}
                     </p>
                     <p className="text-[11px] text-[color:var(--lens-ink)]/55">
                       {row.relationType}
@@ -296,10 +309,18 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
             }
           />
           <footer className="flex items-center justify-between gap-3 pt-2">
-            <Button type="button" onClick={() => setEditingRelatedRelease(null)}>
+            <Button
+              type="button"
+              onClick={() => setEditingRelatedRelease(null)}
+            >
               Cancel
             </Button>
-            <Button type="button" primary onClick={() => void handleUpdate()} isLoading={isUpdating}>
+            <Button
+              type="button"
+              primary
+              onClick={() => void handleUpdate()}
+              isLoading={isUpdating}
+            >
               Save
             </Button>
           </footer>

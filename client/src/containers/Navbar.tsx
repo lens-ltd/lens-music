@@ -7,7 +7,7 @@ import {
   faSignOutAlt,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { setUser } from '@/state/features/userSlice';
+import { setUser } from '@/state/features/authSlice';
 import { setToken } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import LensLogo from '/logo.png';
@@ -18,7 +18,7 @@ export interface NavbarProps {
 }
 
 const Navbar = ({ className, public: isPublic }: NavbarProps) => {
-  const { user } = useAppSelector((state) => state.user);
+  const { user } = useAppSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

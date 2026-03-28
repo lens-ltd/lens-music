@@ -1,6 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import store from "store";
 import { API_URL, CLOUDINARY_CLOUD_NAME } from "@/constants/environments.constants";
+import {
+  AudioMetadata,
+  computeSha256,
+  extractAudioMetadata,
+} from "@/utils/audioMetadata";
 
 const MAX_AUDIO_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -157,6 +162,8 @@ const useTrackAudioUpload = () => {
     cloudinaryResult: CloudinaryUploadResponse,
     originalName: string,
     signal: AbortSignal,
+    audioMeta: AudioMetadata,
+    checksumSha256: string,
   ): Promise<unknown> => {
     const response = await fetch(
       `${API_URL}/tracks/${trackId}/audio/register`,
@@ -168,9 +175,15 @@ const useTrackAudioUpload = () => {
           secureUrl: cloudinaryResult.secure_url,
           publicId: cloudinaryResult.public_id,
           bytes: cloudinaryResult.bytes,
-          durationMs: cloudinaryResult.duration
-            ? Math.round(cloudinaryResult.duration * 1000)
-            : undefined,
+          durationMs:
+            audioMeta.durationMs ??
+            (cloudinaryResult.duration
+              ? Math.round(cloudinaryResult.duration * 1000)
+              : undefined),
+          sampleRate: audioMeta.sampleRate,
+          bitDepth: audioMeta.bitDepth,
+          channels: audioMeta.channels,
+          checksumSha256,
           format: cloudinaryResult.format,
           originalName,
         }),
@@ -219,8 +232,14 @@ const useTrackAudioUpload = () => {
           abortController.signal,
         );
 
-        // Step 2: Upload directly to Cloudinary with true progress
+        // Step 2: Upload to Cloudinary + extract metadata in parallel
+        const metadataPromise = extractAudioMetadata(file);
+        const checksumPromise = computeSha256(file);
         const cloudinaryResult = await uploadToCloudinary(file, signature);
+        const [audioMeta, checksumSha256] = await Promise.all([
+          metadataPromise,
+          checksumPromise,
+        ]);
 
         // Step 3: Register the uploaded file with our backend
         setState((prev) => ({
@@ -234,6 +253,8 @@ const useTrackAudioUpload = () => {
           cloudinaryResult,
           file.name,
           abortController.signal,
+          audioMeta,
+          checksumSha256,
         );
 
         setState({

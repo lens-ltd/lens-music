@@ -34,15 +34,8 @@ const SubmitRelease = () => {
     (state) => state.release,
   );
   const activeRelease = selectedRelease ?? release;
-  const {
-    submitRelease,
-    isLoading,
-    data,
-    isSuccess,
-    isError,
-    error,
-    reset,
-  } = useSubmitRelease();
+  const { submitRelease, isLoading, data, isSuccess, isError, error, reset } =
+    useSubmitRelease();
 
   const closeModal = useCallback(() => {
     dispatch(setSubmitReleaseModal(false));
@@ -86,28 +79,19 @@ const SubmitRelease = () => {
           Submit this validated release for review. Submission will run the
           release validation checks again before changing its status to review.
         </p>
-        <menu className="flex items-center justify-end gap-3">
-          <Button
-            onClick={(event) => {
-              event.preventDefault();
-              closeModal();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            primary
-            isLoading={isLoading}
-            onClick={(event) => {
-              event.preventDefault();
-              if (activeRelease?.id) {
-                submitRelease({ id: activeRelease.id });
-              }
-            }}
-          >
-            Submit for Review
-          </Button>
-        </menu>
+        <Button
+          className="self-end"
+          primary
+          isLoading={isLoading}
+          onClick={(event) => {
+            event.preventDefault();
+            if (activeRelease?.id) {
+              submitRelease({ id: activeRelease.id });
+            }
+          }}
+        >
+          Submit for Review
+        </Button>
       </article>
     </Modal>
   );

@@ -1,16 +1,16 @@
-import { Toaster } from 'sonner';
-import Router from './Router';
+import { Toaster } from "sonner";
+import Router from "./Router";
 
 const App = () => {
   return (
     <>
       <Toaster
-        duration={1500}
+        duration={1000}
         toastOptions={{
           classNames: {
-            toast: 'text-[12px] font-light',
-            title: 'text-[12px] font-light',
-            description: 'text-[12px] font-light leading-snug',
+            toast: "text-[12px] font-light",
+            title: "text-[12px] font-light",
+            description: "text-[12px] font-light leading-snug",
           },
         }}
       />

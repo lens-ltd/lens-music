@@ -35,6 +35,10 @@ export class RegisterAudioDto {
 
   @IsOptional()
   @IsString()
+  checksumSha256?: string;
+
+  @IsOptional()
+  @IsString()
   format?: string;
 
   @IsString()

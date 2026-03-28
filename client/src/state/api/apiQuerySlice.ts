@@ -19,16 +19,23 @@ export const apiQuerySlice = createApi({
     return {
       // LIST LABELS
       fetchLabels: builder.query({
-        query: ({ size, page }) => {
-          return {
-            url: "/labels",
-            method: "GET",
-            params: {
-              size,
-              page,
-            },
-          };
-        },
+        query: ({
+          size,
+          page,
+          searchKey,
+        }: {
+          size: number;
+          page: number;
+          searchKey?: string;
+        }) => ({
+          url: "/labels",
+          method: "GET",
+          params: {
+            size,
+            page,
+            ...(searchKey ? { searchKey } : {}),
+          },
+        }),
       }),
 
       fetchInvitations: builder.query({

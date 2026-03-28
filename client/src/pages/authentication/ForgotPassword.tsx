@@ -70,7 +70,7 @@ const ForgotPassword = () => {
 
           <p className="mt-5 text-center text-[12px] text-[color:var(--lens-ink)]/55 font-normal">
             Remembered your password?{' '}
-            <Link to="/auth/login" className="text-[color:var(--lens-blue)] hover:underline">
+            <Link to="/auth/login" className="text-[color:var(--lens-blue)] text-[12px] hover:underline">
               Return to sign in
             </Link>
           </p>

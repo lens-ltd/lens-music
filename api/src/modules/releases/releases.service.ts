@@ -66,6 +66,7 @@ export class ReleaseService {
       type: dto.type,
       createdById: userId,
       catalogNumber: generateCatalogNumber(),
+      upc: generateCatalogNumber(6, 'UPC'),
     });
 
     return this.releaseRepository.save(release);
@@ -423,23 +424,8 @@ export class ReleaseService {
       errors.push('Production year is required');
     }
 
-    // --- Labels ---
-    const releaseLabels = release.releaseLabels || [];
-    if (releaseLabels.length === 0) {
-      errors.push('At least one label is required');
-    } else {
-      const hasPrimaryLabel = releaseLabels.some(
-        (rl) => rl.type === ReleaseLabelType.PRIMARY,
-      );
-      if (!hasPrimaryLabel) {
-        errors.push('A primary label is required');
-      }
-    }
-
     // --- Territories & Stores ---
-    if (!release.territories || release.territories.length === 0) {
-      errors.push('At least one territory is required');
-    } else {
+    if (release.territories && release.territories.length > 0) {
       for (const territory of release.territories) {
         if (!isValidIso3166Alpha2(territory)) {
           errors.push(`Invalid territory code: ${territory}`);

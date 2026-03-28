@@ -10,7 +10,7 @@ import Loader from '../../components/inputs/Loader';
 import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../state/features/authSlice';
-import { setUser } from '../../state/features/userSlice';
+import { setUser } from '../../state/features/authSlice';
 import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';

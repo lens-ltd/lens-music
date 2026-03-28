@@ -76,6 +76,7 @@ const TrackDetailsForm = ({
           <Input
             {...field}
             label="ISRC"
+            required
             placeholder="USRC17607839"
             onBlur={() => void onPersistField("isrc")}
           />
@@ -177,6 +178,7 @@ const TrackDetailsForm = ({
             placeholder="Select the primary language"
             value={String(field.value)}
             label="Primary language"
+            required
             onChange={(value) => {
               field.onChange(value);
               void onPersistField("primaryLanguage", value);

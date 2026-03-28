@@ -111,7 +111,14 @@ const ReleaseNavigationPanel = ({
                               : "bg-gray-100 text-gray-500"
                       }`}
                     >
-                      {isCompleted ? <FontAwesomeIcon icon={faCheck} className="text-white text-[10px]" /> : `${index + 1}`.padStart(2, "0")}
+                      {isCompleted ? (
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          className="text-white text-[10px]"
+                        />
+                      ) : (
+                        `${index + 1}`.padStart(2, "0")
+                      )}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
@@ -169,19 +176,6 @@ const ReleaseNavigationPanel = ({
                   )}
                 </ul>
               </menu>
-              {activeReleaseNavigationFlow && !isLoading && (
-                <span
-                  className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-normal ${
-                    activeReleaseNavigationFlow?.completed
-                      ? "bg-primary/10 text-primary"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {activeReleaseNavigationFlow.completed
-                    ? "Completed"
-                    : "In progress"}
-                </span>
-              )}
             </nav>
           </header>
 

@@ -2,7 +2,7 @@ import { generateRandomNumber } from "./strings.helper";
 import { ReleaseType, RELEASE_TYPE_TRACK_LIMITS } from "../constants/release.constants";
 import { countriesList } from "../constants/location.constant";
 
-export const generateCatalogNumber = (length: number = 6, productionYear: number = new Date().getFullYear()) => {
+export const generateCatalogNumber = (length: number = 6, prefix: string = 'LNS', productionYear: number = new Date().getFullYear()) => {
     return `LNS${productionYear}${generateRandomNumber(length)}`;
 };
 
@@ -46,6 +46,16 @@ export const getTrackCountRange = (releaseType: ReleaseType): { min: number; max
     return RELEASE_TYPE_TRACK_LIMITS[releaseType] ?? { min: 1, max: Infinity };
 };
 
+/**
+ * Validates a UPC (Universal Product Code).
+ *
+ * A valid UPC is a 12- or 13-digit numeric code commonly used to identify products.
+ *
+ * Example of a valid 12-digit UPC: "012345678905"
+ *
+ * @param upc - The UPC string to validate
+ * @returns True if valid, else false
+ */
 export const isValidUpc = (upc: string): boolean => {
     if (!/^\d{12,13}$/.test(upc)) {
         return false;

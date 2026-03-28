@@ -5,14 +5,13 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 const AuthenticatedRoutes = () => {
   // STATE VARIABLES
-  const { token } = useSelector((state: RootState) => state.auth);
-  const { user } = useSelector((state: RootState) => state.user);
+  const { token, user } = useSelector((state: RootState) => state.auth);
 
   // NAVIGATION
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || !token) {
+    if (!user?.id || !token) {
       navigate('/auth/login');
     }
   }, [navigate, token, user]);

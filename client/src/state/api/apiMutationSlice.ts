@@ -276,6 +276,13 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      verifyContributor: builder.mutation({
+        query: ({ id }) => ({
+          url: `/contributors/${id}/verify`,
+          method: "POST",
+        }),
+      }),
+
       createContributorMembership: builder.mutation({
         query: (body: CreateContributorMembershipPayload) => ({
           url: "/contributor-memberships",
@@ -716,6 +723,7 @@ export const {
   useCreateContributorMutation,
   useUpdateContributorMutation,
   useDeleteContributorMutation,
+  useVerifyContributorMutation,
   useCreateContributorMembershipMutation,
   useDeleteContributorMembershipMutation,
   useCreateTrackMutation,

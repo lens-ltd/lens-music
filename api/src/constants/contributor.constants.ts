@@ -36,6 +36,7 @@ export enum ContributorVerificationStatus {
     PENDING = 'PENDING',
     VERIFIED = 'VERIFIED',
     NOT_VERIFIED = 'NOT_VERIFIED',
+    PENDING_VERIFICATION = 'PENDING_VERIFICATION',
 }
 
 export enum ContributorProfileLinkType {
