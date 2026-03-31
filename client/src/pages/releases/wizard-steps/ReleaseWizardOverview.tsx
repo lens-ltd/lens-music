@@ -38,9 +38,9 @@ interface ReleaseOverviewFormValues {
   titleVersion?: string;
   version?: string;
   productionYear: string;
-  originalReleaseDate: string;
-  digitalReleaseDate: string;
-  preorderDate?: string;
+  originalReleaseDate: string | Date;
+  digitalReleaseDate: string | Date;
+  preorderDate?: string | Date;
   cLine: {
     year: string;
     owner: string;
@@ -141,15 +141,32 @@ const ReleaseWizardOverview = ({
     setOverviewError(undefined);
     resetUpdateReleaseOverview();
 
+    const toYmd = (v: string | Date) => {
+      const m = moment(v);
+      return m.isValid() ? m.format("YYYY-MM-DD") : "";
+    };
+    const toYmdOptional = (v?: string | Date) => {
+      if (v == null || v === "") return undefined;
+      const m = moment(v);
+      return m.isValid() ? m.format("YYYY-MM-DD") : undefined;
+    };
+
+    const keywordsPayload = data.keywords?.trim()
+      ? data.keywords
+          .split(/[,\n]/)
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : undefined;
+
     const payload = {
       title: data.title.trim(),
       type: data.type,
       titleVersion: normalizeOptionalString(data.titleVersion),
       version: normalizeOptionalString(data.version),
       productionYear: Number(data.productionYear),
-      originalReleaseDate: data.originalReleaseDate,
-      digitalReleaseDate: data.digitalReleaseDate,
-      preorderDate: normalizeOptionalString(data.preorderDate),
+      originalReleaseDate: toYmd(data.originalReleaseDate),
+      digitalReleaseDate: toYmd(data.digitalReleaseDate),
+      preorderDate: toYmdOptional(data.preorderDate),
       cLine: {
         year: Number(data.cLine.year),
         owner: data.cLine.owner.trim(),
@@ -163,10 +180,7 @@ const ReleaseWizardOverview = ({
       metadataLanguage: normalizeOptionalString(data.metadataLanguage),
       grid: normalizeOptionalString(data.grid),
       description: normalizeOptionalString(data.description),
-      keywords: data.keywords
-        ?.split(/[,\n]/)
-        .map((k) => k.trim())
-        .filter(Boolean),
+      keywords: keywordsPayload,
       marketingComment: normalizeOptionalString(data.marketingComment),
     };
 

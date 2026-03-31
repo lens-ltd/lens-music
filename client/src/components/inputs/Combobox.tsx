@@ -94,6 +94,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                             <SkeletonLoader />
                         ) : (
                             <Button
+                                type="button"
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={open}

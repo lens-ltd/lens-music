@@ -338,12 +338,6 @@ export class ReleaseService {
       errors.push('Metadata language must be a valid ISO 639-1 language code');
     }
 
-    if (!release.upc) {
-      errors.push('UPC is required');
-    } else if (!isValidUpc(release.upc)) {
-      errors.push('UPC format is invalid');
-    }
-
     if (!release.cLine?.year || !release.cLine?.owner) {
       errors.push('C-line (year and owner) is required');
     }

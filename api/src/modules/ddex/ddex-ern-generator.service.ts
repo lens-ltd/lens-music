@@ -23,6 +23,7 @@ import { ReleaseTerritoryDetail } from '../../entities/release-territory-detail.
 import { RelatedRelease } from '../../entities/related-release.entity';
 
 import { ReleaseStatus } from '../../constants/release.constants';
+import { ContributorRole } from '../../constants/contributor.constants';
 import { ReleaseLabelType } from '../../constants/release-label.constants';
 import { RELEASE_TYPE_TO_DDEX_VALUE } from '../../constants/ddex-release.constants';
 
@@ -233,13 +234,10 @@ export class DdexErnGeneratorService {
       relations: ['label'],
     });
 
-    // Validate primary label exists
+    // Primary label (optional — fallback to artist/rights line if missing)
     const primaryLabel = releaseLabels.find(
       rl => rl.type === ReleaseLabelType.PRIMARY,
     );
-    if (!primaryLabel?.label) {
-      throw new BadRequestException('Release must have a primary label');
-    }
 
     // Load deals (active, matching store or global)
     const deals = await this.dealRepo
@@ -278,12 +276,22 @@ export class DdexErnGeneratorService {
       where: { releaseId },
     });
 
-    // Computed fields
+    // Computed fields — derive sender identity with fallback chain
     const senderDpid =
       this.configService.get<string>('DDEX_SENDER_DPID') ||
-      primaryLabel.label.ddexPartyId ||
+      primaryLabel?.label?.ddexPartyId ||
       'UNKNOWN';
-    const senderName = primaryLabel.label.name;
+
+    const primaryArtist = releaseContributors.find(
+      rc => rc.role === ContributorRole.PRIMARY_ARTIST && rc.contributor,
+    );
+    const senderName =
+      primaryLabel?.label?.name ||
+      primaryArtist?.contributor?.displayName ||
+      primaryArtist?.contributor?.name ||
+      release.pLine?.owner ||
+      release.cLine?.owner ||
+      release.title;
     const recipientDpid = store.ddexPartyId!;
     const recipientName = store.name;
     const messageId = `${senderDpid}:${Date.now()}:${uuidv4().slice(0, 8)}`;
