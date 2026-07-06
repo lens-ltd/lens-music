@@ -13,6 +13,9 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import {
   CurrentUser,
   AuthUser,
@@ -23,12 +26,10 @@ import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { Contributor } from "../../entities/contributor.entity";
 import { FindOptionsWhere } from "typeorm";
-
 @Controller("contributors")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContributorsController {
   constructor(private readonly contributorService: ContributorService) {}
-
   /**
    * Create a contributor
    * @param dto - The data to create the contributor with
@@ -37,6 +38,7 @@ export class ContributorsController {
    */
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.CREATE_CONTRIBUTOR)
   async create(
     @Body() dto: CreateContributorDto,
     @CurrentUser() user: AuthUser,
@@ -44,7 +46,6 @@ export class ContributorsController {
     const contributor = await this.contributorService.create(dto, user.id);
     return { message: "Contributor created successfully", data: contributor };
   }
-
   /**
    * Get all contributors
    * @param size - The number of contributors to return
@@ -56,6 +57,7 @@ export class ContributorsController {
    * @returns The contributors
    */
   @Get()
+  @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
   async findAll(
     @Query("size") size = "10",
     @Query("page") page = "0",
@@ -72,7 +74,6 @@ export class ContributorsController {
     if (type) {
       condition.type = type as Contributor["type"];
     }
-
     const data = await this.contributorService.findAll({
       size: Number(size),
       page: Number(page),
@@ -82,13 +83,13 @@ export class ContributorsController {
     });
     return { message: "Contributors fetched successfully", data };
   }
-
   /**
    * Get a contributor by ID
    * @param id - The ID of the contributor to get
    * @returns The contributor
    */
   @Get(":id")
+  @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
   async findOne(@Param("id") id: string) {
     const contributor = await this.contributorService.findOne(id);
     if (!contributor) {
@@ -96,7 +97,6 @@ export class ContributorsController {
     }
     return { message: "Contributor fetched successfully", data: contributor };
   }
-
   /**
    * Update a contributor
    * @param id - The ID of the contributor to update
@@ -105,6 +105,7 @@ export class ContributorsController {
    * @returns The updated contributor
    */
   @Patch(":id")
+  @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
   async update(
     @Param("id") id: string,
     @Body() dto: UpdateContributorDto,
@@ -113,7 +114,6 @@ export class ContributorsController {
     const contributor = await this.contributorService.update(id, dto, user.id);
     return { message: "Contributor updated successfully", data: contributor };
   }
-
   /**
    * Remove a contributor
    * @param id - The ID of the contributor to remove
@@ -121,27 +121,28 @@ export class ContributorsController {
    */
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(PERMISSIONS.DELETE_CONTRIBUTOR)
   async remove(@Param("id") id: UUID) {
     await this.contributorService.remove(id);
   }
-
   /**
    * Verify a contributor
    * @param id - The ID of the contributor to verify
    * @returns The verified contributor
    */
   @Post(":id/verify")
+  @Permissions(PERMISSIONS.VERIFY_CONTRIBUTOR)
   async verify(@Param("id") id: UUID, @CurrentUser() user: AuthUser) {
     const contributor = await this.contributorService.verify(id, user?.id);
     return { message: "Contributor verified successfully", data: contributor };
   }
-
   /**
    * Request verification for a contributor
    * @param id - The ID of the contributor to request verification for
    * @returns The requested verification
    */
   @Post(":id/request-verification")
+  @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
   async requestVerification(@Param("id") id: UUID, @CurrentUser() user: AuthUser) {
     const contributor = await this.contributorService.requestVerification(id, user?.id);
     return { message: "Verification requested successfully", data: contributor };

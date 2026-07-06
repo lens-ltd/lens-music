@@ -15,13 +15,16 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { ReleaseLabelsService } from "./release-labels.service";
 import { CreateReleaseLabelDto } from "./dto/create-release-label.dto";
 import { UpdateReleaseLabelDto } from "./dto/update-release-label.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("releases/:releaseId/labels")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleaseLabelsController {
   constructor(
     private readonly releaseLabelsService: ReleaseLabelsService,
@@ -29,6 +32,7 @@ export class ReleaseLabelsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async create(
     @Param("releaseId") releaseId: string,
     @Body() dto: CreateReleaseLabelDto,
@@ -46,6 +50,7 @@ export class ReleaseLabelsController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async findByReleaseId(@Param("releaseId") releaseId: string) {
     const releaseLabels = await this.releaseLabelsService.findByReleaseId(
       releaseId as UUID,
@@ -57,6 +62,7 @@ export class ReleaseLabelsController {
   }
 
   @Patch(":releaseLabelId")
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async update(
     @Param("releaseId") releaseId: string,
     @Param("releaseLabelId") releaseLabelId: string,
@@ -75,6 +81,7 @@ export class ReleaseLabelsController {
 
   @Delete(":releaseLabelId")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async delete(
     @Param("releaseId") releaseId: string,
     @Param("releaseLabelId") releaseLabelId: string,

@@ -10,18 +10,22 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PERMISSIONS } from '../../constants/permission.constants';
 import { CreateReleaseNavigationFlowDto } from './dto/create-release-navigation-flow.dto';
 import { CompleteReleaseNavigationFlowDto } from './dto/complete-release-navigation-flow.dto';
 import { ReleaseNavigationFlowsService } from './release-navigation-flows.service';
 
 @Controller('release-navigation-flows')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleaseNavigationFlowsController {
   constructor(
     private readonly releaseNavigationFlowsService: ReleaseNavigationFlowsService,
   ) {}
 
   @Get()
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async fetchAllReleaseNavigationFlows(@Query('releaseId') releaseId: string) {
     if (!releaseId) {
       throw new BadRequestException('releaseId query parameter is required');
@@ -38,6 +42,7 @@ export class ReleaseNavigationFlowsController {
   }
 
   @Post()
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async createOrActivateNavigationFlow(@Body() dto: CreateReleaseNavigationFlowDto) {
     const payload = await this.releaseNavigationFlowsService.createOrActivateNavigationFlow(dto);
 
@@ -48,6 +53,7 @@ export class ReleaseNavigationFlowsController {
   }
 
   @Patch(':id/complete')
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async completeNavigationFlow(
     @Param('id') id: string,
     @Body() dto: CompleteReleaseNavigationFlowDto,

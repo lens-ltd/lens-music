@@ -1,12 +1,74 @@
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { Role } from '../entities/role.entity';
 import { RolePermission } from '../entities/role-permission.entity';
 import { Permission } from '../entities/permission.entity';
 import { User } from '../entities/user.entity';
+import { PERMISSIONS } from '../constants/permission.constants';
 import logger from '../utils/logger';
 
-const SUPER_ADMIN_ROLE_NAME = 'SUPER_ADMIN';
 const ADMIN_EMAIL = 'info@lens.rw';
+
+const ROLE_PERMISSION_MAP: Record<string, PERMISSIONS[] | 'ALL'> = {
+  SUPER_ADMIN: 'ALL',
+  ADMIN: [
+    PERMISSIONS.CREATE_USER,
+    PERMISSIONS.READ_USER,
+    PERMISSIONS.UPDATE_USER,
+    PERMISSIONS.DELETE_USER,
+    PERMISSIONS.CREATE_INVITATION,
+    PERMISSIONS.READ_INVITATION,
+    PERMISSIONS.APPROVE_INVITATION,
+    PERMISSIONS.REVOKE_INVITATION,
+    PERMISSIONS.CREATE_ROLE,
+    PERMISSIONS.READ_ROLE,
+    PERMISSIONS.UPDATE_ROLE,
+    PERMISSIONS.READ_RELEASE,
+    PERMISSIONS.CREATE_RELEASE,
+    PERMISSIONS.UPDATE_RELEASE,
+    PERMISSIONS.DELETE_RELEASE,
+    PERMISSIONS.READ_STORE,
+    PERMISSIONS.UPDATE_STORE,
+    PERMISSIONS.ASSIGN_RELEASE_STORE,
+    PERMISSIONS.READ_GENRE,
+    PERMISSIONS.CREATE_GENRE,
+    PERMISSIONS.UPDATE_GENRE,
+    PERMISSIONS.DELETE_GENRE,
+    PERMISSIONS.READ_CONTRIBUTOR,
+    PERMISSIONS.CREATE_CONTRIBUTOR,
+    PERMISSIONS.UPDATE_CONTRIBUTOR,
+    PERMISSIONS.DELETE_CONTRIBUTOR,
+    PERMISSIONS.VERIFY_CONTRIBUTOR,
+    PERMISSIONS.READ_TRACK,
+    PERMISSIONS.CREATE_TRACK,
+    PERMISSIONS.UPDATE_TRACK,
+    PERMISSIONS.DELETE_TRACK,
+    PERMISSIONS.READ_LYRICS,
+    PERMISSIONS.CREATE_LYRICS,
+    PERMISSIONS.UPDATE_LYRICS,
+    PERMISSIONS.DELETE_LYRICS,
+    PERMISSIONS.SYNC_LYRICS,
+    PERMISSIONS.GENERATE_DDEX,
+  ],
+  REVIEWER: [
+    PERMISSIONS.READ_USER,
+    PERMISSIONS.READ_INVITATION,
+    PERMISSIONS.READ_ROLE,
+    PERMISSIONS.READ_RELEASE,
+    PERMISSIONS.READ_STORE,
+    PERMISSIONS.READ_GENRE,
+    PERMISSIONS.READ_CONTRIBUTOR,
+    PERMISSIONS.VERIFY_CONTRIBUTOR,
+    PERMISSIONS.READ_TRACK,
+    PERMISSIONS.READ_LYRICS,
+    PERMISSIONS.GENERATE_DDEX,
+  ],
+};
+
+const ROLE_DESCRIPTIONS: Record<string, string> = {
+  SUPER_ADMIN: 'System super administrator role with all permissions',
+  ADMIN: 'Administrator role with catalog, user, invitation, and operational permissions',
+  REVIEWER: 'Reviewer role with read-only catalog access and verification permissions',
+};
 
 export const seedRoles = async (dataSource: DataSource) => {
   const roleRepo = dataSource.getRepository(Role);
@@ -21,53 +83,89 @@ export const seedRoles = async (dataSource: DataSource) => {
     return;
   }
 
-  let superAdminRole = await roleRepo.findOneBy({ name: SUPER_ADMIN_ROLE_NAME });
-  if (!superAdminRole) {
-    superAdminRole = await roleRepo.save(
-      roleRepo.create({
-        name: SUPER_ADMIN_ROLE_NAME,
-        description: 'System super administrator role with all permissions',
-        createdById: adminUser.id,
-      }),
-    );
-    seedLog.info({ role: SUPER_ADMIN_ROLE_NAME }, 'Added role');
-  } else {
-    seedLog.debug({ role: SUPER_ADMIN_ROLE_NAME }, 'Role already exists');
-  }
-
   const permissions = await permissionRepo.find();
-  let created = 0;
-  let skipped = 0;
+  const permissionByName = new Map(permissions.map((permission) => [permission.name, permission]));
+  let superAdminRole: Role | null = null;
 
-  for (const permission of permissions) {
-    const exists = await rolePermissionRepo.findOneBy({
-      roleId: superAdminRole.id,
-      permissionId: permission.id,
-    });
-
-    if (exists) {
-      skipped++;
-      continue;
+  for (const [roleName, configuredPermissions] of Object.entries(ROLE_PERMISSION_MAP)) {
+    let role = await roleRepo.findOneBy({ name: roleName });
+    if (!role) {
+      role = await roleRepo.save(
+        roleRepo.create({
+          name: roleName,
+          description: ROLE_DESCRIPTIONS[roleName],
+          createdById: adminUser.id,
+        }),
+      );
+      seedLog.info({ role: roleName }, 'Added role');
+    } else {
+      seedLog.debug({ role: roleName }, 'Role already exists');
     }
 
-    await rolePermissionRepo.save(
-      rolePermissionRepo.create({
-        roleId: superAdminRole.id,
-        permissionId: permission.id,
-        createdById: adminUser.id,
-      }),
+    if (roleName === 'SUPER_ADMIN') {
+      superAdminRole = role;
+    }
+
+    const expectedPermissionNames = configuredPermissions === 'ALL'
+      ? permissions.map((permission) => permission.name)
+      : configuredPermissions;
+    const expectedPermissionIds = expectedPermissionNames
+      .map((permissionName) => permissionByName.get(permissionName)?.id)
+      .filter((permissionId): permissionId is string => Boolean(permissionId));
+    const expectedPermissionIdSet = new Set(expectedPermissionIds);
+
+    const existingRolePermissions = await rolePermissionRepo.find({
+      where: { roleId: role.id },
+    });
+    const existingPermissionIdSet = new Set(
+      existingRolePermissions.map((rolePermission) => rolePermission.permissionId),
     );
-    created++;
+
+    let created = 0;
+    let skipped = 0;
+    for (const permissionId of expectedPermissionIds) {
+      if (existingPermissionIdSet.has(permissionId)) {
+        skipped++;
+        continue;
+      }
+
+      await rolePermissionRepo.save(
+        rolePermissionRepo.create({
+          roleId: role.id,
+          permissionId,
+          createdById: adminUser.id,
+        }),
+      );
+      created++;
+    }
+
+    const staleRolePermissionIds = existingRolePermissions
+      .filter((rolePermission) => !expectedPermissionIdSet.has(rolePermission.permissionId))
+      .map((rolePermission) => rolePermission.id);
+
+    if (staleRolePermissionIds.length) {
+      await rolePermissionRepo.delete({ id: In(staleRolePermissionIds) });
+    }
+
+    seedLog.info(
+      {
+        role: roleName,
+        permissionsAssigned: created,
+        permissionsAlreadyAssigned: skipped,
+        stalePermissionsRemoved: staleRolePermissionIds.length,
+      },
+      'Role permissions seed complete',
+    );
   }
 
-  seedLog.info(
-    { role: SUPER_ADMIN_ROLE_NAME, permissionsAssigned: created, permissionsAlreadyAssigned: skipped },
-    'Roles seed complete',
-  );
+  if (!superAdminRole) {
+    seedLog.warn('Skipped assigning admin user role (SUPER_ADMIN role not found)');
+    return;
+  }
 
   await userRepo.update({ id: adminUser.id }, { roleId: superAdminRole.id });
   seedLog.info(
-    { userId: adminUser.id, role: SUPER_ADMIN_ROLE_NAME },
+    { userId: adminUser.id, role: superAdminRole.name },
     'Assigned role to admin user',
   );
 };

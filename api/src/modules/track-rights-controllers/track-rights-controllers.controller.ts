@@ -15,13 +15,16 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { TrackRightsControllersService } from "./track-rights-controllers.service";
 import { CreateTrackRightsControllerDto } from "./dto/create-track-rights-controller.dto";
 import { UpdateTrackRightsControllerDto } from "./dto/update-track-rights-controller.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("tracks/:trackId/rights-controllers")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TrackRightsControllersController {
   constructor(
     private readonly trackRightsControllersService: TrackRightsControllersService,
@@ -29,6 +32,7 @@ export class TrackRightsControllersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async create(
     @Param("trackId") trackId: string,
     @Body() dto: CreateTrackRightsControllerDto,
@@ -46,6 +50,7 @@ export class TrackRightsControllersController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_TRACK)
   async findByTrackId(@Param("trackId") trackId: string) {
     const trcs = await this.trackRightsControllersService.findByTrackId(
       trackId as UUID,
@@ -57,6 +62,7 @@ export class TrackRightsControllersController {
   }
 
   @Patch(":trcId")
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async update(
     @Param("trackId") trackId: string,
     @Param("trcId") trcId: string,
@@ -75,6 +81,7 @@ export class TrackRightsControllersController {
 
   @Delete(":trcId")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async delete(
     @Param("trackId") trackId: string,
     @Param("trcId") trcId: string,

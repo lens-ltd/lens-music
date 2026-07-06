@@ -11,7 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { AdminGuard } from '../../common/guards/admin.guard';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PERMISSIONS } from '../../constants/permission.constants';
 import { StoresService } from './stores.service';
 import {
   AuthUser,
@@ -21,18 +23,20 @@ import { AssignReleaseStoresDto } from './dto/assign-release-stores.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Controller()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
   @Get('stores')
+  @Permissions(PERMISSIONS.READ_STORE)
   async fetchStores() {
     const stores = await this.storesService.fetchStores();
     return { message: 'Stores fetched successfully', data: stores };
   }
 
   @Patch('stores/:id')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.UPDATE_STORE)
   async updateStore(
     @Param('id') id: string,
     @Body() dto: UpdateStoreDto,
@@ -42,6 +46,8 @@ export class StoresController {
   }
 
   @Post('releases/:id/stores')
+  @UseGuards(PermissionsGuard)
+  @Permissions(PERMISSIONS.ASSIGN_RELEASE_STORE)
   @HttpCode(HttpStatus.CREATED)
   async assignReleaseStores(
     @Param('id') releaseId: string,
@@ -61,6 +67,7 @@ export class StoresController {
   }
 
   @Get('releases/:id/stores')
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async findReleaseStores(@Param('id') releaseId: string) {
     const releaseStores = await this.storesService.findReleaseStores(releaseId);
     return {
@@ -71,6 +78,7 @@ export class StoresController {
 
   @Delete('releases/:id/stores/:releaseStoreId')
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.ASSIGN_RELEASE_STORE)
   async deleteReleaseStore(
     @Param('id') releaseId: string,
     @Param('releaseStoreId') releaseStoreId: string,

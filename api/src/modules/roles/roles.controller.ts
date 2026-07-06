@@ -1,15 +1,19 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { RolesService } from "./roles.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { AuthUser, CurrentUser } from "../../common/decorators/current-user.decorator";
 import { CreateRoleDto } from "./dto/create-role.dto";
 
 @Controller("roles")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
+  @Permissions(PERMISSIONS.CREATE_ROLE)
   async createRole(@Body() dto: CreateRoleDto, @CurrentUser() user: AuthUser) {
     const createdRole = await this.rolesService.createRole({
       ...dto,
@@ -20,6 +24,7 @@ export class RolesController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_ROLE)
   async fetchRoles(
     @Query("size") size = "10",
     @Query("page") page = "0",
@@ -35,6 +40,7 @@ export class RolesController {
   }
 
   @Get(":id")
+  @Permissions(PERMISSIONS.READ_ROLE)
   async getRoleById(@Param("id") id: string) {
     const role = await this.rolesService.getRoleById(id);
     return { message: "Role found successfully", data: role };

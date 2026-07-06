@@ -38,9 +38,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private signToken(user: Pick<User, 'id' | 'email'>): string {
+  private signToken(user: Pick<User, 'id' | 'email'>, permissions: string[] = [], roleName?: string): string {
     return this.jwtService.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, permissions, roleName },
       { expiresIn: '1w' },
     );
   }
@@ -171,8 +171,9 @@ export class AuthService {
       throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
     }
 
-    const accessToken = this.signToken(userExists);
-    return { user: this.toPublicAuthUser(userExists), accessToken };
+    const publicUser = this.toPublicAuthUser(userExists);
+    const accessToken = this.signToken(userExists, publicUser.permissions, publicUser.roleName);
+    return { user: publicUser, accessToken };
   }
 
   async createInvitation(email: string, createdById?: string) {
@@ -414,7 +415,7 @@ export class AuthService {
 
     return {
       user: this.toPublicAuthUser(userWithRole),
-      accessToken: this.signToken(user),
+      accessToken: this.signToken(user, this.collectPermissionNames(userWithRole), userWithRole.assignedRole?.name),
     };
   }
 

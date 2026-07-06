@@ -23,10 +23,9 @@ const Sidebar = () => {
   );
   const { user } = useSelector((state: RootState) => state.auth);
   const permissions = user?.permissions;
-  const role = user?.role;
   const sidebarNavItems = useMemo(
-    () => getSidebarNavigationForUser(permissions, role),
-    [permissions, role],
+    () => getSidebarNavigationForUser(permissions),
+    [permissions],
   );
   const [openCategories, setOpenCategories] = useState<string[]>([]);
   const textControls = useAnimation();

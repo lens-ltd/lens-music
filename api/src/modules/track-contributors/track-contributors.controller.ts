@@ -16,13 +16,16 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { TrackContributorsService } from "./track-contributors.service";
 import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
 import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("track-contributors")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TrackContributorsController {
   constructor(
     private readonly trackContributorsService: TrackContributorsService,
@@ -30,6 +33,7 @@ export class TrackContributorsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async create(
     @Body() dto: CreateTrackContributorDto,
     @CurrentUser() user: AuthUser,
@@ -45,6 +49,7 @@ export class TrackContributorsController {
   }
 
   @Patch(":id")
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async update(
     @Param("id") id: string,
     @Body() dto: UpdateTrackContributorDto,
@@ -60,6 +65,7 @@ export class TrackContributorsController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_TRACK)
   async findByTrackId(@Query("trackId") trackId: string) {
     const trackContributors =
       await this.trackContributorsService.findByTrackId(trackId as UUID);
@@ -71,6 +77,7 @@ export class TrackContributorsController {
 
   @Delete(":id")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async delete(@Param("id") id: string) {
     await this.trackContributorsService.delete(id as UUID);
     return { message: "Track contributor removed successfully" };

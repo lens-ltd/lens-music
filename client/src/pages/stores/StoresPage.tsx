@@ -8,7 +8,7 @@ import Loader from "@/components/inputs/Loader";
 import Modal from "@/components/modals/Modal";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
-import { ROLES } from "@/constants/role.constants";
+import { PERMISSIONS } from "@/constants/permission.constants";
 import { useFetchStores, useUpdateStore } from "@/hooks/stores/store.hooks";
 import { useAppSelector } from "@/state/hooks";
 import {
@@ -42,7 +42,9 @@ const StoresPage = () => {
 
   const stores: Store[] = useMemo(() => data?.data ?? [], [data?.data]);
 
-  if (user?.role !== ROLES.ADMIN) {
+  const canManageStores = user?.permissions?.includes(PERMISSIONS.UPDATE_STORE);
+
+  if (!canManageStores) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -14,22 +14,27 @@ import {
 } from '@nestjs/common';
 import { LabelService } from './labels.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PERMISSIONS } from '../../constants/permission.constants';
 import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
 
 @Controller('labels')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class LabelsController {
   constructor(private readonly labelService: LabelService) {}
 
   @Post()
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async createLabel(@Body() dto: CreateLabelDto, @CurrentUser() user: AuthUser) {
     const label = await this.labelService.createLabel({ ...dto, createdById: user.id });
     return { message: 'Label created successfully', data: label };
   }
 
   @Patch(':id')
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async updateLabel(@Param('id') id: string, @Body() dto: UpdateLabelDto) {
     const labelExists = await this.labelService.getLabelById(id);
     if (!labelExists) throw new NotFoundException('Label not found');
@@ -40,6 +45,7 @@ export class LabelsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async deleteLabel(@Param('id') id: string) {
     const labelExists = await this.labelService.getLabelById(id);
     if (!labelExists) throw new NotFoundException('Label not found');
@@ -47,6 +53,7 @@ export class LabelsController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async fetchLabels(
     @Query('size') size = '10',
     @Query('page') page = '0',
@@ -61,6 +68,7 @@ export class LabelsController {
   }
 
   @Get(':id')
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async getLabel(@Param('id') id: string) {
     const label = await this.labelService.getLabelById(id);
     if (!label) throw new NotFoundException('Label not found');

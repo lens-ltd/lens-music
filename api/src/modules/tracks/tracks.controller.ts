@@ -19,23 +19,25 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
 import { RegisterAudioDto } from "./dto/register-audio.dto";
 import { TrackService } from "./tracks.service";
 import { TrackQueryService } from "./tracks-query.service";
 import { UUID } from "../../types/common.types";
-
 @Controller("tracks")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TracksController {
   constructor(
     private readonly trackService: TrackService,
     private readonly trackQueryService: TrackQueryService,
   ) {}
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.CREATE_TRACK)
   async createTrack(
     @Body() dto: CreateTrackDto,
     @CurrentUser() user: AuthUser,
@@ -43,21 +45,21 @@ export class TracksController {
     const track = await this.trackService.createTrack(dto, user.id);
     return { message: "Track created successfully", data: track };
   }
-
   @Patch(":id")
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async updateTrack(@Param("id") id: string, @Body() dto: UpdateTrackDto) {
     const track = await this.trackService.updateTrack(id as UUID, dto);
     return { message: "Track updated successfully", data: track };
   }
-
   @Post(":id/validate")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async validateTrack(@Param("id") id: string) {
     const result = await this.trackService.validateTrack(id as UUID);
     return { message: "Track validation completed", data: result };
   }
-
   @Get(":id/audio/sign")
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async getAudioUploadSignature(
     @Param("id") id: string,
     @CurrentUser() user: AuthUser,
@@ -65,9 +67,9 @@ export class TracksController {
     const signature = await this.trackService.getUploadSignature(id as UUID);
     return { message: "Upload signature generated", data: signature };
   }
-
   @Post(":id/audio/register")
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async registerAudio(
     @Param("id") id: string,
     @Body() dto: RegisterAudioDto,
@@ -80,10 +82,10 @@ export class TracksController {
     );
     return { message: "Audio file registered successfully", data: audioFile };
   }
-
   @Post(":id/audio")
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor("file"))
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async uploadAudio(
     @Param("id") id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -96,9 +98,9 @@ export class TracksController {
     );
     return { message: "Audio file uploaded successfully", data: audioFile };
   }
-
   @Delete(":id/audio/:audioFileId")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
   async deleteAudio(
     @Param("id") id: string,
     @Param("audioFileId") audioFileId: string,
@@ -106,14 +108,14 @@ export class TracksController {
     await this.trackService.deleteAudio(id as UUID, audioFileId as UUID);
     return { message: "Audio file deleted successfully" };
   }
-
   @Get(":id")
+  @Permissions(PERMISSIONS.READ_TRACK)
   async getTrackById(@Param("id") id: string) {
     const track = await this.trackQueryService.getTrackById(id);
     return { message: "Track fetched successfully", data: track };
   }
-
   @Get()
+  @Permissions(PERMISSIONS.READ_TRACK)
   async fetchTracks(
     @Query("size") size = "10",
     @Query("page") page = "0",
