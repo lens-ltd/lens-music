@@ -4,7 +4,8 @@ import { UUID } from '../../types/common.types';
 export interface AuthUser {
   id: UUID;
   email: string;
-  role?: string;
+  permissions?: string[];
+  roleName?: string;
 }
 
 export const CurrentUser = createParamDecorator(

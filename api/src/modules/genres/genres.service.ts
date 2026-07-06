@@ -9,7 +9,7 @@ import { IsNull, Repository } from 'typeorm';
 import { Genre } from '../../entities/genre.entity';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
-import { ROLES } from '../../constants/auth.constant';
+import { PERMISSIONS } from '../../constants/permission.constants';
 
 @Injectable()
 export class GenresService {
@@ -28,8 +28,8 @@ export class GenresService {
   }
 
   async createGenre(dto: CreateGenreDto, user: AuthUser): Promise<Genre> {
-    if (user.role !== ROLES.ADMIN) {
-      throw new ForbiddenException('Only admins can create genres');
+    if (!user.permissions?.includes(PERMISSIONS.CREATE_GENRE)) {
+      throw new ForbiddenException('CREATE_GENRE permission required');
     }
 
     if (dto.parentId) {

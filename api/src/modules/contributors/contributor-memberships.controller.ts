@@ -1,19 +1,21 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { CurrentUser, AuthUser } from "../../common/decorators/current-user.decorator";
 import { ContributorMembershipService } from "./contributor-membership.service";
 import { CreateContributorMembershipDto } from "./dto/create-contributor-membership.dto";
 import { UUID } from "../../types/common.types";
-
 @Controller("contributor-memberships")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContributorMembershipsController {
   constructor(
     private readonly contributorMembershipService: ContributorMembershipService,
   ) {}
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
   async create(
     @Body() dto: CreateContributorMembershipDto,
     @CurrentUser() user: AuthUser,
@@ -24,14 +26,13 @@ export class ContributorMembershipsController {
         memberContributorId: dto.memberContributorId,
         createdById: user.id,
       });
-
     return {
       message: "Contributor membership created successfully",
       data: contributorMembership,
     };
   }
-
   @Get()
+  @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
   async findAll(
     @Query("size") size = "10",
     @Query("page") page = "0",
@@ -43,15 +44,14 @@ export class ContributorMembershipsController {
       page: Number(page),
       filters: (parentContributorId || memberContributorId) ? { parentContributorId, memberContributorId } : undefined,
     });
-
     return {
       message: "Contributor memberships fetched successfully",
       data,
     };
   }
-
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
   async remove(@Param("id") id: string) {
     await this.contributorMembershipService.deleteContributorMembership(id);
   }

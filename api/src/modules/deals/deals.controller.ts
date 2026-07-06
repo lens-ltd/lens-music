@@ -15,18 +15,22 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { DealsService } from "./deals.service";
 import { CreateDealDto } from "./dto/create-deal.dto";
 import { UpdateDealDto } from "./dto/update-deal.dto";
 import { UUID } from "../../types/common.types";
 
 @Controller("releases/:releaseId/deals")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class DealsController {
   constructor(private readonly dealsService: DealsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async create(
     @Param("releaseId") releaseId: string,
     @Body() dto: CreateDealDto,
@@ -44,6 +48,7 @@ export class DealsController {
   }
 
   @Get()
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async findByReleaseId(@Param("releaseId") releaseId: string) {
     const deals = await this.dealsService.findByReleaseId(releaseId as UUID);
     return {
@@ -53,6 +58,7 @@ export class DealsController {
   }
 
   @Patch(":dealId")
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async update(
     @Param("releaseId") releaseId: string,
     @Param("dealId") dealId: string,
@@ -71,6 +77,7 @@ export class DealsController {
 
   @Delete(":dealId")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async delete(
     @Param("releaseId") releaseId: string,
     @Param("dealId") dealId: string,

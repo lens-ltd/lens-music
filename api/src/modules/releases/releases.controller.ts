@@ -20,6 +20,9 @@ import {
   AuthUser,
 } from "../../common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PERMISSIONS } from "../../constants/permission.constants";
 import { CreateReleaseDto } from "./dto/create-release.dto";
 import { UpdateReleaseOverviewDto } from "./dto/update-release-overview.dto";
 import { UpdateReleaseTerritoriesDto } from "./dto/update-release-territories.dto";
@@ -28,16 +31,15 @@ import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
 import { UpsertReleaseGenreDto } from "./dto/upsert-release-genre.dto";
 import { ReleaseGenreType } from "../../constants/release.constants";
-
 @Controller("releases")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleasesController {
   constructor(
     private readonly releaseService: ReleaseService,
     private readonly releaseQueryService: ReleaseQueryService,
   ) {}
-
   @Post()
+  @Permissions(PERMISSIONS.CREATE_RELEASE)
   async createRelease(
     @Body() dto: CreateReleaseDto,
     @CurrentUser() user: AuthUser,
@@ -45,8 +47,8 @@ export class ReleasesController {
     const release = await this.releaseService.createRelease(dto, user.id);
     return { message: "Release created successfully", data: release };
   }
-
   @Patch(":id/overview")
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async updateReleaseOverview(
     @Param("id") id: string,
     @Body() dto: UpdateReleaseOverviewDto,
@@ -55,9 +57,8 @@ export class ReleasesController {
     const release = await this.releaseService.updateOverview(id, dto, user);
     return { message: "Release overview updated successfully", data: release };
   }
-
-
   @Patch(":id/territories")
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async updateReleaseTerritories(
     @Param("id") id: string,
     @Body() dto: UpdateReleaseTerritoriesDto,
@@ -69,13 +70,13 @@ export class ReleasesController {
       data: release,
     };
   }
-
   @Post(":id/cover-art")
   @UseInterceptors(
     FileInterceptor("file", {
       storage: memoryStorage(),
     }),
   )
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async uploadReleaseCoverArt(
     @Param("id") id: string,
     @UploadedFile() file: Express.Multer.File | undefined,
@@ -87,9 +88,8 @@ export class ReleasesController {
       data: release,
     };
   }
-
-
   @Post(":id/genres")
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async upsertReleaseGenre(
     @Param("id") id: string,
     @Body() dto: UpsertReleaseGenreDto,
@@ -98,8 +98,8 @@ export class ReleasesController {
     const releaseGenre = await this.releaseService.upsertReleaseGenre(id, dto, user);
     return { message: "Release genre saved successfully", data: releaseGenre };
   }
-
   @Get(":id/genres")
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async getReleaseGenres(
     @Param("id") id: string,
     @CurrentUser() user: AuthUser,
@@ -107,9 +107,9 @@ export class ReleasesController {
     const releaseGenres = await this.releaseService.getReleaseGenres(id, user);
     return { message: "Release genres fetched successfully", data: releaseGenres };
   }
-
   @Delete(":id/genres")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async deleteReleaseGenre(
     @Param("id") id: string,
     @Query("type") type: ReleaseGenreType,
@@ -118,9 +118,9 @@ export class ReleasesController {
     await this.releaseService.deleteReleaseGenreByType(id, type, user);
     return { message: "Release genre removed successfully" };
   }
-
   @Post(":id/validate")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async validateRelease(
     @Param("id") id: string,
     @CurrentUser() user: AuthUser,
@@ -128,9 +128,9 @@ export class ReleasesController {
     const result = await this.releaseService.validateRelease(id, user);
     return { message: "Release validation completed", data: result };
   }
-
   @Post(":id/submit")
   @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
   async submitRelease(
     @Param("id") id: string,
     @CurrentUser() user: AuthUser,
@@ -138,8 +138,8 @@ export class ReleasesController {
     const result = await this.releaseService.submitRelease(id, user);
     return { message: "Release submission completed", data: result };
   }
-
   @Get()
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async fetchAllReleases(
     @CurrentUser() user: AuthUser,
     @Query("createdById") createdById?: string,
@@ -153,8 +153,8 @@ export class ReleasesController {
     });
     return { message: "Releases fetched successfully", data: releases };
   }
-
   @Get(":id")
+  @Permissions(PERMISSIONS.READ_RELEASE)
   async getReleaseById(@Param("id") id: string) {
     const release = await this.releaseQueryService.getReleaseById(id);
     if (!release) {
@@ -162,7 +162,6 @@ export class ReleasesController {
     }
     return { message: "Release fetched successfully", data: release };
   }
-
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteRelease(@Param("id") id: string) {

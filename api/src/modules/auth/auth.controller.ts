@@ -14,7 +14,9 @@ import { validateEmail } from '../../helpers/validations.helper';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { AdminGuard } from '../../common/guards/admin.guard';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PERMISSIONS } from '../../constants/permission.constants';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { CreateUserInvitationDto } from './dto/create-user-invitation.dto';
 import { CreateBulkUserInvitationDto } from './dto/create-bulk-user-invitation.dto';
@@ -42,7 +44,8 @@ export class AuthController {
   }
 
   @Post('invitations')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.CREATE_INVITATION)
   async createInvitation(
     @Body() dto: CreateUserInvitationDto,
     @CurrentUser() user: { id: string },
@@ -78,7 +81,8 @@ export class AuthController {
   }
 
   @Post('invitations/bulk')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.CREATE_INVITATION)
   async createBulkInvitations(
     @Body() dto: CreateBulkUserInvitationDto,
     @CurrentUser() user: { id: string },
@@ -91,7 +95,8 @@ export class AuthController {
   }
 
   @Get('invitations')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.READ_INVITATION)
   async listInvitations(@Query() query: ListInvitationsQueryDto) {
     const data = await this.authService.listInvitations({
       page: query.page ?? 0,
@@ -130,7 +135,8 @@ export class AuthController {
   }
 
   @Post('invitations/:id/revoke')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.REVOKE_INVITATION)
   async revokeInvitation(@Param('id') id: string) {
     const invitation = await this.authService.revokeInvitation(id);
     return {
@@ -140,7 +146,8 @@ export class AuthController {
   }
 
   @Post('invitations/:id/approve')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.APPROVE_INVITATION)
   async approveInvitation(
     @Param('id') id: string,
     @CurrentUser() user: { id: string },

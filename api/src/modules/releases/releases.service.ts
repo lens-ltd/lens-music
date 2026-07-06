@@ -20,7 +20,7 @@ import {
 import { releaseStoreHasDealCoverage } from '../../helpers/deals.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
-import { ROLES } from '../../constants/auth.constant';
+import { PERMISSIONS } from '../../constants/permission.constants';
 import {
   ReleaseGenreType,
   ReleaseParentalAdvisory,
@@ -280,9 +280,9 @@ export class ReleaseService {
     }
 
     const isOwner = release.createdById === user.id;
-    const isAdmin = user.role === ROLES.ADMIN;
+    const canManageReleases = user.permissions?.includes(PERMISSIONS.UPDATE_RELEASE) ?? false;
 
-    if (!isOwner && !isAdmin) {
+    if (!isOwner && !canManageReleases) {
       throw new ForbiddenException('Forbidden');
     }
 
