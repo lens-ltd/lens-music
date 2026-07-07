@@ -283,6 +283,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      rejectContributor: builder.mutation({
+        query: ({ id, notes }: { id: string; notes?: string }) => ({
+          url: `/contributors/${id}/reject`,
+          method: "POST",
+          body: notes ? { notes } : {},
+        }),
+      }),
+
       createContributorMembership: builder.mutation({
         query: (body: CreateContributorMembershipPayload) => ({
           url: "/contributor-memberships",
@@ -354,6 +362,21 @@ export const apiMutationSlice = createApi({
         query: ({ id }: { id: string }) => ({
           url: `/releases/${id}/submit`,
           method: "POST",
+        }),
+      }),
+
+      approveRelease: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/releases/${id}/approve`,
+          method: "POST",
+        }),
+      }),
+
+      rejectRelease: builder.mutation({
+        query: ({ id, reviewNotes }: { id: string; reviewNotes: string }) => ({
+          url: `/releases/${id}/reject`,
+          method: "POST",
+          body: { reviewNotes },
         }),
       }),
 
@@ -724,6 +747,7 @@ export const {
   useUpdateContributorMutation,
   useDeleteContributorMutation,
   useVerifyContributorMutation,
+  useRejectContributorMutation,
   useCreateContributorMembershipMutation,
   useDeleteContributorMembershipMutation,
   useCreateTrackMutation,
@@ -733,6 +757,8 @@ export const {
   useValidateTrackMutation,
   useValidateReleaseMutation,
   useSubmitReleaseMutation,
+  useApproveReleaseMutation,
+  useRejectReleaseMutation,
   useCreateTrackContributorMutation,
   useUpdateTrackContributorMutation,
   useDeleteTrackContributorMutation,

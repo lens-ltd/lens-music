@@ -144,10 +144,6 @@ const ReleaseWizardManageContributions = ({
           }
         }
       })();
-
-      return () => {
-        setIsContributorSearchPending(false);
-      };
     }, 2000);
 
     return () => {

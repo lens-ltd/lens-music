@@ -8,6 +8,7 @@ const initialState: {
   deleteContributorModal: boolean;
   selectedContributor?: Contributor;
   verifyContributorModal: boolean;
+  rejectContributorModal: boolean;
 } = {
   contributorsList: [],
   contributor: undefined,
@@ -15,6 +16,7 @@ const initialState: {
   deleteContributorModal: false,
   selectedContributor: undefined,
   verifyContributorModal: false,
+  rejectContributorModal: false,
 };
 
 const contributorSlice = createSlice({
@@ -39,6 +41,9 @@ const contributorSlice = createSlice({
     setVerifyContributorModal: (state, action) => {
       state.verifyContributorModal = action.payload;
     },
+    setRejectContributorModal: (state, action) => {
+      state.rejectContributorModal = action.payload;
+    },
   },
 });
 
@@ -49,6 +54,7 @@ export const {
   setDeleteContributorModal,
   setSelectedContributor,
   setVerifyContributorModal,
+  setRejectContributorModal,
 } = contributorSlice.actions;
 
 export default contributorSlice.reducer;

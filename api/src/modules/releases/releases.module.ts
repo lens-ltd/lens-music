@@ -11,6 +11,7 @@ import { Genre } from '../../entities/genre.entity';
 import { UploadsModule } from '../uploads/uploads.module';
 import { Deal } from '../../entities/deal.entity';
 import { TrackRightsController } from '../../entities/track-rights-controller.entity';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TrackRightsController } from '../../entities/track-rights-controller.en
       TrackRightsController,
     ]),
     UploadsModule,
+    EmailModule,
   ],
   controllers: [ReleasesController],
   providers: [ReleaseService, ReleaseQueryService],

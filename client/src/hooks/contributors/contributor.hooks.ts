@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import {
   useDeleteContributorMutation,
   useVerifyContributorMutation,
+  useRejectContributorMutation,
 } from "@/state/api/apiMutationSlice";
 
 // FETCH CONTRIBUTORS
@@ -84,4 +85,12 @@ export const useVerifyContributor = () => {
     useVerifyContributorMutation();
 
   return { verifyContributor, isLoading, data, isSuccess, reset };
+};
+
+// REJECT CONTRIBUTOR
+export const useRejectContributor = () => {
+  const [rejectContributor, { isLoading, data, isSuccess, reset }] =
+    useRejectContributorMutation();
+
+  return { rejectContributor, isLoading, data, isSuccess, reset };
 };

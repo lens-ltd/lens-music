@@ -26,6 +26,8 @@ import { PERMISSIONS } from "../../constants/permission.constants";
 import { CreateReleaseDto } from "./dto/create-release.dto";
 import { UpdateReleaseOverviewDto } from "./dto/update-release-overview.dto";
 import { UpdateReleaseTerritoriesDto } from "./dto/update-release-territories.dto";
+import { RejectReleaseDto } from "./dto/reject-release.dto";
+import { ReleaseStatus } from "../../constants/release.constants";
 import { ReleaseService } from "./releases.service";
 import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
@@ -138,6 +140,41 @@ export class ReleasesController {
     const result = await this.releaseService.submitRelease(id, user);
     return { message: "Release submission completed", data: result };
   }
+  @Get("review/queue")
+  @Permissions(PERMISSIONS.REVIEW_RELEASE)
+  async fetchReviewQueue(
+    @Query("status") status?: ReleaseStatus,
+    @Query("size") size = "10",
+    @Query("page") page = "0",
+  ) {
+    const releases = await this.releaseQueryService.fetchReviewQueue({
+      status,
+      size: Number(size),
+      page: Number(page),
+    });
+    return { message: "Review queue fetched successfully", data: releases };
+  }
+  @Post(":id/approve")
+  @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.APPROVE_RELEASE)
+  async approveRelease(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const release = await this.releaseService.approveRelease(id, user);
+    return { message: "Release approved successfully", data: release };
+  }
+  @Post(":id/reject")
+  @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.REJECT_RELEASE)
+  async rejectRelease(
+    @Param("id") id: string,
+    @Body() dto: RejectReleaseDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const release = await this.releaseService.rejectRelease(id, dto, user);
+    return { message: "Release rejected successfully", data: release };
+  }
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
   async fetchAllReleases(
@@ -164,6 +201,7 @@ export class ReleasesController {
   }
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(PERMISSIONS.DELETE_RELEASE)
   async deleteRelease(@Param("id") id: string) {
     await this.releaseService.deleteRelease(id);
   }

@@ -1,5 +1,14 @@
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from "typeorm";
 import { AbstractEntity } from "./abstract.entity";
+import type { User } from "./user.entity";
+import { UUID } from "../types/common.types";
 import { Track } from "./track.entity";
 import { ReleaseNavigationFlow } from "./release-navigation-flow.entity";
 import { ReleaseGenre } from "./release-genre.entity";
@@ -212,4 +221,25 @@ export class Release extends AbstractEntity {
   // MARKETING COMMENT
   @Column({ name: "marketing_comment", type: "text", nullable: true })
   marketingComment?: string;
+
+  // REVIEW NOTES (reviewer feedback, set on rejection)
+  @Column({ name: "review_notes", type: "text", nullable: true })
+  reviewNotes?: string;
+
+  // REVIEWED BY ID
+  @Column({ name: "reviewed_by_id", type: "uuid", nullable: true })
+  reviewedById?: UUID;
+
+  // REVIEWED AT
+  @Column({ name: "reviewed_at", type: "timestamp", nullable: true })
+  reviewedAt?: Date;
+
+  // REVIEWED BY (lazy require avoids circular import)
+  @ManyToOne(() => require("./user.entity").User, {
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE",
+    nullable: true,
+  })
+  @JoinColumn({ name: "reviewed_by_id" })
+  reviewedBy?: User;
 }

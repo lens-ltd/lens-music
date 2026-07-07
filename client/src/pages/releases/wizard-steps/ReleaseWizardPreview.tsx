@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import store from "store";
 import Button from "@/components/inputs/Button";
 import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
-import { useValidateRelease } from "@/hooks/releases/release.hooks";
+import { useGetRelease, useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
 import { useFetchReleaseStores } from "@/hooks/releases/release-store.hooks";
 import {
@@ -38,6 +38,7 @@ const ReleaseWizardPreview = ({
   const { createReleaseNavigationFlow, isLoading: isNavigating } =
     useCreateReleaseNavigationFlow();
   const { validateRelease, isLoading: isValidating } = useValidateRelease();
+  const { getRelease } = useGetRelease();
   const { fetchReleaseContributors, data: releaseContributorsData, isFetching: areContributorsFetching } =
     useFetchReleaseContributors();
   const { fetchReleaseStores, data: releaseStoresData } =
@@ -90,10 +91,13 @@ const ReleaseWizardPreview = ({
 
   useEffect(() => {
     if (release?.id) {
+      // Refresh the release so the submit/validate button reflects the server's
+      // current status (edits elsewhere can demote a VALIDATED release to DRAFT).
+      getRelease({ id: release.id });
       fetchReleaseContributors({ releaseId: release.id });
       fetchReleaseStores({ releaseId: release.id });
     }
-  }, [fetchReleaseContributors, fetchReleaseStores, release?.id]);
+  }, [fetchReleaseContributors, fetchReleaseStores, getRelease, release?.id]);
 
   const handleDownloadDdex = useCallback(async () => {
     if (!release?.id) return;
@@ -165,6 +169,17 @@ const ReleaseWizardPreview = ({
           Review all release information before submitting for distribution.
         </p>
       </header>
+
+      {release.status === ReleaseStatus.DRAFT && release.reviewNotes && (
+        <aside className="rounded-md border border-amber-200 bg-amber-50 p-4">
+          <p className="text-[12px] font-medium text-amber-800">
+            Changes requested by the review team
+          </p>
+          <p className="mt-1 text-[12px] text-amber-700 whitespace-pre-line">
+            {release.reviewNotes}
+          </p>
+        </aside>
+      )}
   
       <section className="flex flex-col gap-4">
         <PreviewOverviewSection release={release} contributors={releaseContributors} />

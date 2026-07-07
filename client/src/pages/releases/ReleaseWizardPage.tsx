@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import UserLayout from "@/containers/UserLayout";
 import ReleaseNavigationPanel from "@/containers/releases/ReleaseNavigationPanel";
 import ReleaseProgressNavigation from "@/containers/releases/ReleaseProgressNavigation";
@@ -54,16 +54,16 @@ const ReleaseWizardPage = () => {
     staticReleaseNavigationIsFetching ||
     createReleaseNavigationFlowIsLoading;
 
+  // Guards the one-time bootstrap of the initial OVERVIEW navigation flow so a
+  // slow/duplicate render can't create it twice.
+  const hasBootstrappedFirstFlow = useRef(false);
+
   useEffect(() => {
+    hasBootstrappedFirstFlow.current = false;
     if (id) {
       getRelease({ id });
     }
-  }, [
-    id,
-    getRelease,
-    fetchReleaseNavigationFlows,
-    fetchStaticReleaseNavigation,
-  ]);
+  }, [id, getRelease]);
 
   useEffect(() => {
     if (release?.id) {
@@ -75,11 +75,14 @@ const ReleaseWizardPage = () => {
   useEffect(() => {
     if (
       id &&
+      !hasBootstrappedFirstFlow.current &&
+      !createReleaseNavigationFlowIsLoading &&
       releaseNavigationFlowsIsSuccess &&
       staticReleaseNavigationIsSuccess &&
       Object.keys(staticSteps).length > 0 &&
       releaseNavigationFlows.length === 0
     ) {
+      hasBootstrappedFirstFlow.current = true;
       createReleaseNavigationFlow({
         releaseId: id,
         staticReleaseNavigationStepName: "OVERVIEW",
@@ -92,6 +95,7 @@ const ReleaseWizardPage = () => {
     staticSteps,
     releaseNavigationFlows.length,
     createReleaseNavigationFlow,
+    createReleaseNavigationFlowIsLoading,
   ]);
 
   const activateStep = useCallback(
@@ -105,6 +109,11 @@ const ReleaseWizardPage = () => {
     [id, createReleaseNavigationFlow],
   );
 
+  // NOTE: the linear Next/Back order below is hardcoded and must be kept in
+  // sync with the seeded static-navigation catalog
+  // (api/src/constants/static-release-navigation.constants.ts), which drives the
+  // tab bar ordering. Renaming/reordering steps in one place without the other
+  // will desync the tab bar from this flow.
   const stepContent = useMemo(() => {
     const stepName =
       activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName || "";

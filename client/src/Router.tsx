@@ -29,6 +29,8 @@ import UsersPage from "./pages/users/UsersPage";
 import UserInvitationsPage from "./pages/users/UserInvitationsPage";
 import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
 import StoresPage from "./pages/stores/StoresPage";
+import ReleaseReviewPage from "./pages/releases/review/ReleaseReviewPage";
+import ContributorVerificationQueuePage from "./pages/contributors/ContributorVerificationQueuePage";
 
 type RouteSeoConfig = Omit<SeoProps, "children">;
 
@@ -73,6 +75,11 @@ const routeSeo = {
     description:
       "Track release status, organize catalog delivery, and manage publishing workflows inside Lens Music.",
   },
+  releaseReview: {
+    title: "Release Review",
+    description:
+      "Review releases submitted for approval, approve them for delivery, or request changes with feedback.",
+  },
   releaseWizard: {
     title: "Release Wizard",
     description:
@@ -92,6 +99,11 @@ const routeSeo = {
     title: "Contributors",
     description:
       "Manage contributor records, roles, profile links, and membership relationships across your catalog.",
+  },
+  contributorVerification: {
+    title: "Contributor Verification",
+    description:
+      "Review contributors awaiting verification and approve or reject their verified status.",
   },
   createContributor: {
     title: "Create Contributor",
@@ -205,6 +217,10 @@ const Router = () => {
               element={withSeo(<ReleasesPage />, routeSeo.releases)}
             />
             <Route
+              path="review"
+              element={withSeo(<ReleaseReviewPage />, routeSeo.releaseReview)}
+            />
+            <Route
               path=":id/wizard"
               element={withSeo(<ReleaseWizardPage />, routeSeo.releaseWizard)}
             />
@@ -223,6 +239,13 @@ const Router = () => {
             <Route
               path=""
               element={withSeo(<ContributorsPage />, routeSeo.contributors)}
+            />
+            <Route
+              path="verification"
+              element={withSeo(
+                <ContributorVerificationQueuePage />,
+                routeSeo.contributorVerification,
+              )}
             />
             <Route
               path="create"

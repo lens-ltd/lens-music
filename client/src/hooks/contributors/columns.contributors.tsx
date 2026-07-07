@@ -5,6 +5,7 @@ import { ellipsisHClassName } from "@/constants/input.constants";
 import { PERMISSIONS } from "@/constants/permission.constants";
 import {
   setDeleteContributorModal,
+  setRejectContributorModal,
   setSelectedContributor,
   setVerifyContributorModal,
 } from "@/state/features/contributorSlice";
@@ -24,6 +25,7 @@ import {
   faCertificate,
   faCircleCheck,
   faCircleInfo,
+  faCircleXmark,
   faEllipsisH,
   faTrash,
   faUsers,
@@ -150,6 +152,24 @@ export const useContributorColumns = () => {
                     {verificationLabel}
                   </TableActionButton>
                 )}
+                {canVerify &&
+                  !([
+                    ContributorVerificationStatus.NOT_VERIFIED,
+                  ] as string[]).includes(row?.original?.verificationStatus) && (
+                    <TableActionButton
+                      icon={faCircleXmark}
+                      iconClassName="text-red-700 text-[12px]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (row?.original?.id) {
+                          dispatch(setSelectedContributor(row?.original));
+                          dispatch(setRejectContributorModal(true));
+                        }
+                      }}
+                    >
+                      Reject
+                    </TableActionButton>
+                  )}
                 {[ContributorType.GROUP].includes(
                   row?.original?.type as ContributorType,
                 ) && (

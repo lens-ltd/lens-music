@@ -1,6 +1,7 @@
 import { faEnvelope, faFileLines } from '@fortawesome/free-regular-svg-icons';
 import {
   faChartLine,
+  faClipboardCheck,
   faStore,
   faUser,
   faUserGroup,
@@ -30,9 +31,28 @@ const sidebarNavigationDefinition: SidebarNavigation[] = [
     icon: faFileLines,
   },
   {
+    title: 'Release Review',
+    path: '/releases/review',
+    icon: faClipboardCheck,
+    requiredAnyPermissions: [PERMISSIONS.REVIEW_RELEASE],
+  },
+  {
     title: 'Contributors',
     path: '/contributors',
     icon: faUserGroup,
+    subCategories: [
+      {
+        title: 'Contributors',
+        path: '/contributors',
+        icon: faUserGroup,
+      },
+      {
+        title: 'Verification',
+        path: '/contributors/verification',
+        icon: faClipboardCheck,
+        requiredAnyPermissions: [PERMISSIONS.VERIFY_CONTRIBUTOR],
+      },
+    ],
   },
   {
     title: 'Stores',

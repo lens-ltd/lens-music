@@ -1,7 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
+import { EmailService } from "../email/email.service";
+import { RejectContributorDto } from "./dto/reject-contributor.dto";
 import {
   getPagination,
   getPagingData,
@@ -21,7 +23,10 @@ export class ContributorService {
     private readonly contributorRepository: Repository<Contributor>,
     @InjectRepository(ContributorMembership)
     private readonly contributorMembershipRepository: Repository<ContributorMembership>,
+    private readonly emailService: EmailService,
   ) {}
+
+  private readonly logger = new Logger(ContributorService.name);
 
   private getPrioritizedContributorName({
     displayName,
@@ -211,7 +216,56 @@ export class ContributorService {
     contributor.verifiedById = verifiedById;
     contributor.verifiedAt = new Date();
     contributor.lastUpdatedById = verifiedById;
-    return this.contributorRepository.save(contributor);
+    const saved = await this.contributorRepository.save(contributor);
+    await this.notifyVerificationOutcome(saved, "VERIFIED");
+    return saved;
+  }
+
+  async reject(
+    id: UUID,
+    reviewedById: UUID,
+    dto?: RejectContributorDto,
+  ): Promise<Contributor> {
+    const contributor = await this.contributorRepository.findOne({
+      where: { id },
+    });
+    if (!contributor) {
+      throw new NotFoundException("Contributor not found");
+    }
+    contributor.verificationStatus =
+      ContributorVerificationStatus.NOT_VERIFIED;
+    contributor.verifiedById = reviewedById;
+    contributor.verifiedAt = new Date();
+    contributor.lastUpdatedById = reviewedById;
+    const saved = await this.contributorRepository.save(contributor);
+    await this.notifyVerificationOutcome(saved, "REJECTED", dto?.notes);
+    return saved;
+  }
+
+  private async notifyVerificationOutcome(
+    contributor: Contributor,
+    outcome: "VERIFIED" | "REJECTED",
+    notes?: string,
+  ): Promise<void> {
+    if (!contributor.email) {
+      return;
+    }
+    try {
+      await this.emailService.sendContributorVerificationEmail({
+        to: contributor.email,
+        contributorName:
+          contributor.displayName || contributor.name || "Contributor",
+        outcome,
+        notes,
+        contributorId: contributor.id,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to send contributor verification email for ${contributor.id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   async requestVerification(

@@ -6,9 +6,13 @@ import { ContributorsController } from './contributors.controller';
 import { ContributorMembershipsController } from './contributor-memberships.controller';
 import { ContributorService } from './contributors.service';
 import { ContributorMembershipService } from './contributor-membership.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Contributor, ContributorMembership])],
+  imports: [
+    TypeOrmModule.forFeature([Contributor, ContributorMembership]),
+    EmailModule,
+  ],
   controllers: [ContributorsController, ContributorMembershipsController],
   providers: [ContributorService, ContributorMembershipService],
 })

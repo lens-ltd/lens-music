@@ -1,7 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
+import { EmailService } from '../email/email.service';
+import { RejectReleaseDto } from './dto/reject-release.dto';
 import { ReleaseContributor } from '../../entities/release-contributor.entity';
 import { ReleaseGenre } from '../../entities/release-genre.entity';
 import { ReleaseLabel } from '../../entities/release-label.entity';
@@ -58,7 +60,10 @@ export class ReleaseService {
     @InjectRepository(TrackRightsController)
     private readonly trackRightsControllerRepository: Repository<TrackRightsController>,
     private readonly cloudinaryImageUploaderService: CloudinaryImageUploaderService,
+    private readonly emailService: EmailService,
   ) { }
+
+  private readonly logger = new Logger(ReleaseService.name);
 
   async createRelease(dto: CreateReleaseDto, userId: UUID): Promise<Release> {
     const release = this.releaseRepository.create({
@@ -198,6 +203,86 @@ export class ReleaseService {
     }
 
     return { valid: false, errors };
+  }
+
+  async approveRelease(id: UUID, user: AuthUser): Promise<Release> {
+    const release = await this.releaseRepository.findOne({
+      where: { id },
+      relations: { createdBy: true },
+    });
+    if (!release) {
+      throw new NotFoundException('Release not found');
+    }
+    if (release.status !== ReleaseStatus.REVIEW) {
+      throw new BadRequestException(
+        'Only releases in review can be approved',
+      );
+    }
+
+    release.status = ReleaseStatus.APPROVED;
+    release.reviewNotes = undefined;
+    release.reviewedById = user?.id;
+    release.reviewedAt = new Date();
+    release.lastUpdatedById = user?.id;
+
+    const savedRelease = await this.releaseRepository.save(release);
+    await this.notifyReleaseReviewOutcome(savedRelease, 'APPROVED');
+    return savedRelease;
+  }
+
+  async rejectRelease(
+    id: UUID,
+    dto: RejectReleaseDto,
+    user: AuthUser,
+  ): Promise<Release> {
+    const release = await this.releaseRepository.findOne({
+      where: { id },
+      relations: { createdBy: true },
+    });
+    if (!release) {
+      throw new NotFoundException('Release not found');
+    }
+    if (release.status !== ReleaseStatus.REVIEW) {
+      throw new BadRequestException(
+        'Only releases in review can be rejected',
+      );
+    }
+
+    release.status = ReleaseStatus.DRAFT;
+    release.reviewNotes = dto.reviewNotes;
+    release.reviewedById = user?.id;
+    release.reviewedAt = new Date();
+    release.lastUpdatedById = user?.id;
+
+    const savedRelease = await this.releaseRepository.save(release);
+    await this.notifyReleaseReviewOutcome(savedRelease, 'REJECTED');
+    return savedRelease;
+  }
+
+  private async notifyReleaseReviewOutcome(
+    release: Release,
+    outcome: 'APPROVED' | 'REJECTED',
+  ): Promise<void> {
+    const recipient = release.createdBy?.email;
+    if (!recipient) {
+      return;
+    }
+
+    try {
+      await this.emailService.sendReleaseReviewEmail({
+        to: recipient,
+        releaseTitle: release.title,
+        outcome,
+        reviewNotes: release.reviewNotes,
+        releaseId: release.id,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to send release review email for release ${release.id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
 

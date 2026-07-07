@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
 import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
 import { UUID } from '../../types/common.types';
+import { ReleaseStatus } from '../../constants/release.constants';
 
 @Injectable()
 export class ReleaseQueryService {
@@ -31,6 +32,30 @@ export class ReleaseQueryService {
         createdBy: true,
         genres: { genre: true },
       }
+    });
+
+    return getPagingData({ data: releases, size, page });
+  }
+
+  async fetchReviewQueue({
+    status,
+    size,
+    page,
+  }: {
+    status?: ReleaseStatus;
+    size?: number;
+    page?: number;
+  }): Promise<Pagination> {
+    const { take, skip } = getPagination({ size, page });
+    const releases = await this.releaseRepository.findAndCount({
+      where: { status: status ?? ReleaseStatus.REVIEW },
+      order: { createdAt: 'ASC' },
+      take,
+      skip,
+      relations: {
+        createdBy: true,
+        genres: { genre: true },
+      },
     });
 
     return getPagingData({ data: releases, size, page });

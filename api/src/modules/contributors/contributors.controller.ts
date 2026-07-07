@@ -23,9 +23,11 @@ import {
 import { ContributorService } from "./contributors.service";
 import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
+import { RejectContributorDto } from "./dto/reject-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { Contributor } from "../../entities/contributor.entity";
-import { FindOptionsWhere } from "typeorm";
+import { FindOptionsWhere, In } from "typeorm";
+import { ContributorVerificationStatus } from "../../constants/contributor.constants";
 @Controller("contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContributorsController {
@@ -65,6 +67,7 @@ export class ContributorsController {
     @Query("type") type?: string,
     @Query("searchKey") searchKey?: string,
     @Query("searchName") searchName?: string,
+    @Query("verificationStatus") verificationStatus?: string,
   ) {
     const condition: FindOptionsWhere<Contributor> = {};
     if (parentContributorId) {
@@ -73,6 +76,21 @@ export class ContributorsController {
     }
     if (type) {
       condition.type = type as Contributor["type"];
+    }
+    if (verificationStatus) {
+      const statuses = verificationStatus
+        .split(",")
+        .map((value) => value.trim())
+        .filter((value): value is ContributorVerificationStatus =>
+          Object.values(ContributorVerificationStatus).includes(
+            value as ContributorVerificationStatus,
+          ),
+        );
+      if (statuses.length === 1) {
+        condition.verificationStatus = statuses[0];
+      } else if (statuses.length > 1) {
+        condition.verificationStatus = In(statuses);
+      }
     }
     const data = await this.contributorService.findAll({
       size: Number(size),
@@ -135,6 +153,22 @@ export class ContributorsController {
   async verify(@Param("id") id: UUID, @CurrentUser() user: AuthUser) {
     const contributor = await this.contributorService.verify(id, user?.id);
     return { message: "Contributor verified successfully", data: contributor };
+  }
+  /**
+   * Reject a contributor's verification
+   * @param id - The ID of the contributor to reject
+   * @param dto - Optional rejection notes
+   * @returns The updated contributor
+   */
+  @Post(":id/reject")
+  @Permissions(PERMISSIONS.VERIFY_CONTRIBUTOR)
+  async reject(
+    @Param("id") id: UUID,
+    @Body() dto: RejectContributorDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const contributor = await this.contributorService.reject(id, user?.id, dto);
+    return { message: "Contributor verification rejected", data: contributor };
   }
   /**
    * Request verification for a contributor

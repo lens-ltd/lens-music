@@ -61,6 +61,10 @@ export interface Release extends AbstractEntity {
   status: ReleaseStatus;
   metadataLanguage?: string;
   territories?: string[];
+  reviewNotes?: string;
+  reviewedAt?: string;
+  reviewedById?: string;
+  reviewedBy?: User | null;
   createdById?: string;
   createdBy?: User | null;
   tracks: Track[];

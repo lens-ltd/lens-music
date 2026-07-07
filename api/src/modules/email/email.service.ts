@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { renderInvitationEmail } from './templates/invitation-email.template';
 import { renderPasswordResetEmail } from './templates/password-reset-email.template';
+import {
+  renderReleaseReviewEmail,
+  ReleaseReviewOutcome,
+} from './templates/release-review-email.template';
+import {
+  renderContributorVerificationEmail,
+  ContributorVerificationOutcome,
+} from './templates/contributor-verification-email.template';
 
 @Injectable()
 export class EmailService {
@@ -84,6 +92,66 @@ export class EmailService {
       html: renderPasswordResetEmail({
         resetUrl,
         expiresInMinutes,
+        logoUrl: this.logoUrl,
+        appUrl: this.appUrl,
+      }),
+    });
+  }
+
+  async sendReleaseReviewEmail({
+    to,
+    releaseTitle,
+    outcome,
+    reviewNotes,
+    releaseId,
+  }: {
+    to: string;
+    releaseTitle: string;
+    outcome: ReleaseReviewOutcome;
+    reviewNotes?: string;
+    releaseId: string;
+  }) {
+    return this.sendEmail({
+      to,
+      subject:
+        outcome === 'APPROVED'
+          ? `Your release "${releaseTitle}" was approved`
+          : `Changes requested on "${releaseTitle}"`,
+      html: renderReleaseReviewEmail({
+        releaseTitle,
+        outcome,
+        reviewNotes,
+        releaseUrl: `${this.appUrl}/releases/${releaseId}/wizard`,
+        logoUrl: this.logoUrl,
+        appUrl: this.appUrl,
+      }),
+    });
+  }
+
+  async sendContributorVerificationEmail({
+    to,
+    contributorName,
+    outcome,
+    notes,
+    contributorId,
+  }: {
+    to: string;
+    contributorName: string;
+    outcome: ContributorVerificationOutcome;
+    notes?: string;
+    contributorId: string;
+  }) {
+    return this.sendEmail({
+      to,
+      subject:
+        outcome === 'VERIFIED'
+          ? `Contributor "${contributorName}" was verified`
+          : `Contributor "${contributorName}" was not verified`,
+      html: renderContributorVerificationEmail({
+        contributorName,
+        outcome,
+        notes,
+        contributorUrl: `${this.appUrl}/contributors/${contributorId}`,
         logoUrl: this.logoUrl,
         appUrl: this.appUrl,
       }),

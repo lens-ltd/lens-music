@@ -100,6 +100,29 @@ export const apiQuerySlice = createApi({
         },
       }),
 
+      // FETCH RELEASE REVIEW QUEUE
+      fetchReleaseReviewQueue: builder.query({
+        query: ({
+          size,
+          page,
+          status,
+        }: {
+          size: number;
+          page: number;
+          status?: string;
+        }) => {
+          return {
+            url: "/releases/review/queue",
+            method: "GET",
+            params: {
+              size,
+              page,
+              ...(status ? { status } : {}),
+            },
+          };
+        },
+      }),
+
       // FETCH RELEASE GENRES
       fetchReleaseGenres: builder.query({
         query: ({ id }: { id: string }) => ({
@@ -139,12 +162,14 @@ export const apiQuerySlice = createApi({
           type,
           searchKey,
           searchName,
+          verificationStatus,
         }: {
           page: number;
           size: number;
           type?: string;
           searchKey?: string;
           searchName?: string;
+          verificationStatus?: string;
         }) => {
           return {
             url: "/contributors",
@@ -155,6 +180,7 @@ export const apiQuerySlice = createApi({
               ...(type && { type }),
               ...(searchKey && { searchKey }),
               ...(searchName && { searchName }),
+              ...(verificationStatus && { verificationStatus }),
             },
           };
         },
@@ -318,6 +344,7 @@ export const {
   useLazyFetchLabelsQuery,
   useLazyFetchGenresQuery,
   useLazyFetchReleasesQuery,
+  useLazyFetchReleaseReviewQueueQuery,
   useLazyFetchStaticReleaseNavigationQuery,
   useLazyFetchReleaseNavigationFlowsQuery,
   useLazyFetchReleaseGenresQuery,
