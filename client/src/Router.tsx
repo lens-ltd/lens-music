@@ -34,6 +34,7 @@ import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
 import StoresPage from "./pages/stores/StoresPage";
 import ReleaseReviewPage from "./pages/releases/review/ReleaseReviewPage";
 import ContributorVerificationQueuePage from "./pages/contributors/ContributorVerificationQueuePage";
+import UserProfilePage from "./pages/profile/UserProfilePage";
 
 type RouteSeoConfig = Omit<SeoProps, "children">;
 
@@ -162,6 +163,11 @@ const routeSeo = {
     title: "Create User Invitation",
     description:
       "Send single or bulk invitations to teammates who need access to the Lens Music dashboard.",
+  },
+  profile: {
+    title: "User Profile",
+    description:
+      "View and manage your personal profile information, account details, and permissions in Lens Music.",
   },
   notFound: {
     title: "Page Not Found",
@@ -328,6 +334,12 @@ const Router = () => {
               element={withSeo(<EditRolePage />, routeSeo.roles)}
             />
           </Route>
+
+          {/* PROFILE ROUTE */}
+          <Route
+            path="/profile"
+            element={withSeo(<UserProfilePage />, routeSeo.profile)}
+          />
         </Route>
 
         {/* NOT FOUND */}
