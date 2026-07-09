@@ -5,16 +5,11 @@ import UserLayout from "@/containers/UserLayout";
 import { useRoleColumns } from "@/hooks/roles/columns.roles";
 import { useFetchRoles } from "@/hooks/roles/roles.hooks";
 import DeleteRole from "@/pages/roles/DeleteRole";
-import { setDeleteRoleModal, setSelectedRole } from "@/state/features/roleSlice";
-import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { useAppSelector } from "@/state/hooks";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 const RolesPage = () => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  
   // STATE
   const { rolesList } = useAppSelector((state) => state.role);
 
@@ -38,22 +33,7 @@ const RolesPage = () => {
   }, [refreshRoles]);
 
   // COLUMNS
-  const { roleColumns } = useRoleColumns({
-    onView: (id) => {
-      navigate(`/roles/${id}`);
-    },
-    onEdit: (id) => {
-      navigate(`/roles/${id}/edit`);
-    },
-    onDelete: (id) => {
-      const role = rolesList.find((item) => item.id === id);
-      if (!role) {
-        return;
-      }
-      dispatch(setSelectedRole(role));
-      dispatch(setDeleteRoleModal(true));
-    },
-  });
+  const { roleColumns } = useRoleColumns();
 
   return (
     <UserLayout>

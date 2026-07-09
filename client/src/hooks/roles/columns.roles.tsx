@@ -1,24 +1,23 @@
 import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { ellipsisHClassName } from "@/constants/input.constants";
+import { setDeleteRoleModal, setSelectedRole } from "@/state/features/roleSlice";
+import { useAppDispatch } from "@/state/hooks";
 import { Role } from "@/types/models/role.types";
 import { formatDate } from "@/utils/strings.helper";
-import { faCircleInfo, faPencil, faTrash, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import {
+  faCircleInfo,
+  faTrash,
+  faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-interface UseRoleColumnsProps {
-  onView?: (id: string) => void;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
-}
+export const useRoleColumns = () => {
+  const dispatch = useAppDispatch();
 
-export const useRoleColumns = ({
-  onView,
-  onEdit,
-  onDelete,
-}: UseRoleColumnsProps = {}) => {
   const roleColumns = useMemo<ColumnDef<Role>[]>(
     () => [
       {
@@ -70,38 +69,38 @@ export const useRoleColumns = ({
               }
             >
               <menu className="w-full flex flex-col items-center gap-1">
-                {onView && (
-                  <TableActionButton
-                    icon={faCircleInfo}
-                    onClick={() => onView(row?.original?.id)}
-                  >
-                    View details
-                  </TableActionButton>
-                )}
-                {onEdit && (
-                  <TableActionButton
-                    icon={faPencil}
-                    onClick={() => onEdit(row?.original?.id)}
-                  >
-                    Edit
-                  </TableActionButton>
-                )}
-                {onDelete && (
-                  <TableActionButton
-                    icon={faTrash}
-                    onClick={() => onDelete(row?.original?.id)}
-                    className="text-red-600 hover:bg-red-50"
-                  >
-                    Delete
-                  </TableActionButton>
-                )}
+                <TableActionButton
+                  icon={faCircleInfo}
+                  to={`/roles/${row?.original?.id}`}
+                >
+                  View details
+                </TableActionButton>
+                <TableActionButton
+                  icon={faPenToSquare}
+                  to={`/roles/${row?.original?.id}/edit`}
+                >
+                  Edit role
+                </TableActionButton>
+                <TableActionButton
+                  icon={faTrash}
+                  iconClassName="text-red-700 text-[12px]"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (row?.original?.id) {
+                      dispatch(setSelectedRole(row.original));
+                      dispatch(setDeleteRoleModal(true));
+                    }
+                  }}
+                >
+                  Delete
+                </TableActionButton>
               </menu>
             </CustomPopover>
           );
         },
       },
     ],
-    [onView, onEdit, onDelete],
+    [dispatch],
   );
 
   return { roleColumns };

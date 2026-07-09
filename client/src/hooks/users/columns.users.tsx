@@ -12,11 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-interface UseUserColumnsProps {
-  onView?: (id: string) => void;
-}
-
-export const useUserColumns = ({ onView }: UseUserColumnsProps = {}) => {
+export const useUserColumns = () => {
   const userColumns = useMemo<ColumnDef<User>[]>(
     () => [
       {
@@ -65,21 +61,19 @@ export const useUserColumns = ({ onView }: UseUserColumnsProps = {}) => {
               }
             >
               <menu className="w-full flex flex-col items-center gap-1">
-                {onView && (
-                  <TableActionButton
-                    icon={faCircleInfo}
-                    onClick={() => onView(row?.original?.id)}
-                  >
-                    View details
-                  </TableActionButton>
-                )}
+                <TableActionButton
+                  icon={faCircleInfo}
+                  to={`/users/${row?.original?.id}`}
+                >
+                  View details
+                </TableActionButton>
               </menu>
             </CustomPopover>
           );
         },
       },
     ],
-    [onView],
+    [],
   );
 
   return { userColumns };
