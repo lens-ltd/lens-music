@@ -3,8 +3,7 @@ import Input from "@/components/inputs/Input";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useAppSelector } from "@/state/hooks";
-import { faUser, faEnvelope, faPhone, faGlobe, faCalendar } from "@fortawesome/free-regular-svg-icons";
-import { faShieldAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faEnvelope, faPhone, faGlobe, faCalendar, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
