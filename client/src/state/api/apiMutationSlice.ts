@@ -22,6 +22,7 @@ import type {
 import type { RelatedReleasePayload } from "@/types/models/relatedRelease.types";
 import type { ReleaseTerritoryDetailPayload } from "@/types/models/releaseTerritoryDetail.types";
 import type { UpdateStorePayload } from "@/types/models/store.types";
+import type { Role } from "@/types/models/role.types";
 
 export const apiMutationSlice = createApi({
   reducerPath: "apiMutation",
@@ -91,15 +92,33 @@ export const apiMutationSlice = createApi({
       }),
 
       completeInvitation: builder.mutation({
-        query: ({ token, name, phoneNumber, password }) => ({
-          url: "/auth/invitations/complete",
+        query: ({ token, password, name }) => ({
+          url: `/auth/invitations/${token}/complete`,
           method: "POST",
-          body: {
-            token,
-            name,
-            phoneNumber,
-            password,
-          },
+          body: { password, name },
+        }),
+      }),
+
+      createRole: builder.mutation({
+        query: (body: { name: string; description?: string; createdById?: string }) => ({
+          url: "/roles",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      updateRole: builder.mutation({
+        query: ({ id, body }: { id: string; body: { name?: string; description?: string } }) => ({
+          url: `/roles/${id}`,
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      deleteRole: builder.mutation({
+        query: (id: string) => ({
+          url: `/roles/${id}`,
+          method: "DELETE",
         }),
       }),
 

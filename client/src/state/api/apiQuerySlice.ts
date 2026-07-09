@@ -75,6 +75,35 @@ export const apiQuerySlice = createApi({
         }),
       }),
 
+      fetchRoles: builder.query({
+        query: ({
+          size,
+          page,
+          ...filters
+        }: {
+          size: number;
+          page: number;
+          [key: string]: string | number | undefined;
+        }) => ({
+          url: "/roles",
+          method: "GET",
+          params: {
+            size,
+            page,
+            ...Object.fromEntries(
+              Object.entries(filters).filter(([_, v]) => v !== undefined)
+            ),
+          },
+        }),
+      }),
+
+      fetchRoleById: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/roles/${id}`,
+          method: "GET",
+        }),
+      }),
+
       // FETCH GENRES
       fetchGenres: builder.query({
         query: ({ parentId }: { parentId?: string } = {}) => ({

@@ -12,6 +12,7 @@ import navigationSlice from './features/navigationSlice';
 import contributorSlice from './features/contributorSlice';
 import contributorMembershipSlice from './features/contributorMembershipSlice';
 import userInvitationSlice from './features/userInvitationSlice';
+import roleSlice from './features/roleSlice';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     contributor: contributorSlice,
     contributorMembership: contributorMembershipSlice,
     userInvitation: userInvitationSlice,
+    role: roleSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

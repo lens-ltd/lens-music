@@ -16,6 +16,9 @@ import CreateLyrics from "./pages/lyrics/CreateLyrics";
 import SyncLyrics from "./pages/lyrics/SyncLyrics";
 import NotFoundPage from "./pages/common/NotFoundPage";
 import RolesPage from "./pages/roles/RolesPage";
+import CreateRolePage from "./pages/roles/CreateRolePage";
+import RoleDetailsPage from "./pages/roles/RoleDetailsPage";
+import EditRolePage from "./pages/roles/EditRolePage";
 import ReleaseWizardPage from "./pages/releases/ReleaseWizardPage";
 import ContributorsPage from "./pages/contributors/ContributorsPage";
 import CreateContributorPage from "./pages/contributors/CreateContributorPage";
@@ -308,11 +311,23 @@ const Router = () => {
               )}
             />
           </Route>
-        </Route>
 
-        {/* ROLES ROUTES */}
-        <Route path="/roles">
-          <Route path="" element={withSeo(<RolesPage />, routeSeo.roles)} />
+          {/* ROLES ROUTES */}
+          <Route path="/roles">
+            <Route path="" element={withSeo(<RolesPage />, routeSeo.roles)} />
+            <Route
+              path="create"
+              element={withSeo(<CreateRolePage />, routeSeo.roles)}
+            />
+            <Route
+              path=":id"
+              element={withSeo(<RoleDetailsPage />, routeSeo.roles)}
+            />
+            <Route
+              path=":id/edit"
+              element={withSeo(<EditRolePage />, routeSeo.roles)}
+            />
+          </Route>
         </Route>
 
         {/* NOT FOUND */}
