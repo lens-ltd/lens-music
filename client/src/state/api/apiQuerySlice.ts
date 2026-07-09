@@ -395,5 +395,7 @@ export const {
   useLazyFetchReleaseTerritoryDetailsQuery,
   useLazyFetchLyricsQuery,
   useLazyGetLyricsQuery,
+  useLazyFetchRolesQuery,
+  useLazyFetchRoleByIdQuery,
 } = apiQuerySlice;
 export default apiQuerySlice;

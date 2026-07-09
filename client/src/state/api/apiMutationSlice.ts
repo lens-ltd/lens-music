@@ -805,5 +805,8 @@ export const {
   useCreateLyricsMutation,
   useUpdateLyricsMutation,
   useDeleteLyricsMutation,
+  useCreateRoleMutation,
+  useUpdateRoleMutation,
+  useDeleteRoleMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;
