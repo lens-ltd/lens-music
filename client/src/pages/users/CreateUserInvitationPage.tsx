@@ -4,7 +4,7 @@ import TextArea from '@/components/inputs/TextArea';
 import { Heading } from '@/components/text/Headings';
 import UserLayout from '@/containers/UserLayout';
 import { useCreateUserInvitations } from '@/hooks/users/userInvitations.hooks';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 
 const CreateUserInvitationPage = () => {
   const {

@@ -10,7 +10,7 @@ import {
   useUserInvitationTableActions,
 } from '@/hooks/users/userInvitations.hooks';
 import { useAppSelector } from '@/state/hooks';
-import { faPlus } from '@fortawesome/free-regular-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useEffect, useState } from 'react';
 
 const UserInvitationsPage = () => {

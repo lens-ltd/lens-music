@@ -5,7 +5,7 @@ import UserLayout from "@/containers/UserLayout";
 import { useRoleColumns } from "@/hooks/roles/columns.roles";
 import { useFetchRoles } from "@/hooks/roles/roles.hooks";
 import { useAppSelector } from "@/state/hooks";
-import { faPlus } from "@fortawesome/free-regular-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
