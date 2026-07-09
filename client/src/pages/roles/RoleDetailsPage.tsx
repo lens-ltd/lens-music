@@ -4,13 +4,12 @@ import UserLayout from "@/containers/UserLayout";
 import { useFetchRoleById } from "@/hooks/roles/roles.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { formatDate } from "@/utils/strings.helper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import Loader from "@/components/inputs/Loader";
 
 const RoleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { fetchRoleById, isFetching } = useFetchRoleById();
   const { role } = useAppSelector((state) => state.role);
 
@@ -40,7 +39,7 @@ const RoleDetailsPage = () => {
             </div>
             <Button route="/roles">Back to roles</Button>
           </nav>
-          <div className="w-full rounded-xl border border-[color:var(--lens-sand)] bg-white p-8 text-center">
+          <div className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
             <p className="text-[color:var(--lens-ink)]/60">Role not found</p>
           </div>
         </main>
@@ -64,8 +63,8 @@ const RoleDetailsPage = () => {
           </div>
         </nav>
 
-        <section className="w-full max-w-3xl">
-          <div className="w-full flex flex-col gap-6 rounded-xl border border-[color:var(--lens-sand)] bg-white p-6 shadow-sm">
+        <section className="w-full">
+          <div className="flex w-full flex-col gap-6 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[18px] font-semibold text-[color:var(--lens-ink)]">
                 {role.name}
@@ -77,8 +76,8 @@ const RoleDetailsPage = () => {
               )}
             </div>
 
-            <div className="grid gap-4 pt-4 border-t border-[color:var(--lens-sand)]">
-              <div className="flex flex-col gap-1">
+            <div className="grid gap-3 border-t border-[color:var(--lens-sand)]/70 pt-5">
+              <div className="flex flex-col gap-1 rounded-md bg-white p-4">
                 <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
                   Role ID
                 </p>
@@ -87,7 +86,7 @@ const RoleDetailsPage = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 rounded-md bg-white p-4">
                 <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
                   Permissions
                 </p>
@@ -107,8 +106,8 @@ const RoleDetailsPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex flex-col gap-1 rounded-md bg-white p-4">
                   <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
                     Created
                   </p>
@@ -117,7 +116,7 @@ const RoleDetailsPage = () => {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 rounded-md bg-white p-4">
                   <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
                     Last updated
                   </p>

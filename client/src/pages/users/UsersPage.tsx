@@ -7,8 +7,11 @@ import { useFetchUsers } from "@/hooks/users/users.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UsersPage = () => {
+  const navigate = useNavigate();
+
   // STATE
   const { usersList } = useAppSelector((state) => state.user);
 
@@ -28,7 +31,11 @@ const UsersPage = () => {
   }, [fetchUsers, page, size]);
 
   // COLUMNS
-  const { userColumns } = useUserColumns();
+  const { userColumns } = useUserColumns({
+    onView: (id) => {
+      navigate(`/users/${id}`);
+    },
+  });
 
   return (
     <UserLayout>
@@ -56,6 +63,7 @@ const UsersPage = () => {
           setPage={setPage}
           setSize={setSize}
           noDataMessage="No users found."
+          containerClassName="border-0 rounded-none"
         />
       </main>
     </UserLayout>

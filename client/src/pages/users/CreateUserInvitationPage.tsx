@@ -31,8 +31,8 @@ const CreateUserInvitationPage = () => {
           <Button route="/users/invitations">Back to invitations</Button>
         </nav>
 
-        <section className="w-full grid gap-6 xl:grid-cols-2">
-          <div className="w-full flex flex-col gap-4 rounded-xl border border-[color:var(--lens-sand)] bg-white p-5 shadow-sm">
+        <section className="grid w-full gap-5 xl:grid-cols-2">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
             <h2 className="text-[14px] font-medium text-[color:var(--lens-ink)]">
               Send invitation
             </h2>
@@ -59,7 +59,7 @@ const CreateUserInvitationPage = () => {
             </Button>
           </div>
 
-          <div className="w-full flex flex-col gap-4 rounded-xl border border-[color:var(--lens-sand)] bg-white p-5 shadow-sm">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
             <h2 className="text-[14px] font-medium text-[color:var(--lens-ink)]">
               Bulk invite (max 50)
             </h2>

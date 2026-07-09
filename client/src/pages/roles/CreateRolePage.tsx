@@ -46,8 +46,8 @@ const CreateRolePage = () => {
           <Button route="/roles">Back to roles</Button>
         </nav>
 
-        <section className="w-full max-w-2xl">
-          <div className="w-full flex flex-col gap-4 rounded-xl border border-[color:var(--lens-sand)] bg-white p-5 shadow-sm">
+        <section className="w-full">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">

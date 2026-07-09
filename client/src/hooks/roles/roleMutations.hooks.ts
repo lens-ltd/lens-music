@@ -1,5 +1,4 @@
 import { toast } from "sonner";
-import { useAppDispatch } from "@/state/hooks";
 import {
   useCreateRoleMutation,
   useUpdateRoleMutation,
@@ -8,7 +7,6 @@ import {
 import { useLazyFetchRolesQuery } from "@/state/api/apiQuerySlice";
 
 export const useCreateRole = () => {
-  const dispatch = useAppDispatch();
   const [createRole, { isLoading: isCreating }] = useCreateRoleMutation();
   const [fetchRoles] = useLazyFetchRolesQuery();
 
@@ -34,7 +32,6 @@ export const useCreateRole = () => {
 };
 
 export const useUpdateRole = () => {
-  const dispatch = useAppDispatch();
   const [updateRole, { isLoading: isUpdating }] = useUpdateRoleMutation();
   const [fetchRoles] = useLazyFetchRolesQuery();
 
@@ -60,7 +57,6 @@ export const useUpdateRole = () => {
 };
 
 export const useDeleteRole = () => {
-  const dispatch = useAppDispatch();
   const [deleteRole, { isLoading: isDeleting }] = useDeleteRoleMutation();
   const [fetchRoles] = useLazyFetchRolesQuery();
 

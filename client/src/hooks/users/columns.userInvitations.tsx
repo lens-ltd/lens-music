@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 
 export const useUserInvitationColumns = ({
   onApprove,
+  onDecline,
   onRevoke,
   onRetry,
   isApproving,
@@ -15,6 +16,7 @@ export const useUserInvitationColumns = ({
   isRetrying,
 }: {
   onApprove: (id: string) => void;
+  onDecline: (id: string) => void;
   onRevoke: (id: string) => void;
   onRetry: (email: string) => void;
   isApproving: boolean;
@@ -92,7 +94,7 @@ export const useUserInvitationColumns = ({
                     type="button"
                     className="p-2 rounded-full cursor-pointer bg-red-600 text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isRevoking}
-                    onClick={() => onRevoke(invitation.id)}
+                    onClick={() => onDecline(invitation.id)}
                   >
                     <FontAwesomeIcon icon={faBan} className="text-[12px]" />
                   </button>
@@ -130,7 +132,15 @@ export const useUserInvitationColumns = ({
         },
       },
     ],
-    [isApproving, isRetrying, isRevoking, onApprove, onRetry, onRevoke],
+    [
+      isApproving,
+      isRetrying,
+      isRevoking,
+      onApprove,
+      onDecline,
+      onRetry,
+      onRevoke,
+    ],
   );
 
   return { userInvitationColumns };

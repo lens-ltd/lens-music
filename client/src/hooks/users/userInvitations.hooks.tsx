@@ -140,8 +140,10 @@ export const useUserInvitationTableActions = ({
         await approveInvitation(id).unwrap();
         toast.success('Invitation approved and email sent.');
         runOnSuccess();
+        return true;
       } catch (err) {
         toast.error(apiMessage(err, 'Could not approve invitation.'));
+        return false;
       }
     },
     [approveInvitation, runOnSuccess],
@@ -153,8 +155,10 @@ export const useUserInvitationTableActions = ({
         await revokeInvitation(id).unwrap();
         toast.success('Invitation revoked.');
         runOnSuccess();
+        return true;
       } catch (err) {
         toast.error(apiMessage(err, 'Could not revoke invitation.'));
+        return false;
       }
     },
     [revokeInvitation, runOnSuccess],
@@ -166,8 +170,10 @@ export const useUserInvitationTableActions = ({
         await createInvitation({ email }).unwrap();
         toast.success('Invitation sent.');
         runOnSuccess();
+        return true;
       } catch (err) {
         toast.error(apiMessage(err, 'Could not resend invitation.'));
+        return false;
       }
     },
     [createInvitation, runOnSuccess],

@@ -29,6 +29,7 @@ import ManageReleaseTrack from "./pages/tracks/ManageReleaseTrack";
 import TrackDetailsPage from "./pages/tracks/TrackDetailsPage";
 import Seo, { SeoProps } from "@/components/seo/Seo";
 import UsersPage from "./pages/users/UsersPage";
+import UserDetailsPage from "./pages/users/UserDetailsPage";
 import UserInvitationsPage from "./pages/users/UserInvitationsPage";
 import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
 import StoresPage from "./pages/stores/StoresPage";
@@ -153,6 +154,11 @@ const routeSeo = {
     title: "Users",
     description:
       "Review user records and access-related configuration inside the Lens Music client.",
+  },
+  userDetails: {
+    title: "User Details",
+    description:
+      "Review a Lens Music user's identity, account status, and access context.",
   },
   userInvitations: {
     title: "User Invitations",
@@ -315,6 +321,10 @@ const Router = () => {
                 <CreateUserInvitationPage />,
                 routeSeo.createUserInvitation,
               )}
+            />
+            <Route
+              path=":id"
+              element={withSeo(<UserDetailsPage />, routeSeo.userDetails)}
             />
           </Route>
 

@@ -5,12 +5,14 @@ export interface RoleState {
   rolesList: Role[];
   role?: Role;
   selectedRole?: Role;
+  deleteRoleModal: boolean;
 }
 
 const initialState: RoleState = {
   rolesList: [],
   role: undefined,
   selectedRole: undefined,
+  deleteRoleModal: false,
 };
 
 export const roleSlice = createSlice({
@@ -26,9 +28,13 @@ export const roleSlice = createSlice({
     setRole: (state, action) => {
       state.role = action.payload;
     },
+    setDeleteRoleModal: (state, action) => {
+      state.deleteRoleModal = action.payload;
+    },
   },
 });
 
 export default roleSlice.reducer;
 
-export const { setSelectedRole, setRolesList, setRole } = roleSlice.actions;
+export const { setSelectedRole, setRolesList, setRole, setDeleteRoleModal } =
+  roleSlice.actions;

@@ -9,12 +9,20 @@ import {
   useFetchUserInvitations,
   useUserInvitationTableActions,
 } from '@/hooks/users/userInvitations.hooks';
-import { useAppSelector } from '@/state/hooks';
+import DeclineUserInvitation from '@/pages/users/DeclineUserInvitation';
+import RevokeUserInvitation from '@/pages/users/RevokeUserInvitation';
+import {
+  setDeclineInvitationModal,
+  setRevokeInvitationModal,
+  setSelectedUserInvitation,
+} from '@/state/features/userInvitationSlice';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useEffect, useState } from 'react';
 
 const UserInvitationsPage = () => {
   // STATE
+  const dispatch = useAppDispatch();
   const { userInvitationsList } = useAppSelector((state) => state.userInvitation);
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -51,10 +59,35 @@ const UserInvitationsPage = () => {
     refreshInvitations();
   }, [refreshInvitations]);
 
+  const openRevokeModal = useCallback(
+    (id: string) => {
+      const invitation = userInvitationsList.find((item) => item.id === id);
+      if (!invitation) {
+        return;
+      }
+      dispatch(setSelectedUserInvitation(invitation));
+      dispatch(setRevokeInvitationModal(true));
+    },
+    [dispatch, userInvitationsList],
+  );
+
+  const openDeclineModal = useCallback(
+    (id: string) => {
+      const invitation = userInvitationsList.find((item) => item.id === id);
+      if (!invitation) {
+        return;
+      }
+      dispatch(setSelectedUserInvitation(invitation));
+      dispatch(setDeclineInvitationModal(true));
+    },
+    [dispatch, userInvitationsList],
+  );
+
   // COLUMNS
   const { userInvitationColumns } = useUserInvitationColumns({
     onApprove: (id) => void handleApprove(id),
-    onRevoke: (id) => void handleRevoke(id),
+    onDecline: openDeclineModal,
+    onRevoke: openRevokeModal,
     onRetry: (email) => void handleRetry(email),
     isApproving,
     isRevoking,
@@ -101,8 +134,17 @@ const UserInvitationsPage = () => {
             setSize={setSize}
             isLoading={isFetching}
             noDataMessage="No invitations match this filter."
+            containerClassName="border-0 rounded-none"
           />
         </section>
+        <RevokeUserInvitation
+          isRevoking={isRevoking}
+          onConfirm={handleRevoke}
+        />
+        <DeclineUserInvitation
+          isDeclining={isRevoking}
+          onConfirm={handleRevoke}
+        />
       </main>
     </UserLayout>
   );

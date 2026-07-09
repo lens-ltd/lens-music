@@ -12,16 +12,12 @@ interface UseRoleColumnsProps {
   onView?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  isDeleting?: boolean;
-  isEditing?: boolean;
 }
 
 export const useRoleColumns = ({
   onView,
   onEdit,
   onDelete,
-  isDeleting = false,
-  isEditing = false,
 }: UseRoleColumnsProps = {}) => {
   const roleColumns = useMemo<ColumnDef<Role>[]>(
     () => [

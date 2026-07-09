@@ -5,12 +5,16 @@ type UserInvitationState = {
   userInvitationsList: UserInvitation[];
   userInvitation?: UserInvitation;
   selectedUserInvitation?: UserInvitation;
+  revokeInvitationModal: boolean;
+  declineInvitationModal: boolean;
 };
 
 const initialState: UserInvitationState = {
   userInvitationsList: [],
   userInvitation: undefined,
   selectedUserInvitation: undefined,
+  revokeInvitationModal: false,
+  declineInvitationModal: false,
 };
 
 const userInvitationSlice = createSlice({
@@ -26,6 +30,12 @@ const userInvitationSlice = createSlice({
     setSelectedUserInvitation: (state, action) => {
       state.selectedUserInvitation = action.payload;
     },
+    setRevokeInvitationModal: (state, action) => {
+      state.revokeInvitationModal = action.payload;
+    },
+    setDeclineInvitationModal: (state, action) => {
+      state.declineInvitationModal = action.payload;
+    },
   },
 });
 
@@ -33,6 +43,8 @@ export const {
   setUserInvitationsList,
   setUserInvitation,
   setSelectedUserInvitation,
+  setRevokeInvitationModal,
+  setDeclineInvitationModal,
 } = userInvitationSlice.actions;
 
 export default userInvitationSlice.reducer;

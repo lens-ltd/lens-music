@@ -1,8 +1,11 @@
 import { useEffect } from "react";
 import { usePagination } from "@/hooks/common/pagination.hooks";
-import { useLazyFetchUsersQuery } from "@/state/api/apiQuerySlice";
+import {
+  useLazyFetchUserByIdQuery,
+  useLazyFetchUsersQuery,
+} from "@/state/api/apiQuerySlice";
 import { useAppDispatch } from "@/state/hooks";
-import { setUsersList } from "@/state/features/userSlice";
+import { setUser, setUsersList } from "@/state/features/userSlice";
 
 export const useFetchUsers = () => {
   // STATE
@@ -41,5 +44,26 @@ export const useFetchUsers = () => {
     setSize,
     isError,
     error,
+  };
+};
+
+export const useFetchUserById = () => {
+  const dispatch = useAppDispatch();
+  const [fetchUserById, { data, isFetching, isError, error, isSuccess }] =
+    useLazyFetchUserByIdQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setUser(data?.data));
+    }
+  }, [isSuccess, data, dispatch]);
+
+  return {
+    fetchUserById,
+    isFetching,
+    isError,
+    error,
+    isSuccess,
+    data: data?.data,
   };
 };

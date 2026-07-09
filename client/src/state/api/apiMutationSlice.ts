@@ -22,7 +22,6 @@ import type {
 import type { RelatedReleasePayload } from "@/types/models/relatedRelease.types";
 import type { ReleaseTerritoryDetailPayload } from "@/types/models/releaseTerritoryDetail.types";
 import type { UpdateStorePayload } from "@/types/models/store.types";
-import type { Role } from "@/types/models/role.types";
 
 export const apiMutationSlice = createApi({
   reducerPath: "apiMutation",

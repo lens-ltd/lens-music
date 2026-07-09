@@ -75,6 +75,13 @@ export const apiQuerySlice = createApi({
         }),
       }),
 
+      fetchUserById: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/users/${id}`,
+          method: "GET",
+        }),
+      }),
+
       fetchRoles: builder.query({
         query: ({
           size,
@@ -91,7 +98,7 @@ export const apiQuerySlice = createApi({
             size,
             page,
             ...Object.fromEntries(
-              Object.entries(filters).filter(([_, v]) => v !== undefined)
+              Object.entries(filters).filter(([, value]) => value !== undefined)
             ),
           },
         }),
@@ -370,6 +377,7 @@ export const apiQuerySlice = createApi({
 export const {
   useLazyFetchInvitationsQuery,
   useLazyFetchUsersQuery,
+  useLazyFetchUserByIdQuery,
   useLazyFetchLabelsQuery,
   useLazyFetchGenresQuery,
   useLazyFetchReleasesQuery,

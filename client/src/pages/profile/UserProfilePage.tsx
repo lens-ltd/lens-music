@@ -45,10 +45,10 @@ const UserProfilePage = () => {
           </div>
         </nav>
 
-        <section className="w-full max-w-3xl">
+        <section className="flex w-full flex-col gap-5">
           {/* Profile Header */}
-          <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-[color:var(--lens-sand)]/50">
+          <div className="flex w-full flex-col items-start gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:flex-row sm:items-center">
+            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-white">
               {user?.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -86,7 +86,7 @@ const UserProfilePage = () => {
           </div>
 
           {/* Profile Information */}
-          <div className="w-full flex flex-col gap-4 rounded-xl border border-[color:var(--lens-sand)] bg-white p-6 shadow-sm">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
             <h3 className="text-[14px] font-medium text-[color:var(--lens-ink)] mb-2">
               Account Information
             </h3>
@@ -148,8 +148,8 @@ const UserProfilePage = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex items-start gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                     <FontAwesomeIcon icon={faUser} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                   </div>
@@ -163,7 +163,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                     <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                   </div>
@@ -177,7 +177,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                     <FontAwesomeIcon icon={faPhone} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                   </div>
@@ -191,7 +191,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                     <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                   </div>
@@ -206,7 +206,7 @@ const UserProfilePage = () => {
                 </div>
 
                 {user?.dateOfBirth && (
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 rounded-md bg-white p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                       <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                     </div>
@@ -222,7 +222,7 @@ const UserProfilePage = () => {
                 )}
 
                 {user?.gender && (
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 rounded-md bg-white p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
                       <FontAwesomeIcon icon={faUser} className="text-[12px] text-[color:var(--lens-ink)]/60" />
                     </div>
@@ -242,7 +242,7 @@ const UserProfilePage = () => {
 
           {/* Permissions Section */}
           {user?.permissions && user.permissions.length > 0 && (
-            <div className="w-full flex flex-col gap-4 rounded-xl border border-[color:var(--lens-sand)] bg-white p-6 shadow-sm">
+            <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
               <h3 className="text-[14px] font-medium text-[color:var(--lens-ink)] mb-2">
                 Your Permissions
               </h3>
