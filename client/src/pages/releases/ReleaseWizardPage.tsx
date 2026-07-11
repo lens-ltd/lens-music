@@ -54,6 +54,20 @@ const ReleaseWizardPage = () => {
     staticReleaseNavigationIsFetching ||
     createReleaseNavigationFlowIsLoading;
 
+  // Controls whether the panel replaces the active step with a skeleton. This
+  // must only fire for the initial wizard load (nothing to render yet) and step
+  // switches — NOT for a background release refetch. A step like PREVIEW
+  // refreshes the release on mount (shared `getRelease` cache key), which pulses
+  // `releaseIsFetching`; gating the skeleton on that would unmount the step,
+  // abort its in-flight section fetches, then remount it and refetch again —
+  // an infinite loader loop.
+  const stepContentIsLoading =
+    (!activeReleaseNavigationFlow &&
+      (releaseIsFetching ||
+        releaseNavigationFlowsIsFetching ||
+        staticReleaseNavigationIsFetching)) ||
+    createReleaseNavigationFlowIsLoading;
+
   // Guards the one-time bootstrap of the initial OVERVIEW navigation flow so a
   // slow/duplicate render can't create it twice.
   const hasBootstrappedFirstFlow = useRef(false);
@@ -207,7 +221,7 @@ const ReleaseWizardPage = () => {
           staticSteps={staticSteps}
           releaseNavigationFlows={releaseNavigationFlows}
           activeReleaseNavigationFlow={activeReleaseNavigationFlow}
-          isLoading={wizardIsLoading}
+          isLoading={stepContentIsLoading}
           onActivateStep={activateStep}
         >
           {stepContent}

@@ -23,11 +23,27 @@ export class StoresService {
     private readonly releaseStoreRepository: Repository<ReleaseStore>,
   ) {}
 
-  async fetchStores(): Promise<Store[]> {
+  /**
+   * List stores ordered for admin UI. Optional isActive filter for pickers.
+   */
+  async fetchStores(options?: { isActive?: boolean }): Promise<Store[]> {
+    const where =
+      options?.isActive === undefined
+        ? undefined
+        : { isActive: options.isActive };
+
     return this.storeRepository.find({
-      where: { isActive: true },
+      where,
       order: { sortOrder: 'ASC', name: 'ASC' },
     });
+  }
+
+  async getStoreById(id: UUID): Promise<Store> {
+    const store = await this.storeRepository.findOne({ where: { id } });
+    if (!store) {
+      throw new NotFoundException('Store not found');
+    }
+    return store;
   }
 
   async updateStore(id: UUID, dto: UpdateStoreDto): Promise<Store> {

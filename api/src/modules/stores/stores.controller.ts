@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -29,13 +30,28 @@ export class StoresController {
 
   @Get('stores')
   @Permissions(PERMISSIONS.READ_STORE)
-  async fetchStores() {
-    const stores = await this.storesService.fetchStores();
+  async fetchStores(@Query('isActive') isActive?: string) {
+    let isActiveFilter: boolean | undefined;
+    if (isActive === 'true') {
+      isActiveFilter = true;
+    } else if (isActive === 'false') {
+      isActiveFilter = false;
+    }
+
+    const stores = await this.storesService.fetchStores({
+      isActive: isActiveFilter,
+    });
     return { message: 'Stores fetched successfully', data: stores };
   }
 
+  @Get('stores/:id')
+  @Permissions(PERMISSIONS.READ_STORE)
+  async getStore(@Param('id') id: string) {
+    const store = await this.storesService.getStoreById(id);
+    return { message: 'Store retrieved successfully', data: store };
+  }
+
   @Patch('stores/:id')
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(PERMISSIONS.UPDATE_STORE)
   async updateStore(
     @Param('id') id: string,
@@ -46,7 +62,6 @@ export class StoresController {
   }
 
   @Post('releases/:id/stores')
-  @UseGuards(PermissionsGuard)
   @Permissions(PERMISSIONS.ASSIGN_RELEASE_STORE)
   @HttpCode(HttpStatus.CREATED)
   async assignReleaseStores(

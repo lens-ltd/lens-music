@@ -138,6 +138,41 @@ const ReleaseWizardRegions = ({
     }
   };
 
+  const navButtons = (
+    <>
+      <Button
+        type="button"
+        onClick={handleGoBack}
+        disabled={
+          !previousStepName ||
+          isSavingTerritories ||
+          createNavigationFlowIsLoading ||
+          completeNavigationFlowIsLoading
+        }
+      >
+        Back
+      </Button>
+
+      <Button
+        type="button"
+        primary
+        onClick={handleSaveAndContinue}
+        disabled={
+          isSavingTerritories ||
+          createNavigationFlowIsLoading ||
+          completeNavigationFlowIsLoading
+        }
+        isLoading={
+          isSavingTerritories ||
+          createNavigationFlowIsLoading ||
+          completeNavigationFlowIsLoading
+        }
+      >
+        Save & continue
+      </Button>
+    </>
+  );
+
   return (
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
@@ -147,6 +182,10 @@ const ReleaseWizardRegions = ({
           to restrict delivery.
         </p>
       </header>
+
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-gray-200/70 pb-4">
+        {navButtons}
+      </menu>
 
       <Input
         label="Search countries"
@@ -226,36 +265,7 @@ const ReleaseWizardRegions = ({
         ) : null}
 
         <menu className="w-full flex items-center justify-between gap-3">
-          <Button
-            type="button"
-            onClick={handleGoBack}
-            disabled={
-              !previousStepName ||
-              isSavingTerritories ||
-              createNavigationFlowIsLoading ||
-              completeNavigationFlowIsLoading
-            }
-          >
-            Back
-          </Button>
-
-          <Button
-            type="button"
-            primary
-            onClick={handleSaveAndContinue}
-            disabled={
-              isSavingTerritories ||
-              createNavigationFlowIsLoading ||
-              completeNavigationFlowIsLoading
-            }
-            isLoading={
-              isSavingTerritories ||
-              createNavigationFlowIsLoading ||
-              completeNavigationFlowIsLoading
-            }
-          >
-            Save & continue
-          </Button>
+          {navButtons}
         </menu>
       </footer>
     </section>

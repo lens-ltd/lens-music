@@ -29,6 +29,7 @@ import {
 } from '@/types/models/dashboard.types';
 import { ReleaseStatus } from '@/types/models/release.types';
 import { ReleaseDeliveryStatus } from '@/types/models/releaseStore.types';
+import { formatDate } from '@/utils/strings.helper';
 
 const serif = { fontFamily: 'var(--font-serif)', fontWeight: 700 } as const;
 
@@ -56,15 +57,6 @@ const deliveryStatusMeta: Record<
 };
 
 const formatNumber = new Intl.NumberFormat('en-US');
-const formatDate = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-});
-const formatTime = new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric',
-  minute: '2-digit',
-});
 
 const UserDashboard = () => {
   const { data, isLoading, isFetching, isError, refetch } =
@@ -123,7 +115,7 @@ const DashboardContent = ({
             <span
               className={`h-1.5 w-1.5 rounded-full bg-[color:var(--lens-blue)] ${isRefreshing ? 'animate-pulse' : ''}`}
             />
-            Updated {formatTime.format(new Date(summary.generatedAt))}
+            Updated {formatDate(new Date(summary.generatedAt))}
           </span>
           <Button primary icon={faPlus} onClick={createRelease}>
             Create release
@@ -420,7 +412,7 @@ const RecentReleaseRow = ({ release }: { release: DashboardRelease }) => {
         <span className="hidden lg:block">
           <span className="block text-[11px] text-[color:var(--lens-ink)]">
             {release.digitalReleaseDate
-              ? formatDate.format(new Date(`${release.digitalReleaseDate}T00:00:00`))
+              ? formatDate(release?.digitalReleaseDate, 'DD/MM/YYYY')
               : 'Not set'}
           </span>
           <span className="text-[9px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/42">

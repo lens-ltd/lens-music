@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import {
@@ -48,7 +48,7 @@ const ReleaseWizardStores = ({
     useAssignReleaseStores();
 
   useEffect(() => {
-    fetchStores({});
+    fetchStores({ isActive: true });
   }, [fetchStores]);
 
   useEffect(() => {
@@ -65,6 +65,32 @@ const ReleaseWizardStores = ({
     setSelectedStoreIds(assignedStoreIds);
     setStoresError(undefined);
   }, [releaseStoresResponse]);
+
+  // When a release has no stores assigned yet, default-select every available
+  // store so the "at least one store" rule is satisfied with zero effort. Runs
+  // once (guarded), and never overrides a user's manual selection.
+  const hasDefaultedStoresRef = useRef(false);
+  useEffect(() => {
+    if (hasDefaultedStoresRef.current) return;
+    if (storesIsFetching || releaseStoresIsFetching) return;
+    if (!storesResponse || !releaseStoresResponse) return;
+
+    const assignedStoreIds = releaseStoresResponse?.data ?? [];
+    const availableStores = storesResponse?.data ?? [];
+    if (assignedStoreIds.length === 0 && availableStores.length > 0) {
+      hasDefaultedStoresRef.current = true;
+      setSelectedStoreIds(
+        availableStores.map((store: { id: string }) => store.id),
+      );
+    } else if (assignedStoreIds.length > 0) {
+      hasDefaultedStoresRef.current = true;
+    }
+  }, [
+    storesIsFetching,
+    releaseStoresIsFetching,
+    storesResponse,
+    releaseStoresResponse,
+  ]);
 
   const stores: Store[] = useMemo(
     () => storesResponse?.data ?? [],
@@ -127,6 +153,54 @@ const ReleaseWizardStores = ({
     }
   };
 
+  const handleGoBack = () => {
+    if (previousStepName && release?.id) {
+      createReleaseNavigationFlow({
+        releaseId: release.id,
+        staticReleaseNavigationStepName: previousStepName,
+      });
+    }
+  };
+
+  const navButtons = (
+    <>
+      <Button
+        type="button"
+        isLoading={createNavigationFlowIsLoading}
+        disabled={
+          createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+        }
+        onClick={(event) => {
+          event.preventDefault();
+          handleGoBack();
+        }}
+      >
+        Back
+      </Button>
+      <Button
+        type="button"
+        primary
+        isLoading={
+          isAssigning ||
+          createNavigationFlowIsLoading ||
+          completeNavigationFlowIsLoading
+        }
+        disabled={
+          selectedStoreIds.length === 0 ||
+          isAssigning ||
+          createNavigationFlowIsLoading ||
+          completeNavigationFlowIsLoading
+        }
+        onClick={(event) => {
+          event.preventDefault();
+          void saveAndContinue();
+        }}
+      >
+        Save and continue
+      </Button>
+    </>
+  );
+
   return (
     <section className="w-full flex flex-col gap-4">
       <header>
@@ -135,6 +209,10 @@ const ReleaseWizardStores = ({
           Select the stores where this release should be delivered.
         </p>
       </header>
+
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-gray-200/70 pb-4">
+        {navButtons}
+      </menu>
 
       <section className="flex flex-col gap-3">
         <menu className="grid grid-cols-1 gap-3">
@@ -234,43 +312,7 @@ const ReleaseWizardStores = ({
       <ReleaseWizardDealsSection />
 
       <footer className="w-full flex items-center justify-between gap-3">
-        <Button
-          isLoading={createNavigationFlowIsLoading}
-          disabled={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-          }
-          onClick={(event) => {
-            event.preventDefault();
-            if (previousStepName && release?.id) {
-              createReleaseNavigationFlow({
-                releaseId: release.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
-            }
-          }}
-        >
-          Back
-        </Button>
-        <Button
-          isLoading={
-            isAssigning ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          primary
-          disabled={
-            selectedStoreIds.length === 0 ||
-            isAssigning ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          onClick={(event) => {
-            event.preventDefault();
-            void saveAndContinue();
-          }}
-        >
-          Save and continue
-        </Button>
+        {navButtons}
       </footer>
     </section>
   );

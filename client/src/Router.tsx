@@ -36,6 +36,7 @@ import UserDetailsPage from "./pages/users/UserDetailsPage";
 import UserInvitationsPage from "./pages/users/UserInvitationsPage";
 import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
 import StoresPage from "./pages/stores/StoresPage";
+import StoreDetailsPage from "./pages/stores/StoreDetailsPage";
 import ReleaseReviewPage from "./pages/releases/review/ReleaseReviewPage";
 import ContributorVerificationQueuePage from "./pages/contributors/ContributorVerificationQueuePage";
 import UserProfilePage from "./pages/profile/UserProfilePage";
@@ -77,6 +78,11 @@ const routeSeo = {
     title: "Stores",
     description:
       "Configure store delivery metadata and DDEX destination settings for Lens Music distribution.",
+  },
+  storeDetails: {
+    title: "Store Details",
+    description:
+      "View store identity and update DDEX delivery settings for a distribution destination.",
   },
   releases: {
     title: "Releases",
@@ -252,10 +258,16 @@ const Router = () => {
             <Route path="" element={withSeo(<ListLabels />, routeSeo.labels)} />
           </Route>
 
-          <Route
-            path="/stores"
-            element={withSeo(<StoresPage />, routeSeo.stores)}
-          />
+          <Route path="/stores">
+            <Route
+              path=""
+              element={withSeo(<StoresPage />, routeSeo.stores)}
+            />
+            <Route
+              path=":id"
+              element={withSeo(<StoreDetailsPage />, routeSeo.storeDetails)}
+            />
+          </Route>
 
           {/* RELEASE ROUTES */}
           <Route path="/releases">

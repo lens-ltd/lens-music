@@ -232,32 +232,43 @@ const ReleaseWizardOverview = ({
 
   useEffect(() => {
     if (release) {
+      // Sensible defaults so the wizard is effortless — only applied when the
+      // release field is unset, never overwriting real data.
+      const currentYear = String(moment().year());
+
       setValue("type", release.type || ReleaseType.ALBUM);
       setValue("title", release.title || "");
       setValue("titleVersion", release.titleVersion || "");
       setValue("version", release.version || "");
       setValue(
         "productionYear",
-        release.productionYear ? String(release.productionYear) : "",
+        release.productionYear ? String(release.productionYear) : currentYear,
       );
-      setValue("originalReleaseDate", release.originalReleaseDate || "");
-      setValue("digitalReleaseDate", release.digitalReleaseDate || "");
+      setValue(
+        "originalReleaseDate",
+        release.originalReleaseDate || moment().format("YYYY-MM-DD"),
+      );
+      setValue(
+        "digitalReleaseDate",
+        release.digitalReleaseDate ||
+          moment().add(14, "days").format("YYYY-MM-DD"),
+      );
       setValue("preorderDate", release.preorderDate || "");
       setValue(
         "cLine.year",
-        release.cLine?.year ? String(release.cLine.year) : "",
+        release.cLine?.year ? String(release.cLine.year) : currentYear,
       );
       setValue("cLine.owner", release.cLine?.owner || "");
       setValue(
         "pLine.year",
-        release.pLine?.year ? String(release.pLine.year) : "",
+        release.pLine?.year ? String(release.pLine.year) : currentYear,
       );
       setValue("pLine.owner", release.pLine?.owner || "");
       setValue(
         "parentalAdvisory",
         release.parentalAdvisory || ReleaseParentalAdvisory.NOT_EXPLICIT,
       );
-      setValue("primaryLanguage", release.primaryLanguage || "");
+      setValue("primaryLanguage", release.primaryLanguage || "en");
       setValue(
         "primaryGenreId",
         release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)
@@ -268,7 +279,7 @@ const ReleaseWizardOverview = ({
         release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)
           ?.genreId || "",
       );
-      setValue("metadataLanguage", release.metadataLanguage || "");
+      setValue("metadataLanguage", release.metadataLanguage || "en");
       setValue("grid", release.grid || "");
       setValue("description", release.description || "");
       setValue(

@@ -311,10 +311,21 @@ export const apiQuerySlice = createApi({
       }),
 
 
-      // FETCH STORES
+      // FETCH STORES (optional isActive for wizard pickers)
       fetchStores: builder.query({
-        query: () => ({
+        query: (params?: { isActive?: boolean }) => ({
           url: '/stores',
+          method: 'GET',
+          params:
+            params?.isActive === undefined
+              ? undefined
+              : { isActive: String(params.isActive) },
+        }),
+      }),
+
+      getStore: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/stores/${id}`,
           method: 'GET',
         }),
       }),
@@ -414,6 +425,7 @@ export const {
   useLazyFetchTrackContributorsQuery,
   useLazyFetchReleaseContributorsQuery,
   useLazyFetchStoresQuery,
+  useLazyGetStoreQuery,
   useLazyGetLabelQuery,
   useLazyFetchReleaseStoresQuery,
   useLazyFetchReleaseLabelsQuery,
