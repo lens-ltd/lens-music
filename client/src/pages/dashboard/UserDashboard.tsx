@@ -29,7 +29,7 @@ import {
 } from '@/types/models/dashboard.types';
 import { ReleaseStatus } from '@/types/models/release.types';
 import { ReleaseDeliveryStatus } from '@/types/models/releaseStore.types';
-import { formatDate } from '@/utils/strings.helper';
+import { formatDate, formatNumbers } from '@/utils/strings.helper';
 
 const serif = { fontFamily: 'var(--font-serif)', fontWeight: 700 } as const;
 
@@ -55,8 +55,6 @@ const deliveryStatusMeta: Record<
   [ReleaseDeliveryStatus.DELIVERED]: { label: 'Delivered', color: 'rgb(31,98,142)' },
   [ReleaseDeliveryStatus.FAILED]: { label: 'Failed', color: 'rgb(185,28,28)' },
 };
-
-const formatNumber = new Intl.NumberFormat('en-US');
 
 const UserDashboard = () => {
   const { data, isLoading, isFetching, isError, refetch } =
@@ -150,7 +148,7 @@ const TotalsStrip = ({ totals }: { totals: DashboardSummary['totals'] }) => {
         <DashboardCard
           key={metric.label}
           title={metric.label}
-          value={formatNumber.format(metric.value)}
+          value={formatNumbers(metric.value)}
           icon={metric.icon}
         />
       ))}
@@ -169,7 +167,7 @@ const ReleasePipeline = ({
     <DashboardSection
       label="Pipeline"
       title="Release pipeline"
-      subtitle={`${formatNumber.format(total)} releases moving through your distribution chain`}
+      subtitle={`${formatNumbers(total)} releases moving through your distribution chain`}
       overflowHidden
     >
       <div className="overflow-x-auto">
@@ -190,7 +188,7 @@ const ReleasePipeline = ({
                     style={{ backgroundColor: meta.tone }}
                     aria-hidden="true"
                   />
-                  <span className="text-[10px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/50">
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-[color:var(--lens-ink)]/50">
                     {meta.label}
                   </span>
                 </span>
@@ -198,7 +196,7 @@ const ReleasePipeline = ({
                   className="text-[22px] text-[color:var(--lens-ink)]"
                   style={serif}
                 >
-                  {formatNumber.format(item.count)}
+                  {formatNumbers(item.count)}
                 </strong>
               </li>
             );
@@ -222,7 +220,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
     <DashboardSection
       label="Store delivery"
       title="Delivery health"
-      subtitle={`${formatNumber.format(deliveryHealth.total)} store assignments across your catalog`}
+      subtitle={`${formatNumbers(deliveryHealth.total)} store assignments across your catalog`}
     >
       {deliveryHealth.total === 0 ? (
         <div className="rounded-md border border-dashed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/10 px-5 py-8 text-center">
@@ -269,7 +267,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
                     className="block text-[17px] text-[color:var(--lens-ink)]"
                     style={serif}
                   >
-                    {formatNumber.format(item.count)}
+                    {formatNumbers(item.count)}
                   </strong>
                   <span className="text-[10px] text-[color:var(--lens-ink)]/50">
                     {meta.label}

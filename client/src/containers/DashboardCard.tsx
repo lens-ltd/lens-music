@@ -24,7 +24,7 @@ const DashboardCard = ({
       aria-label={title}
     >
       <header className="mb-2 flex items-center justify-between gap-3">
-        <span className="text-[color:var(--lens-ink)]/55 text-xs font-normal uppercase tracking-[0.15em]">
+        <span className="text-[color:var(--lens-ink)]/55 text-xs font-normal uppercase tracking-[0.08em]">
           {title}
         </span>
         <span className="text-lg text-[color:var(--lens-blue)] opacity-50">

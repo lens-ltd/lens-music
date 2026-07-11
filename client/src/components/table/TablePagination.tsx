@@ -73,7 +73,7 @@ export function DataTablePagination<TData>({
       <menu className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 
                      md:justify-end md:gap-x-6">
         <section className="flex items-center space-x-2">
-          <span className="hidden text-sm font-normal sm:block">Rows per page</span>
+          <span className="hidden text-[12px] font-normal sm:block">Rows per page</span>
           <Select
             value={`${size}`}
             onValueChange={(value) => {
@@ -101,7 +101,7 @@ export function DataTablePagination<TData>({
         </section>
 
         <section className="flex items-center gap-2">
-          <span className="text-sm font-normal whitespace-nowrap">
+          <span className="text-[12px] font-normal whitespace-nowrap">
             Page {page + 1} of {formatNumbers(totalPages || 1)}
           </span>
           <input
