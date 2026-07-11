@@ -2,6 +2,7 @@ import store from "store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "@/constants/environments.constants";
 import { UUID } from "@/types/common.types";
+import { DashboardSummaryResponse } from "@/types/models/dashboard.types";
 
 export const apiQuerySlice = createApi({
   reducerPath: "apiQuery",
@@ -17,6 +18,13 @@ export const apiQuerySlice = createApi({
   }),
   endpoints: (builder) => {
     return {
+      getDashboardSummary: builder.query<DashboardSummaryResponse, void>({
+        query: () => ({
+          url: "/dashboard/summary",
+          method: "GET",
+        }),
+      }),
+
       // LIST LABELS
       fetchLabels: builder.query({
         query: ({
@@ -227,6 +235,14 @@ export const apiQuerySlice = createApi({
         query: ({ id }) => `/contributors/${id}`,
       }),
 
+      // LIST CONTRIBUTOR MANAGERS (admin)
+      fetchContributorManagers: builder.query({
+        query: ({ id }: { id: string }) => ({
+          url: `/contributors/${id}/managers`,
+          method: "GET",
+        }),
+      }),
+
       // FETCH CONTRIBUTOR MEMBERSHIPS
       fetchContributorMemberships: builder.query({
         query: ({
@@ -375,6 +391,7 @@ export const apiQuerySlice = createApi({
 });
 
 export const {
+  useGetDashboardSummaryQuery,
   useLazyFetchInvitationsQuery,
   useLazyFetchUsersQuery,
   useLazyFetchUserByIdQuery,
@@ -388,6 +405,7 @@ export const {
   useLazyGetReleaseQuery,
   useLazyGetContributorQuery,
   useLazyFetchContributorsQuery,
+  useLazyFetchContributorManagersQuery,
   useLazyFetchContributorMembershipsQuery,
   useLazyFetchTracksQuery,
   useLazyGetTrackQuery,

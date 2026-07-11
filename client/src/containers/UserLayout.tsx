@@ -16,7 +16,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
       <main
         className={`mt-20 min-h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-300 ease-in-out ${
           isOpen
-            ? 'ml-[220px] lg:ml-[260px]'
+            ? 'ml-[60px] sm:ml-[220px] lg:ml-[260px]'
             : 'ml-[60px] lg:ml-[80px]'
         }`}
       >

@@ -1,18 +1,34 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionsGuard } from "../../common/guards/permissions.guard";
 import { Permissions } from "../../common/decorators/permissions.decorator";
 import { PERMISSIONS } from "../../constants/permission.constants";
-import { CurrentUser, AuthUser } from "../../common/decorators/current-user.decorator";
+import {
+  CurrentUser,
+  AuthUser,
+} from "../../common/decorators/current-user.decorator";
 import { ContributorMembershipService } from "./contributor-membership.service";
 import { CreateContributorMembershipDto } from "./dto/create-contributor-membership.dto";
 import { UUID } from "../../types/common.types";
+
 @Controller("contributor-memberships")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContributorMembershipsController {
   constructor(
     private readonly contributorMembershipService: ContributorMembershipService,
   ) {}
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
@@ -21,16 +37,20 @@ export class ContributorMembershipsController {
     @CurrentUser() user: AuthUser,
   ) {
     const contributorMembership =
-      await this.contributorMembershipService.createContributorMembership({
-        parentContributorId: dto.parentContributorId,
-        memberContributorId: dto.memberContributorId,
-        createdById: user.id,
-      });
+      await this.contributorMembershipService.createContributorMembership(
+        {
+          parentContributorId: dto.parentContributorId,
+          memberContributorId: dto.memberContributorId,
+          createdById: user.id,
+        },
+        user,
+      );
     return {
       message: "Contributor membership created successfully",
       data: contributorMembership,
     };
   }
+
   @Get()
   @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
   async findAll(
@@ -39,20 +59,31 @@ export class ContributorMembershipsController {
     @Query("parentContributorId") parentContributorId?: UUID,
     @Query("memberContributorId") memberContributorId?: UUID,
   ) {
-    const data = await this.contributorMembershipService.fetchContributorMemberships({
-      size: Number(size),
-      page: Number(page),
-      filters: (parentContributorId || memberContributorId) ? { parentContributorId, memberContributorId } : undefined,
-    });
+    const data =
+      await this.contributorMembershipService.fetchContributorMemberships({
+        size: Number(size),
+        page: Number(page),
+        filters:
+          parentContributorId || memberContributorId
+            ? { parentContributorId, memberContributorId }
+            : undefined,
+      });
     return {
       message: "Contributor memberships fetched successfully",
       data,
     };
   }
+
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
-  async remove(@Param("id") id: string) {
-    await this.contributorMembershipService.deleteContributorMembership(id);
+  async remove(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.contributorMembershipService.deleteContributorMembership(
+      id,
+      user,
+    );
   }
 }

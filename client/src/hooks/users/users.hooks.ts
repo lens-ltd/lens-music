@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { usePagination } from "@/hooks/common/pagination.hooks";
 import {
   useLazyFetchUserByIdQuery,
@@ -49,7 +49,7 @@ export const useFetchUsers = () => {
 
 export const useFetchUserById = () => {
   const dispatch = useAppDispatch();
-  const [fetchUserById, { data, isFetching, isError, error, isSuccess }] =
+  const [trigger, { data, isFetching, isError, error, isSuccess, isUninitialized }] =
     useLazyFetchUserByIdQuery();
 
   useEffect(() => {
@@ -58,12 +58,22 @@ export const useFetchUserById = () => {
     }
   }, [isSuccess, data, dispatch]);
 
+  const fetchUserById = useCallback(
+    (args: { id: string }) => {
+      // Avoid flashing a previous user's details while a new id loads.
+      dispatch(setUser(undefined));
+      return trigger(args);
+    },
+    [dispatch, trigger],
+  );
+
   return {
     fetchUserById,
     isFetching,
     isError,
     error,
     isSuccess,
+    isUninitialized,
     data: data?.data,
   };
 };

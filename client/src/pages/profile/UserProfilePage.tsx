@@ -247,7 +247,7 @@ const UserProfilePage = () => {
                 Your Permissions
               </h3>
               <div className="flex flex-wrap gap-2">
-                {user.permissions.map((permission) => (
+                {user?.permissions?.map((permission: string) => (
                   <span
                     key={permission}
                     className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-blue)]/10 text-[11px] text-[color:var(--lens-blue)]"

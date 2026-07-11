@@ -66,6 +66,12 @@ export interface CreateContributorPayload {
 
 export interface UpdateContributorPayload extends Partial<CreateContributorPayload> {}
 
+export interface ContributorManager extends AbstractEntity {
+  contributorId: UUID;
+  userId: UUID;
+  user?: Pick<User, 'id' | 'name' | 'email' | 'avatarUrl' | 'status'>;
+}
+
 export interface Contributor extends Person {
   displayName?: string;
   verificationStatus: ContributorVerificationStatus;
@@ -78,6 +84,13 @@ export interface Contributor extends Person {
   ipi?: string;
   isni?: string;
   verifiedBy: User;
+  managers?: ContributorManager[];
+  currentUserIsManager?: boolean;
+  currentUserCanManage?: boolean;
+}
+
+export interface AssignContributorManagerPayload {
+  userId: string;
 }
 
 export interface ContributorMembership extends AbstractEntity {

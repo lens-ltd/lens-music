@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Contributor } from '@/types/models/contributor.types';
+import {
+  Contributor,
+  ContributorManager,
+} from '@/types/models/contributor.types';
 
 const initialState: {
   contributorsList: Contributor[];
@@ -9,6 +12,10 @@ const initialState: {
   selectedContributor?: Contributor;
   verifyContributorModal: boolean;
   rejectContributorModal: boolean;
+  assignManagerModal: boolean;
+  unassignManagerModal: boolean;
+  selectedManager?: ContributorManager;
+  managersList: ContributorManager[];
 } = {
   contributorsList: [],
   contributor: undefined,
@@ -17,6 +24,10 @@ const initialState: {
   selectedContributor: undefined,
   verifyContributorModal: false,
   rejectContributorModal: false,
+  assignManagerModal: false,
+  unassignManagerModal: false,
+  selectedManager: undefined,
+  managersList: [],
 };
 
 const contributorSlice = createSlice({
@@ -44,6 +55,18 @@ const contributorSlice = createSlice({
     setRejectContributorModal: (state, action) => {
       state.rejectContributorModal = action.payload;
     },
+    setAssignManagerModal: (state, action) => {
+      state.assignManagerModal = action.payload;
+    },
+    setUnassignManagerModal: (state, action) => {
+      state.unassignManagerModal = action.payload;
+    },
+    setSelectedManager: (state, action) => {
+      state.selectedManager = action.payload;
+    },
+    setManagersList: (state, action) => {
+      state.managersList = action.payload;
+    },
   },
 });
 
@@ -55,6 +78,10 @@ export const {
   setSelectedContributor,
   setVerifyContributorModal,
   setRejectContributorModal,
+  setAssignManagerModal,
+  setUnassignManagerModal,
+  setSelectedManager,
+  setManagersList,
 } = contributorSlice.actions;
 
 export default contributorSlice.reducer;

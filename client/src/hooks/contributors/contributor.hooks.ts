@@ -1,10 +1,12 @@
 import {
   useLazyFetchContributorsQuery,
+  useLazyFetchContributorManagersQuery,
   useLazyGetContributorQuery,
 } from "@/state/api/apiQuerySlice";
 import {
   setContributor,
   setContributorsList,
+  setManagersList,
 } from "@/state/features/contributorSlice";
 import { useAppDispatch } from "@/state/hooks";
 import { usePagination } from "../common/pagination.hooks";
@@ -13,6 +15,8 @@ import {
   useDeleteContributorMutation,
   useVerifyContributorMutation,
   useRejectContributorMutation,
+  useAssignContributorManagerMutation,
+  useUnassignContributorManagerMutation,
 } from "@/state/api/apiMutationSlice";
 
 // FETCH CONTRIBUTORS
@@ -93,4 +97,44 @@ export const useRejectContributor = () => {
     useRejectContributorMutation();
 
   return { rejectContributor, isLoading, data, isSuccess, reset };
+};
+
+// FETCH CONTRIBUTOR MANAGERS
+export const useFetchContributorManagers = () => {
+  const dispatch = useAppDispatch();
+  const [fetchManagers, { isFetching, data, isSuccess, isError, error }] =
+    useLazyFetchContributorManagersQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setManagersList(data?.data ?? []));
+    }
+  }, [isSuccess, data, dispatch]);
+
+  return {
+    fetchManagers,
+    isFetching,
+    isSuccess,
+    isError,
+    error,
+    data: data?.data,
+  };
+};
+
+// ASSIGN CONTRIBUTOR MANAGER
+export const useAssignContributorManager = () => {
+  const [assignManager, { isLoading, data, isSuccess, isError, error, reset }] =
+    useAssignContributorManagerMutation();
+
+  return { assignManager, isLoading, data, isSuccess, isError, error, reset };
+};
+
+// UNASSIGN CONTRIBUTOR MANAGER
+export const useUnassignContributorManager = () => {
+  const [
+    unassignManager,
+    { isLoading, data, isSuccess, isError, error, reset },
+  ] = useUnassignContributorManagerMutation();
+
+  return { unassignManager, isLoading, data, isSuccess, isError, error, reset };
 };

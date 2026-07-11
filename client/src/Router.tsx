@@ -15,6 +15,9 @@ import ListLyrics from "./pages/lyrics/ListLyrics";
 import CreateLyrics from "./pages/lyrics/CreateLyrics";
 import SyncLyrics from "./pages/lyrics/SyncLyrics";
 import NotFoundPage from "./pages/common/NotFoundPage";
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import TermsOfService from "./pages/legal/TermsOfService";
+import ArtistAgreement from "./pages/legal/ArtistAgreement";
 import RolesPage from "./pages/roles/RolesPage";
 import CreateRolePage from "./pages/roles/CreateRolePage";
 import RoleDetailsPage from "./pages/roles/RoleDetailsPage";
@@ -63,7 +66,7 @@ const routeSeo = {
   dashboard: {
     title: "Dashboard Overview",
     description:
-      "Monitor release performance, streams, downloads, and revenue trends from your Lens Music dashboard.",
+      "Track catalog health, release workflow progress, and store delivery status from your Lens Music dashboard.",
   },
   labels: {
     title: "Labels",
@@ -180,6 +183,21 @@ const routeSeo = {
     description:
       "The page you requested could not be found. Return to Lens Music to continue browsing or managing your catalog.",
   },
+  privacyPolicy: {
+    title: "Privacy Policy",
+    description:
+      "Learn how Lens Music collects, uses, and protects your personal information and data privacy rights.",
+  },
+  termsOfService: {
+    title: "Terms of Service",
+    description:
+      "Review the terms and conditions governing your use of the Lens Music platform and distribution services.",
+  },
+  artistAgreement: {
+    title: "Artist Agreement",
+    description:
+      "Understand the distribution rights, revenue share model, and obligations for artists using Lens Music.",
+  },
 } satisfies Record<string, RouteSeoConfig>;
 
 const withSeo = (element: ReactElement, seo: RouteSeoConfig) => (
@@ -193,6 +211,20 @@ const Router = () => {
         {/* REDIRECT */}
         {/* LANDING PAGE */}
         <Route path="/" element={withSeo(<LandingPage />, routeSeo.landing)} />
+
+        {/* LEGAL PAGES */}
+        <Route
+          path="/privacy-policy"
+          element={withSeo(<PrivacyPolicy />, routeSeo.privacyPolicy)}
+        />
+        <Route
+          path="/terms-of-service"
+          element={withSeo(<TermsOfService />, routeSeo.termsOfService)}
+        />
+        <Route
+          path="/artist-agreement"
+          element={withSeo(<ArtistAgreement />, routeSeo.artistAgreement)}
+        />
 
         {/* AUTHENTICATION */}
         <Route path="/auth/login" element={<Login />} />

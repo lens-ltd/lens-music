@@ -81,15 +81,19 @@ const PublicFooter: FC = () => (
             Legal
           </p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-            {['Privacy Policy', 'Terms of Service', 'Artist Agreement'].map(label => (
+            {[
+              { label: 'Privacy Policy', href: '/privacy-policy' },
+              { label: 'Terms of Service', href: '/terms-of-service' },
+              { label: 'Artist Agreement', href: '/artist-agreement' },
+            ].map(({ label, href }) => (
               <li key={label}>
-                <a
-                  href="#"
+                <Link
+                  to={href}
                   className="footer-link text-[12px]"
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
                   {label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

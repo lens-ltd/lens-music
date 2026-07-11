@@ -40,6 +40,9 @@ export const useContributorColumns = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const permissions = user?.permissions;
+  const isAdminAssigner = permissions?.includes(
+    PERMISSIONS.ASSIGN_CONTRIBUTOR_MANAGER,
+  );
 
   const contributorColumns = useMemo<ColumnDef<Contributor>[]>(
     () => [
@@ -107,6 +110,12 @@ export const useContributorColumns = () => {
           const canVerify = [PERMISSIONS.VERIFY_CONTRIBUTOR].some((permission) =>
             permissions?.includes(permission),
           );
+          const canUpdate = permissions?.includes(PERMISSIONS.UPDATE_CONTRIBUTOR);
+          const canDelete = permissions?.includes(PERMISSIONS.DELETE_CONTRIBUTOR);
+          // Admins (assign rights) can act on any row; non-admins need assignment (API-enforced).
+          // List rows don't include canManage — show mutate actions when permission allows;
+          // details page uses currentUserCanManage for stricter gating.
+          const showMutateActions = Boolean(isAdminAssigner || canUpdate || canVerify || canDelete);
 
           let verificationLabel = "Verify";
           let verificationIcon = faCertificate;
@@ -131,12 +140,14 @@ export const useContributorColumns = () => {
                 >
                   View details
                 </TableActionButton>
-                <TableActionButton
-                  icon={faPenToSquare}
-                  to={`/contributors/${row?.original?.id}/update`}
-                >
-                  Manage
-                </TableActionButton>
+                {canUpdate && showMutateActions && (
+                  <TableActionButton
+                    icon={faPenToSquare}
+                    to={`/contributors/${row?.original?.id}/update`}
+                  >
+                    Manage
+                  </TableActionButton>
+                )}
                 {canVerify && !['VERIFIED'].includes(row?.original?.verificationStatus) && (
                   <TableActionButton
                     icon={verificationIcon}
@@ -170,9 +181,10 @@ export const useContributorColumns = () => {
                       Reject
                     </TableActionButton>
                   )}
-                {[ContributorType.GROUP].includes(
-                  row?.original?.type as ContributorType,
-                ) && (
+                {canUpdate &&
+                  [ContributorType.GROUP].includes(
+                    row?.original?.type as ContributorType,
+                  ) && (
                   <TableActionButton
                     icon={faUsers}
                     to={`/contributors/${row?.original?.id}/memberships`}
@@ -180,26 +192,28 @@ export const useContributorColumns = () => {
                     Manage memberships
                   </TableActionButton>
                 )}
-                <TableActionButton
-                  icon={faTrash}
-                  iconClassName="text-red-700"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (row?.original?.id) {
-                      dispatch(setSelectedContributor(row?.original));
-                      dispatch(setDeleteContributorModal(true));
-                    }
-                  }}
-                >
-                  Delete
-                </TableActionButton>
+                {canDelete && (
+                  <TableActionButton
+                    icon={faTrash}
+                    iconClassName="text-red-700"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (row?.original?.id) {
+                        dispatch(setSelectedContributor(row?.original));
+                        dispatch(setDeleteContributorModal(true));
+                      }
+                    }}
+                  >
+                    Delete
+                  </TableActionButton>
+                )}
               </menu>
             </CustomPopover>
           );
         },
       },
     ],
-    [dispatch, permissions],
+    [dispatch, permissions, isAdminAssigner],
   );
 
   return { contributorColumns };

@@ -309,6 +309,33 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      assignContributorManager: builder.mutation({
+        query: ({
+          id,
+          userId,
+        }: {
+          id: string;
+          userId: string;
+        }) => ({
+          url: `/contributors/${id}/managers`,
+          method: "POST",
+          body: { userId },
+        }),
+      }),
+
+      unassignContributorManager: builder.mutation({
+        query: ({
+          id,
+          userId,
+        }: {
+          id: string;
+          userId: string;
+        }) => ({
+          url: `/contributors/${id}/managers/${userId}`,
+          method: "DELETE",
+        }),
+      }),
+
       createContributorMembership: builder.mutation({
         query: (body: CreateContributorMembershipPayload) => ({
           url: "/contributor-memberships",
@@ -766,6 +793,8 @@ export const {
   useDeleteContributorMutation,
   useVerifyContributorMutation,
   useRejectContributorMutation,
+  useAssignContributorManagerMutation,
+  useUnassignContributorManagerMutation,
   useCreateContributorMembershipMutation,
   useDeleteContributorMembershipMutation,
   useCreateTrackMutation,

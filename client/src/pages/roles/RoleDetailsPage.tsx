@@ -97,7 +97,7 @@ const RoleDetailsPage = () => {
                         key={permission.id}
                         className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-sand)]/30 text-[12px] text-[color:var(--lens-ink)]"
                       >
-                        {permission.permission?.name || permission.name}
+                        {permission.permission?.name}
                       </span>
                     ))
                   ) : (

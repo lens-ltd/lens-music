@@ -1,10 +1,20 @@
 import Button from "@/components/inputs/Button";
 import { KeyValuePair } from "@/components/inputs/KeyValuePair";
+import TableActionButton from "@/components/inputs/TableActionButton";
 import { Heading } from "@/components/text/Headings";
 import { getCountryName } from "@/constants/countries.constants";
+import { PERMISSIONS } from "@/constants/permission.constants";
 import UserLayout from "@/containers/UserLayout";
-import { useGetContributor } from "@/hooks/contributors/contributor.hooks";
-import { useAppSelector } from "@/state/hooks";
+import {
+  useFetchContributorManagers,
+  useGetContributor,
+} from "@/hooks/contributors/contributor.hooks";
+import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import {
+  setAssignManagerModal,
+  setSelectedManager,
+  setUnassignManagerModal,
+} from "@/state/features/contributorSlice";
 import {
   Contributor,
   ContributorProfileLinkType,
@@ -12,17 +22,20 @@ import {
 } from "@/types/models/contributor.types";
 import { GROUP_CONTRIBUTOR_TYPES } from "./contributorForm";
 import { UUID } from "@/types/common.types";
-import { capitalizeString } from "@/utils/strings.helper";
+import { capitalizeString, formatDate } from "@/utils/strings.helper";
 import { useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { socialProfileFields, storeProfileFields } from "./contributorForm";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getGenderLabel } from "@/constants/input.constants";
 import { useMemberContributorMembershipsColumns } from "@/hooks/contributors/columns.contributorMemberships";
 import { useFetchContributorMemberships } from "@/hooks/contributors/contributorMembership.hooks";
 import Table from "@/components/table/Table";
+import AssignContributorManager from "./AssignContributorManager";
+import UnassignContributorManager from "./UnassignContributorManager";
 
 const statusBadgeClassNames: Record<string, string> = {
   ACTIVE: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
@@ -64,10 +77,17 @@ const getProfileLinkMap = (selectedContributor?: Contributor) => {
 
 const ContributorDetailsPage = () => {
   // STATE
-  const { contributor } = useAppSelector((state) => state.contributor);
+  const dispatch = useAppDispatch();
+  const { contributor, managersList, assignManagerModal, unassignManagerModal } =
+    useAppSelector((state) => state.contributor);
+  const { user: authUser } = useAppSelector((state) => state.auth);
   const hasRequestedContributor = useRef(false);
   const { contributorMembershipsList } = useAppSelector(
     (state) => state.contributorMembership,
+  );
+
+  const canAssignManagers = authUser?.permissions?.includes(
+    PERMISSIONS.ASSIGN_CONTRIBUTOR_MANAGER,
   );
 
   const { memberContributorMembershipsColumns } = useMemberContributorMembershipsColumns();
@@ -84,6 +104,11 @@ const ContributorDetailsPage = () => {
     setPage: setMembershipsPage,
     setSize: setMembershipsSize,
   } = useFetchContributorMemberships();
+
+  const {
+    fetchManagers,
+    isFetching: managersIsFetching,
+  } = useFetchContributorManagers();
 
   useEffect(() => {
     if (contributor?.id) {
@@ -112,6 +137,18 @@ const ContributorDetailsPage = () => {
     getContributor({ id });
   }, [getContributor, id]);
 
+  useEffect(() => {
+    if (id && canAssignManagers && !assignManagerModal && !unassignManagerModal) {
+      fetchManagers({ id });
+    }
+  }, [
+    id,
+    canAssignManagers,
+    fetchManagers,
+    assignManagerModal,
+    unassignManagerModal,
+  ]);
+
   const contributorDetails = useMemo(() => {
     if (contributor?.id === id) {
       return contributor;
@@ -124,6 +161,10 @@ const ContributorDetailsPage = () => {
 
     return undefined;
   }, [contributor, data?.data, id]);
+
+  const canManage =
+    Boolean(contributorDetails?.currentUserCanManage) ||
+    Boolean(canAssignManagers);
 
   const profileLinksMap = useMemo(
     () => getProfileLinkMap(contributorDetails),
@@ -274,14 +315,16 @@ const ContributorDetailsPage = () => {
               current verification metadata.
             </p>
           </div>
-          <FontAwesomeIcon
-            icon={faPenToSquare}
-            className="text-primary text-[14px] cursor-pointer"
-            onClick={(event) => {
-              event.preventDefault();
-              navigate(`/contributors/${id}/update`);
-            }}
-          />
+          {canManage && (
+            <FontAwesomeIcon
+              icon={faPenToSquare}
+              className="text-primary text-[14px] cursor-pointer"
+              onClick={(event) => {
+                event.preventDefault();
+                navigate(`/contributors/${id}/update`);
+              }}
+            />
+          )}
         </header>
 
         {isNotFound ? (
@@ -405,7 +448,8 @@ const ContributorDetailsPage = () => {
             {contributorDetails?.type &&
               GROUP_CONTRIBUTOR_TYPES.includes(
                 contributorDetails.type as ContributorType,
-              ) && (
+              ) &&
+              canManage && (
                 <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
                   <header className="flex flex-col gap-1">
                     <Heading type="h3" className="!text-gray-900">
@@ -422,6 +466,75 @@ const ContributorDetailsPage = () => {
                   </div>
                 </section>
               )}
+
+            {canAssignManagers && (
+              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+                <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-1">
+                    <Heading type="h3" className="!text-gray-900">
+                      Managers
+                    </Heading>
+                    <p className="text-[12px] text-gray-500">
+                      Users assigned to manage this contributor. Assignment is
+                      admin-only; managers also need contributor permissions.
+                    </p>
+                  </div>
+                  <Button
+                    primary
+                    icon={faPlus}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(setAssignManagerModal(true));
+                    }}
+                  >
+                    Assign manager
+                  </Button>
+                </header>
+                <div className="mt-4 flex flex-col gap-2">
+                  {managersIsFetching ? (
+                    <p className="text-[12px] text-gray-500">Loading managers…</p>
+                  ) : managersList.length === 0 ? (
+                    <p className="rounded-md border border-dashed border-gray-200 bg-gray-50/60 px-4 py-3 text-[12px] text-gray-500">
+                      No managers assigned yet. The creator is auto-assigned on
+                      create; assign additional users as needed.
+                    </p>
+                  ) : (
+                    managersList.map((manager) => (
+                      <div
+                        key={manager.id}
+                        className="flex flex-col gap-2 rounded-md border border-gray-100 bg-gray-50/80 p-3 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-medium text-gray-900">
+                            {manager.user?.name || "User"}
+                          </p>
+                          <p className="truncate text-[12px] text-gray-500">
+                            {manager.user?.email || manager.userId}
+                          </p>
+                          <p className="mt-1 text-[11px] text-gray-400">
+                            Assigned{" "}
+                            {manager.createdAt
+                              ? formatDate(manager.createdAt, "DD/MM/YYYY HH:mm")
+                              : "—"}
+                          </p>
+                        </div>
+                        <TableActionButton
+                          icon={faTrash}
+                          iconClassName="text-red-700"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(setSelectedManager(manager));
+                            dispatch(setUnassignManagerModal(true));
+                          }}
+                        >
+                          Remove
+                        </TableActionButton>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+            )}
 
             {membershipsIsSuccess && contributorMembershipsList.length > 0 && (
               <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
@@ -456,6 +569,8 @@ const ContributorDetailsPage = () => {
           </Button>
         </footer>
       </main>
+      <AssignContributorManager />
+      <UnassignContributorManager />
     </UserLayout>
   );
 };

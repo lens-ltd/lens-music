@@ -35,6 +35,19 @@ export class UsersController {
     };
   }
 
+  @Get(':id')
+  @Permissions(PERMISSIONS.READ_USER)
+  async getUser(@Param('id') id: string) {
+    const user = await this.userService.getUserDetails(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return {
+      message: 'User retrieved.',
+      data: user,
+    };
+  }
+
   @Delete(':id')
   @Permissions(PERMISSIONS.DELETE_USER)
   @HttpCode(HttpStatus.NO_CONTENT)

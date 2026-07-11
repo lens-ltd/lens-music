@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
+import { ContributorManager } from "../../entities/contributor-manager.entity";
+import { User } from "../../entities/user.entity";
 import { EmailService } from "../email/email.service";
 import { RejectContributorDto } from "./dto/reject-contributor.dto";
 import {
@@ -15,6 +23,14 @@ import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { ContributorMembership } from "../../entities/contributor-membership.entity";
 import { isValidIsni, normalizeIsni } from "../../helpers/releases.helper";
 import { ContributorVerificationStatus } from "../../constants/contributor.constants";
+import { ContributorAccessService } from "./contributor-access.service";
+import { AuthUser } from "../../common/decorators/current-user.decorator";
+
+export type ContributorDetailsResponse = Contributor & {
+  managers?: ContributorManager[];
+  currentUserIsManager?: boolean;
+  currentUserCanManage?: boolean;
+};
 
 @Injectable()
 export class ContributorService {
@@ -23,7 +39,12 @@ export class ContributorService {
     private readonly contributorRepository: Repository<Contributor>,
     @InjectRepository(ContributorMembership)
     private readonly contributorMembershipRepository: Repository<ContributorMembership>,
+    @InjectRepository(ContributorManager)
+    private readonly managerRepository: Repository<ContributorManager>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly emailService: EmailService,
+    private readonly contributorAccess: ContributorAccessService,
   ) {}
 
   private readonly logger = new Logger(ContributorService.name);
@@ -38,6 +59,26 @@ export class ContributorService {
     fallbackName?: string;
   }): string | undefined {
     return displayName || name || fallbackName;
+  }
+
+  private async assignManagerRow(
+    contributorId: UUID,
+    userId: UUID,
+    assignedById: UUID,
+  ): Promise<ContributorManager> {
+    const existing = await this.managerRepository.findOne({
+      where: { contributorId, userId },
+    });
+    if (existing) {
+      return existing;
+    }
+    return this.managerRepository.save(
+      this.managerRepository.create({
+        contributorId,
+        userId,
+        createdById: assignedById,
+      }),
+    );
   }
 
   async create(
@@ -74,6 +115,10 @@ export class ContributorService {
     });
 
     const savedContributor = await this.contributorRepository.save(contributor);
+
+    // Creator becomes a manager of the new contributor.
+    await this.assignManagerRow(savedContributor.id, createdById, createdById);
+
     if (dto.parentContributorId) {
       await this.contributorMembershipRepository.save({
         parentContributorId: dto?.parentContributorId,
@@ -131,18 +176,117 @@ export class ContributorService {
     return getPagingData({ data, size, page });
   }
 
-  async findOne(id: UUID): Promise<Contributor | null> {
-    return this.contributorRepository.findOne({
+  async findOne(
+    id: UUID,
+    currentUser?: AuthUser,
+  ): Promise<ContributorDetailsResponse | null> {
+    const contributor = await this.contributorRepository.findOne({
       where: { id },
-      relations: { parentMemberships: true, childMemberships: true },
+      relations: {
+        parentMemberships: true,
+        childMemberships: true,
+        managers: { user: true },
+      },
     });
+    if (!contributor) {
+      return null;
+    }
+
+    const currentUserIsManager = currentUser?.id
+      ? await this.contributorAccess.isAssignedManager(currentUser.id, id)
+      : false;
+    const currentUserCanManage = await this.contributorAccess.canManage(
+      currentUser,
+      id,
+    );
+
+    return Object.assign(contributor, {
+      currentUserIsManager,
+      currentUserCanManage,
+    });
+  }
+
+  async listManagers(contributorId: UUID): Promise<ContributorManager[]> {
+    const contributor = await this.contributorRepository.findOne({
+      where: { id: contributorId },
+      select: ["id"],
+    });
+    if (!contributor) {
+      throw new NotFoundException("Contributor not found");
+    }
+
+    return this.managerRepository.find({
+      where: { contributorId },
+      relations: { user: true },
+      order: { createdAt: "DESC" },
+    });
+  }
+
+  async assignManager(
+    contributorId: UUID,
+    userId: UUID,
+    assignedById: UUID,
+  ): Promise<ContributorManager> {
+    const contributor = await this.contributorRepository.findOne({
+      where: { id: contributorId },
+      select: ["id"],
+    });
+    if (!contributor) {
+      throw new NotFoundException("Contributor not found");
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ["id", "name", "email"],
+    });
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const existing = await this.managerRepository.findOne({
+      where: { contributorId, userId },
+    });
+    if (existing) {
+      throw new ConflictException(
+        "User is already a manager of this contributor",
+      );
+    }
+
+    const saved = await this.managerRepository.save(
+      this.managerRepository.create({
+        contributorId,
+        userId,
+        createdById: assignedById,
+      }),
+    );
+
+    return this.managerRepository.findOneOrFail({
+      where: { id: saved.id },
+      relations: { user: true },
+    });
+  }
+
+  async unassignManager(
+    contributorId: UUID,
+    userId: UUID,
+  ): Promise<void> {
+    const existing = await this.managerRepository.findOne({
+      where: { contributorId, userId },
+    });
+    if (!existing) {
+      throw new NotFoundException("Manager assignment not found");
+    }
+    await this.managerRepository.remove(existing);
   }
 
   async update(
     id: UUID,
     dto: UpdateContributorDto,
     lastUpdatedById: UUID,
+    actor?: AuthUser,
   ): Promise<Contributor> {
+    await this.contributorAccess.assertCanManage(actor, id);
+
     const contributor = await this.contributorRepository.findOne({
       where: { id },
       relations: { parentMemberships: true, childMemberships: true },
@@ -198,14 +342,22 @@ export class ContributorService {
     return this.contributorRepository.save(contributor);
   }
 
-  async remove(id: UUID): Promise<void> {
+  async remove(id: UUID, actor?: AuthUser): Promise<void> {
+    await this.contributorAccess.assertCanManage(actor, id);
+
     const result = await this.contributorRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException("Contributor not found");
     }
   }
 
-  async verify(id: UUID, verifiedById: UUID): Promise<Contributor> {
+  async verify(
+    id: UUID,
+    verifiedById: UUID,
+    actor?: AuthUser,
+  ): Promise<Contributor> {
+    await this.contributorAccess.assertCanManage(actor, id);
+
     const contributor = await this.contributorRepository.findOne({
       where: { id },
     });
@@ -225,7 +377,10 @@ export class ContributorService {
     id: UUID,
     reviewedById: UUID,
     dto?: RejectContributorDto,
+    actor?: AuthUser,
   ): Promise<Contributor> {
+    await this.contributorAccess.assertCanManage(actor, id);
+
     const contributor = await this.contributorRepository.findOne({
       where: { id },
     });
@@ -271,7 +426,10 @@ export class ContributorService {
   async requestVerification(
     id: UUID,
     requestedById: UUID,
+    actor?: AuthUser,
   ): Promise<Contributor> {
+    await this.contributorAccess.assertCanManage(actor, id);
+
     const contributor = await this.contributorRepository.findOne({
       where: { id },
     });

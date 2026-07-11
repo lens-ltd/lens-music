@@ -57,6 +57,20 @@ const Sidebar = () => {
   }, [sidebarOpen, showLess, showMore]);
 
   useEffect(() => {
+    const mobileViewport = window.matchMedia('(max-width: 639px)');
+
+    const collapseOnMobile = (event: MediaQueryListEvent | MediaQueryList) => {
+      if (event.matches) {
+        dispatch(setSidebarOpen(false));
+      }
+    };
+
+    collapseOnMobile(mobileViewport);
+    mobileViewport.addEventListener('change', collapseOnMobile);
+    return () => mobileViewport.removeEventListener('change', collapseOnMobile);
+  }, [dispatch]);
+
+  useEffect(() => {
     if (!sidebarOpen) return;
 
     const activeCategories = sidebarNavItems

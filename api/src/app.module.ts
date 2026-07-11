@@ -22,6 +22,7 @@ import { TrackRightsControllersModule } from './modules/track-rights-controllers
 import { ReleaseTerritoryDetailsModule } from './modules/release-territory-details/release-territory-details.module';
 import { RelatedReleasesModule } from './modules/related-releases/related-releases.module';
 import { DdexModule } from './modules/ddex/ddex.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { DdexModule } from './modules/ddex/ddex.module';
     ReleaseTerritoryDetailsModule,
     RelatedReleasesModule,
     DdexModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

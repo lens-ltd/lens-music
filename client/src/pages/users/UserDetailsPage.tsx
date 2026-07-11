@@ -4,6 +4,7 @@ import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useFetchUserById } from "@/hooks/users/users.hooks";
 import { useAppSelector } from "@/state/hooks";
+import { User } from "@/types/models/user.types";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import {
   faEnvelope,
@@ -14,8 +15,8 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const detailItems = [
   { key: "name", label: "Full name", icon: faUser },
@@ -25,17 +26,40 @@ const detailItems = [
 ] as const;
 
 const UserDetailsPage = () => {
+
+  // NAVIGATION
   const { id } = useParams<{ id: string }>();
-  const { fetchUserById, isFetching } = useFetchUserById();
-  const { user } = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  // FETCH USER BY ID
+  const {
+    fetchUserById,
+    isFetching,
+    isError,
+    error,
+    isSuccess,
+    isUninitialized,
+    data: fetchedUser,
+  } = useFetchUserById();
+  const { user: storeUser } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     if (id) {
-      fetchUserById({ id });
+      void fetchUserById({ id });
     }
   }, [fetchUserById, id]);
 
-  if (isFetching) {
+  const user: User | undefined = useMemo(() => {
+    if (fetchedUser && fetchedUser.id === id) {
+      return fetchedUser as User;
+    }
+    if (storeUser && storeUser.id === id) {
+      return storeUser;
+    }
+    return undefined;
+  }, [fetchedUser, storeUser, id]);
+
+  if (isUninitialized || isFetching) {
     return (
       <UserLayout>
         <main className="flex min-h-[50vh] w-full items-center justify-center">
@@ -45,7 +69,26 @@ const UserDetailsPage = () => {
     );
   }
 
-  if (!user || user.id !== id) {
+  if (isError) {
+    const message =
+      (error as { data?: { message?: string } })?.data?.message ||
+      "Failed to load user details.";
+    return (
+      <UserLayout>
+        <main className="flex w-full flex-col gap-4">
+          <nav className="flex w-full items-center justify-between gap-3">
+            <Heading>User Details</Heading>
+            <Button route="/users">Back to users</Button>
+          </nav>
+          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
+            <p className="text-[13px] text-[color:var(--lens-ink)]/60">{message}</p>
+          </section>
+        </main>
+      </UserLayout>
+    );
+  }
+
+  if (!user || (isSuccess && user.id !== id)) {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
@@ -73,7 +116,6 @@ const UserDetailsPage = () => {
               Review identity, account status, and access context.
             </p>
           </div>
-          <Button route="/users">Back to users</Button>
         </nav>
 
         <section className="flex w-full flex-col gap-5 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
@@ -204,6 +246,14 @@ const UserDetailsPage = () => {
             </div>
           </div>
         </section>
+        <menu>
+          <Button onClick={(e) => {
+            e.preventDefault();
+            navigate(-1);
+          }}>
+            Back
+          </Button>
+        </menu>
       </main>
     </UserLayout>
   );

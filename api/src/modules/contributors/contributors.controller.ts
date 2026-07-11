@@ -24,20 +24,17 @@ import { ContributorService } from "./contributors.service";
 import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { RejectContributorDto } from "./dto/reject-contributor.dto";
+import { AssignContributorManagerDto } from "./dto/assign-contributor-manager.dto";
 import { UUID } from "../../types/common.types";
 import { Contributor } from "../../entities/contributor.entity";
 import { FindOptionsWhere, In } from "typeorm";
 import { ContributorVerificationStatus } from "../../constants/contributor.constants";
+
 @Controller("contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContributorsController {
   constructor(private readonly contributorService: ContributorService) {}
-  /**
-   * Create a contributor
-   * @param dto - The data to create the contributor with
-   * @param user - The user creating the contributor
-   * @returns The created contributor
-   */
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Permissions(PERMISSIONS.CREATE_CONTRIBUTOR)
@@ -48,16 +45,7 @@ export class ContributorsController {
     const contributor = await this.contributorService.create(dto, user.id);
     return { message: "Contributor created successfully", data: contributor };
   }
-  /**
-   * Get all contributors
-   * @param size - The number of contributors to return
-   * @param page - The page number to return
-   * @param parentContributorId - The ID of the parent contributor to filter by
-   * @param type - The type of contributor to filter by
-   * @param searchKey - The key to search for
-   * @param searchName - The name to search for
-   * @returns The contributors
-   */
+
   @Get()
   @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
   async findAll(
@@ -101,27 +89,59 @@ export class ContributorsController {
     });
     return { message: "Contributors fetched successfully", data };
   }
-  /**
-   * Get a contributor by ID
-   * @param id - The ID of the contributor to get
-   * @returns The contributor
-   */
+
+  @Get(":id/managers")
+  @Permissions(PERMISSIONS.ASSIGN_CONTRIBUTOR_MANAGER)
+  async listManagers(@Param("id") id: string) {
+    const managers = await this.contributorService.listManagers(id);
+    return {
+      message: "Contributor managers fetched successfully",
+      data: managers,
+    };
+  }
+
+  @Post(":id/managers")
+  @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.ASSIGN_CONTRIBUTOR_MANAGER)
+  async assignManager(
+    @Param("id") id: string,
+    @Body() dto: AssignContributorManagerDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const manager = await this.contributorService.assignManager(
+      id,
+      dto.userId,
+      user.id,
+    );
+    return {
+      message: "Contributor manager assigned successfully",
+      data: manager,
+    };
+  }
+
+  @Delete(":id/managers/:userId")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(PERMISSIONS.ASSIGN_CONTRIBUTOR_MANAGER)
+  async unassignManager(
+    @Param("id") id: string,
+    @Param("userId") userId: string,
+  ) {
+    await this.contributorService.unassignManager(id, userId);
+  }
+
   @Get(":id")
   @Permissions(PERMISSIONS.READ_CONTRIBUTOR)
-  async findOne(@Param("id") id: string) {
-    const contributor = await this.contributorService.findOne(id);
+  async findOne(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const contributor = await this.contributorService.findOne(id, user);
     if (!contributor) {
       throw new NotFoundException("Contributor not found");
     }
     return { message: "Contributor fetched successfully", data: contributor };
   }
-  /**
-   * Update a contributor
-   * @param id - The ID of the contributor to update
-   * @param dto - The data to update the contributor with
-   * @param user - The user updating the contributor
-   * @returns The updated contributor
-   */
+
   @Patch(":id")
   @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
   async update(
@@ -129,37 +149,36 @@ export class ContributorsController {
     @Body() dto: UpdateContributorDto,
     @CurrentUser() user: AuthUser,
   ) {
-    const contributor = await this.contributorService.update(id, dto, user.id);
+    const contributor = await this.contributorService.update(
+      id,
+      dto,
+      user.id,
+      user,
+    );
     return { message: "Contributor updated successfully", data: contributor };
   }
-  /**
-   * Remove a contributor
-   * @param id - The ID of the contributor to remove
-   * @returns The removed contributor
-   */
+
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   @Permissions(PERMISSIONS.DELETE_CONTRIBUTOR)
-  async remove(@Param("id") id: UUID) {
-    await this.contributorService.remove(id);
+  async remove(
+    @Param("id") id: UUID,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.contributorService.remove(id, user);
   }
-  /**
-   * Verify a contributor
-   * @param id - The ID of the contributor to verify
-   * @returns The verified contributor
-   */
+
   @Post(":id/verify")
   @Permissions(PERMISSIONS.VERIFY_CONTRIBUTOR)
   async verify(@Param("id") id: UUID, @CurrentUser() user: AuthUser) {
-    const contributor = await this.contributorService.verify(id, user?.id);
+    const contributor = await this.contributorService.verify(
+      id,
+      user?.id,
+      user,
+    );
     return { message: "Contributor verified successfully", data: contributor };
   }
-  /**
-   * Reject a contributor's verification
-   * @param id - The ID of the contributor to reject
-   * @param dto - Optional rejection notes
-   * @returns The updated contributor
-   */
+
   @Post(":id/reject")
   @Permissions(PERMISSIONS.VERIFY_CONTRIBUTOR)
   async reject(
@@ -167,18 +186,29 @@ export class ContributorsController {
     @Body() dto: RejectContributorDto,
     @CurrentUser() user: AuthUser,
   ) {
-    const contributor = await this.contributorService.reject(id, user?.id, dto);
+    const contributor = await this.contributorService.reject(
+      id,
+      user?.id,
+      dto,
+      user,
+    );
     return { message: "Contributor verification rejected", data: contributor };
   }
-  /**
-   * Request verification for a contributor
-   * @param id - The ID of the contributor to request verification for
-   * @returns The requested verification
-   */
+
   @Post(":id/request-verification")
   @Permissions(PERMISSIONS.UPDATE_CONTRIBUTOR)
-  async requestVerification(@Param("id") id: UUID, @CurrentUser() user: AuthUser) {
-    const contributor = await this.contributorService.requestVerification(id, user?.id);
-    return { message: "Verification requested successfully", data: contributor };
+  async requestVerification(
+    @Param("id") id: UUID,
+    @CurrentUser() user: AuthUser,
+  ) {
+    const contributor = await this.contributorService.requestVerification(
+      id,
+      user?.id,
+      user,
+    );
+    return {
+      message: "Verification requested successfully",
+      data: contributor,
+    };
   }
 }

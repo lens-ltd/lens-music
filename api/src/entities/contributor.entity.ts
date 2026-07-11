@@ -9,6 +9,7 @@ import {
 import { UUID } from "../types/common.types";
 import { UserStatus } from "../constants/user.constants";
 import { ContributorMembership } from "./contributor-membership.entity";
+import { ContributorManager } from "./contributor-manager.entity";
 
 @Entity("contributors")
 export class Contributor extends Person {
@@ -104,4 +105,11 @@ export class Contributor extends Person {
     (membership: ContributorMembership) => membership.memberContributor
   )
   childMemberships: ContributorMembership[];
+
+  // USERS ASSIGNED TO MANAGE THIS CONTRIBUTOR
+  @OneToMany(
+    () => ContributorManager,
+    (manager: ContributorManager) => manager.contributor,
+  )
+  managers: ContributorManager[];
 }
