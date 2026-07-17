@@ -8,11 +8,18 @@ import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { setCreateReleaseTrackModal } from "@/state/features/trackSlice";
 import CreateReleaseTrack from "../../tracks/CreateReleaseTrack";
-import { useFetchTracks } from "@/hooks/tracks/track.hooks";
-import { useEffect } from "react";
+import {
+  useDeleteTrack,
+  useFetchTracks,
+} from "@/hooks/tracks/track.hooks";
+import { useEffect, useState } from "react";
 import ReleaseTrackCard from "@/components/tracks/ReleaseTrackCard";
 import { RelaxedHeading } from "@/components/text/Headings";
 import { useNavigate } from "react-router-dom";
+import Modal from "@/components/modals/Modal";
+import { Track } from "@/types/models/track.types";
+import { ReleaseStatus } from "@/types/models/release.types";
+import { toast } from "sonner";
 
 const ReleaseWizardUploadTracks = ({
   currentStepName,
@@ -23,6 +30,7 @@ const ReleaseWizardUploadTracks = ({
   const dispatch = useAppDispatch();
   const { release } = useAppSelector((state) => state.release);
   const { tracksList } = useAppSelector((state) => state.track);
+  const [trackToDelete, setTrackToDelete] = useState<Track>();
 
   // NAVIGATION
   const navigate = useNavigate();
@@ -34,6 +42,11 @@ const ReleaseWizardUploadTracks = ({
 
   // FETCH TRACKS
   const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
+  const { deleteTrack, isLoading: deleteTrackIsLoading } = useDeleteTrack();
+
+  const canDeleteTracks =
+    release?.status === ReleaseStatus.DRAFT ||
+    release?.status === ReleaseStatus.VALIDATED;
 
   useEffect(() => {
     if (release?.id) {
@@ -74,6 +87,8 @@ const ReleaseWizardUploadTracks = ({
                       `/releases/${release?.id}/manage-tracks/${track?.id}`,
                     );
                   }}
+                  canDelete={canDeleteTracks}
+                  onDelete={() => setTrackToDelete(track)}
                 />
               </li>
             ))}
@@ -139,6 +154,50 @@ const ReleaseWizardUploadTracks = ({
         </Button>
       </footer>
       <CreateReleaseTrack />
+      <Modal
+        isOpen={Boolean(trackToDelete)}
+        onClose={() => setTrackToDelete(undefined)}
+        headingClassName="text-red-700"
+        heading={`Delete ${trackToDelete?.title ?? "track"}`}
+      >
+        <article className="flex w-full flex-col gap-4">
+          <p>
+            Are you sure you want to delete {trackToDelete?.title}? This action
+            cannot be undone.
+          </p>
+          <Button
+            danger
+            className="self-end"
+            isLoading={deleteTrackIsLoading}
+            disabled={deleteTrackIsLoading}
+            onClick={async (e) => {
+              e.preventDefault();
+              if (!trackToDelete?.id || !release?.id) return;
+
+              try {
+                const response = await deleteTrack({
+                  id: trackToDelete.id,
+                }).unwrap();
+                toast.success(response?.message || "Track deleted successfully");
+                setTrackToDelete(undefined);
+                await fetchTracks({ releaseId: release.id });
+              } catch (error) {
+                const apiError = error as {
+                  data?: { message?: string | string[] };
+                };
+                const message = apiError.data?.message;
+                toast.error(
+                  Array.isArray(message)
+                    ? message.join(", ")
+                    : message || "Unable to delete track",
+                );
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </article>
+      </Modal>
     </section>
   );
 };

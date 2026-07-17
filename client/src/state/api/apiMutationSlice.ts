@@ -402,6 +402,20 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      reorderTracks: builder.mutation({
+        query: ({
+          releaseId,
+          trackIds,
+        }: {
+          releaseId: string;
+          trackIds: string[];
+        }) => ({
+          url: `/tracks/reorder`,
+          method: "PATCH",
+          body: { releaseId, trackIds },
+        }),
+      }),
+
       uploadTrackAudio: builder.mutation({
         query: ({ id, formData }: { id: string; formData: FormData }) => ({
           url: `/tracks/${id}/audio`,
@@ -414,6 +428,13 @@ export const apiMutationSlice = createApi({
       deleteTrackAudio: builder.mutation({
         query: ({ id, audioFileId }: { id: string; audioFileId: string }) => ({
           url: `/tracks/${id}/audio/${audioFileId}`,
+          method: "DELETE",
+        }),
+      }),
+
+      deleteTrack: builder.mutation({
+        query: ({ id }: { id: string }) => ({
+          url: `/tracks/${id}`,
           method: "DELETE",
         }),
       }),
@@ -832,6 +853,7 @@ export const {
   useUpdateTrackMutation,
   useUploadTrackAudioMutation,
   useDeleteTrackAudioMutation,
+  useDeleteTrackMutation,
   useValidateTrackMutation,
   useValidateReleaseMutation,
   useSubmitReleaseMutation,

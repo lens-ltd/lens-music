@@ -11,6 +11,7 @@ import {
   useUpdateTrackMutation,
   useUploadTrackAudioMutation,
   useDeleteTrackAudioMutation,
+  useDeleteTrackMutation,
   useValidateTrackMutation,
 } from "@/state/api/apiMutationSlice";
 
@@ -98,6 +99,14 @@ export const useDeleteTrackAudio = () => {
     useDeleteTrackAudioMutation();
 
   return { deleteTrackAudio, isLoading, reset, data, isSuccess, isError, error };
+};
+
+// DELETE TRACK
+export const useDeleteTrack = () => {
+  const [deleteTrack, { isLoading, reset, data, isSuccess, isError, error }] =
+    useDeleteTrackMutation();
+
+  return { deleteTrack, isLoading, reset, data, isSuccess, isError, error };
 };
 
 // VALIDATE TRACK

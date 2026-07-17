@@ -113,7 +113,7 @@ export const buildContributorPayload = (
             : normalizeValue(formValues.dateOfBirth);
 
     return {
-        name: displayName || name || "",
+        name: name || "",
         displayName,
         email: normalizeValue(formValues.email),
         phoneNumber: normalizeValue(formValues.phoneNumber),

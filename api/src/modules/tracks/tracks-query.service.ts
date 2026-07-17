@@ -41,7 +41,9 @@ export class TrackQueryService {
 
     const tracks = await this.trackRepository.findAndCount({
       where,
-      order: { createdAt: 'DESC' },
+      order: releaseId
+        ? { discNumber: 'ASC', trackNumber: 'ASC' }
+        : { createdAt: 'DESC' },
       take,
       skip,
     });

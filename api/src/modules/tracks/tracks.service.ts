@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Track } from "../../entities/track.entity";
@@ -6,6 +12,7 @@ import { AudioFile, AudioFileType } from "../../entities/audio-file.entity";
 import { TrackContributor } from "../../entities/track-contributor.entity";
 import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
+import { ReorderTracksDto } from "./dto/reorder-tracks.dto";
 import { RegisterAudioDto } from "./dto/register-audio.dto";
 import { UUID } from "../../types/common.types";
 import {
@@ -20,6 +27,9 @@ import {
   sortContributorsForDisplay,
 } from "../../helpers/releases.helper";
 import { BinaryLike, createHash } from "crypto";
+import { Release } from "../../entities/release.entity";
+import { ReleaseContributor } from "../../entities/release-contributor.entity";
+import { ReleaseStatus } from "../../constants/release.constants";
 
 @Injectable()
 export class TrackService {
@@ -128,27 +138,116 @@ export class TrackService {
   }
 
   async createTrack(dto: CreateTrackDto, userId: UUID): Promise<Track> {
-    const discNumber = 1;
-    const raw = await this.trackRepository
-      .createQueryBuilder("track")
-      .select("MAX(track.track_number)", "maxTrackNumber")
-      .where("track.release_id = :releaseId", { releaseId: dto.releaseId })
-      .andWhere("track.disc_number = :discNumber", { discNumber })
-      .getRawOne<{ maxTrackNumber: string | null }>();
+    return this.trackRepository.manager.transaction(async (manager) => {
+      const trackRepository = manager.getRepository(Track);
+      const release = await manager.getRepository(Release).findOne({
+        where: { id: dto.releaseId },
+      });
 
-    const nextTrackNumber = Number(raw?.maxTrackNumber || 0) + 1;
+      if (!release) {
+        throw new NotFoundException("Release not found");
+      }
 
-    const track = this.trackRepository.create({
-      releaseId: dto.releaseId,
-      title: dto.title,
-      titleVersion: dto.titleVersion,
-      discNumber,
-      trackNumber: nextTrackNumber,
-      durationMs: 30000,
-      createdById: userId,
+      const discNumber = 1;
+      const raw = await trackRepository
+        .createQueryBuilder("track")
+        .select("MAX(track.track_number)", "maxTrackNumber")
+        .where("track.release_id = :releaseId", { releaseId: dto.releaseId })
+        .andWhere("track.disc_number = :discNumber", { discNumber })
+        .getRawOne<{ maxTrackNumber: string | null }>();
+
+      const track = await trackRepository.save(
+        trackRepository.create({
+          releaseId: dto.releaseId,
+          title: dto.title,
+          titleVersion: dto.titleVersion,
+          discNumber,
+          trackNumber: Number(raw?.maxTrackNumber || 0) + 1,
+          durationMs: 30000,
+          cLineYear: release.cLine?.year,
+          cLineOwner: release.cLine?.owner,
+          pLineYear: release.pLine?.year,
+          pLineOwner: release.pLine?.owner,
+          createdById: userId,
+        }),
+      );
+
+      const primaryArtist = await manager
+        .getRepository(ReleaseContributor)
+        .findOne({
+          where: {
+            releaseId: dto.releaseId,
+            role: ContributorRole.PRIMARY_ARTIST,
+          },
+          order: { sequenceNumber: "ASC", createdAt: "ASC" },
+        });
+
+      if (primaryArtist) {
+        await manager.getRepository(TrackContributor).save(
+          manager.getRepository(TrackContributor).create({
+            trackId: track.id,
+            contributorId: primaryArtist.contributorId,
+            role: ContributorRole.PRIMARY_ARTIST,
+            sequenceNumber: primaryArtist.sequenceNumber,
+            createdById: userId,
+          }),
+        );
+      }
+
+      return track;
+    });
+  }
+
+  async deleteTrack(id: UUID): Promise<void> {
+    const track = await this.trackRepository.findOne({
+      where: { id },
+      relations: ["release", "audioFiles"],
     });
 
-    return this.trackRepository.save(track);
+    if (!track) {
+      throw new NotFoundException("Track not found");
+    }
+
+    if (
+      ![ReleaseStatus.DRAFT, ReleaseStatus.VALIDATED].includes(
+        track.release.status,
+      )
+    ) {
+      throw new ConflictException(
+        "Tracks cannot be deleted after the release has been submitted",
+      );
+    }
+
+    for (const audioFile of track.audioFiles ?? []) {
+      if (audioFile.cloudinaryPublicId) {
+        await this.cloudinaryAudioUploaderService.destroyAudio(
+          audioFile.cloudinaryPublicId,
+        );
+      }
+    }
+
+    await this.trackRepository.manager.transaction(async (manager) => {
+      await manager.getRepository(Track).delete(id);
+      await manager
+        .getRepository(Track)
+        .createQueryBuilder()
+        .update(Track)
+        .set({ trackNumber: () => '"track_number" - 1' })
+        .where("release_id = :releaseId", { releaseId: track.releaseId })
+        .andWhere("disc_number = :discNumber", {
+          discNumber: track.discNumber,
+        })
+        .andWhere("track_number > :trackNumber", {
+          trackNumber: track.trackNumber,
+        })
+        .execute();
+
+      if (track.release.status === ReleaseStatus.VALIDATED) {
+        await manager.getRepository(Release).update(track.releaseId, {
+          status: ReleaseStatus.DRAFT,
+        });
+      }
+    });
   }
 
   async updateTrack(id: UUID, dto: UpdateTrackDto): Promise<Track> {
@@ -174,6 +273,61 @@ export class TrackService {
     return this.normalizeTrackStringFields(
       await this.trackRepository.save(track),
     );
+  }
+
+  async reorderTracks(dto: ReorderTracksDto): Promise<Track[]> {
+    const { releaseId, trackIds } = dto;
+
+    const tracks = await this.trackRepository.find({
+      where: { releaseId: releaseId as UUID },
+    });
+
+    const uniqueTrackIds = new Set(trackIds);
+
+    if (
+      uniqueTrackIds.size !== trackIds.length ||
+      uniqueTrackIds.size !== tracks.length ||
+      !tracks.every((track) => uniqueTrackIds.has(track.id))
+    ) {
+      throw new BadRequestException(
+        "trackIds must contain exactly the tracks belonging to this release",
+      );
+    }
+
+    const trackById = new Map(tracks.map((track) => [track.id, track]));
+    // Offset far enough to clear the whole tracklist and dodge the
+    // (releaseId, discNumber, trackNumber) unique constraint mid-renumber.
+    const offset = tracks.length + 1000;
+
+    await this.trackRepository.manager.transaction(async (manager) => {
+      const trackRepository = manager.getRepository(Track);
+
+      // Phase 1: shift every track_number into a non-colliding range.
+      for (const track of tracks) {
+        await trackRepository.update(track.id, {
+          trackNumber: track.trackNumber + offset,
+        });
+      }
+
+      // Phase 2: assign final 1..N in the requested order, per disc.
+      const nextNumberByDisc = new Map<number, number>();
+
+      for (const trackId of trackIds) {
+        const track = trackById.get(trackId)!;
+        const nextNumber = nextNumberByDisc.get(track.discNumber) ?? 1;
+        nextNumberByDisc.set(track.discNumber, nextNumber + 1);
+
+        await trackRepository.update(track.id, {
+          trackNumber: nextNumber,
+          status: TrackStatus.DRAFT,
+        });
+      }
+    });
+
+    return this.trackRepository.find({
+      where: { releaseId: releaseId as UUID },
+      order: { discNumber: "ASC", trackNumber: "ASC" },
+    });
   }
 
   async validateTrack(id: UUID): Promise<{ valid: boolean; errors: string[] }> {

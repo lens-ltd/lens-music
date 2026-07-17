@@ -1,6 +1,9 @@
 import { Track } from "@/types/models/track.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import {
+  faPenToSquare,
+  faTrashCan,
+} from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CustomTooltip from "../inputs/CustomTooltip";
 
@@ -8,6 +11,8 @@ export interface ReleaseTrackCardProps {
   isLoading?: boolean;
   track?: Track;
   onManage?: () => void;
+  canDelete?: boolean;
+  onDelete?: () => void;
 }
 
 const formatDuration = (durationMs?: number) => {
@@ -24,6 +29,8 @@ const ReleaseTrackCard = ({
   isLoading,
   track,
   onManage,
+  canDelete,
+  onDelete,
 }: ReleaseTrackCardProps) => {
   if (isLoading) {
     return (
@@ -118,6 +125,21 @@ const ReleaseTrackCard = ({
                 className="text-primary text-[12px] cursor-pointer"
                 icon={faPenToSquare}
               />
+            </CustomTooltip>
+          )}
+          {canDelete && (
+            <CustomTooltip label="Delete">
+              <button
+                type="button"
+                aria-label={`Delete ${track?.title ?? "track"}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDelete?.();
+                }}
+                className="cursor-pointer border-0 bg-transparent p-0 text-red-700"
+              >
+                <FontAwesomeIcon className="text-[12px]" icon={faTrashCan} />
+              </button>
             </CustomTooltip>
           )}
         </ul>

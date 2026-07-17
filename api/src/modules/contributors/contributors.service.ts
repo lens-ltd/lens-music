@@ -58,7 +58,7 @@ export class ContributorService {
     name?: string;
     fallbackName?: string;
   }): string | undefined {
-    return displayName || name || fallbackName;
+    return name || displayName || fallbackName;
   }
 
   private async assignManagerRow(
@@ -92,8 +92,8 @@ export class ContributorService {
       dto.isni = normalizeIsni(dto.isni);
     }
     const prioritizedName = this.getPrioritizedContributorName({
-      displayName: dto.displayName,
-      name: dto.name,
+      name: dto.name?.trim(),
+      displayName: dto.displayName.trim(),
     });
 
     const contributor = this.contributorRepository.create({
@@ -103,7 +103,7 @@ export class ContributorService {
       country: dto.country,
       gender: dto.gender,
       dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
-      displayName: dto.displayName,
+      displayName: dto.displayName.trim(),
       profileLinks: dto.profileLinks,
       status: dto.status,
       verificationStatus: ContributorVerificationStatus.NOT_VERIFIED,
@@ -306,15 +306,12 @@ export class ContributorService {
       }
     }
 
-    if (dto.displayName !== undefined)
-      contributor.displayName = dto.displayName;
-    if (dto.name !== undefined || dto.displayName !== undefined) {
+    if (dto.displayName !== undefined) {
+      contributor.displayName = dto.displayName.trim();
+    }
+    if (dto.name !== undefined) {
       contributor.name =
-        this.getPrioritizedContributorName({
-          displayName: dto.displayName ?? contributor.displayName,
-          name: dto.name,
-          fallbackName: contributor.name,
-        }) || contributor.name;
+        dto.name.trim() || contributor.displayName || contributor.name;
     }
     if (dto.email !== undefined) contributor.email = dto.email;
     if (dto.phoneNumber !== undefined)

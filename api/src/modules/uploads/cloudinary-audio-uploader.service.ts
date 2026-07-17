@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
-const MAX_AUDIO_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_AUDIO_SIZE_BYTES = 100 * 1024 * 1024;
 
 export interface UploadAudioInput {
   file: Express.Multer.File | undefined;

@@ -7,7 +7,7 @@ import {
   extractAudioMetadata,
 } from "@/utils/audioMetadata";
 
-const MAX_AUDIO_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_AUDIO_SIZE_BYTES = 100 * 1024 * 1024;
 
 /** Progress reserved for the register-with-backend step after Cloudinary upload. */
 const CLOUDINARY_PROGRESS_CAP = 95;

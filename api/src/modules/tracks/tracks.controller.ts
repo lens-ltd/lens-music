@@ -24,6 +24,7 @@ import { Permissions } from "../../common/decorators/permissions.decorator";
 import { PERMISSIONS } from "../../constants/permission.constants";
 import { CreateTrackDto } from "./dto/create-track.dto";
 import { UpdateTrackDto } from "./dto/update-track.dto";
+import { ReorderTracksDto } from "./dto/reorder-tracks.dto";
 import { RegisterAudioDto } from "./dto/register-audio.dto";
 import { TrackService } from "./tracks.service";
 import { TrackQueryService } from "./tracks-query.service";
@@ -47,6 +48,17 @@ export class TracksController {
     await this.catalogAccess.assertCanWriteRelease(dto.releaseId, user);
     const track = await this.trackService.createTrack(dto, user.id);
     return { message: "Track created successfully", data: track };
+  }
+  @Patch("reorder")
+  @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
+  async reorderTracks(
+    @Body() dto: ReorderTracksDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteRelease(dto.releaseId, user);
+    const tracks = await this.trackService.reorderTracks(dto);
+    return { message: "Tracks reordered successfully", data: tracks };
   }
   @Patch(":id")
   @Permissions(PERMISSIONS.UPDATE_TRACK)
@@ -124,6 +136,17 @@ export class TracksController {
     await this.catalogAccess.assertCanWriteTrack(id, user);
     await this.trackService.deleteAudio(id as UUID, audioFileId as UUID);
     return { message: "Audio file deleted successfully" };
+  }
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  @Permissions(PERMISSIONS.DELETE_TRACK)
+  async deleteTrack(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteTrack(id, user);
+    await this.trackService.deleteTrack(id as UUID);
+    return { message: "Track deleted successfully" };
   }
   @Get(":id")
   @Permissions(PERMISSIONS.READ_TRACK)
