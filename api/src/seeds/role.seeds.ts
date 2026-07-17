@@ -1,9 +1,10 @@
-import { DataSource, In } from 'typeorm';
+import { DataSource, In, IsNull } from 'typeorm';
 import { Role } from '../entities/role.entity';
 import { RolePermission } from '../entities/role-permission.entity';
 import { Permission } from '../entities/permission.entity';
 import { User } from '../entities/user.entity';
 import { PERMISSIONS } from '../constants/permission.constants';
+import { UserStatus } from '../constants/user.constants';
 import logger from '../utils/logger';
 
 const ADMIN_EMAIL = 'info@lens.rw';
@@ -15,6 +16,7 @@ const ROLE_PERMISSION_MAP: Record<string, PERMISSIONS[] | 'ALL'> = {
     PERMISSIONS.READ_USER,
     PERMISSIONS.UPDATE_USER,
     PERMISSIONS.DELETE_USER,
+    PERMISSIONS.UPDATE_OWN_PROFILE,
     PERMISSIONS.CREATE_INVITATION,
     PERMISSIONS.READ_INVITATION,
     PERMISSIONS.APPROVE_INVITATION,
@@ -29,6 +31,7 @@ const ROLE_PERMISSION_MAP: Record<string, PERMISSIONS[] | 'ALL'> = {
     PERMISSIONS.REVIEW_RELEASE,
     PERMISSIONS.APPROVE_RELEASE,
     PERMISSIONS.REJECT_RELEASE,
+    PERMISSIONS.MANAGE_ALL_RELEASES,
     PERMISSIONS.READ_STORE,
     PERMISSIONS.UPDATE_STORE,
     PERMISSIONS.ASSIGN_RELEASE_STORE,
@@ -54,6 +57,7 @@ const ROLE_PERMISSION_MAP: Record<string, PERMISSIONS[] | 'ALL'> = {
     PERMISSIONS.GENERATE_DDEX,
   ],
   REVIEWER: [
+    PERMISSIONS.UPDATE_OWN_PROFILE,
     PERMISSIONS.READ_USER,
     PERMISSIONS.READ_INVITATION,
     PERMISSIONS.READ_ROLE,
@@ -69,12 +73,36 @@ const ROLE_PERMISSION_MAP: Record<string, PERMISSIONS[] | 'ALL'> = {
     PERMISSIONS.READ_LYRICS,
     PERMISSIONS.GENERATE_DDEX,
   ],
+  GENERAL_USER: [
+    PERMISSIONS.UPDATE_OWN_PROFILE,
+    PERMISSIONS.CREATE_RELEASE,
+    PERMISSIONS.READ_RELEASE,
+    PERMISSIONS.UPDATE_RELEASE,
+    PERMISSIONS.DELETE_RELEASE,
+    PERMISSIONS.READ_STORE,
+    PERMISSIONS.ASSIGN_RELEASE_STORE,
+    PERMISSIONS.READ_GENRE,
+    PERMISSIONS.CREATE_CONTRIBUTOR,
+    PERMISSIONS.READ_CONTRIBUTOR,
+    PERMISSIONS.UPDATE_CONTRIBUTOR,
+    PERMISSIONS.DELETE_CONTRIBUTOR,
+    PERMISSIONS.CREATE_TRACK,
+    PERMISSIONS.READ_TRACK,
+    PERMISSIONS.UPDATE_TRACK,
+    PERMISSIONS.DELETE_TRACK,
+    PERMISSIONS.CREATE_LYRICS,
+    PERMISSIONS.READ_LYRICS,
+    PERMISSIONS.UPDATE_LYRICS,
+    PERMISSIONS.DELETE_LYRICS,
+    PERMISSIONS.SYNC_LYRICS,
+  ],
 };
 
 const ROLE_DESCRIPTIONS: Record<string, string> = {
   SUPER_ADMIN: 'System super administrator role with all permissions',
   ADMIN: 'Administrator role with catalog, user, invitation, and operational permissions',
   REVIEWER: 'Reviewer role with read-only catalog access and verification permissions',
+  GENERAL_USER: 'Catalog creator role for releases, contributors, tracks, lyrics, and profile management',
 };
 
 export const seedRoles = async (dataSource: DataSource) => {
@@ -93,6 +121,7 @@ export const seedRoles = async (dataSource: DataSource) => {
   const permissions = await permissionRepo.find();
   const permissionByName = new Map(permissions.map((permission) => [permission.name, permission]));
   let superAdminRole: Role | null = null;
+  let generalUserRole: Role | null = null;
 
   for (const [roleName, configuredPermissions] of Object.entries(ROLE_PERMISSION_MAP)) {
     let role = await roleRepo.findOneBy({ name: roleName });
@@ -111,6 +140,9 @@ export const seedRoles = async (dataSource: DataSource) => {
 
     if (roleName === 'SUPER_ADMIN') {
       superAdminRole = role;
+    }
+    if (roleName === 'GENERAL_USER') {
+      generalUserRole = role;
     }
 
     const expectedPermissionNames = configuredPermissions === 'ALL'
@@ -174,5 +206,19 @@ export const seedRoles = async (dataSource: DataSource) => {
   seedLog.info(
     { userId: adminUser.id, role: superAdminRole.name },
     'Assigned role to admin user',
+  );
+
+  if (!generalUserRole) {
+    seedLog.warn('Skipped backfilling roleless users (GENERAL_USER role not found)');
+    return;
+  }
+
+  const backfillResult = await userRepo.update(
+    { roleId: IsNull(), status: UserStatus.ACTIVE },
+    { roleId: generalUserRole.id },
+  );
+  seedLog.info(
+    { usersUpdated: backfillResult.affected ?? 0, role: generalUserRole.name },
+    'Assigned GENERAL_USER role to active roleless users',
   );
 };

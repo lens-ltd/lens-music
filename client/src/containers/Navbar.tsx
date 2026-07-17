@@ -7,8 +7,7 @@ import {
   faSignOutAlt,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { setUser } from '@/state/features/authSlice';
-import { setToken } from '@/state/features/authSlice';
+import { clearSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import LensLogo from '/logo.png';
 
@@ -137,8 +136,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         className="block rounded-lg px-3 py-2.5 text-[12px] text-[color:var(--lens-ink)]/85 transition-colors hover:bg-[color:var(--lens-sand)]/35"
         onClick={(e) => {
           e.preventDefault();
-          dispatch(setUser(undefined));
-          dispatch(setToken(undefined));
+          dispatch(clearSession());
           navigate('/');
         }}
       >

@@ -23,12 +23,14 @@ import { ReleaseContributorsService } from "./release-contributors.service";
 import { CreateReleaseContributorDto } from "./dto/create-release-contributor.dto";
 import { UpdateReleaseContributorDto } from "./dto/update-release-contributor.dto";
 import { UUID } from "../../types/common.types";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 
 @Controller("release-contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleaseContributorsController {
   constructor(
     private readonly releaseContributorsService: ReleaseContributorsService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class ReleaseContributorsController {
     @Body() dto: CreateReleaseContributorDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(dto.releaseId, user);
     const releaseContributor = await this.releaseContributorsService.create(
       dto,
       user.id,
@@ -53,7 +56,9 @@ export class ReleaseContributorsController {
   async update(
     @Param("id") id: string,
     @Body() dto: UpdateReleaseContributorDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteReleaseContributor(id, user);
     const releaseContributor = await this.releaseContributorsService.update(
       id as UUID,
       dto,
@@ -66,7 +71,11 @@ export class ReleaseContributorsController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findByReleaseId(@Query("releaseId") releaseId: string) {
+  async findByReleaseId(
+    @Query("releaseId") releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const releaseContributors =
       await this.releaseContributorsService.findByReleaseId(releaseId as UUID);
     return {
@@ -78,7 +87,11 @@ export class ReleaseContributorsController {
   @Delete(":id")
   @HttpCode(HttpStatus.OK)
   @Permissions(PERMISSIONS.UPDATE_RELEASE)
-  async delete(@Param("id") id: string) {
+  async delete(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteReleaseContributor(id, user);
     await this.releaseContributorsService.delete(id as UUID);
     return { message: "Release contributor removed successfully" };
   }

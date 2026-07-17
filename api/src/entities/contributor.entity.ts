@@ -28,7 +28,7 @@ export class Contributor extends Person {
     type: "enum",
     enum: ContributorVerificationStatus,
     nullable: false,
-    default: ContributorVerificationStatus.PENDING,
+    default: ContributorVerificationStatus.NOT_VERIFIED,
   })
   verificationStatus!: ContributorVerificationStatus;
 

@@ -23,6 +23,7 @@ import { ReleaseTerritoryDetailsModule } from './modules/release-territory-detai
 import { RelatedReleasesModule } from './modules/related-releases/related-releases.module';
 import { DdexModule } from './modules/ddex/ddex.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { CatalogAccessModule } from './modules/catalog-access/catalog-access.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
         : { rejectUnauthorized: false },
     }),
     AuthModule,
+    CatalogAccessModule,
     UsersModule,
     LabelsModule,
     ReleasesModule,

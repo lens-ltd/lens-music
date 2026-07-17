@@ -10,7 +10,7 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { ContributorType, ContributorVerificationStatus } from '../../../constants/contributor.constants';
+import { ContributorType } from '../../../constants/contributor.constants';
 import { Gender } from '../../../constants/person.constants';
 import { UserStatus } from '../../../constants/user.constants';
 import { ContributorProfileLinkItemDto } from './contributor-profile-link.dto';
@@ -54,10 +54,6 @@ export class CreateContributorDto {
   @IsOptional()
   @IsEnum(UserStatus)
   status?: UserStatus;
-
-  @IsOptional()
-  @IsEnum(ContributorVerificationStatus)
-  verificationStatus?: ContributorVerificationStatus;
 
   @IsOptional()
   @IsEnum(ContributorType)

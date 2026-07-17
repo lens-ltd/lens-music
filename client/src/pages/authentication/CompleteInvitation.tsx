@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
@@ -10,19 +10,17 @@ import PublicFooter from '@/components/layout/PublicFooter';
 import Loader from '@/components/inputs/Loader';
 import {
   useCompleteInvitationMutation,
-  useValidateInvitationTokenMutation,
+  useValidateInvitationTokenQuery,
 } from '@/state/api/apiMutationSlice';
-import { setToken } from '@/state/features/authSlice';
-import { setUser } from '@/state/features/userSlice';
+import { setSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 const CompleteInvitation = () => {
   const { token } = useParams();
-  const authToken = useAppSelector((state) => state.auth.token);
+  const { token: authToken, user: authUser } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [invitationEmail, setInvitationEmail] = useState<string | null>(null);
 
   const {
     handleSubmit,
@@ -38,63 +36,41 @@ const CompleteInvitation = () => {
     },
   });
 
-  const [validateInvitation, validationState] = useValidateInvitationTokenMutation();
+  const validationState = useValidateInvitationTokenQuery(
+    { token: token as string },
+    { skip: !token },
+  );
   const [completeInvitation, completionState] = useCompleteInvitationMutation();
-
-  useEffect(() => {
-    if (token) {
-      validateInvitation({ token });
-    }
-  }, [token, validateInvitation]);
-
-  useEffect(() => {
-    if (validationState.isSuccess) {
-      setInvitationEmail(validationState.data?.data?.email ?? null);
-    }
-
-    if (validationState.isError) {
-      toast.error(
-        (validationState.error as ErrorResponse)?.data?.message ||
-          'This invitation is invalid or has expired.',
-      );
-    }
-  }, [validationState.data, validationState.error, validationState.isError, validationState.isSuccess]);
-
-  useEffect(() => {
-    if (completionState.isSuccess) {
-      dispatch(setToken(completionState.data?.data?.accessToken));
-      dispatch(setUser(completionState.data?.data?.user));
-      toast.success('Account setup complete. Redirecting...');
-      navigate('/dashboard');
-    }
-
-    if (completionState.isError) {
-      toast.error(
-        (completionState.error as ErrorResponse)?.data?.message ||
-          'Unable to complete your registration.',
-      );
-    }
-  }, [completionState.data, completionState.error, completionState.isError, completionState.isSuccess, dispatch, navigate]);
 
   const invitationUnavailable = validationState.isError || (!token && !validationState.isLoading);
 
-  if (authToken) {
-    return <Navigate to="/dashboard" />;
+  if (authToken && authUser?.id) {
+    return <Navigate to="/dashboard" replace />;
   }
 
-  const onSubmit = (formData: {
+  const onSubmit = async (formData: {
     name: string;
     phoneNumber?: string;
     password: string;
   }) => {
     if (!token) return;
 
-    completeInvitation({
-      token,
-      name: formData.name,
-      phoneNumber: formData.phoneNumber || undefined,
-      password: formData.password,
-    });
+    try {
+      const response = await completeInvitation({
+        token,
+        name: formData.name,
+        phoneNumber: formData.phoneNumber || undefined,
+        password: formData.password,
+      }).unwrap();
+      dispatch(setSession(response.data));
+      toast.success('Account setup complete.');
+      navigate('/dashboard', { replace: true });
+    } catch (error) {
+      toast.error(
+        (error as ErrorResponse)?.data?.message ||
+          'Unable to complete your registration.',
+      );
+    }
   };
 
   return (
@@ -126,7 +102,7 @@ const CompleteInvitation = () => {
             <>
               <div className="mt-6 rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 p-4">
                 <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/55">Invited email</p>
-                <p className="mt-2 text-[14px] text-[color:var(--lens-ink)] font-normal">{invitationEmail}</p>
+                <p className="mt-2 text-[14px] text-[color:var(--lens-ink)] font-normal">{validationState.data?.data?.email}</p>
               </div>
 
               <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
@@ -196,7 +172,7 @@ const CompleteInvitation = () => {
                   )}
                 />
 
-                <Button primary submit isLoading={completionState.isLoading} className="w-full py-3 text-[13px] font-normal">
+                <Button primary submit disabled={completionState.isLoading} isLoading={completionState.isLoading} className="w-full py-3 text-[13px] font-normal">
                   Complete registration
                 </Button>
               </form>

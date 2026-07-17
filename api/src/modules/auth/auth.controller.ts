@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -26,6 +27,7 @@ import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
 import { RequestUserInvitationDto } from './dto/request-user-invitation.dto';
 import { User } from '../../entities/user.entity';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -137,6 +139,20 @@ export class AuthController {
     return {
       message: 'Your account has been created successfully!',
       data: { user: userWithoutPassword, accessToken },
+    };
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(PERMISSIONS.UPDATE_OWN_PROFILE)
+  async updateProfile(
+    @Body() dto: UpdateProfileDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    const session = await this.authService.updateProfile(user.id, dto);
+    return {
+      message: 'Profile updated successfully.',
+      data: session,
     };
   }
 

@@ -83,7 +83,7 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
-      validateInvitationToken: builder.mutation({
+      validateInvitationToken: builder.query({
         query: ({ token }) => ({
           url: `/auth/invitations/${token}`,
           method: "GET",
@@ -91,10 +91,31 @@ export const apiMutationSlice = createApi({
       }),
 
       completeInvitation: builder.mutation({
-        query: ({ token, password, name }) => ({
+        query: ({ token, password, name, phoneNumber }) => ({
           url: `/auth/invitations/${token}/complete`,
           method: "POST",
-          body: { password, name },
+          body: { password, name, phoneNumber },
+        }),
+      }),
+
+      updateProfile: builder.mutation({
+        query: (body: {
+          name: string;
+          email: string;
+          phoneNumber?: string;
+          country?: string;
+          currentPassword?: string;
+        }) => ({
+          url: "/auth/profile",
+          method: "PATCH",
+          body,
+        }),
+      }),
+
+      requestContributorVerification: builder.mutation({
+        query: (id: string) => ({
+          url: `/contributors/${id}/request-verification`,
+          method: "POST",
         }),
       }),
 
@@ -770,8 +791,10 @@ export const {
   useCreateBulkInvitationsMutation,
   useApproveInvitationMutation,
   useRevokeInvitationMutation,
-  useValidateInvitationTokenMutation,
+  useValidateInvitationTokenQuery,
   useCompleteInvitationMutation,
+  useUpdateProfileMutation,
+  useRequestContributorVerificationMutation,
   useRequestPasswordResetMutation,
   useValidatePasswordResetTokenMutation,
   useConfirmPasswordResetMutation,

@@ -19,6 +19,7 @@ import {
   Contributor,
   ContributorProfileLinkType,
   ContributorType,
+  ContributorVerificationStatus,
 } from "@/types/models/contributor.types";
 import { GROUP_CONTRIBUTOR_TYPES } from "./contributorForm";
 import { UUID } from "@/types/common.types";
@@ -28,14 +29,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { socialProfileFields, storeProfileFields } from "./contributorForm";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCertificate, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { getGenderLabel } from "@/constants/input.constants";
 import { useMemberContributorMembershipsColumns } from "@/hooks/contributors/columns.contributorMemberships";
 import { useFetchContributorMemberships } from "@/hooks/contributors/contributorMembership.hooks";
 import Table from "@/components/table/Table";
 import AssignContributorManager from "./AssignContributorManager";
 import UnassignContributorManager from "./UnassignContributorManager";
+import { useRequestContributorVerificationMutation } from "@/state/api/apiMutationSlice";
 
 const statusBadgeClassNames: Record<string, string> = {
   ACTIVE: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
@@ -126,6 +127,8 @@ const ContributorDetailsPage = () => {
 
   // FETCH CONTRIBUTOR
   const { getContributor, isFetching, data, isSuccess } = useGetContributor();
+  const [requestVerification, { isLoading: isRequestingVerification }] =
+    useRequestContributorVerificationMutation();
 
   useEffect(() => {
     if (!id) {
@@ -165,6 +168,31 @@ const ContributorDetailsPage = () => {
   const canManage =
     Boolean(contributorDetails?.currentUserCanManage) ||
     Boolean(canAssignManagers);
+  const canRequestVerification = Boolean(
+    canManage &&
+      contributorDetails &&
+      [
+        ContributorVerificationStatus.PENDING,
+        ContributorVerificationStatus.NOT_VERIFIED,
+      ].includes(contributorDetails.verificationStatus),
+  );
+  const verificationRequested =
+    contributorDetails?.verificationStatus ===
+    ContributorVerificationStatus.PENDING_VERIFICATION;
+
+  const handleRequestVerification = async () => {
+    if (!id || !canRequestVerification) return;
+    try {
+      const response = await requestVerification(id).unwrap();
+      toast.success(response.message || "Verification requested successfully.");
+      getContributor({ id });
+    } catch (error) {
+      toast.error(
+        (error as { data?: { message?: string } })?.data?.message ||
+          "Unable to request verification.",
+      );
+    }
+  };
 
   const profileLinksMap = useMemo(
     () => getProfileLinkMap(contributorDetails),
@@ -316,14 +344,33 @@ const ContributorDetailsPage = () => {
             </p>
           </div>
           {canManage && (
-            <FontAwesomeIcon
-              icon={faPenToSquare}
-              className="text-primary text-[14px] cursor-pointer"
-              onClick={(event) => {
-                event.preventDefault();
-                navigate(`/contributors/${id}/update`);
-              }}
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              {(canRequestVerification || verificationRequested) && (
+                <Button
+                  icon={faCertificate}
+                  primary={canRequestVerification}
+                  disabled={verificationRequested || isRequestingVerification}
+                  isLoading={isRequestingVerification}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleRequestVerification();
+                  }}
+                >
+                  {verificationRequested
+                    ? "Verification requested"
+                    : "Request verification"}
+                </Button>
+              )}
+              <Button
+                icon={faPenToSquare}
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate(`/contributors/${id}/update`);
+                }}
+              >
+                Edit contributor
+              </Button>
+            </div>
           )}
         </header>
 

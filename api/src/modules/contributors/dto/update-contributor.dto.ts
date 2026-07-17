@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 import {
   ContributorType,
-  ContributorVerificationStatus,
 } from '../../../constants/contributor.constants';
 import { Gender } from '../../../constants/person.constants';
 import { UserStatus } from '../../../constants/user.constants';
@@ -54,10 +53,6 @@ export class UpdateContributorDto {
   @IsOptional()
   @IsEnum(UserStatus)
   status?: UserStatus;
-
-  @IsOptional()
-  @IsEnum(ContributorVerificationStatus)
-  verificationStatus?: ContributorVerificationStatus;
 
   @IsOptional()
   @IsEnum(ContributorType)

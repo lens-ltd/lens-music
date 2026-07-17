@@ -1,7 +1,7 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { randomBytes } from 'crypto';
 import { User } from '../../entities/user.entity';
 import { comparePasswords, hashPassword } from '../../helpers/encryptions.helper';
@@ -17,6 +17,8 @@ import { PasswordResetToken } from '../../entities/password-reset-token.entity';
 import { UserService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
 import { getPagination, getPagingData, Pagination } from '../../helpers/pagination.helper';
+import { Role } from '../../entities/role.entity';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 /** User fields returned to the client (includes role permissions from seeds, e.g. SUPER_ADMIN). */
 export type AuthResponseUser = Omit<User, 'password' | 'assignedRole'> & {
@@ -36,6 +38,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
+    private readonly dataSource: DataSource,
   ) {}
 
   private signToken(user: Pick<User, 'id' | 'email'>, permissions: string[] = [], roleName?: string): string {
@@ -144,6 +147,17 @@ export class AuthService {
       .getOne();
   }
 
+  private async loadUserWithRoleForAuthById(id: string): Promise<User | null> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.assignedRole', 'role')
+      .leftJoinAndSelect('role.permissions', 'rolePermission')
+      .leftJoinAndSelect('rolePermission.permission', 'permission')
+      .where('user.id = :id', { id })
+      .addSelect('user.password')
+      .getOne();
+  }
+
   async login({
     email,
     password,
@@ -156,7 +170,9 @@ export class AuthService {
       throw new ValidationError('Password is required', 'AUTH SERVICE');
     }
 
-    const userExists = await this.loadUserWithRoleForAuth(email);
+    const userExists = await this.loadUserWithRoleForAuth(
+      this.normalizeEmail(email),
+    );
 
     if (!userExists || !userExists.password) {
       throw new ValidationError('Email or password is incorrect', 'AUTH SERVICE');
@@ -390,25 +406,59 @@ export class AuthService {
   }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     this.validatePassword(password);
 
-    const invitation = await this.getInvitationByToken(token);
-
-    const existingUser = await this.userService.findUserByEmail(invitation.email);
-    if (existingUser) {
-      await this.userInvitationRepository.delete({ email: invitation.email });
-      throw new ConflictError('User already exists', { email: invitation.email }, 'AUTH SERVICE');
+    const generalRole = await this.dataSource.getRepository(Role).findOne({
+      where: { name: 'GENERAL_USER' },
+    });
+    if (!generalRole) {
+      throw new InternalServerErrorException('Default user role is not configured');
     }
 
     const hashedPassword = await hashPassword(password);
-    const user = await this.userService.createUser({
-      email: invitation.email,
-      name,
-      phoneNumber,
-      password: hashedPassword,
-    });
+    const user = await this.dataSource.transaction(async (manager) => {
+      const invitationRepository = manager.getRepository(UserInvitation);
+      const userRepository = manager.getRepository(User);
+      const invitation = await invitationRepository.findOne({
+        where: { token },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-    invitation.status = InvitationStatus.COMPLETED;
-    invitation.completedAt = new Date();
-    await this.userInvitationRepository.save(invitation);
+      if (!invitation) {
+        throw new NotFoundError('Invitation not found', 'AUTH SERVICE');
+      }
+      if (!invitation.expiresAt) {
+        throw new ValidationError('Invitation has expired', 'AUTH SERVICE');
+      }
+      this.ensureFutureDate(invitation.expiresAt, 'Invitation has expired');
+      if (invitation.status !== InvitationStatus.PENDING) {
+        throw new ValidationError('This invitation is no longer valid', 'AUTH SERVICE');
+      }
+
+      const existingUser = await userRepository.findOne({
+        where: { email: invitation.email },
+      });
+      if (existingUser) {
+        throw new ConflictError(
+          'User already exists',
+          { email: invitation.email },
+          'AUTH SERVICE',
+        );
+      }
+
+      const createdUser = await userRepository.save(
+        userRepository.create({
+          email: invitation.email,
+          name: name.trim(),
+          phoneNumber: this.normalizeOptionalString(phoneNumber) ?? undefined,
+          password: hashedPassword,
+          roleId: generalRole.id,
+        }),
+      );
+
+      invitation.status = InvitationStatus.COMPLETED;
+      invitation.completedAt = new Date();
+      await invitationRepository.save(invitation);
+      return createdUser;
+    });
 
     const userWithRole =
       (await this.loadUserWithRoleForAuth(user.email!)) ?? user;
@@ -416,6 +466,80 @@ export class AuthService {
     return {
       user: this.toPublicAuthUser(userWithRole),
       accessToken: this.signToken(user, this.collectPermissionNames(userWithRole), userWithRole.assignedRole?.name),
+    };
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+  ): Promise<{ user: AuthResponseUser; accessToken: string }> {
+    const user = await this.loadUserWithRoleForAuthById(userId);
+    if (!user || !user.password) {
+      throw new NotFoundError('User not found', 'AUTH SERVICE');
+    }
+
+    const normalizedEmail = dto.email
+      ? this.normalizeEmail(dto.email)
+      : user.email;
+    const emailChanged = Boolean(
+      normalizedEmail && normalizedEmail !== user.email,
+    );
+
+    if (emailChanged) {
+      if (!dto.currentPassword) {
+        throw new ValidationError(
+          'Current password is required to change your email',
+          'AUTH SERVICE',
+        );
+      }
+      const passwordMatches = await comparePasswords(
+        dto.currentPassword,
+        user.password,
+      );
+      if (!passwordMatches) {
+        throw new ValidationError('Current password is incorrect', 'AUTH SERVICE');
+      }
+
+      const emailOwner = await this.userRepository.findOne({
+        where: { email: normalizedEmail },
+      });
+      if (emailOwner && emailOwner.id !== user.id) {
+        throw new ConflictError(
+          'Email is already in use',
+          { email: normalizedEmail },
+          'AUTH SERVICE',
+        );
+      }
+      user.email = normalizedEmail;
+    }
+
+    if (dto.name !== undefined) {
+      const normalizedName = dto.name.trim();
+      if (!normalizedName) {
+        throw new ValidationError('Name is required', 'AUTH SERVICE');
+      }
+      user.name = normalizedName;
+    }
+    if (dto.phoneNumber !== undefined) {
+      user.phoneNumber = this.normalizeOptionalString(dto.phoneNumber) ?? undefined;
+    }
+    if (dto.country !== undefined) {
+      user.country = this.normalizeOptionalString(dto.country) ?? undefined;
+    }
+
+    await this.userRepository.save(user);
+    const refreshedUser = await this.loadUserWithRoleForAuthById(user.id);
+    if (!refreshedUser) {
+      throw new NotFoundError('User not found', 'AUTH SERVICE');
+    }
+    const publicUser = this.toPublicAuthUser(refreshedUser);
+    return {
+      user: publicUser,
+      accessToken: this.signToken(
+        refreshedUser,
+        publicUser.permissions,
+        publicUser.roleName,
+      ),
     };
   }
 

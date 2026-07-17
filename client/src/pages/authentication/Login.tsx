@@ -9,15 +9,14 @@ import { toast } from 'sonner';
 import Loader from '../../components/inputs/Loader';
 import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../../state/features/authSlice';
-import { setUser } from '../../state/features/authSlice';
+import { setSession } from '../../state/features/authSlice';
 import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
 import { useAppSelector } from '@/state/hooks';
 
 const Login = () => {
-  const { token } = useAppSelector((state) => state.auth);
+  const { token, user } = useAppSelector((state) => state.auth);
 
   const {
     handleSubmit,
@@ -44,14 +43,13 @@ const Login = () => {
 
     if (isSuccess) {
       toast.success('Login successful. Redirecting...');
-      dispatch(setToken(data?.data?.accessToken));
-      dispatch(setUser(data?.data?.user));
-      navigate('/dashboard');
+      dispatch(setSession(data?.data));
+      navigate('/dashboard', { replace: true });
     }
   }, [data, dispatch, error, isError, isSuccess, navigate]);
 
-  if (token) {
-    return <Navigate to="/dashboard" />;
+  if (token && user?.id) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

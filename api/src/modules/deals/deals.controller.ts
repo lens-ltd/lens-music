@@ -22,11 +22,15 @@ import { DealsService } from "./deals.service";
 import { CreateDealDto } from "./dto/create-deal.dto";
 import { UpdateDealDto } from "./dto/update-deal.dto";
 import { UUID } from "../../types/common.types";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 
 @Controller("releases/:releaseId/deals")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class DealsController {
-  constructor(private readonly dealsService: DealsService) {}
+  constructor(
+    private readonly dealsService: DealsService,
+    private readonly catalogAccess: CatalogAccessService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -36,6 +40,7 @@ export class DealsController {
     @Body() dto: CreateDealDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const deal = await this.dealsService.create(
       releaseId as UUID,
       dto,
@@ -49,7 +54,11 @@ export class DealsController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findByReleaseId(@Param("releaseId") releaseId: string) {
+  async findByReleaseId(
+    @Param("releaseId") releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const deals = await this.dealsService.findByReleaseId(releaseId as UUID);
     return {
       message: "Deals fetched successfully",
@@ -63,7 +72,9 @@ export class DealsController {
     @Param("releaseId") releaseId: string,
     @Param("dealId") dealId: string,
     @Body() dto: UpdateDealDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const deal = await this.dealsService.update(
       releaseId as UUID,
       dealId as UUID,
@@ -81,7 +92,9 @@ export class DealsController {
   async delete(
     @Param("releaseId") releaseId: string,
     @Param("dealId") dealId: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     await this.dealsService.delete(releaseId as UUID, dealId as UUID);
     return { message: "Deal deleted successfully" };
   }

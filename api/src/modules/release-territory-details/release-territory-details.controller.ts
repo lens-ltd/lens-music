@@ -22,12 +22,14 @@ import { ReleaseTerritoryDetailsService } from './release-territory-details.serv
 import { CreateReleaseTerritoryDetailDto } from './dto/create-release-territory-detail.dto';
 import { UpdateReleaseTerritoryDetailDto } from './dto/update-release-territory-detail.dto';
 import { UUID } from '../../types/common.types';
+import { CatalogAccessService } from '../catalog-access/catalog-access.service';
 
 @Controller('releases/:releaseId/territory-details')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleaseTerritoryDetailsController {
   constructor(
     private readonly territoryDetailsService: ReleaseTerritoryDetailsService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class ReleaseTerritoryDetailsController {
     @Body() dto: CreateReleaseTerritoryDetailDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const data = await this.territoryDetailsService.create(
       releaseId as UUID,
       dto,
@@ -48,7 +51,11 @@ export class ReleaseTerritoryDetailsController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findByReleaseId(@Param('releaseId') releaseId: string) {
+  async findByReleaseId(
+    @Param('releaseId') releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const data = await this.territoryDetailsService.findByReleaseId(
       releaseId as UUID,
     );
@@ -61,7 +68,9 @@ export class ReleaseTerritoryDetailsController {
     @Param('releaseId') releaseId: string,
     @Param('id') id: string,
     @Body() dto: UpdateReleaseTerritoryDetailDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const data = await this.territoryDetailsService.update(
       releaseId as UUID,
       id as UUID,
@@ -76,7 +85,9 @@ export class ReleaseTerritoryDetailsController {
   async delete(
     @Param('releaseId') releaseId: string,
     @Param('id') id: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     await this.territoryDetailsService.delete(releaseId as UUID, id as UUID);
     return { message: 'Territory detail deleted successfully' };
   }

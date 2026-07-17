@@ -17,7 +17,7 @@ type RequestInvitationForm = {
 };
 
 const RequestInvitation = () => {
-  const authToken = useAppSelector((state) => state.auth.token);
+  const { token: authToken, user: authUser } = useAppSelector((state) => state.auth);
   const {
     control,
     handleSubmit,
@@ -56,8 +56,8 @@ const RequestInvitation = () => {
     reset,
   ]);
 
-  if (authToken) {
-    return <Navigate to="/dashboard" />;
+  if (authToken && authUser?.id) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = (formData: RequestInvitationForm) => {

@@ -1,24 +1,37 @@
 import store from 'store';
 import { createSlice } from '@reduxjs/toolkit';
 
+const persistedToken = store.get('token');
+const persistedUser = store.get('user');
+const hasCompleteSession = Boolean(persistedToken && persistedUser?.id);
+
+if (!hasCompleteSession) {
+  store.remove('token');
+  store.remove('user');
+}
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    token: store.get('token'),
-    user: store.get('user'),
+    token: hasCompleteSession ? persistedToken : undefined,
+    user: hasCompleteSession ? persistedUser : undefined,
   },
   reducers: {
-    setToken: (state, action) => {
-      state.token = action.payload;
-      store.set('token', action.payload);
+    setSession: (state, action) => {
+      state.token = action.payload.accessToken;
+      state.user = action.payload.user;
+      store.set('token', action.payload.accessToken);
+      store.set('user', action.payload.user);
     },
-    setUser: (state, action) => {
-      state.user = action.payload;
-      store.set('user', action.payload);
+    clearSession: (state) => {
+      state.token = undefined;
+      state.user = undefined;
+      store.remove('token');
+      store.remove('user');
     },
   },
 });
 
 export default authSlice.reducer;
 
-export const { setToken, setUser } = authSlice.actions;
+export const { setSession, clearSession } = authSlice.actions;

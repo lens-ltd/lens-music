@@ -2,25 +2,53 @@ import Button from "@/components/inputs/Button";
 import Input from "@/components/inputs/Input";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
-import { useAppSelector } from "@/state/hooks";
+import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { useUpdateProfileMutation } from "@/state/api/apiMutationSlice";
+import { setSession } from "@/state/features/authSlice";
 import { faUser, faEnvelope, faPhone, faGlobe, faCalendar, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const UserProfilePage = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     country: user?.country || "",
+    currentPassword: "",
   });
 
-  const handleSave = () => {
-    // TODO: Implement profile update API call
-    console.log("Saving profile:", formData);
-    setIsEditing(false);
+  const emailChanged = formData.email.trim().toLowerCase() !== user?.email?.toLowerCase();
+
+  const handleSave = async () => {
+    if (emailChanged && !formData.currentPassword) {
+      toast.error("Enter your current password to change your email.");
+      return;
+    }
+
+    try {
+      const response = await updateProfile({
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        country: formData.country,
+        currentPassword: emailChanged ? formData.currentPassword : undefined,
+      }).unwrap();
+      dispatch(setSession(response.data));
+      setFormData((current) => ({ ...current, currentPassword: "" }));
+      setIsEditing(false);
+      toast.success(response.message || "Profile updated successfully.");
+    } catch (error) {
+      toast.error(
+        (error as { data?: { message?: string } })?.data?.message ||
+          "Unable to update your profile.",
+      );
+    }
   };
 
   const handleCancel = () => {
@@ -29,6 +57,7 @@ const UserProfilePage = () => {
       email: user?.email || "",
       phoneNumber: user?.phoneNumber || "",
       country: user?.country || "",
+      currentPassword: "",
     });
     setIsEditing(false);
   };
@@ -116,6 +145,23 @@ const UserProfilePage = () => {
                   />
                 </div>
 
+                {emailChanged && (
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                      Current password
+                    </label>
+                    <Input
+                      value={formData.currentPassword}
+                      onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                      placeholder="Confirm your current password"
+                      type="password"
+                    />
+                    <p className="text-[11px] text-[color:var(--lens-ink)]/50">
+                      Required because you are changing your login email.
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-2">
                   <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
                     Phone number
@@ -142,7 +188,7 @@ const UserProfilePage = () => {
                   <Button onClick={handleCancel}>
                     Cancel
                   </Button>
-                  <Button primary onClick={handleSave}>
+                  <Button primary onClick={handleSave} disabled={isLoading} isLoading={isLoading}>
                     Save changes
                   </Button>
                 </div>

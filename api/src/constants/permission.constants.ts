@@ -5,6 +5,7 @@ export enum PERMISSIONS {
   READ_USER = 'READ_USER',
   UPDATE_USER = 'UPDATE_USER',
   DELETE_USER = 'DELETE_USER',
+  UPDATE_OWN_PROFILE = 'UPDATE_OWN_PROFILE',
 
   // Invitation permissions
   CREATE_INVITATION = 'CREATE_INVITATION',
@@ -26,6 +27,8 @@ export enum PERMISSIONS {
   REVIEW_RELEASE = 'REVIEW_RELEASE',
   APPROVE_RELEASE = 'APPROVE_RELEASE',
   REJECT_RELEASE = 'REJECT_RELEASE',
+  /** Administrative bypass for accessing releases owned by other users. */
+  MANAGE_ALL_RELEASES = 'MANAGE_ALL_RELEASES',
 
   // Store permissions
   READ_STORE = 'READ_STORE',

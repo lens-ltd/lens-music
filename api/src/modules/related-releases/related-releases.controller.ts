@@ -22,11 +22,15 @@ import { RelatedReleasesService } from './related-releases.service';
 import { CreateRelatedReleaseDto } from './dto/create-related-release.dto';
 import { UpdateRelatedReleaseDto } from './dto/update-related-release.dto';
 import { UUID } from '../../types/common.types';
+import { CatalogAccessService } from '../catalog-access/catalog-access.service';
 
 @Controller('releases/:releaseId/related-releases')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RelatedReleasesController {
-  constructor(private readonly relatedReleasesService: RelatedReleasesService) {}
+  constructor(
+    private readonly relatedReleasesService: RelatedReleasesService,
+    private readonly catalogAccess: CatalogAccessService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -36,6 +40,7 @@ export class RelatedReleasesController {
     @Body() dto: CreateRelatedReleaseDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const data = await this.relatedReleasesService.create(
       releaseId as UUID,
       dto,
@@ -46,7 +51,11 @@ export class RelatedReleasesController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findByReleaseId(@Param('releaseId') releaseId: string) {
+  async findByReleaseId(
+    @Param('releaseId') releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const data = await this.relatedReleasesService.findByReleaseId(
       releaseId as UUID,
     );
@@ -59,7 +68,9 @@ export class RelatedReleasesController {
     @Param('releaseId') releaseId: string,
     @Param('id') id: string,
     @Body() dto: UpdateRelatedReleaseDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const data = await this.relatedReleasesService.update(
       releaseId as UUID,
       id as UUID,
@@ -74,7 +85,9 @@ export class RelatedReleasesController {
   async delete(
     @Param('releaseId') releaseId: string,
     @Param('id') id: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     await this.relatedReleasesService.delete(releaseId as UUID, id as UUID);
     return { message: 'Related release removed successfully' };
   }

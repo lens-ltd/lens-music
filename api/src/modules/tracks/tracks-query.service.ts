@@ -24,15 +24,20 @@ export class TrackQueryService {
 
   async fetchAllTracks({
     releaseId,
+    ownerId,
     size,
     page,
   }: {
     releaseId?: UUID;
+    ownerId?: UUID;
     size?: number;
     page?: number;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
-    const where: FindOptionsWhere<Track> = releaseId ? { releaseId } : {};
+    const where: FindOptionsWhere<Track> = {
+      ...(releaseId ? { releaseId } : {}),
+      ...(ownerId ? { release: { createdById: ownerId } } : {}),
+    };
 
     const tracks = await this.trackRepository.findAndCount({
       where,

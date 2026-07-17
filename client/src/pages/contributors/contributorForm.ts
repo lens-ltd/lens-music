@@ -3,7 +3,6 @@ import {
     Contributor,
     ContributorProfileLinkType,
     ContributorType,
-    ContributorVerificationStatus,
     CreateContributorPayload,
     UserStatus,
 } from "@/types/models/contributor.types";
@@ -18,7 +17,6 @@ export type ContributorFormValues = {
     gender?: string;
     dateOfBirth?: Date | string;
     status?: UserStatus;
-    verificationStatus?: ContributorVerificationStatus;
     type?: ContributorType;
     ipn?: string;
     ipi?: string;
@@ -59,11 +57,6 @@ export const storeProfileFields = [
 ] as const;
 
 export const statusOptions = Object.values(UserStatus).map((value) => ({
-    label: capitalizeString(value),
-    value,
-}));
-
-export const verificationStatusOptions = Object.values(ContributorVerificationStatus).map((value) => ({
     label: capitalizeString(value),
     value,
 }));
@@ -128,7 +121,6 @@ export const buildContributorPayload = (
         gender: normalizeValue(formValues.gender),
         dateOfBirth,
         status: formValues.status,
-        verificationStatus: formValues.verificationStatus,
         profileLinks: profileLinks.length ? profileLinks : undefined,
         type: formValues.type,
         ipn: normalizeValue(formValues.ipn),
@@ -150,8 +142,6 @@ export const getContributorFormDefaults = (
         gender: contributor?.gender || "",
         dateOfBirth: contributor?.dateOfBirth ? new Date(contributor.dateOfBirth) : undefined,
         status: contributor?.status || UserStatus.ACTIVE,
-        verificationStatus:
-            contributor?.verificationStatus || ContributorVerificationStatus.NOT_VERIFIED,
         type: contributor?.type || ContributorType.INDIVIDUAL,
         ipn: contributor?.ipn || "",
         ipi: contributor?.ipi || "",

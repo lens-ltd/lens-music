@@ -22,11 +22,15 @@ import {
 } from '../../common/decorators/current-user.decorator';
 import { AssignReleaseStoresDto } from './dto/assign-release-stores.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { CatalogAccessService } from '../catalog-access/catalog-access.service';
 
 @Controller()
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class StoresController {
-  constructor(private readonly storesService: StoresService) {}
+  constructor(
+    private readonly storesService: StoresService,
+    private readonly catalogAccess: CatalogAccessService,
+  ) {}
 
   @Get('stores')
   @Permissions(PERMISSIONS.READ_STORE)
@@ -69,6 +73,7 @@ export class StoresController {
     @Body() dto: AssignReleaseStoresDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const releaseStores = await this.storesService.assignReleaseStores(
       releaseId,
       dto,
@@ -83,7 +88,11 @@ export class StoresController {
 
   @Get('releases/:id/stores')
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findReleaseStores(@Param('id') releaseId: string) {
+  async findReleaseStores(
+    @Param('id') releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const releaseStores = await this.storesService.findReleaseStores(releaseId);
     return {
       message: 'Release stores fetched successfully',
@@ -97,7 +106,9 @@ export class StoresController {
   async deleteReleaseStore(
     @Param('id') releaseId: string,
     @Param('releaseStoreId') releaseStoreId: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     await this.storesService.deleteReleaseStore(releaseId, releaseStoreId);
     return { message: 'Release store removed successfully' };
   }

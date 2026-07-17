@@ -106,7 +106,7 @@ export class ContributorService {
       displayName: dto.displayName,
       profileLinks: dto.profileLinks,
       status: dto.status,
-      verificationStatus: dto.verificationStatus,
+      verificationStatus: ContributorVerificationStatus.NOT_VERIFIED,
       type: dto.type,
       ipn: dto.ipn,
       ipi: dto.ipi,
@@ -329,9 +329,6 @@ export class ContributorService {
     if (dto.profileLinks !== undefined)
       contributor.profileLinks = dto.profileLinks;
     if (dto.status !== undefined) contributor.status = dto.status;
-    if (dto.verificationStatus !== undefined) {
-      contributor.verificationStatus = dto.verificationStatus;
-    }
     if (dto.type !== undefined) contributor.type = dto.type;
     if (dto.ipn !== undefined) contributor.ipn = dto.ipn;
     if (dto.ipi !== undefined) contributor.ipi = dto.ipi;
@@ -356,8 +353,6 @@ export class ContributorService {
     verifiedById: UUID,
     actor?: AuthUser,
   ): Promise<Contributor> {
-    await this.contributorAccess.assertCanManage(actor, id);
-
     const contributor = await this.contributorRepository.findOne({
       where: { id },
     });
@@ -379,8 +374,6 @@ export class ContributorService {
     dto?: RejectContributorDto,
     actor?: AuthUser,
   ): Promise<Contributor> {
-    await this.contributorAccess.assertCanManage(actor, id);
-
     const contributor = await this.contributorRepository.findOne({
       where: { id },
     });
@@ -435,6 +428,17 @@ export class ContributorService {
     });
     if (!contributor) {
       throw new NotFoundException("Contributor not found");
+    }
+    if (
+      contributor.verificationStatus ===
+      ContributorVerificationStatus.PENDING_VERIFICATION
+    ) {
+      return contributor;
+    }
+    if (
+      contributor.verificationStatus === ContributorVerificationStatus.VERIFIED
+    ) {
+      throw new BadRequestException("Contributor is already verified");
     }
     contributor.verificationStatus =
       ContributorVerificationStatus.PENDING_VERIFICATION;

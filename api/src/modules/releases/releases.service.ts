@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Release } from '../../entities/release.entity';
@@ -22,7 +22,6 @@ import {
 import { releaseStoreHasDealCoverage } from '../../helpers/deals.helper';
 import { CloudinaryImageUploaderService } from '../uploads/cloudinary-image-uploader.service';
 import { AuthUser } from '../../common/decorators/current-user.decorator';
-import { PERMISSIONS } from '../../constants/permission.constants';
 import {
   ReleaseGenreType,
   ReleaseParentalAdvisory,
@@ -39,6 +38,7 @@ import { Deal } from '../../entities/deal.entity';
 import { TrackRightsController } from '../../entities/track-rights-controller.entity';
 import { RightType } from '../../constants/ddex.constants';
 import { BinaryLike, createHash } from 'crypto';
+import { CatalogAccessService } from '../catalog-access/catalog-access.service';
 
 @Injectable()
 export class ReleaseService {
@@ -61,6 +61,7 @@ export class ReleaseService {
     private readonly trackRightsControllerRepository: Repository<TrackRightsController>,
     private readonly cloudinaryImageUploaderService: CloudinaryImageUploaderService,
     private readonly emailService: EmailService,
+    private readonly catalogAccess: CatalogAccessService,
   ) { }
 
   private readonly logger = new Logger(ReleaseService.name);
@@ -168,7 +169,8 @@ export class ReleaseService {
   }
 
   // DELETE RELEASE
-  async deleteRelease(id: UUID): Promise<void> {
+  async deleteRelease(id: UUID, user: AuthUser): Promise<void> {
+    await this.catalogAccess.assertCanWriteRelease(id, user);
     const result = await this.releaseRepository.delete(id);
     if (result?.affected === 0) {
       throw new NotFoundException('Release not found');
@@ -330,7 +332,7 @@ export class ReleaseService {
   }
 
   async getReleaseGenres(releaseId: UUID, user: AuthUser): Promise<ReleaseGenre[]> {
-    await this.getAuthorizedRelease(releaseId, user);
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     return this.releaseGenreRepository.find({
       where: { releaseId },
       relations: { genre: true },
@@ -358,20 +360,7 @@ export class ReleaseService {
   }
 
   private async getAuthorizedRelease(id: UUID, user: AuthUser): Promise<Release> {
-    const release = await this.releaseRepository.findOne({ where: { id } });
-
-    if (!release) {
-      throw new NotFoundException('Release not found');
-    }
-
-    const isOwner = release.createdById === user.id;
-    const canManageReleases = user.permissions?.includes(PERMISSIONS.UPDATE_RELEASE) ?? false;
-
-    if (!isOwner && !canManageReleases) {
-      throw new ForbiddenException('Forbidden');
-    }
-
-    return release;
+    return this.catalogAccess.assertCanWriteRelease(id, user);
   }
 
   private static readonly WRITING_ROLES = [

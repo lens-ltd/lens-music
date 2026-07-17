@@ -22,12 +22,14 @@ import { TrackRightsControllersService } from "./track-rights-controllers.servic
 import { CreateTrackRightsControllerDto } from "./dto/create-track-rights-controller.dto";
 import { UpdateTrackRightsControllerDto } from "./dto/update-track-rights-controller.dto";
 import { UUID } from "../../types/common.types";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 
 @Controller("tracks/:trackId/rights-controllers")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TrackRightsControllersController {
   constructor(
     private readonly trackRightsControllersService: TrackRightsControllersService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class TrackRightsControllersController {
     @Body() dto: CreateTrackRightsControllerDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteTrack(trackId, user);
     const trc = await this.trackRightsControllersService.create(
       trackId as UUID,
       dto,
@@ -51,7 +54,11 @@ export class TrackRightsControllersController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_TRACK)
-  async findByTrackId(@Param("trackId") trackId: string) {
+  async findByTrackId(
+    @Param("trackId") trackId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadTrack(trackId, user);
     const trcs = await this.trackRightsControllersService.findByTrackId(
       trackId as UUID,
     );
@@ -67,7 +74,9 @@ export class TrackRightsControllersController {
     @Param("trackId") trackId: string,
     @Param("trcId") trcId: string,
     @Body() dto: UpdateTrackRightsControllerDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteTrack(trackId, user);
     const trc = await this.trackRightsControllersService.update(
       trackId as UUID,
       trcId as UUID,
@@ -85,7 +94,9 @@ export class TrackRightsControllersController {
   async delete(
     @Param("trackId") trackId: string,
     @Param("trcId") trcId: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteTrack(trackId, user);
     await this.trackRightsControllersService.delete(
       trackId as UUID,
       trcId as UUID,

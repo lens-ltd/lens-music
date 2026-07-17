@@ -1,20 +1,16 @@
 import { RootState } from '@/state/store';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const AuthenticatedRoutes = () => {
   // STATE VARIABLES
   const { token, user } = useSelector((state: RootState) => state.auth);
 
-  // NAVIGATION
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!user?.id || !token) {
-      navigate('/auth/login');
-    }
-  }, [navigate, token, user]);
+  if (!user?.id || !token) {
+    return <Navigate to="/auth/login" replace state={{ from: location }} />;
+  }
 
   return <Outlet />;
 };

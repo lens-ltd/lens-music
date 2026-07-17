@@ -20,11 +20,15 @@ import { PERMISSIONS } from '../../constants/permission.constants';
 import { CurrentUser, AuthUser } from '../../common/decorators/current-user.decorator';
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
+import { CatalogAccessService } from '../catalog-access/catalog-access.service';
 
 @Controller('labels')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class LabelsController {
-  constructor(private readonly labelService: LabelService) {}
+  constructor(
+    private readonly labelService: LabelService,
+    private readonly catalogAccess: CatalogAccessService,
+  ) {}
 
   @Post()
   @Permissions(PERMISSIONS.UPDATE_RELEASE)
@@ -35,7 +39,12 @@ export class LabelsController {
 
   @Patch(':id')
   @Permissions(PERMISSIONS.UPDATE_RELEASE)
-  async updateLabel(@Param('id') id: string, @Body() dto: UpdateLabelDto) {
+  async updateLabel(
+    @Param('id') id: string,
+    @Body() dto: UpdateLabelDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteLabel(id, user);
     const labelExists = await this.labelService.getLabelById(id);
     if (!labelExists) throw new NotFoundException('Label not found');
 
@@ -46,7 +55,11 @@ export class LabelsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Permissions(PERMISSIONS.UPDATE_RELEASE)
-  async deleteLabel(@Param('id') id: string) {
+  async deleteLabel(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteLabel(id, user);
     const labelExists = await this.labelService.getLabelById(id);
     if (!labelExists) throw new NotFoundException('Label not found');
     await this.labelService.deleteLabel(id);

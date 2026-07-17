@@ -56,7 +56,6 @@ export interface CreateContributorPayload {
   dateOfBirth?: string;
   profileLinks?: ContributorProfileLink[];
   status?: UserStatus;
-  verificationStatus?: ContributorVerificationStatus;
   type?: ContributorType;
   ipn?: string;
   ipi?: string;

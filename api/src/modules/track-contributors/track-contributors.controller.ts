@@ -23,12 +23,14 @@ import { TrackContributorsService } from "./track-contributors.service";
 import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
 import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 
 @Controller("track-contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TrackContributorsController {
   constructor(
     private readonly trackContributorsService: TrackContributorsService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class TrackContributorsController {
     @Body() dto: CreateTrackContributorDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteTrack(dto.trackId, user);
     const trackContributor = await this.trackContributorsService.create(
       dto,
       user.id,
@@ -53,7 +56,9 @@ export class TrackContributorsController {
   async update(
     @Param("id") id: string,
     @Body() dto: UpdateTrackContributorDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteTrackContributor(id, user);
     const trackContributor = await this.trackContributorsService.update(
       id as UUID,
       dto,
@@ -66,7 +71,11 @@ export class TrackContributorsController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_TRACK)
-  async findByTrackId(@Query("trackId") trackId: string) {
+  async findByTrackId(
+    @Query("trackId") trackId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadTrack(trackId, user);
     const trackContributors =
       await this.trackContributorsService.findByTrackId(trackId as UUID);
     return {
@@ -78,7 +87,11 @@ export class TrackContributorsController {
   @Delete(":id")
   @HttpCode(HttpStatus.OK)
   @Permissions(PERMISSIONS.UPDATE_TRACK)
-  async delete(@Param("id") id: string) {
+  async delete(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteTrackContributor(id, user);
     await this.trackContributorsService.delete(id as UUID);
     return { message: "Track contributor removed successfully" };
   }

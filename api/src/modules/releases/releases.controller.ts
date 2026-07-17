@@ -33,12 +33,14 @@ import { ReleaseQueryService } from "./releases-query.service";
 import { memoryStorage } from "multer";
 import { UpsertReleaseGenreDto } from "./dto/upsert-release-genre.dto";
 import { ReleaseGenreType } from "../../constants/release.constants";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 @Controller("releases")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleasesController {
   constructor(
     private readonly releaseService: ReleaseService,
     private readonly releaseQueryService: ReleaseQueryService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
   @Post()
   @Permissions(PERMISSIONS.CREATE_RELEASE)
@@ -183,8 +185,11 @@ export class ReleasesController {
     @Query("size") size = "10",
     @Query("page") page = "0",
   ) {
+    const canReadAcrossAccounts =
+      this.catalogAccess.canManageAllReleases(user) ||
+      this.catalogAccess.canReviewReleases(user);
     const releases = await this.releaseQueryService.fetchAllReleases({
-      createdById: createdById || user.id,
+      createdById: canReadAcrossAccounts ? createdById : user.id,
       size: Number(size),
       page: Number(page),
     });
@@ -192,7 +197,11 @@ export class ReleasesController {
   }
   @Get(":id")
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async getReleaseById(@Param("id") id: string) {
+  async getReleaseById(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(id, user);
     const release = await this.releaseQueryService.getReleaseById(id);
     if (!release) {
       throw new NotFoundException("Release not found");
@@ -202,7 +211,10 @@ export class ReleasesController {
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   @Permissions(PERMISSIONS.DELETE_RELEASE)
-  async deleteRelease(@Param("id") id: string) {
-    await this.releaseService.deleteRelease(id);
+  async deleteRelease(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.releaseService.deleteRelease(id, user);
   }
 }

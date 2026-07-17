@@ -22,12 +22,14 @@ import { ReleaseLabelsService } from "./release-labels.service";
 import { CreateReleaseLabelDto } from "./dto/create-release-label.dto";
 import { UpdateReleaseLabelDto } from "./dto/update-release-label.dto";
 import { UUID } from "../../types/common.types";
+import { CatalogAccessService } from "../catalog-access/catalog-access.service";
 
 @Controller("releases/:releaseId/labels")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ReleaseLabelsController {
   constructor(
     private readonly releaseLabelsService: ReleaseLabelsService,
+    private readonly catalogAccess: CatalogAccessService,
   ) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class ReleaseLabelsController {
     @Body() dto: CreateReleaseLabelDto,
     @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const releaseLabel = await this.releaseLabelsService.create(
       releaseId as UUID,
       dto,
@@ -51,7 +54,11 @@ export class ReleaseLabelsController {
 
   @Get()
   @Permissions(PERMISSIONS.READ_RELEASE)
-  async findByReleaseId(@Param("releaseId") releaseId: string) {
+  async findByReleaseId(
+    @Param("releaseId") releaseId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanReadRelease(releaseId, user);
     const releaseLabels = await this.releaseLabelsService.findByReleaseId(
       releaseId as UUID,
     );
@@ -67,7 +74,9 @@ export class ReleaseLabelsController {
     @Param("releaseId") releaseId: string,
     @Param("releaseLabelId") releaseLabelId: string,
     @Body() dto: UpdateReleaseLabelDto,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     const releaseLabel = await this.releaseLabelsService.update(
       releaseId as UUID,
       releaseLabelId as UUID,
@@ -85,7 +94,9 @@ export class ReleaseLabelsController {
   async delete(
     @Param("releaseId") releaseId: string,
     @Param("releaseLabelId") releaseLabelId: string,
+    @CurrentUser() user: AuthUser,
   ) {
+    await this.catalogAccess.assertCanWriteRelease(releaseId, user);
     await this.releaseLabelsService.delete(
       releaseId as UUID,
       releaseLabelId as UUID,
