@@ -295,9 +295,11 @@ export class TrackService {
     }
 
     const trackById = new Map(tracks.map((track) => [track.id, track]));
-    // Offset far enough to clear the whole tracklist and dodge the
+    // Offset strictly above every existing track_number so the phase-1
+    // shift can never collide with a not-yet-updated row, dodging the
     // (releaseId, discNumber, trackNumber) unique constraint mid-renumber.
-    const offset = tracks.length + 1000;
+    const offset =
+      Math.max(0, ...tracks.map((track) => track.trackNumber)) + 1;
 
     await this.trackRepository.manager.transaction(async (manager) => {
       const trackRepository = manager.getRepository(Track);

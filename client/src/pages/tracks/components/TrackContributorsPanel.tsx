@@ -203,8 +203,8 @@ const TrackContributorsPanel = ({
             >
               <section className="flex flex-col gap-0.5">
                 <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
-                  {trackContributor?.contributor?.name ||
-                    trackContributor?.contributor?.displayName ||
+                  {trackContributor?.contributor?.displayName ||
+                    trackContributor?.contributor?.name ||
                     "Unknown contributor"}
                 </p>
                 <p className="text-[11px] text-[color:var(--lens-ink)]/55">
