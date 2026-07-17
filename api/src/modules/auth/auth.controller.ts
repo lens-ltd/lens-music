@@ -122,10 +122,16 @@ export class AuthController {
     };
   }
 
-  @Post('invitations/complete')
+  @Post('invitations/:token/complete')
   @HttpCode(HttpStatus.OK)
-  async completeInvitation(@Body() dto: CompleteUserInvitationDto) {
-    const { user, accessToken } = await this.authService.completeInvitation(dto);
+  async completeInvitation(
+    @Param('token') token: string,
+    @Body() dto: CompleteUserInvitationDto,
+  ) {
+    const { user, accessToken } = await this.authService.completeInvitation({
+      ...dto,
+      token,
+    });
     const { ...userWithoutPassword } = user as unknown as User;
 
     return {
