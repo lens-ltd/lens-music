@@ -5,12 +5,14 @@ export interface UserState {
   usersList: User[];
   user?: User;
   selectedUser?: User;
+  assignUserRoleModal: boolean;
 }
 
 const initialState: UserState = {
   usersList: [],
   user: undefined,
   selectedUser: undefined,
+  assignUserRoleModal: false,
 };
 
 export const userSlice = createSlice({
@@ -26,9 +28,13 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setAssignUserRoleModal: (state, action) => {
+      state.assignUserRoleModal = action.payload;
+    },
   },
 });
 
 export default userSlice.reducer;
 
-export const { setSelectedUser, setUsersList, setUser } = userSlice.actions;
+export const { setSelectedUser, setUsersList, setUser, setAssignUserRoleModal } =
+  userSlice.actions;

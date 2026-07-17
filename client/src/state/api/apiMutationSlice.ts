@@ -142,6 +142,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      assignUserRole: builder.mutation({
+        query: ({ id, roleId }: { id: string; roleId: string }) => ({
+          url: `/users/${id}/role`,
+          method: "PATCH",
+          body: { roleId },
+        }),
+      }),
+
       requestPasswordReset: builder.mutation({
         query: ({ email }) => ({
           url: "/auth/password-reset/request",
@@ -859,5 +867,6 @@ export const {
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
+  useAssignUserRoleMutation,
 } = apiMutationSlice;
 export default apiMutationSlice;

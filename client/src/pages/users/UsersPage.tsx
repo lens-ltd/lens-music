@@ -4,13 +4,16 @@ import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useUserColumns } from "@/hooks/users/columns.users";
 import { useFetchUsers } from "@/hooks/users/users.hooks";
+import AssignUserRole from "@/pages/users/AssignUserRole";
 import { useAppSelector } from "@/state/hooks";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useEffect } from "react";
 
 const UsersPage = () => {
   // STATE
-  const { usersList } = useAppSelector((state) => state.user);
+  const { usersList, assignUserRoleModal } = useAppSelector(
+    (state) => state.user,
+  );
 
   const {
     fetchUsers,
@@ -24,8 +27,10 @@ const UsersPage = () => {
   } = useFetchUsers();
 
   useEffect(() => {
-    fetchUsers({ page, size });
-  }, [fetchUsers, page, size]);
+    if (!assignUserRoleModal) {
+      fetchUsers({ page, size });
+    }
+  }, [fetchUsers, page, size, assignUserRoleModal]);
 
   // COLUMNS
   const { userColumns } = useUserColumns();
@@ -59,6 +64,7 @@ const UsersPage = () => {
           containerClassName="border-0 rounded-none"
         />
       </main>
+      <AssignUserRole />
     </UserLayout>
   );
 };

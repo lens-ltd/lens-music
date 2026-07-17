@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -6,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { PERMISSIONS } from '../../constants/permission.constants';
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
+import { AssignUserRoleDto } from './dto/assign-user-role.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -44,6 +47,25 @@ export class UsersController {
     }
     return {
       message: 'User retrieved.',
+      data: user,
+    };
+  }
+
+  @Patch(':id/role')
+  @Permissions(PERMISSIONS.UPDATE_USER)
+  async assignUserRole(
+    @Param('id') id: string,
+    @Body() assignUserRoleDto: AssignUserRoleDto,
+  ) {
+    const user = await this.userService.assignUserRole(
+      id,
+      assignUserRoleDto.roleId,
+    );
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return {
+      message: 'Role assigned successfully.',
       data: user,
     };
   }

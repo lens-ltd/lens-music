@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { Label } from '../../entities/label.entity';
 import { Release } from '../../entities/release.entity';
+import { Role } from '../../entities/role.entity';
 import { UUID } from '../../types/common.types';
 import { getPagingData, getPagination, Pagination } from '../../helpers/pagination.helper';
 
@@ -24,6 +25,8 @@ export class UserService {
     private readonly labelRepository: Repository<Label>,
     @InjectRepository(Release)
     private readonly releaseRepository: Repository<Release>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async findUserByEmail(email: string): Promise<User | null> {
@@ -143,6 +146,24 @@ export class UserService {
 
   async updatePassword(id: UUID, password: string): Promise<void> {
     await this.userRepository.update(id, { password });
+  }
+
+  /**
+   * Assign a role to a user. Returns null when the user does not exist;
+   * throws when the role does not exist. Returns the refreshed details
+   * payload so consumers get the updated roleName/permissions.
+   */
+  async assignUserRole(id: UUID, roleId: UUID): Promise<UserDetailsResponse | null> {
+    const userExists = await this.userRepository.findOne({ where: { id } });
+    if (!userExists) return null;
+
+    const roleExists = await this.roleRepository.findOne({ where: { id: roleId } });
+    if (!roleExists) {
+      throw new NotFoundException('Role not found');
+    }
+
+    await this.userRepository.update(id, { roleId });
+    return this.getUserDetails(id);
   }
 
   async deleteUser(id: UUID): Promise<User | null> {

@@ -2,8 +2,14 @@ import Button from "@/components/inputs/Button";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
+import { PERMISSIONS } from "@/constants/permission.constants";
 import { useFetchUserById } from "@/hooks/users/users.hooks";
-import { useAppSelector } from "@/state/hooks";
+import AssignUserRole from "@/pages/users/AssignUserRole";
+import {
+  setAssignUserRoleModal,
+  setSelectedUser,
+} from "@/state/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { User } from "@/types/models/user.types";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import {
@@ -41,13 +47,20 @@ const UserDetailsPage = () => {
     isUninitialized,
     data: fetchedUser,
   } = useFetchUserById();
-  const { user: storeUser } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const { user: storeUser, assignUserRoleModal } = useAppSelector(
+    (state) => state.user,
+  );
+  const { user: authUser } = useAppSelector((state) => state.auth);
+  const canAssignRole = authUser?.permissions?.includes(
+    PERMISSIONS.UPDATE_USER,
+  );
 
   useEffect(() => {
-    if (id) {
+    if (id && !assignUserRoleModal) {
       void fetchUserById({ id });
     }
-  }, [fetchUserById, id]);
+  }, [fetchUserById, id, assignUserRoleModal]);
 
   const user: User | undefined = useMemo(() => {
     if (fetchedUser && fetchedUser.id === id) {
@@ -179,8 +192,21 @@ const UserDetailsPage = () => {
                   <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
                     Role
                   </p>
-                  <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="mt-1 flex items-center gap-2 text-[13px] text-[color:var(--lens-ink)]">
                     {user.roleName || "No role assigned"}
+                    {canAssignRole && (
+                      <button
+                        type="button"
+                        className="text-[12px] text-[color:var(--lens-blue)] hover:underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          dispatch(setSelectedUser(user));
+                          dispatch(setAssignUserRoleModal(true));
+                        }}
+                      >
+                        {user.roleName ? "Change role" : "Assign role"}
+                      </button>
+                    )}
                   </p>
                 </div>
                 <div>
@@ -255,6 +281,7 @@ const UserDetailsPage = () => {
           </Button>
         </menu>
       </main>
+      <AssignUserRole />
     </UserLayout>
   );
 };
