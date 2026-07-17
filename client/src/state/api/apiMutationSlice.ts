@@ -851,6 +851,7 @@ export const {
   useDeleteContributorMembershipMutation,
   useCreateTrackMutation,
   useUpdateTrackMutation,
+  useReorderTracksMutation,
   useUploadTrackAudioMutation,
   useDeleteTrackAudioMutation,
   useDeleteTrackMutation,

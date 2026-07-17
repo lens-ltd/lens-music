@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/state/hooks";
 import {
   useCreateTrackMutation,
   useUpdateTrackMutation,
+  useReorderTracksMutation,
   useUploadTrackAudioMutation,
   useDeleteTrackAudioMutation,
   useDeleteTrackMutation,
@@ -83,6 +84,14 @@ export const useUpdateTrack = () => {
     useUpdateTrackMutation();
 
   return { updateTrack, isLoading, reset, data, isSuccess, isError, error };
+};
+
+// REORDER TRACKS
+export const useReorderTracks = () => {
+  const [reorderTracks, { isLoading, reset, data, isSuccess, isError, error }] =
+    useReorderTracksMutation();
+
+  return { reorderTracks, isLoading, reset, data, isSuccess, isError, error };
 };
 
 // UPLOAD TRACK AUDIO

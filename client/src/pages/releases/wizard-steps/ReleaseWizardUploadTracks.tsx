@@ -11,15 +11,39 @@ import CreateReleaseTrack from "../../tracks/CreateReleaseTrack";
 import {
   useDeleteTrack,
   useFetchTracks,
+  useReorderTracks,
 } from "@/hooks/tracks/track.hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReleaseTrackCard from "@/components/tracks/ReleaseTrackCard";
+import SortableTrackItem from "@/components/tracks/SortableTrackItem";
 import { RelaxedHeading } from "@/components/text/Headings";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/modals/Modal";
 import { Track } from "@/types/models/track.types";
 import { ReleaseStatus } from "@/types/models/release.types";
 import { toast } from "sonner";
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+const sortTracksForDisplay = (tracks: Track[]) =>
+  [...tracks].sort(
+    (first, second) =>
+      (first.discNumber ?? 1) - (second.discNumber ?? 1) ||
+      (first.trackNumber ?? 0) - (second.trackNumber ?? 0),
+  );
 
 const ReleaseWizardUploadTracks = ({
   currentStepName,
@@ -31,6 +55,7 @@ const ReleaseWizardUploadTracks = ({
   const { release } = useAppSelector((state) => state.release);
   const { tracksList } = useAppSelector((state) => state.track);
   const [trackToDelete, setTrackToDelete] = useState<Track>();
+  const [orderedTracks, setOrderedTracks] = useState<Track[]>([]);
 
   // NAVIGATION
   const navigate = useNavigate();
@@ -43,16 +68,63 @@ const ReleaseWizardUploadTracks = ({
   // FETCH TRACKS
   const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
   const { deleteTrack, isLoading: deleteTrackIsLoading } = useDeleteTrack();
+  const { reorderTracks, isLoading: isReorderingTracks } = useReorderTracks();
 
   const canDeleteTracks =
     release?.status === ReleaseStatus.DRAFT ||
     release?.status === ReleaseStatus.VALIDATED;
+
+  // DRAG SENSORS
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     if (release?.id) {
       fetchTracks({ releaseId: release?.id });
     }
   }, [release?.id, fetchTracks]);
+
+  // Keep the local ordered list in sync with the fetched tracks.
+  useEffect(() => {
+    setOrderedTracks(sortTracksForDisplay(tracksList ?? []));
+  }, [tracksList]);
+
+  const trackIds = useMemo(
+    () => orderedTracks.map((track) => track.id),
+    [orderedTracks],
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !release?.id) return;
+
+    const oldIndex = orderedTracks.findIndex((track) => track.id === active.id);
+    const newIndex = orderedTracks.findIndex((track) => track.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const previousOrder = orderedTracks;
+    const nextOrder = arrayMove(orderedTracks, oldIndex, newIndex);
+    setOrderedTracks(nextOrder);
+
+    try {
+      await reorderTracks({
+        releaseId: release.id,
+        trackIds: nextOrder.map((track) => track.id),
+      }).unwrap();
+      await fetchTracks({ releaseId: release.id });
+      toast.success("Track order updated.");
+    } catch (error) {
+      setOrderedTracks(previousOrder);
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "Unable to update track order.";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <section className="flex w-full flex-col gap-4">
@@ -72,27 +144,58 @@ const ReleaseWizardUploadTracks = ({
       </header>
 
       <article className="rounded-md bg-white py-4">
-        {tracksList?.length || tracksIsFetching ? (
-          <ul
-            className="m-0 flex list-none flex-col gap-2.5 p-0"
-            aria-label="Release tracks"
-          >
-            {tracksList.map((track) => (
-              <li key={track?.id}>
-                <ReleaseTrackCard
-                  isLoading={tracksIsFetching}
-                  track={track}
-                  onManage={() => {
-                    navigate(
-                      `/releases/${release?.id}/manage-tracks/${track?.id}`,
-                    );
-                  }}
-                  canDelete={canDeleteTracks}
-                  onDelete={() => setTrackToDelete(track)}
-                />
-              </li>
-            ))}
-          </ul>
+        {orderedTracks?.length || tracksIsFetching ? (
+          tracksIsFetching && !orderedTracks.length ? (
+            <ul
+              className="m-0 flex list-none flex-col gap-2.5 p-0"
+              aria-label="Release tracks"
+            >
+              {Array.from({ length: 3 }).map((_, index) => (
+                <li key={index}>
+                  <ReleaseTrackCard isLoading />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              {orderedTracks.length > 1 && (
+                <p className="mb-2 px-1 text-[11px] text-[color:var(--lens-ink)]/55">
+                  Drag the handle to reorder tracks.
+                </p>
+              )}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={trackIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul
+                    className="m-0 flex list-none flex-col gap-2.5 p-0"
+                    aria-label="Release tracks"
+                  >
+                    {orderedTracks.map((track) => (
+                      <li key={track?.id}>
+                        <SortableTrackItem
+                          track={track}
+                          disabled={isReorderingTracks}
+                          onManage={() => {
+                            navigate(
+                              `/releases/${release?.id}/manage-tracks/${track?.id}`,
+                            );
+                          }}
+                          canDelete={canDeleteTracks}
+                          onDelete={() => setTrackToDelete(track)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
+            </>
+          )
         ) : (
           <section className="rounded-xl border border-dashed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/10 p-5 text-center">
             <p className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal">
