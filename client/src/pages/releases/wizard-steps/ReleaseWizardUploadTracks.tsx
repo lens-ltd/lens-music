@@ -84,7 +84,7 @@ const ReleaseWizardUploadTracks = ({
 
   useEffect(() => {
     if (release?.id) {
-      fetchTracks({ releaseId: release?.id });
+      fetchTracks({ releaseId: release?.id, size: 100 });
     }
   }, [release?.id, fetchTracks]);
 

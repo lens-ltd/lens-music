@@ -271,12 +271,14 @@ export const apiQuerySlice = createApi({
 
       // FETCH TRACKS
       fetchTracks: builder.query({
-        query: ({ releaseId }) => {
+        query: ({ releaseId, page, size }) => {
           return {
             url: "/tracks",
             method: "GET",
             params: {
               releaseId,
+              page,
+              size,
             },
           };
         },
