@@ -151,6 +151,7 @@ const PreviewTracksSection = ({
             columns={columns}
             data={sortedTracks}
             showPagination={false}
+            size={sortedTracks?.length}
             containerClassName="border-0"
           />
         ) : (
