@@ -38,6 +38,7 @@ import CreateUserInvitationPage from "./pages/users/CreateUserInvitationPage";
 import StoresPage from "./pages/stores/StoresPage";
 import StoreDetailsPage from "./pages/stores/StoreDetailsPage";
 import ReleaseReviewPage from "./pages/releases/review/ReleaseReviewPage";
+import ReleaseReviewDetailPage from "./pages/releases/review/ReleaseReviewDetailPage";
 import ContributorVerificationQueuePage from "./pages/contributors/ContributorVerificationQueuePage";
 import UserProfilePage from "./pages/profile/UserProfilePage";
 
@@ -93,6 +94,11 @@ const routeSeo = {
     title: "Release Review",
     description:
       "Review releases submitted for approval, approve them for delivery, or request changes with feedback.",
+  },
+  releaseReviewDetail: {
+    title: "Release Review Detail",
+    description:
+      "View everything submitted for a release, prior feedback, and approve or request changes.",
   },
   releaseWizard: {
     title: "Release Wizard",
@@ -278,6 +284,13 @@ const Router = () => {
             <Route
               path="review"
               element={withSeo(<ReleaseReviewPage />, routeSeo.releaseReview)}
+            />
+            <Route
+              path=":id/review"
+              element={withSeo(
+                <ReleaseReviewDetailPage />,
+                routeSeo.releaseReviewDetail,
+              )}
             />
             <Route
               path=":id/wizard"

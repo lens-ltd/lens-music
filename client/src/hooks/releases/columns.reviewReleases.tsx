@@ -91,7 +91,7 @@ export const useReviewReleaseColumns = () => {
               <menu className="w-full flex flex-col items-center gap-1">
                 <TableActionButton
                   icon={faCircleInfo}
-                  to={`/releases/${row?.original?.id}/wizard`}
+                  to={`/releases/${row?.original?.id}/review`}
                 >
                   View release
                 </TableActionButton>
