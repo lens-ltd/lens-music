@@ -56,7 +56,7 @@ const ReleaseNavigationPanel = ({
   const hasStepSidebar = navigationSteps.length > 1;
 
   return (
-    <article className="w-full overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)]">
+    <article className="w-full overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm">
       <section
         className={`w-full ${
           hasStepSidebar
@@ -98,15 +98,15 @@ const ReleaseNavigationPanel = ({
                     className={`relative flex min-w-[190px] items-center gap-3 rounded-md border px-3 py-3 text-left transition-all duration-200 lg:min-w-0 ${
                       isActive
                         ? "border-[color:var(--lens-blue)]/30 bg-[color:var(--lens-blue)]/8"
-                        : "border-transparent bg-[color:var(--color-background)] hover:border-[color:var(--lens-sand)] hover:bg-[color:var(--lens-sand)]/25"
+                        : "border-transparent bg-white hover:border-[color:var(--lens-sand)] hover:bg-[color:var(--lens-sand)]/25"
                     }`}
                   >
                     <span
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-normal ${
                         isCompleted
-                          ? "bg-[color:var(--lens-blue)] text-[color:var(--color-background)]"
+                          ? "bg-[color:var(--lens-blue)] text-white"
                           : isActive
-                            ? "bg-[color:var(--lens-blue)] text-[color:var(--color-background)]"
+                            ? "bg-[color:var(--lens-blue)] text-white"
                             : isPast
                               ? "bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]"
                               : "bg-[color:var(--lens-sand)]/45 text-[color:var(--lens-ink)]/55"
@@ -115,7 +115,7 @@ const ReleaseNavigationPanel = ({
                       {isCompleted ? (
                         <FontAwesomeIcon
                           icon={faCheck}
-                          className="text-[color:var(--color-background)] text-[10px]"
+                          className="text-white text-[10px]"
                         />
                       ) : (
                         `${index + 1}`.padStart(2, "0")
@@ -138,7 +138,7 @@ const ReleaseNavigationPanel = ({
         )}
 
         <div className="min-w-0 w-full">
-          <header className="border-b border-[color:var(--lens-sand)] bg-[color:var(--color-background)] px-5 py-5 sm:px-6">
+          <header className="border-b border-[color:var(--lens-sand)] bg-white px-5 py-5 sm:px-6">
             <nav className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <menu className="min-w-0">
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)] font-normal">

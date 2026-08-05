@@ -218,7 +218,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-[color:var(--color-background)] p-3 shadow-sm transition-colors hover:bg-secondary/5"
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
           >
             <UiInput
               type="checkbox"
@@ -269,7 +269,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-[color:var(--color-background)] p-3 shadow-sm transition-colors hover:bg-secondary/5"
+                className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
               >
                 <UiInput
                   type="checkbox"
@@ -311,7 +311,7 @@ const ReleaseWizardStores = ({
 
       <ReleaseWizardDealsSection />
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
         {navButtons}
       </footer>
     </section>

@@ -205,7 +205,7 @@ const ReleaseWizardPreview = ({
       />
 
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
         <Button
           isLoading={isNavigating}
           onClick={(event) => {

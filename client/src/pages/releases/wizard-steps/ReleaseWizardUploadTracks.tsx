@@ -132,7 +132,7 @@ const ReleaseWizardUploadTracks = ({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[color:var(--color-background)]">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
         <RelaxedHeading>Tracks List</RelaxedHeading>
         <Button
           primary
@@ -147,7 +147,7 @@ const ReleaseWizardUploadTracks = ({
         </Button>
       </header>
 
-      <article className="rounded-md bg-[color:var(--color-background)] py-4">
+      <article className="rounded-md bg-white py-4">
         {orderedTracks?.length || tracksIsFetching ? (
           tracksIsFetching && !orderedTracks.length ? (
             <ul
@@ -231,7 +231,7 @@ const ReleaseWizardUploadTracks = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
         <Button
           onClick={(e) => {
             e.preventDefault();

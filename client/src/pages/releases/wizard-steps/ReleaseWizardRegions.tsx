@@ -253,7 +253,7 @@ const ReleaseWizardRegions = ({
         selectedTerritories={selectedTerritories}
       />
 
-      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
         <p className="text-xs text-[color:var(--lens-ink)]/55">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"

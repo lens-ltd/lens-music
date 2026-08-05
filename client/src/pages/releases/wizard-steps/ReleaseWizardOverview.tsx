@@ -352,7 +352,7 @@ const ReleaseWizardOverview = ({
               overview now and add it before submitting.
             </p>
           ) : null}
-          <article className="w-full rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-4 sm:p-5">
+          <article className="w-full rounded-md border border-[color:var(--lens-sand)] bg-white p-4 sm:p-5">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
                 <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-md border border-secondary/20 bg-secondary/5">
@@ -742,7 +742,7 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
           <Button
             onClick={(e) => {
               e.preventDefault();

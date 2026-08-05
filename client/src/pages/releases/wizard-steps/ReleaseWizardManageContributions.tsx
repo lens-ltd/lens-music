@@ -289,11 +289,11 @@ const ReleaseWizardManageContributions = ({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[color:var(--color-background)]">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
-      <article className="rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] p-4">
+      <article className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
         <header className="space-y-1">
           <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
             Contributors
@@ -337,7 +337,7 @@ const ReleaseWizardManageContributions = ({
                   prefixIcon={faSearch}
                 />
                 {contributorSearchTerm?.trim()?.length > 0 && (
-                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] shadow-sm">
+                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
                     {isSearchingContributors || isContributorSearchPending ? (
                       <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
                         <Loader
@@ -494,7 +494,7 @@ const ReleaseWizardManageContributions = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
         <Button
           onClick={(e) => {
             e.preventDefault();
