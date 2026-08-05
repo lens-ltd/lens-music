@@ -169,7 +169,7 @@ const TotalsStrip = ({ totals }: { totals: DashboardSummary['totals'] }) => {
 
   return (
     <section
-      className="grid overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] sm:grid-cols-2 xl:grid-cols-4"
+      className="grid overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm sm:grid-cols-2 xl:grid-cols-4"
       aria-label="Catalog totals"
     >
       {metrics.map((metric, index) => {
@@ -221,7 +221,7 @@ const ReleasePipeline = ({
             return (
               <li
                 key={item.status}
-                className="bg-[color:var(--color-background)]"
+                className="bg-white"
               >
                 <Link
                   to={`/releases?status=${item.status}`}
@@ -284,7 +284,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
             className="relative mx-auto flex h-[142px] w-[142px] items-center justify-center rounded-full"
             style={ringStyle}
           >
-            <div className="flex h-[108px] w-[108px] flex-col items-center justify-center rounded-full bg-[color:var(--color-background)]">
+            <div className="flex h-[108px] w-[108px] flex-col items-center justify-center rounded-full bg-white">
               <strong
                 className="text-[25px] text-[color:var(--lens-ink)]"
                 style={serif}
@@ -494,7 +494,7 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
     initial={reduceMotion ? false : { opacity: 0, y: 14 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, ease: 'easeOut' }}
-    className="grid min-h-[560px] overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] lg:grid-cols-[1.1fr_0.9fr]"
+    className="grid min-h-[560px] overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-white shadow-sm lg:grid-cols-[1.1fr_0.9fr]"
     aria-labelledby="empty-dashboard-title"
   >
     <div className="flex flex-col justify-between bg-[color:var(--lens-ink)] p-7 text-[color:var(--color-background)] sm:p-10 lg:p-12">
@@ -540,7 +540,7 @@ const DashboardError = ({
   isRetrying: boolean;
 }) => (
   <section
-    className="flex min-h-[420px] flex-col items-center justify-center rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] px-6 text-center"
+    className="flex min-h-[420px] flex-col items-center justify-center rounded-xl border border-[color:var(--lens-sand)] bg-white px-6 text-center shadow-sm"
     role="alert"
   >
     <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[color:var(--lens-ink)]/25 bg-[color:var(--lens-sand)]/30 text-[color:var(--lens-ink)]">
@@ -581,7 +581,7 @@ const DashboardSkeleton = () => (
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="min-h-[120px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5"
+          className="min-h-[120px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5"
         >
           <SkeletonLoader type="text" width="6rem" height="1rem" />
           <div className="mt-4">
@@ -590,14 +590,14 @@ const DashboardSkeleton = () => (
         </div>
       ))}
     </div>
-    <div className="h-[150px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
+    <div className="h-[150px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
       <SkeletonLoader type="text" width="10rem" height="1rem" />
     </div>
     <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
+      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
         <SkeletonLoader type="text" width="10rem" height="1rem" />
       </div>
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
+      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
         <SkeletonLoader type="text" width="8rem" height="1rem" />
       </div>
     </div>

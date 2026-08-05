@@ -35,7 +35,7 @@ const DashboardSection = ({
     <section
       className={cn(
         variant === 'panel'
-          ? 'flex flex-col rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)]'
+          ? 'flex flex-col rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm'
           : 'flex flex-col border-t border-[color:var(--lens-sand)] pt-1',
         overflowHidden && 'overflow-hidden',
         contentClassName,
