@@ -1,13 +1,15 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { sortContributorsForDisplay } from "../../helpers/releases.helper";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { TrackContributor } from "../../entities/track-contributor.entity";
 import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
 import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { Track, TrackStatus } from "../../entities/track.entity";
 import { Contributor } from "../../entities/contributor.entity";
+import { ContributorRole } from "../../constants/contributor.constants";
+import { CreateBulkTrackContributorsDto } from "./dto/create-bulk-track-contributors.dto";
 
 @Injectable()
 export class TrackContributorsService {
@@ -19,6 +21,80 @@ export class TrackContributorsService {
     @InjectRepository(Contributor)
     private readonly contributorRepository: Repository<Contributor>,
   ) {}
+
+  async createBulk(
+    dto: CreateBulkTrackContributorsDto,
+    createdById: UUID,
+  ): Promise<{
+    contributors: TrackContributor[];
+    createdRoles: ContributorRole[];
+    existingRoles: ContributorRole[];
+  }> {
+    const roles = [...new Set(dto.roles)];
+
+    return this.trackContributorRepository.manager.transaction(
+      async (manager) => {
+        const trackRepository = manager.getRepository(Track);
+        const contributorRepository = manager.getRepository(Contributor);
+        const creditRepository = manager.getRepository(TrackContributor);
+
+        const [track, contributor] = await Promise.all([
+          trackRepository.findOne({ where: { id: dto.trackId } }),
+          contributorRepository.findOne({ where: { id: dto.contributorId } }),
+        ]);
+
+        if (!track) throw new NotFoundException("Track not found");
+        if (!contributor) throw new NotFoundException("Contributor not found");
+
+        const existing = await creditRepository.find({
+          where: {
+            trackId: dto.trackId,
+            contributorId: dto.contributorId,
+            role: In(roles),
+          },
+        });
+        const existingRoles = existing.map((credit) => credit.role);
+        const createdRoles = roles.filter(
+          (role) => !existingRoles.includes(role),
+        );
+
+        if (createdRoles.length > 0) {
+          await creditRepository
+            .createQueryBuilder()
+            .insert()
+            .values(
+              createdRoles.map((role) => ({
+                trackId: dto.trackId,
+                contributorId: dto.contributorId,
+                role,
+                createdById,
+              })),
+            )
+            .orIgnore()
+            .execute();
+
+          await trackRepository.update(dto.trackId, {
+            status: TrackStatus.DRAFT,
+          });
+        }
+
+        const contributors = await creditRepository.find({
+          where: {
+            trackId: dto.trackId,
+            contributorId: dto.contributorId,
+            role: In(roles),
+          },
+          relations: ["contributor"],
+        });
+
+        return {
+          contributors: sortContributorsForDisplay(contributors),
+          createdRoles,
+          existingRoles,
+        };
+      },
+    );
+  }
 
   async create(
     dto: CreateTrackContributorDto,

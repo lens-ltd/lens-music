@@ -1,11 +1,11 @@
 import Button from "@/components/inputs/Button";
-import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
+import ContributorRoleMultiSelect from "@/components/contributors/ContributorRoleMultiSelect";
 import { RelaxedHeading } from "@/components/text/Headings";
 import {
   useFetchReleaseContributors,
-  useCreateReleaseContributor,
+  useCreateBulkReleaseContributors,
   useDeleteReleaseContributor,
   useUpdateReleaseContributor,
 } from "@/hooks/releases/release-contributor.hooks";
@@ -20,7 +20,10 @@ import {
   ContributorRole,
   ReleaseContributor,
 } from "@/types/models/releaseContributor.types";
-import { capitalizeString } from "@/utils/strings.helper";
+import {
+  getContributorCreditName,
+  getContributorSearchName,
+} from "@/utils/contributorCredit.helper";
 import {
   MIN_CONTRIBUTOR_SEARCH_CHARS,
   toTitleCase,
@@ -35,17 +38,6 @@ import { Check } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
-
-const roleOptions = Object.values(ContributorRole).map((role) => ({
-  value: role,
-  label: capitalizeString(role),
-}));
-
-const getContributorLabel = (contributor: Contributor) =>
-  contributor.displayName ||
-  contributor.name ||
-  contributor.email ||
-  "Unnamed contributor";
 
 const ReleaseWizardManageContributions = ({
   currentStepName,
@@ -64,8 +56,10 @@ const ReleaseWizardManageContributions = ({
 
   const { fetchReleaseContributors, data: releaseContributorsData } =
     useFetchReleaseContributors();
-  const { createReleaseContributor, isLoading: isCreatingContributor } =
-    useCreateReleaseContributor();
+  const {
+    createBulkReleaseContributors,
+    isLoading: isCreatingContributor,
+  } = useCreateBulkReleaseContributors();
   const { deleteReleaseContributor, isLoading: isDeletingContributor } =
     useDeleteReleaseContributor();
   const {
@@ -76,8 +70,9 @@ const ReleaseWizardManageContributions = ({
     useLazyFetchContributorsQuery();
 
   const [selectedContributorId, setSelectedContributorId] = useState("");
-  const [selectedContributorRole, setSelectedContributorRole] =
-    useState<ContributorRole>(ContributorRole.PRIMARY_ARTIST);
+  const [selectedContributorRoles, setSelectedContributorRoles] = useState<
+    ContributorRole[]
+  >([]);
   const [selectedContributorLabel, setSelectedContributorLabel] = useState("");
   const [contributorSearchTerm, setContributorSearchTerm] = useState("");
   const [contributorSearchResults, setContributorSearchResults] = useState<
@@ -159,10 +154,11 @@ const ReleaseWizardManageContributions = ({
 
   const handleSelectContributor = useCallback((contributor: Contributor) => {
     setSelectedContributorId(contributor.id ?? "");
-    const label = getContributorLabel(contributor);
+    const label = getContributorSearchName(contributor);
     setSelectedContributorLabel(label);
     setContributorSearchTerm(label);
     setContributorSearchResults([]);
+    setSelectedContributorRoles([]);
   }, []);
 
   const handleContributorSearchChange = useCallback(
@@ -171,6 +167,7 @@ const ReleaseWizardManageContributions = ({
       if (selectedContributorId) {
         setSelectedContributorId("");
         setSelectedContributorLabel("");
+        setSelectedContributorRoles([]);
       }
     },
     [selectedContributorId],
@@ -184,29 +181,27 @@ const ReleaseWizardManageContributions = ({
         return;
       }
 
-      const existing = (releaseContributorsData?.data ??
-        []) as ReleaseContributor[];
-      const isDuplicate = existing.some(
-        (rc) =>
-          rc.contributorId === selectedContributorId &&
-          rc.role === selectedContributorRole,
-      );
-
-      if (isDuplicate) {
-        toast.error("This contributor already has that role on the release.");
+      if (selectedContributorRoles.length === 0) {
+        toast.error("Select at least one role before adding.");
         return;
       }
 
       try {
-        await createReleaseContributor({
+        const response = await createBulkReleaseContributors({
           releaseId: release.id,
           contributorId: selectedContributorId,
-          role: selectedContributorRole,
+          roles: selectedContributorRoles,
         }).unwrap();
 
-        toast.success("Contributor added successfully.");
+        const addedCount = response?.data?.createdRoles?.length ?? 0;
+        toast.success(
+          addedCount > 0
+            ? `${addedCount} contributor role${addedCount === 1 ? "" : "s"} added.`
+            : "Those contributor roles are already assigned.",
+        );
         setSelectedContributorId("");
         setSelectedContributorLabel("");
+        setSelectedContributorRoles([]);
         setContributorSearchTerm("");
         setContributorSearchResults([]);
         fetchReleaseContributors({ releaseId: release.id });
@@ -220,9 +215,8 @@ const ReleaseWizardManageContributions = ({
     [
       release?.id,
       selectedContributorId,
-      selectedContributorRole,
-      releaseContributorsData,
-      createReleaseContributor,
+      selectedContributorRoles,
+      createBulkReleaseContributors,
       fetchReleaseContributors,
     ],
   );
@@ -284,6 +278,11 @@ const ReleaseWizardManageContributions = ({
 
   const releaseContributors = (releaseContributorsData?.data ??
     []) as ReleaseContributor[];
+  const unavailableRoles = releaseContributors
+    .filter(
+      (contributor) => contributor.contributorId === selectedContributorId,
+    )
+    .map((contributor) => contributor.role);
   const hasPrimaryArtist = releaseContributors.some(
     (contributor) => contributor.role === ContributorRole.PRIMARY_ARTIST,
   );
@@ -300,7 +299,8 @@ const ReleaseWizardManageContributions = ({
             Contributors
           </h2>
           <p className="text-[12px] text-[color:var(--lens-ink)]/55">
-            Add each contributor once per role.
+            Select a contributor once, then add every role they have on this
+            release.
           </p>
           <p className="text-[12px] text-[color:var(--lens-ink)]/55 mt-2">
             Can't find the contributor you're looking for?{" "}
@@ -322,7 +322,7 @@ const ReleaseWizardManageContributions = ({
           className="w-full flex flex-col gap-4 my-4"
           onSubmit={(event) => void handleAddContributor(event)}
         >
-          <section className="w-full grid grid-cols-2 gap-4">
+          <section className="grid w-full gap-4">
             <label className="flex flex-col gap-2">
               <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
                 Contributor
@@ -368,7 +368,7 @@ const ReleaseWizardManageContributions = ({
                               >
                                 <p className="flex flex-col items-start">
                                   <span className="text-[12px] text-[color:var(--lens-ink)]">
-                                    {getContributorLabel(contributor)}
+                                    {getContributorSearchName(contributor)}
                                   </span>
                                   <span className="text-[11px] text-[color:var(--lens-ink)]/55">
                                     {[
@@ -400,19 +400,12 @@ const ReleaseWizardManageContributions = ({
               </search>
             </label>
 
-            <label className="flex flex-col gap-2">
-              <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
-                Role
-              </span>
-              <Combobox
-                options={roleOptions}
-                value={selectedContributorRole}
-                onChange={(value) =>
-                  setSelectedContributorRole(value as ContributorRole)
-                }
-                readOnly={isSearchingContributors}
-              />
-            </label>
+            <ContributorRoleMultiSelect
+              value={selectedContributorRoles}
+              unavailableRoles={unavailableRoles}
+              onChange={setSelectedContributorRoles}
+              disabled={isSearchingContributors || !selectedContributorId}
+            />
           </section>
 
           <Button
@@ -420,6 +413,11 @@ const ReleaseWizardManageContributions = ({
             type="submit"
             primary
             isLoading={isCreatingContributor}
+            disabled={
+              isCreatingContributor ||
+              !selectedContributorId ||
+              selectedContributorRoles.length === 0
+            }
             className="w-fit self-end"
           >
             Add contributor
@@ -435,9 +433,10 @@ const ReleaseWizardManageContributions = ({
               >
                 <section className="flex flex-col gap-0.5">
                   <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
-                    {releaseContributor?.contributor?.name ||
-                      releaseContributor?.contributor?.displayName ||
-                      "Unknown contributor"}
+                    {getContributorCreditName(
+                      releaseContributor?.contributor,
+                      releaseContributor.role,
+                    )}
                   </p>
                   <p className="text-[11px] text-[color:var(--lens-ink)]/55">
                     {toTitleCase(releaseContributor?.role)}

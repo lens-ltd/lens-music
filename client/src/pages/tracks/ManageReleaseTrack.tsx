@@ -10,7 +10,7 @@ import {
   useValidateTrack,
 } from "@/hooks/tracks/track.hooks";
 import {
-  useCreateTrackContributor,
+  useCreateBulkTrackContributors,
   useDeleteTrackContributor,
   useFetchTrackContributors,
   useUpdateTrackContributor,
@@ -49,6 +49,7 @@ import {
 import useTrackMetadataAutosave from "./components/useTrackMetadataAutosave";
 import { Lyrics } from "@/types/models/lyrics.types";
 import { RelaxedHeading } from "@/components/text/Headings";
+import { getContributorSearchName } from "@/utils/contributorCredit.helper";
 
 const formatTrackLyricsLabel = (lyrics: Lyrics) => {
   const createdAt = lyrics.createdAt
@@ -88,8 +89,8 @@ const ManageReleaseTrack = () => {
   const { validateTrack, isLoading: isValidatingTrack } = useValidateTrack();
   const { fetchTrackContributors, data: trackContributorsData } =
     useFetchTrackContributors();
-  const { createTrackContributor, isLoading: isCreatingContributor } =
-    useCreateTrackContributor();
+  const { createBulkTrackContributors, isLoading: isCreatingContributor } =
+    useCreateBulkTrackContributors();
   const { deleteTrackContributor, isLoading: isDeletingContributor } =
     useDeleteTrackContributor();
   const { updateTrackContributor, isLoading: isUpdatingContributorSequence } =
@@ -101,9 +102,9 @@ const ManageReleaseTrack = () => {
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
   const [selectedContributorId, setSelectedContributorId] = useState("");
-  const [selectedContributorRole, setSelectedContributorRole] = useState(
-    ContributorRole.PRIMARY_ARTIST,
-  );
+  const [selectedContributorRoles, setSelectedContributorRoles] = useState<
+    ContributorRole[]
+  >([]);
   const [selectedContributorLabel, setSelectedContributorLabel] = useState("");
   const [contributorSearchTerm, setContributorSearchTerm] = useState("");
   const [contributorSearchResults, setContributorSearchResults] = useState<
@@ -274,29 +275,29 @@ const ManageReleaseTrack = () => {
         toast.error("Select a contributor before adding.");
         return;
       }
-      const duplicateContributor = trackContributorsData?.data?.some(
-        (trackContributor: TrackContributor) =>
-          trackContributor.contributorId === selectedContributorId &&
-          trackContributor.role === selectedContributorRole,
-      );
-      if (duplicateContributor) {
-        toast.error("That contributor already has this role on the track.");
+      if (selectedContributorRoles.length === 0) {
+        toast.error("Select at least one role before adding.");
         return;
       }
       resetValidationResult();
       try {
-        await createTrackContributor({
+        const response = await createBulkTrackContributors({
           trackId,
           contributorId: selectedContributorId,
-          role: selectedContributorRole,
+          roles: selectedContributorRoles,
         }).unwrap();
         await fetchTrackContributors({ trackId });
         setSelectedContributorId("");
         setSelectedContributorLabel("");
-        setSelectedContributorRole(ContributorRole.PRIMARY_ARTIST);
+        setSelectedContributorRoles([]);
         setContributorSearchTerm("");
         setContributorSearchResults([]);
-        toast.success("Contributor added successfully.");
+        const addedCount = response?.data?.createdRoles?.length ?? 0;
+        toast.success(
+          addedCount > 0
+            ? `${addedCount} contributor role${addedCount === 1 ? "" : "s"} added.`
+            : "Those contributor roles are already assigned.",
+        );
       } catch (error) {
         const errorMessage =
           (error as { data?: { message?: string } })?.data?.message ||
@@ -305,12 +306,11 @@ const ManageReleaseTrack = () => {
       }
     },
     [
-      createTrackContributor,
+      createBulkTrackContributors,
       fetchTrackContributors,
       resetValidationResult,
       selectedContributorId,
-      selectedContributorRole,
-      trackContributorsData,
+      selectedContributorRoles,
       trackId,
     ],
   );
@@ -321,18 +321,19 @@ const ManageReleaseTrack = () => {
       if (selectedContributorId && value !== selectedContributorLabel) {
         setSelectedContributorId("");
         setSelectedContributorLabel("");
+        setSelectedContributorRoles([]);
       }
     },
     [selectedContributorId, selectedContributorLabel],
   );
 
   const handleSelectContributor = useCallback((contributor: Contributor) => {
-    const label =
-      contributor.displayName || contributor.name || contributor.email || "";
+    const label = getContributorSearchName(contributor);
     setSelectedContributorId(contributor.id);
     setSelectedContributorLabel(label);
     setContributorSearchTerm(label);
     setContributorSearchResults([]);
+    setSelectedContributorRoles([]);
   }, []);
 
   const handleUpdateContributorSequence = useCallback(
@@ -463,7 +464,7 @@ const ManageReleaseTrack = () => {
             contributorSearchTerm={contributorSearchTerm}
             contributorSearchResults={contributorSearchResults}
             selectedContributorId={selectedContributorId}
-            selectedContributorRole={selectedContributorRole}
+            selectedContributorRoles={selectedContributorRoles}
             trackContributors={trackContributorsData?.data ?? []}
             isSearchingContributors={
               isContributorSearchPending || isSearchingContributors
@@ -472,7 +473,7 @@ const ManageReleaseTrack = () => {
             isDeletingContributor={isDeletingContributor}
             onContributorSearchChange={handleContributorSearchChange}
             onSelectContributor={handleSelectContributor}
-            onSelectRole={setSelectedContributorRole}
+            onSelectRoles={setSelectedContributorRoles}
             onAddContributor={handleAddContributor}
             onDeleteContributor={handleDeleteContributor}
             onUpdateSequence={handleUpdateContributorSequence}

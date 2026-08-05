@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { sortContributorsForDisplay } from "../../helpers/releases.helper";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { ReleaseContributor } from "../../entities/release-contributor.entity";
 import { CreateReleaseContributorDto } from "./dto/create-release-contributor.dto";
 import { UpdateReleaseContributorDto } from "./dto/update-release-contributor.dto";
@@ -9,6 +9,8 @@ import { UUID } from "../../types/common.types";
 import { Release } from "../../entities/release.entity";
 import { ReleaseStatus } from "../../constants/release.constants";
 import { Contributor } from "../../entities/contributor.entity";
+import { ContributorRole } from "../../constants/contributor.constants";
+import { CreateBulkReleaseContributorsDto } from "./dto/create-bulk-release-contributors.dto";
 
 @Injectable()
 export class ReleaseContributorsService {
@@ -20,6 +22,84 @@ export class ReleaseContributorsService {
     @InjectRepository(Contributor)
     private readonly contributorRepository: Repository<Contributor>,
   ) {}
+
+  async createBulk(
+    dto: CreateBulkReleaseContributorsDto,
+    createdById: UUID,
+  ): Promise<{
+    contributors: ReleaseContributor[];
+    createdRoles: ContributorRole[];
+    existingRoles: ContributorRole[];
+  }> {
+    const roles = [...new Set(dto.roles)];
+
+    const result = await this.releaseContributorRepository.manager.transaction(
+      async (manager) => {
+        const releaseRepository = manager.getRepository(Release);
+        const contributorRepository = manager.getRepository(Contributor);
+        const creditRepository = manager.getRepository(ReleaseContributor);
+
+        const [release, contributor] = await Promise.all([
+          releaseRepository.findOne({ where: { id: dto.releaseId } }),
+          contributorRepository.findOne({ where: { id: dto.contributorId } }),
+        ]);
+
+        if (!release) throw new NotFoundException("Release not found");
+        if (!contributor) throw new NotFoundException("Contributor not found");
+
+        const existing = await creditRepository.find({
+          where: {
+            releaseId: dto.releaseId,
+            contributorId: dto.contributorId,
+            role: In(roles),
+          },
+        });
+        const existingRoles = existing.map((credit) => credit.role);
+        const createdRoles = roles.filter(
+          (role) => !existingRoles.includes(role),
+        );
+
+        if (createdRoles.length > 0) {
+          await creditRepository
+            .createQueryBuilder()
+            .insert()
+            .values(
+              createdRoles.map((role) => ({
+                releaseId: dto.releaseId,
+                contributorId: dto.contributorId,
+                role,
+                createdById,
+              })),
+            )
+            .orIgnore()
+            .execute();
+
+          if (release.status === ReleaseStatus.VALIDATED) {
+            await releaseRepository.update(dto.releaseId, {
+              status: ReleaseStatus.DRAFT,
+            });
+          }
+        }
+
+        const contributors = await creditRepository.find({
+          where: {
+            releaseId: dto.releaseId,
+            contributorId: dto.contributorId,
+            role: In(roles),
+          },
+          relations: ["contributor"],
+        });
+
+        return {
+          contributors: sortContributorsForDisplay(contributors),
+          createdRoles,
+          existingRoles,
+        };
+      },
+    );
+
+    return result;
+  }
 
   async create(
     dto: CreateReleaseContributorDto,

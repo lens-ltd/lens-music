@@ -1,11 +1,14 @@
 import Button from "@/components/inputs/Button";
-import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
+import ContributorRoleMultiSelect from "@/components/contributors/ContributorRoleMultiSelect";
 import { Contributor } from "@/types/models/contributor.types";
 import { ContributorRole } from "@/types/models/releaseContributor.types";
 import { TrackContributor } from "@/types/models/track.types";
-import { capitalizeString } from "@/utils/strings.helper";
+import {
+  getContributorCreditName,
+  getContributorSearchName,
+} from "@/utils/contributorCredit.helper";
 import {
   faExternalLinkAlt,
   faSearch,
@@ -20,14 +23,14 @@ type TrackContributorsPanelProps = {
   contributorSearchTerm: string;
   contributorSearchResults: Contributor[];
   selectedContributorId: string;
-  selectedContributorRole: ContributorRole;
+  selectedContributorRoles: ContributorRole[];
   trackContributors: TrackContributor[];
   isSearchingContributors: boolean;
   isCreatingContributor: boolean;
   isDeletingContributor: boolean;
   onContributorSearchChange: (value: string) => void;
   onSelectContributor: (contributor: Contributor) => void;
-  onSelectRole: (value: ContributorRole) => void;
+  onSelectRoles: (value: ContributorRole[]) => void;
   onAddContributor: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   onDeleteContributor: (trackContributorId: string) => Promise<void>;
   onUpdateSequence?: (
@@ -37,34 +40,29 @@ type TrackContributorsPanelProps = {
   isUpdatingSequence?: boolean;
 };
 
-const roleOptions = Object.values(ContributorRole).map((role) => ({
-  value: role,
-  label: capitalizeString(role),
-}));
-
-const getContributorLabel = (contributor: Contributor) =>
-  contributor.displayName ||
-  contributor.name ||
-  contributor.email ||
-  "Unnamed contributor";
-
 const TrackContributorsPanel = ({
   contributorSearchTerm,
   contributorSearchResults,
   selectedContributorId,
-  selectedContributorRole,
+  selectedContributorRoles,
   trackContributors,
   isSearchingContributors,
   isCreatingContributor,
   isDeletingContributor,
   onContributorSearchChange,
   onSelectContributor,
-  onSelectRole,
+  onSelectRoles,
   onAddContributor,
   onDeleteContributor,
   onUpdateSequence,
   isUpdatingSequence,
 }: TrackContributorsPanelProps) => {
+  const unavailableRoles = trackContributors
+    .filter(
+      (contributor) => contributor.contributorId === selectedContributorId,
+    )
+    .map((contributor) => contributor.role);
+
   return (
     <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
       <header className="space-y-1">
@@ -72,7 +70,8 @@ const TrackContributorsPanel = ({
           Contributors
         </h2>
         <p className="text-[12px] text-[color:var(--lens-ink)]/55">
-          Add each contributor once per role.
+          Select a contributor once, then add every role they have on this
+          track.
         </p>
         <p className="text-[12px] text-[color:var(--lens-ink)]/55 mt-2">
           Can't find the contributor you're looking for?{" "}
@@ -94,7 +93,7 @@ const TrackContributorsPanel = ({
         className="w-full flex flex-col gap-4 my-4"
         onSubmit={(event) => void onAddContributor(event)}
       >
-        <section className="w-full grid grid-cols-2 gap-4">
+        <section className="grid w-full gap-4">
           <label className="flex flex-col gap-2">
             <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
               Contributor
@@ -138,7 +137,7 @@ const TrackContributorsPanel = ({
                             >
                               <p className="flex flex-col items-start">
                                 <span className="text-[12px] text-[color:var(--lens-ink)]">
-                                  {getContributorLabel(contributor)}
+                                  {getContributorSearchName(contributor)}
                                 </span>
                                 <span className="text-[11px] text-[color:var(--lens-ink)]/55">
                                   {[
@@ -170,17 +169,12 @@ const TrackContributorsPanel = ({
             </search>
           </label>
 
-          <label className="flex flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
-              Role
-            </span>
-            <Combobox
-              options={roleOptions}
-              value={selectedContributorRole}
-              onChange={(value) => onSelectRole(value as ContributorRole)}
-              readOnly={isSearchingContributors}
-            />
-          </label>
+          <ContributorRoleMultiSelect
+            value={selectedContributorRoles}
+            unavailableRoles={unavailableRoles}
+            onChange={onSelectRoles}
+            disabled={isSearchingContributors || !selectedContributorId}
+          />
         </section>
 
         <Button
@@ -188,6 +182,11 @@ const TrackContributorsPanel = ({
           type="submit"
           primary
           isLoading={isCreatingContributor}
+          disabled={
+            isCreatingContributor ||
+            !selectedContributorId ||
+            selectedContributorRoles.length === 0
+          }
           className="w-fit self-end"
         >
           Add contributor
@@ -203,9 +202,10 @@ const TrackContributorsPanel = ({
             >
               <section className="flex flex-col gap-0.5">
                 <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
-                  {trackContributor?.contributor?.displayName ||
-                    trackContributor?.contributor?.name ||
-                    "Unknown contributor"}
+                  {getContributorCreditName(
+                    trackContributor?.contributor,
+                    trackContributor.role,
+                  )}
                 </p>
                 <p className="text-[11px] text-[color:var(--lens-ink)]/55">
                   {toTitleCase(trackContributor?.role)}

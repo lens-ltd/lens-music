@@ -1,6 +1,7 @@
 import { useLazyFetchReleaseContributorsQuery } from "@/state/api/apiQuerySlice";
 import {
   useCreateReleaseContributorMutation,
+  useCreateBulkReleaseContributorsMutation,
   useDeleteReleaseContributorMutation,
   useUpdateReleaseContributorMutation,
 } from "@/state/api/apiMutationSlice";
@@ -11,6 +12,12 @@ export const useFetchReleaseContributors = () => {
     useLazyFetchReleaseContributorsQuery();
 
   return { fetchReleaseContributors, isFetching, data, isSuccess };
+};
+
+export const useCreateBulkReleaseContributors = () => {
+  const [createBulkReleaseContributors, meta] =
+    useCreateBulkReleaseContributorsMutation();
+  return { createBulkReleaseContributors, ...meta };
 };
 
 // CREATE RELEASE CONTRIBUTOR

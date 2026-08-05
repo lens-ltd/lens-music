@@ -5,6 +5,7 @@ import DashboardSection from "@/pages/dashboard/components/DashboardSection";
 import { useFetchTrackContributors } from "@/hooks/tracks/track-contributor.hooks";
 import { TrackContributor } from "@/types/models/track.types";
 import { capitalizeString } from "@/utils/strings.helper";
+import { getContributorCreditName } from "@/utils/contributorCredit.helper";
 
 interface TrackContributorsSummaryProps {
   trackId: string;
@@ -18,7 +19,7 @@ const columns: ColumnDef<TrackContributor, string>[] = [
       const contributor = row.original.contributor;
       return (
         <span className="text-[12px]">
-          {contributor?.displayName || contributor?.name || "—"}
+          {getContributorCreditName(contributor, row.original.role)}
         </span>
       );
     },

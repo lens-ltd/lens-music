@@ -24,6 +24,7 @@ import { CreateReleaseContributorDto } from "./dto/create-release-contributor.dt
 import { UpdateReleaseContributorDto } from "./dto/update-release-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { CatalogAccessService } from "../catalog-access/catalog-access.service";
+import { CreateBulkReleaseContributorsDto } from "./dto/create-bulk-release-contributors.dto";
 
 @Controller("release-contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -32,6 +33,24 @@ export class ReleaseContributorsController {
     private readonly releaseContributorsService: ReleaseContributorsService,
     private readonly catalogAccess: CatalogAccessService,
   ) {}
+
+  @Post("bulk")
+  @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_RELEASE)
+  async createBulk(
+    @Body() dto: CreateBulkReleaseContributorsDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteRelease(dto.releaseId, user);
+    const result = await this.releaseContributorsService.createBulk(
+      dto,
+      user.id,
+    );
+    return {
+      message: "Release contributor roles added successfully",
+      data: result,
+    };
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

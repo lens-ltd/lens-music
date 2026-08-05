@@ -24,6 +24,7 @@ import { CreateTrackContributorDto } from "./dto/create-track-contributor.dto";
 import { UpdateTrackContributorDto } from "./dto/update-track-contributor.dto";
 import { UUID } from "../../types/common.types";
 import { CatalogAccessService } from "../catalog-access/catalog-access.service";
+import { CreateBulkTrackContributorsDto } from "./dto/create-bulk-track-contributors.dto";
 
 @Controller("track-contributors")
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -32,6 +33,21 @@ export class TrackContributorsController {
     private readonly trackContributorsService: TrackContributorsService,
     private readonly catalogAccess: CatalogAccessService,
   ) {}
+
+  @Post("bulk")
+  @HttpCode(HttpStatus.CREATED)
+  @Permissions(PERMISSIONS.UPDATE_TRACK)
+  async createBulk(
+    @Body() dto: CreateBulkTrackContributorsDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    await this.catalogAccess.assertCanWriteTrack(dto.trackId, user);
+    const result = await this.trackContributorsService.createBulk(dto, user.id);
+    return {
+      message: "Track contributor roles added successfully",
+      data: result,
+    };
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

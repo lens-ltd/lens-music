@@ -1,6 +1,7 @@
 import { useLazyFetchTrackContributorsQuery } from "@/state/api/apiQuerySlice";
 import {
   useCreateTrackContributorMutation,
+  useCreateBulkTrackContributorsMutation,
   useDeleteTrackContributorMutation,
   useUpdateTrackContributorMutation,
 } from "@/state/api/apiMutationSlice";
@@ -11,6 +12,12 @@ export const useFetchTrackContributors = () => {
     useLazyFetchTrackContributorsQuery();
 
   return { fetchTrackContributors, isFetching, data, isSuccess };
+};
+
+export const useCreateBulkTrackContributors = () => {
+  const [createBulkTrackContributors, meta] =
+    useCreateBulkTrackContributorsMutation();
+  return { createBulkTrackContributors, ...meta };
 };
 
 // CREATE TRACK CONTRIBUTOR

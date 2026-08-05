@@ -11,6 +11,7 @@ import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { ellipsisHClassName } from "@/constants/input.constants";
+import { getContributorCreditName } from "@/utils/contributorCredit.helper";
 
 interface PreviewContributorsSectionProps {
   releaseId: string;
@@ -29,7 +30,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
         <span
           className={`text-[12px] ${isPrimaryArtist ? "font-medium text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/85"}`}
         >
-          {contributor?.displayName || contributor?.name || contributor?.email || "—"}
+          {getContributorCreditName(contributor, row.original.role)}
         </span>
       );
     },

@@ -496,6 +496,18 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      createBulkTrackContributors: builder.mutation({
+        query: (body: {
+          trackId: string;
+          contributorId: string;
+          roles: string[];
+        }) => ({
+          url: "/track-contributors/bulk",
+          method: "POST",
+          body,
+        }),
+      }),
+
       updateTrackContributor: builder.mutation({
         query: ({
           id,
@@ -525,6 +537,18 @@ export const apiMutationSlice = createApi({
           sequenceNumber?: number;
         }) => ({
           url: "/release-contributors",
+          method: "POST",
+          body,
+        }),
+      }),
+
+      createBulkReleaseContributors: builder.mutation({
+        query: (body: {
+          releaseId: string;
+          contributorId: string;
+          roles: string[];
+        }) => ({
+          url: "/release-contributors/bulk",
           method: "POST",
           body,
         }),
@@ -870,9 +894,11 @@ export const {
   useApproveReleaseMutation,
   useRejectReleaseMutation,
   useCreateTrackContributorMutation,
+  useCreateBulkTrackContributorsMutation,
   useUpdateTrackContributorMutation,
   useDeleteTrackContributorMutation,
   useCreateReleaseContributorMutation,
+  useCreateBulkReleaseContributorsMutation,
   useUpdateReleaseContributorMutation,
   useDeleteReleaseContributorMutation,
   useCreateReleaseDealMutation,
