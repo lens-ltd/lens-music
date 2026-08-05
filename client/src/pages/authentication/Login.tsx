@@ -140,7 +140,16 @@ const Login = () => {
 
           <div className="mt-5 text-center">
             <p className="text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
-              Lens Music is invite-only. Reach out to your admin if you need access.
+              Don&apos;t have an account?
+            </p>
+            <Link
+              to="/auth/signup"
+              className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+            >
+              Create account
+            </Link>
+            <p className="mt-3 text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
+              Need admin approval instead?
             </p>
             <Link
               to="/auth/request-invitation"

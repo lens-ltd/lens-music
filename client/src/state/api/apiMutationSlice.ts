@@ -45,6 +45,14 @@ export const apiMutationSlice = createApi({
         }),
       }),
 
+      register: builder.mutation({
+        query: ({ name, email, phoneNumber, password }) => ({
+          url: "/auth/register",
+          method: "POST",
+          body: { name, email, phoneNumber, password },
+        }),
+      }),
+
       createInvitation: builder.mutation({
         query: ({ email }) => ({
           url: "/auth/invitations",
@@ -815,6 +823,7 @@ export const apiMutationSlice = createApi({
 
 export const {
   useLoginMutation,
+  useRegisterMutation,
   useCreateInvitationMutation,
   useRequestInvitationMutation,
   useCreateBulkInvitationsMutation,

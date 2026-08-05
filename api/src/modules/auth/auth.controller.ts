@@ -26,6 +26,7 @@ import { CompleteUserInvitationDto } from './dto/complete-user-invitation.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
 import { RequestUserInvitationDto } from './dto/request-user-invitation.dto';
+import { RegisterDto } from './dto/register.dto';
 import { User } from '../../entities/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
@@ -41,6 +42,21 @@ export class AuthController {
 
     return {
       message: 'You have logged in successfully!',
+      data: { user: userWithoutPassword, accessToken },
+    };
+  }
+
+  @Post('register')
+  @HttpCode(HttpStatus.OK)
+  async register(@Body() dto: RegisterDto) {
+    const { error } = validateEmail(dto.email);
+    if (error) throw new BadRequestException(error.message);
+
+    const { user, accessToken } = await this.authService.register(dto);
+    const { ...userWithoutPassword } = user as unknown as User;
+
+    return {
+      message: 'Your account has been created successfully!',
       data: { user: userWithoutPassword, accessToken },
     };
   }

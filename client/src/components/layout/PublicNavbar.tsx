@@ -95,6 +95,15 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                 </Link>
               </li>
               <li>
+                <Button
+                  route="/auth/signup"
+                  primary
+                  className="px-4 py-2 text-[12px] tracking-[0.03em] font-normal"
+                >
+                  Create account
+                </Button>
+              </li>
+              <li>
                 <Link
                   to="/auth/request-invitation"
                   className="nav-link text-[color:var(--lens-ink)] opacity-70 hover:opacity-100 text-[12px] tracking-[0.05em]"
@@ -102,9 +111,6 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                 >
                   Request invite
                 </Link>
-              </li>
-              <li className="text-[11px] tracking-[0.14em] uppercase text-[color:var(--lens-ink)]/45">
-                Invite only
               </li>
             </ul>
 
@@ -164,6 +170,15 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                   ))}
                   <li className="pt-2 mt-1 border-t border-[color:var(--lens-sand)]">
                     <Button
+                      route="/auth/signup"
+                      primary
+                      className="w-full justify-start px-3 py-2 text-[12px] font-normal"
+                    >
+                      Create account
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
                       route="/auth/request-invitation"
                       styled={false}
                       className="w-full justify-start px-3 py-2 text-[12px] font-normal"
@@ -179,9 +194,6 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                     >
                       Sign in
                     </Button>
-                  </li>
-                  <li className="px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/45">
-                    Invite only
                   </li>
                 </ul>
               </div>

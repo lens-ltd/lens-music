@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { ReactElement } from "react";
 import Login from "./pages/authentication/Login";
+import SignUp from "./pages/authentication/SignUp";
 import RequestInvitation from "./pages/authentication/RequestInvitation";
 import CompleteInvitation from "./pages/authentication/CompleteInvitation";
 import ForgotPassword from "./pages/authentication/ForgotPassword";
@@ -240,6 +241,10 @@ const Router = () => {
 
         {/* AUTHENTICATION */}
         <Route path="/auth/login" element={<Login />} />
+        <Route
+          path="/auth/signup"
+          element={withSeo(<SignUp />, routeSeo.signup)}
+        />
         <Route
           path="/auth/request-invitation"
           element={withSeo(<RequestInvitation />, routeSeo.requestInvitation)}

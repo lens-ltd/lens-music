@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadGatewayException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
@@ -28,6 +28,8 @@ export type AuthResponseUser = Omit<User, 'password' | 'assignedRole'> & {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -87,6 +89,74 @@ export class AuthService {
 
   private getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
+  }
+
+  private async getGeneralUserRole(): Promise<Role> {
+    const generalRole = await this.dataSource.getRepository(Role).findOne({
+      where: { name: 'GENERAL_USER' },
+    });
+    if (!generalRole) {
+      throw new InternalServerErrorException('Default user role is not configured');
+    }
+    return generalRole;
+  }
+
+  private async createGeneralUser(
+    userRepository: Repository<User>,
+    {
+      email,
+      name,
+      phoneNumber,
+      password,
+      generalRole,
+    }: {
+      email: string;
+      name: string;
+      phoneNumber?: string;
+      password: string;
+      generalRole: Role;
+    },
+  ): Promise<User> {
+    const existingUser = await userRepository.findOne({
+      where: { email },
+    });
+    if (existingUser) {
+      throw new ConflictError('User already exists', { email }, 'AUTH SERVICE');
+    }
+
+    return userRepository.save(
+      userRepository.create({
+        email,
+        name: name.trim(),
+        phoneNumber: this.normalizeOptionalString(phoneNumber) ?? undefined,
+        password,
+        roleId: generalRole.id,
+      }),
+    );
+  }
+
+  private async buildAuthResponse(
+    user: User,
+  ): Promise<{ user: AuthResponseUser; accessToken: string }> {
+    const userWithRole =
+      (await this.loadUserWithRoleForAuth(user.email!)) ?? user;
+
+    return {
+      user: this.toPublicAuthUser(userWithRole),
+      accessToken: this.signToken(
+        user,
+        this.collectPermissionNames(userWithRole),
+        userWithRole.assignedRole?.name,
+      ),
+    };
+  }
+
+  private sendWelcomeEmailSafely(to: string, name: string): void {
+    void this.emailService.sendWelcomeEmail({ to, name }).catch((error) => {
+      this.logger.error(
+        `Failed to send welcome email to ${to}: ${this.getErrorMessage(error)}`,
+      );
+    });
   }
 
   private getInvitationExpiryDate(): Date {
@@ -190,6 +260,36 @@ export class AuthService {
     const publicUser = this.toPublicAuthUser(userExists);
     const accessToken = this.signToken(userExists, publicUser.permissions, publicUser.roleName);
     return { user: publicUser, accessToken };
+  }
+
+  async register({
+    email,
+    name,
+    phoneNumber,
+    password,
+  }: {
+    email: string;
+    name: string;
+    phoneNumber?: string;
+    password: string;
+  }): Promise<{ user: AuthResponseUser; accessToken: string }> {
+    this.validatePassword(password);
+
+    const normalizedEmail = this.normalizeEmail(email);
+    const generalRole = await this.getGeneralUserRole();
+    const hashedPassword = await hashPassword(password);
+
+    const user = await this.createGeneralUser(this.userRepository, {
+      email: normalizedEmail,
+      name,
+      phoneNumber,
+      password: hashedPassword,
+      generalRole,
+    });
+
+    this.sendWelcomeEmailSafely(normalizedEmail, name.trim());
+
+    return this.buildAuthResponse(user);
   }
 
   async createInvitation(email: string, createdById?: string) {
@@ -406,13 +506,7 @@ export class AuthService {
   }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     this.validatePassword(password);
 
-    const generalRole = await this.dataSource.getRepository(Role).findOne({
-      where: { name: 'GENERAL_USER' },
-    });
-    if (!generalRole) {
-      throw new InternalServerErrorException('Default user role is not configured');
-    }
-
+    const generalRole = await this.getGeneralUserRole();
     const hashedPassword = await hashPassword(password);
     const user = await this.dataSource.transaction(async (manager) => {
       const invitationRepository = manager.getRepository(UserInvitation);
@@ -433,26 +527,13 @@ export class AuthService {
         throw new ValidationError('This invitation is no longer valid', 'AUTH SERVICE');
       }
 
-      const existingUser = await userRepository.findOne({
-        where: { email: invitation.email },
+      const createdUser = await this.createGeneralUser(userRepository, {
+        email: invitation.email,
+        name,
+        phoneNumber,
+        password: hashedPassword,
+        generalRole,
       });
-      if (existingUser) {
-        throw new ConflictError(
-          'User already exists',
-          { email: invitation.email },
-          'AUTH SERVICE',
-        );
-      }
-
-      const createdUser = await userRepository.save(
-        userRepository.create({
-          email: invitation.email,
-          name: name.trim(),
-          phoneNumber: this.normalizeOptionalString(phoneNumber) ?? undefined,
-          password: hashedPassword,
-          roleId: generalRole.id,
-        }),
-      );
 
       invitation.status = InvitationStatus.COMPLETED;
       invitation.completedAt = new Date();
@@ -460,13 +541,9 @@ export class AuthService {
       return createdUser;
     });
 
-    const userWithRole =
-      (await this.loadUserWithRoleForAuth(user.email!)) ?? user;
+    this.sendWelcomeEmailSafely(user.email!, user.name);
 
-    return {
-      user: this.toPublicAuthUser(userWithRole),
-      accessToken: this.signToken(user, this.collectPermissionNames(userWithRole), userWithRole.assignedRole?.name),
-    };
+    return this.buildAuthResponse(user);
   }
 
   async updateProfile(

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { renderInvitationEmail } from './templates/invitation-email.template';
+import { renderWelcomeEmail } from './templates/welcome-email.template';
 import { renderPasswordResetEmail } from './templates/password-reset-email.template';
 import {
   renderReleaseReviewEmail,
@@ -54,6 +55,25 @@ export class EmailService {
       const errorText = await response.text();
       throw new Error(`Resend request failed: ${response.status} ${errorText}`);
     }
+  }
+
+  async sendWelcomeEmail({
+    to,
+    name,
+  }: {
+    to: string;
+    name: string;
+  }) {
+    return this.sendEmail({
+      to,
+      subject: 'Welcome to Lens Music',
+      html: renderWelcomeEmail({
+        name,
+        dashboardUrl: `${this.appUrl}/dashboard`,
+        logoUrl: this.logoUrl,
+        appUrl: this.appUrl,
+      }),
+    });
   }
 
   async sendInvitationEmail({
