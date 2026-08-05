@@ -11,6 +11,7 @@ import { useGetRelease } from "@/hooks/releases/release.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { UUID } from "@/types/common.types";
 import { capitalizeString } from "@/utils/strings.helper";
+import { getAdjacentWizardStepNames } from "@/utils/navigations.helper";
 import { useParams } from "react-router-dom";
 import ReleaseWizardOverview from "./wizard-steps/ReleaseWizardOverview";
 import ReleaseWizardUploadTracks from "./wizard-steps/ReleaseWizardUploadTracks";
@@ -131,12 +132,14 @@ const ReleaseWizardPage = () => {
   const stepContent = useMemo(() => {
     const stepName =
       activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName || "";
+    const { previousStepName, nextStepName } =
+      getAdjacentWizardStepNames(staticSteps, stepName);
 
     if (stepName === "OVERVIEW") {
       return (
         <ReleaseWizardOverview
-          nextStepName={"MANAGE_CONTRIBUTIONS"}
-          previousStepName={undefined}
+          nextStepName={nextStepName}
+          previousStepName={previousStepName}
           currentStepName="OVERVIEW"
         />
       );
@@ -144,8 +147,8 @@ const ReleaseWizardPage = () => {
     if (stepName === "MANAGE_CONTRIBUTIONS") {
       return (
         <ReleaseWizardManageContributions
-          nextStepName={"UPLOAD_TRACKS"}
-          previousStepName={"OVERVIEW"}
+          nextStepName={nextStepName}
+          previousStepName={previousStepName}
           currentStepName="MANAGE_CONTRIBUTIONS"
         />
       );
@@ -153,8 +156,8 @@ const ReleaseWizardPage = () => {
     if (stepName === "UPLOAD_TRACKS") {
       return (
         <ReleaseWizardUploadTracks
-          nextStepName={"REGIONS"}
-          previousStepName={"MANAGE_CONTRIBUTIONS"}
+          nextStepName={nextStepName}
+          previousStepName={previousStepName}
           currentStepName="UPLOAD_TRACKS"
         />
       );
@@ -162,8 +165,8 @@ const ReleaseWizardPage = () => {
     if (stepName === "REGIONS") {
       return (
         <ReleaseWizardRegions
-          nextStepName={"STORES"}
-          previousStepName={"UPLOAD_TRACKS"}
+          nextStepName={nextStepName}
+          previousStepName={previousStepName}
           currentStepName="REGIONS"
         />
       );
@@ -171,8 +174,8 @@ const ReleaseWizardPage = () => {
     if (stepName === "STORES") {
       return (
         <ReleaseWizardStores
-          nextStepName={"PREVIEW"}
-          previousStepName={"REGIONS"}
+          nextStepName={nextStepName}
+          previousStepName={previousStepName}
           currentStepName="STORES"
         />
       );
@@ -180,7 +183,7 @@ const ReleaseWizardPage = () => {
     if (stepName === "PREVIEW") {
       return (
         <ReleaseWizardPreview
-          previousStepName={"STORES"}
+          previousStepName={previousStepName}
           releaseIsFetching={releaseIsFetching}
           currentStepName="PREVIEW"
         />
@@ -188,28 +191,39 @@ const ReleaseWizardPage = () => {
     }
 
     return (
-      <article className="rounded-2xl border border-dashed border-primary/20 bg-gradient-to-br from-primary/[0.03] to-white p-6 sm:p-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-primary/70">
-          Coming Next
+      <article className="rounded-xl border border-dashed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 p-6 sm:p-8">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]/70">
+          Step unavailable
         </p>
-        <h2 className="mt-3 text-xl font-semibold text-gray-900">
+        <h2 className="mt-3 text-xl font-semibold text-[color:var(--lens-ink)]">
           {capitalizeString(stepName)}
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500">
-          This step is wired into the release wizard navigation and ready for
-          its dedicated form. The section shell, activation flow, and progress
-          state are in place so the content can drop in without changing the
-          wizard layout.
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--lens-ink)]/55">
+          This release step is not supported by this version of the workspace.
+          Return to the previous step to continue editing safely.
         </p>
+        {previousStepName ? (
+          <button
+            type="button"
+            className="mt-5 text-[12px] text-[color:var(--lens-blue)] underline-offset-4 hover:underline"
+            onClick={() => activateStep(previousStepName)}
+          >
+            Return to previous step
+          </button>
+        ) : null}
       </article>
     );
-  }, [activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName, releaseIsFetching]);
+  }, [
+    activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName,
+    activateStep,
+    releaseIsFetching,
+    staticSteps,
+  ]);
 
   return (
-    <UserLayout>
-      <main className="flex w-full flex-col gap-4">
+    <UserLayout variant="canvas">
+      <div className="flex w-full flex-col gap-5">
         <ReleaseProgressNavigation
-          releaseId={id}
           staticSteps={staticSteps}
           releaseNavigationFlows={releaseNavigationFlows}
           activeReleaseNavigationFlow={activeReleaseNavigationFlow}
@@ -226,7 +240,7 @@ const ReleaseWizardPage = () => {
         >
           {stepContent}
         </ReleaseNavigationPanel>
-      </main>
+      </div>
     </UserLayout>
   );
 };

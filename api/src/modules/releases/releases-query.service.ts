@@ -17,22 +17,45 @@ export class ReleaseQueryService {
     createdById,
     size,
     page,
+    status,
+    digitalReleaseDateFrom,
+    digitalReleaseDateTo,
   }: {
     createdById?: UUID;
     size?: number;
     page?: number;
+    status?: ReleaseStatus;
+    digitalReleaseDateFrom?: string;
+    digitalReleaseDateTo?: string;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
-    const releases = await this.releaseRepository.findAndCount({
-      where: createdById ? { createdById } : {},
-      order: { createdAt: 'DESC' },
-      take,
-      skip,
-      relations: {
-        createdBy: true,
-        genres: { genre: true },
-      }
-    });
+    const query = this.releaseRepository
+      .createQueryBuilder('release')
+      .leftJoinAndSelect('release.createdBy', 'createdBy')
+      .leftJoinAndSelect('release.genres', 'releaseGenre')
+      .leftJoinAndSelect('releaseGenre.genre', 'genre')
+      .orderBy('release.createdAt', 'DESC')
+      .take(take)
+      .skip(skip);
+
+    if (createdById) {
+      query.andWhere('release.createdById = :createdById', { createdById });
+    }
+    if (status) {
+      query.andWhere('release.status = :status', { status });
+    }
+    if (digitalReleaseDateFrom) {
+      query.andWhere('release.digitalReleaseDate >= :digitalReleaseDateFrom', {
+        digitalReleaseDateFrom,
+      });
+    }
+    if (digitalReleaseDateTo) {
+      query.andWhere('release.digitalReleaseDate <= :digitalReleaseDateTo', {
+        digitalReleaseDateTo,
+      });
+    }
+
+    const releases = await query.getManyAndCount();
 
     return getPagingData({ data: releases, size, page });
   }

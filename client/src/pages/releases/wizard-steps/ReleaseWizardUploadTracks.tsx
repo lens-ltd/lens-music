@@ -19,7 +19,7 @@ import SortableTrackItem from "@/components/tracks/SortableTrackItem";
 import { RelaxedHeading } from "@/components/text/Headings";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/modals/Modal";
-import { Track } from "@/types/models/track.types";
+import { Track, TrackStatus } from "@/types/models/track.types";
 import { ReleaseStatus } from "@/types/models/release.types";
 import { toast } from "sonner";
 import {
@@ -97,6 +97,10 @@ const ReleaseWizardUploadTracks = ({
     () => orderedTracks.map((track) => track.id),
     [orderedTracks],
   );
+  const hasTracks = orderedTracks.length > 0;
+  const allTracksValidated =
+    hasTracks &&
+    orderedTracks.every((track) => track.status === TrackStatus.VALIDATED);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -128,7 +132,7 @@ const ReleaseWizardUploadTracks = ({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[color:var(--color-background)]">
         <RelaxedHeading>Tracks List</RelaxedHeading>
         <Button
           primary
@@ -143,7 +147,7 @@ const ReleaseWizardUploadTracks = ({
         </Button>
       </header>
 
-      <article className="rounded-md bg-white py-4">
+      <article className="rounded-md bg-[color:var(--color-background)] py-4">
         {orderedTracks?.length || tracksIsFetching ? (
           tracksIsFetching && !orderedTracks.length ? (
             <ul
@@ -216,7 +220,18 @@ const ReleaseWizardUploadTracks = ({
         )}
       </article>
 
-      <footer className="w-full flex items-center gap-3 justify-between">
+      {!allTracksValidated ? (
+        <p
+          className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70"
+          role="status"
+        >
+          {hasTracks
+            ? "Finish and validate every track before continuing."
+            : "Add at least one track before continuing."}
+        </p>
+      ) : null}
+
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -236,7 +251,9 @@ const ReleaseWizardUploadTracks = ({
             createNavigationFlowIsLoading || completeNavigationFlowIsLoading
           }
           disabled={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+            !allTracksValidated ||
+            createNavigationFlowIsLoading ||
+            completeNavigationFlowIsLoading
           }
           onClick={async (e) => {
             e.preventDefault();
@@ -260,7 +277,7 @@ const ReleaseWizardUploadTracks = ({
       <Modal
         isOpen={Boolean(trackToDelete)}
         onClose={() => setTrackToDelete(undefined)}
-        headingClassName="text-red-700"
+        headingClassName="text-[color:var(--lens-ink)]"
         heading={`Delete ${trackToDelete?.title ?? "track"}`}
       >
         <article className="flex w-full flex-col gap-4">

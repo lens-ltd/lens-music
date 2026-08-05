@@ -284,14 +284,17 @@ const ReleaseWizardManageContributions = ({
 
   const releaseContributors = (releaseContributorsData?.data ??
     []) as ReleaseContributor[];
+  const hasPrimaryArtist = releaseContributors.some(
+    (contributor) => contributor.role === ContributorRole.PRIMARY_ARTIST,
+  );
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[color:var(--color-background)]">
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
-      <article className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+      <article className="rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] p-4">
         <header className="space-y-1">
           <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
             Contributors
@@ -334,7 +337,7 @@ const ReleaseWizardManageContributions = ({
                   prefixIcon={faSearch}
                 />
                 {contributorSearchTerm?.trim()?.length > 0 && (
-                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
+                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] shadow-sm">
                     {isSearchingContributors || isContributorSearchPending ? (
                       <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
                         <Loader
@@ -470,7 +473,7 @@ const ReleaseWizardManageContributions = ({
                         releaseContributor?.id ?? "",
                       );
                     }}
-                    className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer text-[12px] text-[color:var(--lens-ink)] transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 )}
               </li>
@@ -483,7 +486,16 @@ const ReleaseWizardManageContributions = ({
         </ul>
       </article>
 
-      <footer className="w-full flex items-center gap-3 justify-between">
+      {!hasPrimaryArtist ? (
+        <p
+          className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70"
+          role="status"
+        >
+          Add at least one primary artist before continuing.
+        </p>
+      ) : null}
+
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -503,7 +515,9 @@ const ReleaseWizardManageContributions = ({
             createNavigationFlowIsLoading || completeNavigationFlowIsLoading
           }
           disabled={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
+            !hasPrimaryArtist ||
+            createNavigationFlowIsLoading ||
+            completeNavigationFlowIsLoading
           }
           onClick={async (e) => {
             e.preventDefault();

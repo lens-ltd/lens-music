@@ -6,8 +6,9 @@ import {
   setCreateReleaseModal,
 } from '@/state/features/releaseSlice';
 import { AppDispatch, RootState } from '@/state/store';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useFetchReleases } from '@/hooks/releases/release.hooks';
@@ -16,25 +17,45 @@ import DeleteRelease from './DeleteRelease';
 const ReleasesPage = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { releasesList, deleteReleaseModal } = useSelector(
     (state: RootState) => state.release
   );
 
   // INITIALIZE FETCH RELEASES QUERY
   const { fetchReleases, isFetching, page, size, totalCount, totalPages, setPage, setSize } = useFetchReleases();
+  const filters = useMemo(
+    () => ({
+      status: searchParams.get('status') || undefined,
+      digitalReleaseDateFrom:
+        searchParams.get('digitalReleaseDateFrom') || undefined,
+      digitalReleaseDateTo:
+        searchParams.get('digitalReleaseDateTo') || undefined,
+    }),
+    [searchParams],
+  );
+  const hasFilters = Boolean(
+    filters.status ||
+      filters.digitalReleaseDateFrom ||
+      filters.digitalReleaseDateTo,
+  );
 
   // FETCH RELEASES
   useEffect(() => {
     if (!deleteReleaseModal) {
-      fetchReleases({ size, page });
+      fetchReleases({ size, page, ...filters });
     }
-  }, [fetchReleases, size, page, deleteReleaseModal]);
+  }, [fetchReleases, size, page, deleteReleaseModal, filters]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [filters, setPage]);
 
   const { releaseColumns } = useReleaseColumns();
 
   return (
     <UserLayout>
-      <main className="w-full flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-4">
         <nav className="w-full flex items-center gap-3 justify-between">
           <Heading>Releases</Heading>
           <Button
@@ -49,6 +70,26 @@ const ReleasesPage = () => {
             Add new release
           </Button>
         </nav>
+        {hasFilters ? (
+          <aside className="flex flex-col gap-3 rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[11px] text-[color:var(--lens-ink)]/65">
+              Showing a filtered catalog
+              {filters.status ? ` · ${filters.status.toLowerCase()}` : ''}
+              {filters.digitalReleaseDateFrom && filters.digitalReleaseDateTo
+                ? ` · ${filters.digitalReleaseDateFrom} to ${filters.digitalReleaseDateTo}`
+                : ''}
+            </p>
+            <Button
+              styled={false}
+              onClick={(event) => {
+                event.preventDefault();
+                setSearchParams({});
+              }}
+            >
+              Clear filters
+            </Button>
+          </aside>
+        ) : null}
         <section className="w-full flex flex-col gap-2">
           <Table
             columns={releaseColumns}
@@ -62,7 +103,7 @@ const ReleasesPage = () => {
             isLoading={isFetching}
           />
         </section>
-      </main>
+      </div>
       <DeleteRelease />
     </UserLayout>
   );

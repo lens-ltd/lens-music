@@ -346,7 +346,13 @@ const ReleaseWizardOverview = ({
         {/* COVER ART */}
         <menu className="w-full flex flex-col gap-3">
           <Heading type="h3">Cover Art</Heading>
-          <article className="w-full rounded-md border border-secondary/20 bg-white p-4 sm:p-5">
+          {!release?.coverArtUrl ? (
+            <p className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70">
+              Cover art is required before final validation. You can save the
+              overview now and add it before submitting.
+            </p>
+          ) : null}
+          <article className="w-full rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-4 sm:p-5">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
                 <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-md border border-secondary/20 bg-secondary/5">
@@ -736,7 +742,7 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="w-full flex items-center gap-3 justify-between">
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -793,7 +799,7 @@ const ReleaseWizardOverview = ({
               </p>
               <button
                 type="button"
-                className="inline-flex items-center justify-center text-red-700"
+                className="inline-flex items-center justify-center text-[color:var(--lens-ink)]"
                 onClick={() => {
                   setSelectedCoverArt(undefined);
                   setCoverArtError(undefined);
@@ -806,7 +812,7 @@ const ReleaseWizardOverview = ({
           )}
 
           {coverArtError && (
-            <p className="text-[12px] text-red-600">{coverArtError}</p>
+            <p className="text-[12px] text-[color:var(--lens-ink)]">{coverArtError}</p>
           )}
 
           <menu className="flex items-center justify-between gap-3">

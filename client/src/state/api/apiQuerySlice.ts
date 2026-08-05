@@ -132,13 +132,22 @@ export const apiQuerySlice = createApi({
 
       // FETCH RELEASES
       fetchReleases: builder.query({
-        query: ({ size, page }) => {
+        query: ({
+          size,
+          page,
+          status,
+          digitalReleaseDateFrom,
+          digitalReleaseDateTo,
+        }) => {
           return {
             url: "/releases",
             method: "GET",
             params: {
               size,
               page,
+              status,
+              digitalReleaseDateFrom,
+              digitalReleaseDateTo,
             },
           };
         },

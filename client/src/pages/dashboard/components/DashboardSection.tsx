@@ -13,6 +13,7 @@ interface DashboardSectionProps {
   headerClassName?: string;
   bodyClassName?: string;
   overflowHidden?: boolean;
+  variant?: 'panel' | 'open';
 }
 
 const DashboardSection = ({
@@ -26,13 +27,16 @@ const DashboardSection = ({
   headerClassName,
   bodyClassName,
   overflowHidden = false,
+  variant = 'panel',
 }: DashboardSectionProps) => {
   const hasHeader = Boolean(title || subtitle || label || action);
 
   return (
     <section
       className={cn(
-        'flex flex-col rounded-xl border border-[color:var(--lens-sand)] bg-white',
+        variant === 'panel'
+          ? 'flex flex-col rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)]'
+          : 'flex flex-col border-t border-[color:var(--lens-sand)] pt-1',
         overflowHidden && 'overflow-hidden',
         contentClassName,
         className

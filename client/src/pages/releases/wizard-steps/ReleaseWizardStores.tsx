@@ -204,13 +204,13 @@ const ReleaseWizardStores = ({
   return (
     <section className="w-full flex flex-col gap-4">
       <header>
-        <h2 className="text-xl font-semibold text-gray-900">Stores</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+        <h2 className="text-xl font-semibold text-[color:var(--lens-ink)]">Stores</h2>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-[color:var(--lens-ink)]/55">
           Select the stores where this release should be delivered.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-gray-200/70 pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-[color:var(--lens-sand)] pb-4">
         {navButtons}
       </menu>
 
@@ -218,7 +218,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-[color:var(--color-background)] p-3 shadow-sm transition-colors hover:bg-secondary/5"
           >
             <UiInput
               type="checkbox"
@@ -269,7 +269,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+                className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-[color:var(--color-background)] p-3 shadow-sm transition-colors hover:bg-secondary/5"
               >
                 <UiInput
                   type="checkbox"
@@ -306,12 +306,12 @@ const ReleaseWizardStores = ({
       )}
 
       {storesError ? (
-        <p className="text-[11px] text-red-600">{storesError}</p>
+        <p className="text-[11px] text-[color:var(--lens-ink)]">{storesError}</p>
       ) : null}
 
       <ReleaseWizardDealsSection />
 
-      <footer className="w-full flex items-center justify-between gap-3">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
         {navButtons}
       </footer>
     </section>

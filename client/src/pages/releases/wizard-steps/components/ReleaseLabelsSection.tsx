@@ -236,7 +236,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-white p-4 sm:p-5">
+      <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] p-4 sm:p-5">
         <header className="mb-4 space-y-1">
           <h3 className="text-sm font-medium text-[color:var(--lens-ink)]">
             Release labels
@@ -262,7 +262,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                 prefixIcon={faSearch}
               />
               {labelSearchTerm?.trim()?.length > 0 && (
-                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
+                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] shadow-sm">
                   {isLabelSearchPending || isSearchingLabels ? (
                     <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
                       <Loader
@@ -388,7 +388,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                       type="button"
                       onClick={() => void handleDelete(releaseLabel.id)}
                       disabled={isDeleting}
-                      className="text-[11px] text-red-700 hover:underline"
+                      className="text-[11px] text-[color:var(--lens-ink)] hover:underline"
                     >
                       Remove
                     </button>

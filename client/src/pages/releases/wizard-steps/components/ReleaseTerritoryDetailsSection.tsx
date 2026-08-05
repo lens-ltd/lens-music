@@ -164,7 +164,7 @@ const ReleaseTerritoryDetailsSection = ({
   }
 
   return (
-    <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-white p-4 sm:p-5">
+    <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] p-4 sm:p-5">
       <header className="mb-4 space-y-1">
         <h3 className="text-sm font-medium text-[color:var(--lens-ink)]">
           Territory-specific metadata

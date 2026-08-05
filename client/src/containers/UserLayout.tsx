@@ -4,13 +4,14 @@ import Sidebar from './Sidebar';
 
 interface UserLayoutProps {
   children: React.ReactNode;
+  variant?: 'card' | 'canvas';
 }
 
-const UserLayout = ({ children }: UserLayoutProps) => {
+const UserLayout = ({ children, variant = 'card' }: UserLayoutProps) => {
   const { isOpen } = useAppSelector((state) => state.sidebar);
 
   return (
-    <section className="h-screen w-full overflow-x-hidden bg-gray-50">
+    <section className="min-h-screen w-full overflow-x-hidden bg-[color:var(--color-background)]">
       <Navbar />
       <Sidebar />
       <main
@@ -20,7 +21,13 @@ const UserLayout = ({ children }: UserLayoutProps) => {
             : 'ml-[60px] lg:ml-[80px]'
         }`}
       >
-        <article className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 bg-white rounded-md shadow-sm">
+        <article
+          className={`mx-auto w-full max-w-[1200px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 ${
+            variant === 'card'
+              ? 'rounded-md bg-white shadow-sm'
+              : 'bg-transparent'
+          }`}
+        >
           {children}
         </article>
       </main>

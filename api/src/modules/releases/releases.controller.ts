@@ -27,6 +27,7 @@ import { CreateReleaseDto } from "./dto/create-release.dto";
 import { UpdateReleaseOverviewDto } from "./dto/update-release-overview.dto";
 import { UpdateReleaseTerritoriesDto } from "./dto/update-release-territories.dto";
 import { RejectReleaseDto } from "./dto/reject-release.dto";
+import { ListReleasesQueryDto } from "./dto/list-releases-query.dto";
 import { ReleaseStatus } from "../../constants/release.constants";
 import { ReleaseService } from "./releases.service";
 import { ReleaseQueryService } from "./releases-query.service";
@@ -181,17 +182,18 @@ export class ReleasesController {
   @Permissions(PERMISSIONS.READ_RELEASE)
   async fetchAllReleases(
     @CurrentUser() user: AuthUser,
-    @Query("createdById") createdById?: string,
-    @Query("size") size = "10",
-    @Query("page") page = "0",
+    @Query() query: ListReleasesQueryDto,
   ) {
     const canReadAcrossAccounts =
       this.catalogAccess.canManageAllReleases(user) ||
       this.catalogAccess.canReviewReleases(user);
     const releases = await this.releaseQueryService.fetchAllReleases({
-      createdById: canReadAcrossAccounts ? createdById : user.id,
-      size: Number(size),
-      page: Number(page),
+      createdById: canReadAcrossAccounts ? query.createdById : user.id,
+      size: query.size,
+      page: query.page,
+      status: query.status,
+      digitalReleaseDateFrom: query.digitalReleaseDateFrom,
+      digitalReleaseDateTo: query.digitalReleaseDateTo,
     });
     return { message: "Releases fetched successfully", data: releases };
   }

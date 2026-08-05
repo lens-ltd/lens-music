@@ -176,14 +176,14 @@ const ReleaseWizardRegions = ({
   return (
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-gray-900">Delivery regions</h2>
-        <p className="text-sm leading-6 text-gray-500">
+        <h2 className="text-xl font-semibold text-[color:var(--lens-ink)]">Delivery regions</h2>
+        <p className="text-sm leading-6 text-[color:var(--lens-ink)]/55">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-gray-200/70 pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-[color:var(--lens-sand)] pb-4">
         {navButtons}
       </menu>
 
@@ -220,7 +220,7 @@ const ReleaseWizardRegions = ({
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (
-          <p className="col-span-full text-[12px] text-gray-500">
+          <p className="col-span-full text-[12px] text-[color:var(--lens-ink)]/55">
             No countries match &ldquo;{countrySearchQuery.trim()}&rdquo;.
           </p>
         ) : null}
@@ -253,15 +253,15 @@ const ReleaseWizardRegions = ({
         selectedTerritories={selectedTerritories}
       />
 
-      <footer className="mt-2 flex flex-col gap-3">
-        <p className="text-xs text-gray-500">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-[color:var(--lens-sand)] bg-[color:var(--color-background)]/95 py-4">
+        <p className="text-xs text-[color:var(--lens-ink)]/55">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"
             : `${selectedTerritories.length} of ${COUNTRIES_LIST.length} countries selected`}
         </p>
 
         {territoriesError ? (
-          <p className="text-xs text-red-600">{territoriesError}</p>
+          <p className="text-xs text-[color:var(--lens-ink)]">{territoriesError}</p>
         ) : null}
 
         <menu className="w-full flex items-center justify-between gap-3">

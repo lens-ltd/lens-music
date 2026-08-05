@@ -265,7 +265,7 @@ const ReleaseWizardDealsSection = () => {
   };
 
   return (
-    <section className="mt-8 rounded-xl border border-[color:var(--lens-sand)]/70 bg-white p-4 sm:p-5">
+    <section className="mt-8 rounded-xl border border-[color:var(--lens-sand)]/70 bg-[color:var(--color-background)] p-4 sm:p-5">
       <header className="mb-4 space-y-1">
         <h3 className="text-sm font-medium text-[color:var(--lens-ink)]">
           Commercial deals (DDEX)
@@ -384,7 +384,7 @@ const ReleaseWizardDealsSection = () => {
                     type="button"
                     onClick={() => void handleDelete(deal.id)}
                     disabled={isDeleting}
-                    className="text-[11px] text-red-700 hover:underline"
+                    className="text-[11px] text-[color:var(--lens-ink)] hover:underline"
                   >
                     Remove
                   </button>
