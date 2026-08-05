@@ -24,8 +24,8 @@ const UserLayout = ({ children, variant = 'card' }: UserLayoutProps) => {
         <article
           className={`mx-auto w-full max-w-[1200px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 ${
             variant === 'card'
-              ? 'rounded-md bg-[color:var(--color-background)] shadow-sm'
-              : 'bg-transparent'
+              ? 'rounded-md bg-white shadow-sm'
+              : 'rounded-xl bg-white'
           }`}
         >
           {children}
