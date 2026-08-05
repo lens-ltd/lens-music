@@ -124,11 +124,6 @@ const ReleaseWizardPage = () => {
     [id, createReleaseNavigationFlow],
   );
 
-  // NOTE: the linear Next/Back order below is hardcoded and must be kept in
-  // sync with the seeded static-navigation catalog
-  // (api/src/constants/static-release-navigation.constants.ts), which drives the
-  // tab bar ordering. Renaming/reordering steps in one place without the other
-  // will desync the tab bar from this flow.
   const stepContent = useMemo(() => {
     const stepName =
       activeReleaseNavigationFlow?.staticReleaseNavigation?.stepName || "";

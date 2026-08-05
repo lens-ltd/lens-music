@@ -486,9 +486,12 @@ const onboardingSteps = [
   ['03', 'Review and submit', 'Validate everything, then send it for distribution.'],
 ] as const;
 
-const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void }) => (
+const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void }) => {
+  const reduceMotion = useReducedMotion();
+
+  return (
   <motion.section
-    initial={{ opacity: 0, y: 14 }}
+    initial={reduceMotion ? false : { opacity: 0, y: 14 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, ease: 'easeOut' }}
     className="grid min-h-[560px] overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] lg:grid-cols-[1.1fr_0.9fr]"
@@ -526,7 +529,8 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
       </ol>
     </div>
   </motion.section>
-);
+  );
+};
 
 const DashboardError = ({
   onRetry,
@@ -577,7 +581,7 @@ const DashboardSkeleton = () => (
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="min-h-[120px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5"
+          className="min-h-[120px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5"
         >
           <SkeletonLoader type="text" width="6rem" height="1rem" />
           <div className="mt-4">
@@ -586,14 +590,14 @@ const DashboardSkeleton = () => (
         </div>
       ))}
     </div>
-    <div className="h-[150px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+    <div className="h-[150px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
       <SkeletonLoader type="text" width="10rem" height="1rem" />
     </div>
     <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
         <SkeletonLoader type="text" width="10rem" height="1rem" />
       </div>
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--color-background)] p-5">
         <SkeletonLoader type="text" width="8rem" height="1rem" />
       </div>
     </div>
