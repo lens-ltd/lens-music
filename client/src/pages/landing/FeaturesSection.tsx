@@ -20,7 +20,7 @@ export default function FeaturesSection() {
             <h2 id="features-heading" className="mt-4 type-h2">
               Distribution tools with reporting that stays readable.
             </h2>
-            <p className="mt-4 type-body text-(--muted) max-w-[46ch]">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens is designed for artists, managers, labels, and small teams that need reliable delivery plus practical revenue visibility.
             </p>
           </header>
@@ -33,7 +33,7 @@ export default function FeaturesSection() {
                 style={fadeUp(inView, 0.05 * index)}
               >
                 <h3 className="type-label">{title}</h3>
-                <p className="mt-3 type-body-sm text-(--muted)">{text}</p>
+                <p className="mt-3 type-body-sm text-(--slate)">{text}</p>
               </article>
             ))}
           </section>

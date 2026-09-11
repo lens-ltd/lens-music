@@ -68,7 +68,7 @@ const UserProfilePage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Profile</Heading>
-            <p className="text-[13px] text-(--muted) font-normal mt-1">
+            <p className="text-[13px] text-(--slate) font-normal mt-1">
               Manage your account information and preferences.
             </p>
           </div>
@@ -94,7 +94,7 @@ const UserProfilePage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user?.name || 'User'}
               </h2>
-              <p className="text-[13px] text-(--muted) mt-1">
+              <p className="text-[13px] text-(--slate) mt-1">
                 {user?.email || 'No email provided'}
               </p>
               <div className="flex items-center gap-2 mt-2">
@@ -123,7 +123,7 @@ const UserProfilePage = () => {
             {isEditing ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Full name
                   </label>
                   <Input
@@ -134,7 +134,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Email address
                   </label>
                   <Input
@@ -147,7 +147,7 @@ const UserProfilePage = () => {
 
                 {emailChanged && (
                   <div className="flex flex-col gap-2">
-                    <label className="text-[11px] uppercase tracking-wide text-(--muted)">
+                    <label className="text-[11px] uppercase tracking-wide text-(--slate)">
                       Current password
                     </label>
                     <Input
@@ -156,14 +156,14 @@ const UserProfilePage = () => {
                       placeholder="Confirm your current password"
                       type="password"
                     />
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-[11px] text-(--slate)">
                       Required because you are changing your login email.
                     </p>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Phone number
                   </label>
                   <Input
@@ -174,7 +174,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Country
                   </label>
                   <Input
@@ -197,10 +197,10 @@ const UserProfilePage = () => {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                    <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--muted)" />
+                    <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                       Full name
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -211,10 +211,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                    <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-(--muted)" />
+                    <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                       Email address
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -225,10 +225,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                    <FontAwesomeIcon icon={faPhone} className="text-[12px] text-(--muted)" />
+                    <FontAwesomeIcon icon={faPhone} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                       Phone number
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -239,10 +239,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                    <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-(--muted)" />
+                    <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                       Country
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -254,10 +254,10 @@ const UserProfilePage = () => {
                 {user?.dateOfBirth && (
                   <div className="flex items-start gap-3 rounded-md bg-white p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                      <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-(--muted)" />
+                      <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-(--slate)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                      <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                         Date of birth
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">
@@ -270,10 +270,10 @@ const UserProfilePage = () => {
                 {user?.gender && (
                   <div className="flex items-start gap-3 rounded-md bg-white p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
-                      <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--muted)" />
+                      <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                      <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                         Gender
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">

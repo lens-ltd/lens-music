@@ -163,7 +163,7 @@ const ReleaseWizardUploadTracks = ({
           ) : (
             <>
               {orderedTracks.length > 1 && (
-                <p className="mb-2 px-1 text-[11px] text-(--muted)">
+                <p className="mb-2 px-1 text-[11px] text-(--slate)">
                   Drag the handle to reorder tracks.
                 </p>
               )}
@@ -202,7 +202,7 @@ const ReleaseWizardUploadTracks = ({
           )
         ) : (
           <section className="rounded-xl border border-dashed border-(--line) bg-(--surface) p-5 text-center">
-            <p className="text-[12px] text-(--muted) font-normal">
+            <p className="text-[12px] text-(--slate) font-normal">
               No tracks yet.
             </p>
             <Button

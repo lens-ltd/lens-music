@@ -44,7 +44,7 @@ const TrackAudioPanel = ({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-normal text-(--ink)">Audio</h2>
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[12px] text-(--slate)">
               Uploading a new file makes it the primary audio.
             </p>
           </div>
@@ -61,7 +61,7 @@ const TrackAudioPanel = ({
 
       <dl className="mt-3 grid gap-2 rounded-md bg-(--surface) p-3">
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
             Duration
           </dt>
           <dd className="text-[12px] text-(--ink)">
@@ -69,7 +69,7 @@ const TrackAudioPanel = ({
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
             Status
           </dt>
           <dd className="text-[12px] text-(--ink)">
@@ -94,7 +94,7 @@ const TrackAudioPanel = ({
           fileName={uploadFileName}
         />
         {isDeletingAudio && (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[12px] text-(--slate)">
             Updating audio...
           </p>
         )}
@@ -112,7 +112,7 @@ const TrackAudioPanel = ({
                   <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
@@ -144,7 +144,7 @@ const TrackAudioPanel = ({
             </li>
           ))
         ) : (
-          <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--muted)">
+          <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
             No audio uploaded yet.
           </li>
         )}

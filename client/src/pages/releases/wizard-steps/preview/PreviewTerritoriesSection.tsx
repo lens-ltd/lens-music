@@ -52,7 +52,7 @@ const PreviewTerritoriesSection = ({
             )}
           </section>
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             No territories selected.
           </p>
         )}

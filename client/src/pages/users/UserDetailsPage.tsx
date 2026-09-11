@@ -94,7 +94,7 @@ const UserDetailsPage = () => {
             <Button route="/users">Back to users</Button>
           </nav>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
-            <p className="text-[13px] text-(--muted)">{message}</p>
+            <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
         </main>
       </UserLayout>
@@ -110,7 +110,7 @@ const UserDetailsPage = () => {
             <Button route="/users">Back to users</Button>
           </nav>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
-            <p className="text-[13px] text-(--muted)">
+            <p className="text-[13px] text-(--slate)">
               User not found.
             </p>
           </section>
@@ -125,7 +125,7 @@ const UserDetailsPage = () => {
         <nav className="flex w-full items-center justify-between gap-3">
           <div>
             <Heading>User Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-(--muted)">
+            <p className="mt-1 text-[13px] font-normal text-(--slate)">
               Review identity, account status, and access context.
             </p>
           </div>
@@ -148,7 +148,7 @@ const UserDetailsPage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user.name || "Unnamed user"}
               </h2>
-              <p className="mt-1 truncate text-[13px] text-(--muted)">
+              <p className="mt-1 truncate text-[13px] text-(--slate)">
                 {user.email || "No email provided"}
               </p>
             </div>
@@ -166,7 +166,7 @@ const UserDetailsPage = () => {
                 <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--lens-blue-soft) text-(--lens-blue)">
                   <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
                 </span>
-                <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   {item.label}
                 </p>
                 <p className="min-w-0 truncate text-[13px] text-(--ink)">
@@ -189,7 +189,7 @@ const UserDetailsPage = () => {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Role
                   </p>
                   <p className="mt-1 flex items-center gap-2 text-[13px] text-(--ink)">
@@ -210,7 +210,7 @@ const UserDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Permissions
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -234,7 +234,7 @@ const UserDetailsPage = () => {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Labels
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -242,7 +242,7 @@ const UserDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Releases
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -255,7 +255,7 @@ const UserDetailsPage = () => {
 
           <div className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                 Created
               </p>
               <p className="mt-1 text-[13px] text-(--ink)">
@@ -263,7 +263,7 @@ const UserDetailsPage = () => {
               </p>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                 Last updated
               </p>
               <p className="mt-1 text-[13px] text-(--ink)">

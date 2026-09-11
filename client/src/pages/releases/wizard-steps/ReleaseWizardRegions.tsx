@@ -177,7 +177,7 @@ const ReleaseWizardRegions = ({
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
         <h2 className="text-xl font-semibold text-(--ink)">Delivery regions</h2>
-        <p className="text-sm leading-6 text-(--muted)">
+        <p className="text-sm leading-6 text-(--slate)">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
         </p>
@@ -220,7 +220,7 @@ const ReleaseWizardRegions = ({
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (
-          <p className="col-span-full text-[12px] text-(--muted)">
+          <p className="col-span-full text-[12px] text-(--slate)">
             No countries match &ldquo;{countrySearchQuery.trim()}&rdquo;.
           </p>
         ) : null}
@@ -254,7 +254,7 @@ const ReleaseWizardRegions = ({
       />
 
       <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-(--line) bg-white/95 py-4">
-        <p className="text-xs text-(--muted)">
+        <p className="text-xs text-(--slate)">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"
             : `${selectedTerritories.length} of ${COUNTRIES_LIST.length} countries selected`}

@@ -45,7 +45,7 @@ const SyncLyricsSidebar = ({
           <h2 className="text-sm font-normal text-(--ink)">
             Record selection
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Multiple lyrics records can exist per track. Saving overwrites the
             currently selected record.
           </p>
@@ -95,7 +95,7 @@ const SyncLyricsSidebar = ({
           <h2 className="text-sm font-normal text-(--ink)">
             Lyrics editor
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Update the plain lyric lines here before syncing timestamps.
           </p>
         </header>
@@ -109,7 +109,7 @@ const SyncLyricsSidebar = ({
           placeholder="Enter one lyric line per row"
         />
 
-        <p className="mt-3 text-[12px] text-(--muted)">
+        <p className="mt-3 text-[12px] text-(--slate)">
           {syncState.length} editor line{syncState.length === 1 ? "" : "s"} ready
           for syncing.
         </p>

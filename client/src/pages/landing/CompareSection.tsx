@@ -36,7 +36,7 @@ export default function CompareSection() {
                   <tr key={row[0]} className={i % 2 === 0 ? '' : 'bg-(--surface-sunken)'}>
                     <td className="px-5 py-4 type-body-sm">{row[0]}</td>
                     <td className="px-5 py-4 type-body-sm">{row[1]}</td>
-                    <td className="px-5 py-4 type-body-sm text-(--muted)">{row[2]}</td>
+                    <td className="px-5 py-4 type-body-sm text-(--slate)">{row[2]}</td>
                   </tr>
                 ))}
               </tbody>

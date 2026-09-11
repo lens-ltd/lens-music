@@ -36,7 +36,7 @@ const LyricsGuidelines = () => {
             </h3>
           ),
           p: ({ children }) => (
-            <p className="mb-2 text-[12px] leading-relaxed text-(--muted)">
+            <p className="mb-2 text-[12px] leading-relaxed text-(--slate)">
               {children}
             </p>
           ),
@@ -46,7 +46,7 @@ const LyricsGuidelines = () => {
             </ul>
           ),
           li: ({ children }) => (
-            <li className="text-[12px] leading-relaxed text-(--muted)">
+            <li className="text-[12px] leading-relaxed text-(--slate)">
               {children}
             </li>
           ),

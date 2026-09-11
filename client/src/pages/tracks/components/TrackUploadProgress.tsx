@@ -44,7 +44,7 @@ const TrackUploadProgress = ({
       </figcaption>
 
       {phase === "registering" && !isComplete ? (
-        <p className="mt-2 text-[11px] text-(--muted)">
+        <p className="mt-2 text-[11px] text-(--slate)">
           Saving file details…
         </p>
       ) : null}

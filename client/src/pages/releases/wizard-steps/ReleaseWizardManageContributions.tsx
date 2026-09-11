@@ -298,11 +298,11 @@ const ReleaseWizardManageContributions = ({
           <h2 className="text-sm font-normal text-(--ink)">
             Contributors
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Select a contributor once, then add every role they have on this
             release.
           </p>
-          <p className="text-[12px] text-(--muted) mt-2">
+          <p className="text-[12px] text-(--slate) mt-2">
             Can't find the contributor you're looking for?{" "}
             <a
               href={`/contributors/create?redirect=CLOSE_TAB`}
@@ -339,16 +339,16 @@ const ReleaseWizardManageContributions = ({
                 {contributorSearchTerm?.trim()?.length > 0 && (
                   <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
                     {isSearchingContributors || isContributorSearchPending ? (
-                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
                         <Loader
                           size="small"
-                          className="text-(--muted)"
+                          className="text-(--slate)"
                         />
                         Searching contributors...
                       </span>
                     ) : contributorSearchTerm?.trim()?.length <
                       MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                      <p className="px-3 py-2 text-[12px] text-(--muted)">
+                      <p className="px-3 py-2 text-[12px] text-(--slate)">
                         Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters
                         to search.
                       </p>
@@ -370,7 +370,7 @@ const ReleaseWizardManageContributions = ({
                                   <span className="text-[12px] text-(--ink)">
                                     {getContributorSearchName(contributor)}
                                   </span>
-                                  <span className="text-[11px] text-(--muted)">
+                                  <span className="text-[11px] text-(--slate)">
                                     {[
                                       contributor?.email,
                                       contributor?.phoneNumber,
@@ -390,7 +390,7 @@ const ReleaseWizardManageContributions = ({
                       </ul>
                     ) : (
                       !(isSearchingContributors || selectedContributorId) && (
-                        <p className="px-3 py-2 text-[12px] text-(--muted)">
+                        <p className="px-3 py-2 text-[12px] text-(--slate)">
                           No contributors found.
                         </p>
                       )
@@ -438,7 +438,7 @@ const ReleaseWizardManageContributions = ({
                       releaseContributor.role,
                     )}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {toTitleCase(releaseContributor?.role)}
                   </p>
                   <label className="mt-1 flex items-center gap-2 text-[11px] text-(--ink)/70">
@@ -478,7 +478,7 @@ const ReleaseWizardManageContributions = ({
               </li>
             ))
           ) : (
-            <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--muted)">
+            <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
               No contributors added yet.
             </li>
           )}

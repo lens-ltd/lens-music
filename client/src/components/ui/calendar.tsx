@@ -22,15 +22,15 @@ function Calendar({
         caption_label: "text-sm font-medium",
         nav: "flex items-center gap-1",
         nav_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+          buttonVariants({ variant: "ghost" }),
+          "size-7 bg-transparent p-0 opacity-70 hover:opacity-100"
         ),
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-x-1",
         head_row: "flex",
         head_cell:
-          "text-(--muted) rounded-(--radius-control) w-8 font-normal type-meta",
+          "text-(--slate) rounded-(--radius-control) w-8 font-normal type-meta",
         row: "flex w-full mt-2",
         cell: cn(
           "relative p-0 text-center type-body-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-(--lens-blue-soft) [&:has([aria-selected].day-range-end)]:rounded-r-md",
@@ -50,7 +50,7 @@ function Calendar({
           "bg-(--lens-blue) text-(--lens-blue-ink) hover:bg-(--lens-blue-hover) hover:text-(--lens-blue-ink) focus:bg-(--lens-blue) focus:text-(--lens-blue-ink)",
         day_today: "bg-(--lens-blue-soft) text-(--ink)",
         day_outside:
-          "day-outside text-(--muted) aria-selected:text-(--muted)",
+          "day-outside text-(--placeholder) aria-selected:text-(--placeholder)",
         day_disabled: "text-(--disabled-fg) opacity-50",
         day_range_middle:
           "aria-selected:bg-(--lens-blue-soft) aria-selected:text-(--ink)",

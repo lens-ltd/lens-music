@@ -24,11 +24,11 @@ const SyncLyricsAudioPanel = ({
           <h2 className="text-sm font-normal text-(--ink)">
             Audio reference
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Primary uploaded audio · {primaryAudio.fileType}
           </p>
         </div>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           Use the native audio controls to play and pause the track.
         </p>
       </header>
@@ -43,7 +43,7 @@ const SyncLyricsAudioPanel = ({
 
       <dl className="mt-4 grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-3">
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
             Current time
           </dt>
           <dd className="text-sm text-(--ink)">
@@ -51,7 +51,7 @@ const SyncLyricsAudioPanel = ({
           </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
             Active line
           </dt>
           <dd className="text-sm text-(--ink)">
@@ -59,7 +59,7 @@ const SyncLyricsAudioPanel = ({
           </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
             Synced lines
           </dt>
           <dd className="text-sm text-(--ink)">

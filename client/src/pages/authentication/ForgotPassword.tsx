@@ -34,20 +34,20 @@ const ForgotPassword = () => {
   }, [requestState.data?.message, requestState.error, requestState.isError, requestState.isSuccess, reset]);
 
   return (
-    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--field) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-md card-framed p-8 md:p-10">
+        <article className="w-full max-w-[400px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
           <p className="type-eyebrow">Account security</p>
-          <h1 className="mt-4 type-h2 text-(--ink)" >
+          <h1 className="mt-3 text-[1.65rem] font-medium text-(--ink)" >
             Reset your password
           </h1>
-          <p className="mt-3 type-body-sm text-(--muted)">
+          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
             Enter your email address and we&apos;ll send you a secure password reset link if an account exists.
           </p>
 
-          <form className="mt-7 flex flex-col gap-5" onSubmit={handleSubmit((data) => requestReset(data))}>
+          <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit((data) => requestReset(data))}>
             <Controller
               control={control}
               name="email"
@@ -68,9 +68,9 @@ const ForgotPassword = () => {
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-[12px] text-(--muted) font-normal">
+          <p className="mt-5 text-center text-[12px] text-(--slate) font-normal">
             Remembered your password?{' '}
-            <Link to="/auth/login" className="link-sweep type-body-sm text-(--lens-blue)">
+            <Link to="/auth/login" className="link-sweep type-body-sm text-(--signal)">
               Return to sign in
             </Link>
           </p>

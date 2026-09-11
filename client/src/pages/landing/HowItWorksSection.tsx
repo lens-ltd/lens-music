@@ -29,7 +29,7 @@ export default function HowItWorksSection() {
             <h2 id="how-it-works-heading" className="mt-4 type-h2">
               A clear release workflow from upload to payout.
             </h2>
-            <p className="mt-4 type-body text-(--muted) max-w-[46ch]">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens keeps the release process simple and gives you the revenue reporting needed to make decisions after launch.
             </p>
           </header>
@@ -40,7 +40,7 @@ export default function HowItWorksSection() {
                 <article className="h-full card-framed p-6">
                   <p className="type-eyebrow tabular">{item.step}</p>
                   <h3 className="mt-4 type-h3">{item.title}</h3>
-                  <p className="mt-3 type-body-sm text-(--muted)">{item.text}</p>
+                  <p className="mt-3 type-body-sm text-(--slate)">{item.text}</p>
                 </article>
               </li>
             ))}

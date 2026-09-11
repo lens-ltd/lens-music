@@ -205,7 +205,7 @@ const ReleaseWizardStores = ({
     <section className="w-full flex flex-col gap-4">
       <header>
         <h2 className="text-xl font-semibold text-(--ink)">Stores</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-(--muted)">
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-(--slate)">
           Select the stores where this release should be delivered.
         </p>
       </header>
@@ -239,7 +239,7 @@ const ReleaseWizardStores = ({
             </span>
           </label>
         </menu>
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[12px] text-(--slate)">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
         {storesMissingDdex.length > 0 ? (
@@ -254,11 +254,11 @@ const ReleaseWizardStores = ({
 
       <section className="grid grid-cols-1 gap-3 rounded-xl border border-(--line)/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {storesIsFetching || releaseStoresIsFetching ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Loading stores...
           </p>
         ) : stores.length === 0 ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             No stores available.
           </p>
         ) : (
@@ -299,7 +299,7 @@ const ReleaseWizardStores = ({
       </section>
 
       {!allSelected && stores.length > 0 && (
-        <p className="text-[11px] text-(--muted)">
+        <p className="text-[11px] text-(--slate)">
           Tip: Use Select all for global distribution, then deselect stores you
           do not want.
         </p>

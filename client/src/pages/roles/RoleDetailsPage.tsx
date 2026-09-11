@@ -40,7 +40,7 @@ const RoleDetailsPage = () => {
             <Button route="/roles">Back to roles</Button>
           </nav>
           <div className="w-full rounded-lg bg-(--surface) p-8 text-center">
-            <p className="text-(--muted)">Role not found</p>
+            <p className="text-(--slate)">Role not found</p>
           </div>
         </main>
       </UserLayout>
@@ -53,7 +53,7 @@ const RoleDetailsPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Role Details</Heading>
-            <p className="text-[13px] text-(--muted) font-normal mt-1">
+            <p className="text-[13px] text-(--slate) font-normal mt-1">
               View role information and associated permissions.
             </p>
           </div>
@@ -78,7 +78,7 @@ const RoleDetailsPage = () => {
 
             <div className="grid gap-3 border-t border-(--line)/70 pt-5">
               <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   Role ID
                 </p>
                 <p className="text-[13px] text-(--ink) font-mono">
@@ -87,7 +87,7 @@ const RoleDetailsPage = () => {
               </div>
 
               <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   Permissions
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -101,14 +101,14 @@ const RoleDetailsPage = () => {
                       </span>
                     ))
                   ) : (
-                    <p className="text-[13px] text-(--muted)">No permissions assigned</p>
+                    <p className="text-[13px] text-(--slate)">No permissions assigned</p>
                   )}
                 </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Created
                   </p>
                   <p className="text-[13px] text-(--ink)">
@@ -117,7 +117,7 @@ const RoleDetailsPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Last updated
                   </p>
                   <p className="text-[13px] text-(--ink)">

@@ -241,7 +241,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
           <h3 className="text-sm font-medium text-(--ink)">
             Release labels
           </h3>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Optionally assign labels to this release. If no label is set, the
             primary artist will be used as fallback in DDEX submissions.
           </p>
@@ -264,16 +264,16 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
               {labelSearchTerm?.trim()?.length > 0 && (
                 <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
                   {isLabelSearchPending || isSearchingLabels ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
                       <Loader
                         size="small"
-                        className="text-(--muted)"
+                        className="text-(--slate)"
                       />
                       Searching labels...
                     </span>
                   ) : labelSearchTerm?.trim()?.length <
                     MIN_LABEL_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-(--muted)">
+                    <p className="px-3 py-2 text-[12px] text-(--slate)">
                       Type at least {MIN_LABEL_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -292,7 +292,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                                 <span className="text-[12px] text-(--ink)">
                                   {label.name}
                                 </span>
-                                <span className="text-[11px] text-(--muted)">
+                                <span className="text-[11px] text-(--slate)">
                                   {[label.email, label.country]
                                     .filter(Boolean)
                                     .join(" · ") || "No extra details"}
@@ -308,7 +308,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     </ul>
                   ) : (
                     !(isLabelSearchPending || selectedLabelId) && (
-                      <p className="px-3 py-2 text-[12px] text-(--muted)">
+                      <p className="px-3 py-2 text-[12px] text-(--slate)">
                         No labels found.
                       </p>
                     )
@@ -350,9 +350,9 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="mt-5 border-t border-(--line)/50 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--muted)">Loading labels...</p>
+            <p className="text-[12px] text-(--slate)">Loading labels...</p>
           ) : releaseLabels.length === 0 ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[12px] text-(--slate)">
               No labels assigned yet.
             </p>
           ) : (
@@ -366,13 +366,13 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     <p className="font-medium text-(--ink)">
                       {releaseLabel.label?.name || "Unknown label"}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-[11px] text-(--slate)">
                       {releaseLabel.type}
                       {releaseLabel.ownership
                         ? ` · Ownership: ${releaseLabel.ownership}`
                         : ""}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-[11px] text-(--slate)">
                       DDEX Party ID: {releaseLabel?.label?.ddexPartyId || "—"}
                     </p>
                   </div>

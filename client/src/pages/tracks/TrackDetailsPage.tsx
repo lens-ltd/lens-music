@@ -42,12 +42,12 @@ const TrackDetailsPage = () => {
             </p>
             <h1
               className="text-[18px] leading-tight text-(--ink)"
-              style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
+              style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
             >
               {track?.title || "Loading..."}
             </h1>
             {release?.title && (
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[12px] text-(--slate)">
                 {release.title}
               </p>
             )}

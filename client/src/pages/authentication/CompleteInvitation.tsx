@@ -74,19 +74,19 @@ const CompleteInvitation = () => {
   };
 
   return (
-    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--field) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-lg card-framed p-8 md:p-10">
+        <article className="w-full max-w-[520px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
           <p className="type-eyebrow">
             Invitation only
           </p>
           <h1
-            className="mt-4 type-h2 text-(--ink)">
+            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
             Complete your registration
           </h1>
-          <p className="mt-3 type-body-sm text-(--muted)">
+          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
             Finish setting up your Lens Music account and create your password.
           </p>
 
@@ -103,7 +103,7 @@ const CompleteInvitation = () => {
                 <p className="mt-2 text-[14px] text-(--ink) font-normal">{validationState.data?.data?.email}</p>
               </div>
 
-              <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
+              <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                   control={control}
                   name="name"

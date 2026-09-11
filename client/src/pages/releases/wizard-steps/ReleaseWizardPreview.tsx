@@ -147,7 +147,7 @@ const ReleaseWizardPreview = ({
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           Loading release data...
         </p>
       </section>
@@ -161,11 +161,11 @@ const ReleaseWizardPreview = ({
       <header>
         <h2
           className="text-[18px] leading-tight text-(--ink)"
-          style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
+          style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
         >
           Review &amp; Submit
         </h2>
-        <p className="mt-1 text-[12px] font-normal text-(--muted)">
+        <p className="mt-1 text-[12px] font-normal text-(--slate)">
           Review all release information before submitting for distribution.
         </p>
       </header>

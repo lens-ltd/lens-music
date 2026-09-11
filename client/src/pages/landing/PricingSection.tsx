@@ -18,7 +18,7 @@ export default function PricingSection() {
             <h2 id="pricing-heading" className="mt-4 type-h2">
               Free to distribute. Revenue share only when earnings arrive.
             </h2>
-            <p className="mt-4 type-body text-(--muted) max-w-[46ch]">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens does not charge an upfront distribution fee. The platform takes a 15% share of earnings generated through Lens.
             </p>
           </header>
@@ -43,7 +43,7 @@ export default function PricingSection() {
               <p className="mt-4 type-price">15%</p>
               <p className="mt-2 type-meta">Applied to earnings generated through Lens.</p>
               <section className="mt-6 border-t border-(--line) pt-5">
-                <p className="type-body-sm text-(--muted)">
+                <p className="type-body-sm text-(--slate)">
                   Example: if a release earns $100 through Lens, the artist payout is $85 and Lens retains $15.
                 </p>
               </section>

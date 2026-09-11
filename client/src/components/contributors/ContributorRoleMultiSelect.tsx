@@ -43,7 +43,7 @@ const ContributorRoleMultiSelect = ({
               key={role}
               className={`flex items-center gap-2 rounded-(--radius-control) border px-3 py-2 type-body-sm transition-colors ${
                 isUnavailable
-                  ? "cursor-not-allowed border-(--line) bg-(--surface) text-(--muted)"
+                  ? "cursor-not-allowed border-(--line) bg-(--surface) text-(--slate)"
                   : isSelected
                     ? "cursor-pointer border-[color:var(--lens-blue)] bg-(--lens-blue-soft) text-(--lens-blue)"
                     : "cursor-pointer border-transparent text-(--ink)/70 hover:border-(--line)"
@@ -68,7 +68,7 @@ const ContributorRoleMultiSelect = ({
           );
         })}
       </div>
-      <p className="mt-2 text-[10px] text-(--muted)">
+      <p className="mt-2 text-[10px] text-(--slate)">
         {value.length
           ? `${value.length} role${value.length === 1 ? "" : "s"} selected`
           : "Select at least one role"}

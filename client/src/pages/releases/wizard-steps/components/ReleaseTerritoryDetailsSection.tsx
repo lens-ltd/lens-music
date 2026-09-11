@@ -169,7 +169,7 @@ const ReleaseTerritoryDetailsSection = ({
         <h3 className="text-sm font-medium text-(--ink)">
           Territory-specific metadata
         </h3>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           Add overrides only where title, display artist, or label name must
           differ by territory. Changes save when a field loses focus.
         </p>
@@ -191,7 +191,7 @@ const ReleaseTerritoryDetailsSection = ({
                 <p className="text-sm font-medium text-(--ink)">
                   {countryName}
                 </p>
-                <p className="text-[11px] text-(--muted)">
+                <p className="text-[11px] text-(--slate)">
                   {territory}
                 </p>
               </header>

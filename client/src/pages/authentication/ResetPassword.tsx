@@ -68,20 +68,20 @@ const ResetPassword = () => {
 
   return (
     <main
-      className="min-h-screen bg-(--paper) flex flex-col"
+      className="min-h-screen bg-(--field) flex flex-col"
     >
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-md card-framed p-8 md:p-10">
+        <article className="w-full max-w-[400px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
           <p className="type-eyebrow">
             Account security
           </p>
           <h1
-            className="mt-4 type-h2 text-(--ink)">
+            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
             Choose a new password
           </h1>
-          <p className="mt-3 type-body-sm text-(--muted)">
+          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
             Create a new password for your Lens Music account.
           </p>
 
@@ -95,7 +95,7 @@ const ResetPassword = () => {
             </div>
           ) : (
             <form
-              className="mt-7 flex flex-col gap-5"
+              className="mt-6 flex flex-col gap-4"
               onSubmit={handleSubmit(
                 (data) =>
                   token && confirmReset({ token, password: data.password }),
@@ -168,10 +168,10 @@ const ResetPassword = () => {
             </form>
           )}
 
-          <p className="mt-5 text-center text-[12px] text-(--muted) font-normal">
+          <p className="mt-5 text-center text-[12px] text-(--slate) font-normal">
             <Link
               to="/auth/login"
-              className="link-sweep type-body-sm text-(--lens-blue)"
+              className="link-sweep type-body-sm text-(--signal)"
             >
               Return to sign in
             </Link>

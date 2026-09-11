@@ -27,7 +27,7 @@ const PreviewStoresSection = ({ releaseId }: PreviewStoresSectionProps) => {
     >
       <DashboardSection title="Stores" label="Distribution">
         {isFetching ? (
-          <p className="text-[12px] text-(--muted)">Loading stores...</p>
+          <p className="text-[12px] text-(--slate)">Loading stores...</p>
         ) : releaseStores.length > 0 ? (
           <ul className="flex flex-wrap gap-1.5">
             {releaseStores.map((releaseStore) => (
@@ -41,7 +41,7 @@ const PreviewStoresSection = ({ releaseId }: PreviewStoresSectionProps) => {
             ))}
           </ul>
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             No stores selected yet.
           </p>
         )}

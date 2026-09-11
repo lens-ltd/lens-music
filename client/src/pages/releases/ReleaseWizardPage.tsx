@@ -193,7 +193,7 @@ const ReleaseWizardPage = () => {
         <h2 className="mt-3 text-xl font-semibold text-(--ink)">
           {capitalizeString(stepName)}
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-(--muted)">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-(--slate)">
           This release step is not supported by this version of the workspace.
           Return to the previous step to continue editing safely.
         </p>

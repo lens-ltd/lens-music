@@ -29,7 +29,7 @@ const TrackCopyrightLinesForm = ({
         <h2 className="text-sm font-normal text-(--ink)">
           Copyright lines and flags
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           C-line and P-line are required before validation. Use “Rights controllers”
           below for DDEX making-available rights.
         </p>

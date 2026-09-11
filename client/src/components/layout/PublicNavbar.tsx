@@ -50,7 +50,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
             <li className="hidden sm:block">
               <Link
                 to="/"
-                className="link-sweep type-body-sm text-(--muted) hover:text-(--ink)"
+                className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)"
               >
                 Back to home
               </Link>
@@ -93,7 +93,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
               <li>
                 <Link
                   to="/auth/request-invitation"
-                  className="inline-flex min-h-10 items-center rounded-lg px-3 type-body-sm text-(--muted) hover:text-(--ink)"
+                  className="inline-flex min-h-10 items-center rounded-lg px-3 type-body-sm text-(--slate) hover:text-(--ink)"
                 >
                   Request invite
                 </Link>
@@ -117,7 +117,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                   <rect y="14" width="22" height="1.5" rx="1" fill="currentColor" />
                 </svg>
               </summary>
-              <div className="absolute top-full right-0 mt-2 w-60 card-framed p-3 shadow-[var(--shadow-menu)]">
+              <div className="absolute top-full right-0 mt-2 w-60 rounded-(--radius-control) border border-(--menu-border) bg-(--paper) p-3 shadow-[var(--shadow-menu)]">
                 <ul
                   className="flex flex-col gap-1 list-none m-0 p-0"
                   role="list"
@@ -126,7 +126,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                     <li key={label}>
                       <a
                         href={href}
-                        className="block px-3 py-2 rounded-(--radius-control) type-body-sm text-(--ink) hover:bg-(--surface)"
+                        className="block px-3 py-2 rounded type-body-sm text-(--ink) hover:bg-(--surface)"
                       >
                         {label}
                       </a>

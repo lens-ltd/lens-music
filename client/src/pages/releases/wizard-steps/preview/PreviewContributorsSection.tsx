@@ -123,7 +123,7 @@ const PreviewContributorsSection = ({
             containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             No contributors added yet.
           </p>
         )}

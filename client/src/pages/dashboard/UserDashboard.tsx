@@ -30,7 +30,7 @@ import { ReleaseStatus } from '@/types/models/release.types';
 import { ReleaseDeliveryStatus } from '@/types/models/releaseStore.types';
 import { formatDate, formatNumbers } from '@/utils/strings.helper';
 
-const serif = { fontFamily: 'var(--font-serif)', fontWeight: 700 } as const;
+const serif = { fontFamily: 'var(--font-serif)', fontWeight: 500 } as const;
 
 const releaseStatusMeta: Record<
   ReleaseStatus,
@@ -114,7 +114,7 @@ const DashboardContent = ({
           >
             {userName ? `${userName.split(' ')[0]}’s dashboard` : 'Dashboard'}
           </h1>
-          <p className="mt-2 max-w-xl type-body-sm text-(--muted)">
+          <p className="mt-2 max-w-xl type-body-sm text-(--slate)">
             Follow every release from first draft to store delivery.
           </p>
         </div>
@@ -178,7 +178,7 @@ const TotalsStrip = ({ totals }: { totals: DashboardSummary['totals'] }) => {
               <span className="type-eyebrow">
                 {metric.label}
               </span>
-              <FontAwesomeIcon icon={metric.icon} className="text-(--muted)" aria-hidden="true" />
+              <FontAwesomeIcon icon={metric.icon} className="text-(--slate)" aria-hidden="true" />
             </span>
             <strong className="mt-4 block type-metric text-(--ink)">
               {formatNumbers(metric.value)}
@@ -262,7 +262,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
         <div className="rounded-(--radius-control) border border-dashed border-(--line) bg-(--surface) px-5 py-8 text-center">
           <FontAwesomeIcon
             icon={faPaperPlane}
-            className="text-(--muted)"
+            className="text-(--slate)"
             aria-hidden="true"
           />
           <p className="mt-3 type-label text-(--ink)">
@@ -388,7 +388,7 @@ const RecentReleases = ({ releases }: { releases: DashboardRelease[] }) => (
         ))}
       </ul>
     ) : (
-      <p className="border-t border-(--line) px-5 py-10 text-center type-body-sm text-(--muted)">
+      <p className="border-t border-(--line) px-5 py-10 text-center type-body-sm text-(--slate)">
         No recent release activity yet.
       </p>
     )}
@@ -488,7 +488,7 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
         <FontAwesomeIcon icon={faCompactDisc} aria-hidden="true" />
       </span>
       <div className="mt-16">
-        <p className="type-eyebrow">A clear first step</p>
+        <p className="type-eyebrow text-[#a9c1cf]">A clear first step</p>
         <h1 id="empty-dashboard-title" className="mt-4 max-w-xl type-h2 text-(--ink)">
           Your first release starts here.
         </h1>
@@ -508,7 +508,7 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
             <span className="type-body-sm text-(--lens-blue)" style={serif}>{number}</span>
             <span>
               <strong className="block type-card-title text-(--ink)">{title}</strong>
-              <span className="mt-2 block type-body-sm text-(--muted)">{description}</span>
+              <span className="mt-2 block type-body-sm text-(--slate)">{description}</span>
             </span>
           </li>
         ))}
@@ -535,7 +535,7 @@ const DashboardError = ({
     <h1 className="mt-5 type-page-title text-(--ink)">
       Dashboard unavailable
     </h1>
-    <p className="mt-2 max-w-sm type-body-sm text-(--muted)">
+    <p className="mt-2 max-w-sm type-body-sm text-(--slate)">
       The dashboard summary could not be loaded. Check the API connection and try again.
     </p>
     <Button

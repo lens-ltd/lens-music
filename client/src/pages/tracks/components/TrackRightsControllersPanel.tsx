@@ -165,7 +165,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
         <h2 className="text-sm font-normal text-(--ink)">
           DDEX rights controllers
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           Each track needs at least one row with &quot;Making available&quot;
           before release validation. Use the label or licensor name as
           controller when unsure.
@@ -201,9 +201,9 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
 
       <div className="mt-4 border-t border-(--line)/40 pt-3">
         {isFetching ? (
-          <p className="text-[12px] text-(--muted)">Loading…</p>
+          <p className="text-[12px] text-(--slate)">Loading…</p>
         ) : rows.length === 0 ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             No rights controllers yet.
           </p>
         ) : (
@@ -217,7 +217,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                   <p className="font-medium text-(--ink)">
                     {row.controllerName}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {row.rightType} · {row.territories.join(', ')}
                   </p>
                 </div>

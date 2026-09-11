@@ -27,7 +27,7 @@ const DashboardCard = ({
         <span className="type-eyebrow">
           {title}
         </span>
-        <span className="text-lg text-(--muted)">
+        <span className="text-lg text-(--slate)">
           <FontAwesomeIcon icon={icon} />
         </span>
       </header>
@@ -40,7 +40,7 @@ const DashboardCard = ({
       {change !== undefined && (
         <span
           className={`flex items-center gap-1 text-xs font-normal mt-1 ${
-            change >= 0 ? 'text-(--lens-blue)' : 'text-(--muted)'
+            change >= 0 ? 'text-(--signal)' : 'text-(--danger)'
           }`}
         >
           <FontAwesomeIcon

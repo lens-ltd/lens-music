@@ -5,24 +5,24 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--radius-control) type-label transition-[background-color,color,border-color,box-shadow] duration-200 ease-[cubic-bezier(0,0,1,1)] focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-(--radius-control) border text-[13px] font-normal whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
         default:
-          "border border-(--lens-blue) bg-(--lens-blue) text-(--lens-blue-ink) hover:bg-(--lens-blue-hover) hover:border-(--lens-blue-hover) active:shadow-[var(--press-on-ink)_999px_999px_0_inset]",
+          "border-(--signal) bg-(--signal) text-white hover:border-(--signal-hover) hover:bg-(--signal-hover)",
         destructive:
-          "border border-(--danger) bg-(--danger) text-(--on-consequence) hover:bg-(--danger-strong)",
+          "border-(--danger) bg-(--danger) text-white hover:border-(--danger-strong) hover:bg-(--danger-strong)",
         outline:
-          "border border-(--ink) bg-transparent text-(--ink) hover:bg-(--surface) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
+          "border-(--menu-border) bg-white text-(--ink) hover:bg-(--surface)",
         secondary:
-          "border border-transparent bg-(--surface) text-(--ink) hover:bg-(--surface-hover) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
+          "border-(--menu-border) bg-white text-(--ink) hover:bg-(--surface)",
         ghost:
-          "border-transparent bg-transparent text-(--ink) hover:bg-(--surface) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
-        link: "border-transparent bg-transparent text-(--lens-blue) p-0 h-auto link-sweep",
+          "border-transparent bg-transparent text-(--muted-weak) hover:bg-(--surface) hover:text-(--ink)",
+        link: "border-transparent bg-transparent text-(--signal) p-0 h-auto link-sweep",
       },
       size: {
-        default: "h-(--control-sm) min-h-(--control-sm) px-3.5",
+        default: "h-(--control-md) min-h-(--control-md) px-3.5",
         sm: "h-(--control-sm) min-h-(--control-sm) px-3",
         lg: "h-(--control-md) min-h-(--control-md) px-5",
         icon: "size-(--control-sm)",

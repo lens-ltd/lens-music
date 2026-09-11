@@ -111,7 +111,7 @@ const ReleaseProgressNavigation = ({
                   ? 'border-[color:var(--lens-blue)] bg-(--lens-blue) text-white'
                   : navigationTab.completed
                     ? 'border-[color:var(--lens-blue)]/25 bg-(--lens-blue)/5 text-(--lens-blue) hover:bg-(--lens-blue-soft)'
-                    : 'border-(--line) bg-white text-(--muted) hover:border-[color:var(--lens-blue)]/35'
+                    : 'border-(--line) bg-white text-(--slate) hover:border-[color:var(--lens-blue)]/35'
                 }`}
             >
               <span className="flex w-full items-center gap-3">
@@ -120,7 +120,7 @@ const ReleaseProgressNavigation = ({
                       ? 'bg-white/20 text-white'
                       : navigationTab?.completed
                         ? 'bg-(--lens-blue) text-white'
-                        : 'bg-(--surface) text-(--muted) group-hover:bg-(--lens-blue-soft) group-hover:text-(--lens-blue)'
+                        : 'bg-(--surface) text-(--slate) group-hover:bg-(--lens-blue-soft) group-hover:text-(--lens-blue)'
                     }`}
                 >
                   {navigationTab?.completed ? (

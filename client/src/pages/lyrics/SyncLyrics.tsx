@@ -51,7 +51,7 @@ const SyncLyrics = () => {
               <Heading className="!text-(--ink)">
                 {page.track?.title || "Track lyrics sync"}
               </Heading>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[12px] text-(--slate)">
                 Sync lyrics against the uploaded primary audio and overwrite the
                 selected lyrics record when you save.
               </p>

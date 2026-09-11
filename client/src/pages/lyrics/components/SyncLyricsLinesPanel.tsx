@@ -31,7 +31,7 @@ const SyncLyricsLinesPanel = ({
           <h2 className="text-sm font-normal text-(--ink)">
             Lyrics lines
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Use ↑ and ↓ to move between lines, then press Space while the audio
             is playing to capture a timestamp.
           </p>
@@ -66,14 +66,14 @@ const SyncLyricsLinesPanel = ({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
                     Line {line.index + 1}
                   </p>
                   <p
                     className={`text-sm ${isSynced ? "font-normal text-(--ink)" : "text-(--ink)/70"}`}
                   >
                     {line.text || (
-                      <span className="italic text-(--muted)">
+                      <span className="italic text-(--slate)">
                         Blank line
                       </span>
                     )}

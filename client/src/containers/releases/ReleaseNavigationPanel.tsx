@@ -109,7 +109,7 @@ const ReleaseNavigationPanel = ({
                             ? "bg-(--lens-blue) text-white"
                             : isPast
                               ? "bg-(--lens-blue-soft) text-(--lens-blue)"
-                              : "bg-(--surface) text-(--muted)"
+                              : "bg-(--surface) text-(--slate)"
                       }`}
                     >
                       {isCompleted ? (
@@ -148,7 +148,7 @@ const ReleaseNavigationPanel = ({
                   ) || "Release setup"}
                 </p>
                 <ul className="flex items-center gap-2 mt-1">
-                  <p className="text-[12px] text-(--muted)">
+                  <p className="text-[12px] text-(--slate)">
                     {isLoading ? (
                       <SkeletonLoader type="text" width="16rem" height="1rem" />
                     ) : (
@@ -156,9 +156,9 @@ const ReleaseNavigationPanel = ({
                       "Fill out each section to prepare this release."
                     )}
                   </p>{" "}
-                  <span className="text-[12px] text-(--muted)">•</span>{" "}
+                  <span className="text-[12px] text-(--slate)">•</span>{" "}
                   {release?.catalogNumber && (
-                    <p className="text-[12px] text-(--muted)">
+                    <p className="text-[12px] text-(--slate)">
                       {release?.catalogNumber}{" "}
                       <FontAwesomeIcon
                         className="ml-0.5 cursor-pointer text-[11px] text-(--lens-blue)"

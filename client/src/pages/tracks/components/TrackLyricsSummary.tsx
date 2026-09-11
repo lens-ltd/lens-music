@@ -40,7 +40,7 @@ const TrackLyricsSummary = ({ track }: TrackLyricsSummaryProps) => {
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           No lyrics records.
         </p>
       )}

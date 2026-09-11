@@ -8,7 +8,7 @@ export default function CTASection() {
       {({ inView }) => (
         <article className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-10">
           <section className="text-center" style={fadeUp(inView)}>
-            <p className="type-eyebrow">Start now</p>
+            <p className="type-eyebrow text-[#a9c1cf]">Start now</p>
             <h2 id="cta-heading" className="mt-4 type-h2 max-w-[22ch] mx-auto">
               Launch your next release with distribution and revenue reporting in one place.
             </h2>

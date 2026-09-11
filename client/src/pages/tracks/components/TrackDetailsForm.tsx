@@ -34,7 +34,7 @@ const TrackDetailsForm = ({
         <h2 className="text-sm font-normal text-(--ink)">
           Track details
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           Saved field by field when you leave an input.
         </p>
       </section>

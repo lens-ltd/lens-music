@@ -21,7 +21,7 @@ export default function NotFoundPage() {
             <h1 className="mt-4 type-display">
               This page missed the beat.
             </h1>
-            <p className="mt-5 max-w-[46ch] type-body text-(--muted)">
+            <p className="mt-5 max-w-[46ch] type-body text-(--slate)">
               The route you entered does not exist. Return to the homepage or
               sign in to continue managing releases, artists, and analytics.
             </p>

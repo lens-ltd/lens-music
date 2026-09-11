@@ -42,7 +42,7 @@ const PreviewValidationBanner = ({
       </header>
       <ul className="mt-2 flex flex-col gap-1 pl-5">
         {validationResult?.errors?.map((error) => (
-          <li key={error} className="list-disc text-[11px] text-(--muted)">
+          <li key={error} className="list-disc text-[11px] text-(--slate)">
             {error}
           </li>
         ))}

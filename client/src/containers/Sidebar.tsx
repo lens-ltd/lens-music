@@ -98,7 +98,7 @@ const Sidebar = () => {
   const itemClass = (isActive: boolean, extra?: string) =>
     cn(
       'group relative flex items-center gap-3 overflow-hidden rounded-(--radius-control) type-body-sm transition-colors duration-200',
-      sidebarOpen ? 'px-2.5 py-2' : 'justify-center p-2',
+      sidebarOpen ? 'px-2.5 py-2.5' : 'justify-center p-2',
       isActive
         ? 'bg-(--lens-blue-soft) text-(--ink)'
         : 'text-(--ink) hover:bg-(--surface)',
@@ -172,12 +172,6 @@ const Sidebar = () => {
                     aria-expanded={sidebarOpen ? isSubcategoriesOpen : false}
                     title={nav.title}
                   >
-                    {isActive && (
-                      <span
-                        className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-(--lens-blue)"
-                        aria-hidden="true"
-                      />
-                    )}
                     <FontAwesomeIcon
                       icon={nav.icon}
                       className="text-[15px] flex-shrink-0"
@@ -195,7 +189,7 @@ const Sidebar = () => {
                       <FontAwesomeIcon
                         icon={faChevronDown}
                         className={cn(
-                          'ml-auto text-[10px] text-(--muted) transition-transform duration-200',
+                          'ml-auto text-[10px] text-(--slate) transition-transform duration-200',
                           isSubcategoriesOpen && 'rotate-180',
                         )}
                       />
@@ -213,12 +207,6 @@ const Sidebar = () => {
                       }
                     }}
                   >
-                    {isActive && (
-                      <span
-                        className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-(--lens-blue)"
-                        aria-hidden="true"
-                      />
-                    )}
                     <FontAwesomeIcon
                       icon={nav.icon}
                       className="text-[15px] flex-shrink-0"
@@ -244,7 +232,7 @@ const Sidebar = () => {
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="my-1 overflow-hidden"
                     >
-                      <ul className="ml-[14px] flex flex-col gap-0.5 border-l border-(--line) py-1 pl-2 pr-1">
+                      <ul className="ml-[14px] flex flex-col gap-0.5 py-1 pl-2 pr-1">
                         {nav.subCategories?.map((subCategory) => {
                           const isSubActive =
                             activeSubcategoryPath === subCategory.path;
@@ -254,19 +242,13 @@ const Sidebar = () => {
                               <Link
                                 to={subCategory.path}
                                 className={cn(
-                                  'relative flex items-center gap-2.5 rounded-(--radius-control) px-2.5 py-1.5 type-body-sm transition-colors duration-200',
+                                  'relative flex items-center gap-2.5 rounded-(--radius-control) px-2.5 py-2 type-body-sm transition-colors duration-200',
                                   isSubActive
                                     ? 'bg-(--lens-blue-soft) text-(--ink)'
                                     : 'text-(--ink) hover:bg-(--surface)',
                                 )}
                                 aria-current={isSubActive ? 'page' : undefined}
                               >
-                                {isSubActive && (
-                                  <span
-                                    className="absolute left-0 top-1 bottom-1 w-0.5 rounded-full bg-(--lens-blue)"
-                                    aria-hidden="true"
-                                  />
-                                )}
                                 <FontAwesomeIcon
                                   icon={subCategory.icon}
                                   className="text-[12px] flex-shrink-0"

@@ -22,7 +22,7 @@ const TrackEditorHeader = ({
           {track?.title || "Manage track"}
         </h1>
         {release?.title && (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             {release.title}
           </p>
         )}

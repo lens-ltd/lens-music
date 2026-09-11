@@ -28,9 +28,9 @@ export default function FAQSection() {
               <details key={question} className="card-framed px-4" style={fadeUp(inView, 0.04 * index)}>
                 <summary className="list-none cursor-pointer py-4 flex items-center justify-between gap-4">
                   <span className="type-body-sm">{question}</span>
-                  <span className="faq-plus text-[18px] leading-none text-(--muted)" aria-hidden="true">+</span>
+                  <span className="faq-plus text-[18px] leading-none text-(--slate)" aria-hidden="true">+</span>
                 </summary>
-                <p className="pb-4 type-body-sm text-(--muted)">{answer}</p>
+                <p className="pb-4 type-body-sm text-(--slate)">{answer}</p>
               </details>
             ))}
           </section>

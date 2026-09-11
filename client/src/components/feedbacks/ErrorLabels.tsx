@@ -20,7 +20,7 @@ export const InputErrorMessage = ({
   id?: string;
 }) => {
   return (
-    <p id={id} className={cn('type-meta text-(--danger)', className)} role="alert">
+    <p id={id} className={cn('field-help text-(--danger-text)', className)} role="alert">
       {String(message)}
     </p>
   );

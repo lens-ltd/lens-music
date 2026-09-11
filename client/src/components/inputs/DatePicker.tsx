@@ -156,11 +156,11 @@ const DatePicker = ({
           type="button"
           className={cn(
             'field-chrome flex items-center justify-start text-left font-normal',
-            !normalizedValue && 'text-(--muted)'
+            !normalizedValue && 'text-(--placeholder)'
           )}
           onClick={() => setOpen(!open)}
         >
-          <CalendarIcon className="w-4 h-4 mr-2 text-(--muted)" />
+          <CalendarIcon className="w-4 h-4 mr-2 text-(--slate)" />
           {normalizedValue ? (
             selectionType === 'recurringDate' ? (
               moment(normalizedValue).format('MMMM DD')
@@ -170,7 +170,7 @@ const DatePicker = ({
               moment(normalizedValue).format('MMMM DD')
             )
           ) : (
-            <span className="type-body-sm text-(--muted)">{placeholder}</span>
+            <span className="type-body-sm text-(--placeholder)">{placeholder}</span>
           )}
         </button>
       </PopoverTrigger>

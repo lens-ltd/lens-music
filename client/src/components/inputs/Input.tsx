@@ -127,7 +127,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className={cn("field-stack", labelClassName)}>
           <label className="inline-flex w-fit items-center gap-2 type-body-sm">
             <Checkbox
-              className="border-(--line) cursor-pointer"
+              className="border-(--line-strong) cursor-pointer"
               onCheckedChange={
                 onChange as unknown as
                   | ((checked: CheckedState) => void)
@@ -161,7 +161,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               required={required}
               aria-invalid={errorMessage ? true : undefined}
               className={cn(
-                "h-4 w-4 cursor-pointer accent-(--lens-blue) border-(--line)",
+                "h-4 w-4 cursor-pointer accent-(--signal) border-(--line-strong)",
                 className,
               )}
             />
@@ -180,7 +180,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type="button"
             onClick={() => hiddenFileInput.current?.click()}
             className={cn(
-              "inline-flex h-(--control-sm) cursor-pointer items-center justify-center rounded-(--radius-control) border border-(--ink) bg-(--paper) px-3.5 type-label text-(--ink) hover:bg-(--surface)",
+              "inline-flex h-(--control-md) cursor-pointer items-center justify-center rounded-(--radius-control) border border-(--menu-border) bg-white px-3.5 type-label text-(--ink) transition-colors hover:bg-(--surface)",
               className,
             )}
           >
@@ -261,17 +261,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const textInputWithSuffix = (
       <div
         className={cn(
-          "flex w-full overflow-hidden rounded-(--radius-control) border border-(--line) bg-(--paper) transition-[border-color,box-shadow] duration-200 focus-within:border-(--lens-blue) focus-within:shadow-[0_0_0_3px_var(--lens-blue-soft)]",
-          readOnly && "border-(--line) bg-(--surface)",
-          errorMessage &&
-            "border-(--danger) focus-within:border-(--danger) focus-within:shadow-[0_0_0_3px_var(--danger-line)]",
+          "flex w-full overflow-hidden rounded-(--radius-control) border border-(--line-strong) bg-(--paper) transition-colors focus-within:border-(--signal)",
+          readOnly && "bg-(--surface)",
+          errorMessage && "border-(--danger) focus-within:border-(--danger)",
         )}
       >
         <input
           {...sharedInputProps}
           className={cn(
-            "h-(--control-sm) min-h-(--control-sm) min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 type-body-sm text-(--ink) shadow-none outline-none placeholder:text-(--muted) focus-visible:ring-0 focus-visible:shadow-none",
-            readOnly && "cursor-default text-(--muted)",
+            "h-(--control-md) min-h-(--control-md) min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 type-body-sm text-(--ink) shadow-none outline-none placeholder:text-(--placeholder)",
+            readOnly && "cursor-default text-(--disabled-fg)",
             prefixPaddingClasses,
             className,
           )}
@@ -282,8 +281,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "flex shrink-0 items-center justify-center self-stretch border-l px-3 type-body-sm",
             suffixIconPrimary
-              ? "border-l-(--lens-blue) bg-(--lens-blue) text-(--lens-blue-ink)"
-              : "border-l-(--line) bg-(--paper) text-(--ink)",
+              ? "border-l-(--signal) bg-(--signal) text-white"
+              : "border-l-(--line-strong) bg-(--paper) text-(--slate)",
           )}
           aria-label={`${label || "Input"} action`}
         >
@@ -303,7 +302,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={prefixIconHandler}
               className={cn(
-                "absolute inset-y-0 left-0 flex items-center px-3 text-(--muted)",
+                "absolute inset-y-0 left-0 flex items-center px-3 text-(--slate)",
                 !prefixIconHandler && "pointer-events-none",
               )}
               aria-label={

@@ -41,7 +41,7 @@ export default function HeroSection() {
             Release your music widely.{' '}
             <span className="mark-accent">Understand what it earns.</span>
           </h1>
-          <p className="type-body max-w-[46ch] text-(--muted)">
+          <p className="type-body max-w-[46ch] text-(--slate)">
             Lens Music helps independent artists and labels distribute to 150+ stores, then track
             revenue and performance in one clear workspace. Distribution is free. Lens takes 15%
             only when you earn.

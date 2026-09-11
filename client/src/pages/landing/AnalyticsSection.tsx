@@ -19,7 +19,7 @@ export default function AnalyticsSection() {
             <h2 id="analytics-heading" className="mt-4 type-h2">
               See where revenue comes from, not just how much arrived.
             </h2>
-            <p className="mt-4 type-body text-(--muted) max-w-[46ch]">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens surfaces the platform and territory context behind every reporting cycle so you can compare release performance and plan your next launch with better data.
             </p>
             <ul className="mt-6 space-y-3 list-none p-0 m-0">

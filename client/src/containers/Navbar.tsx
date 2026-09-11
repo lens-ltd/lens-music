@@ -98,7 +98,7 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
 
               <FontAwesomeIcon
                 icon={faChevronDown}
-                className={`mr-1 hidden text-[10px] text-(--muted) transition-transform duration-200 md:inline ${dropdownOpen ? 'rotate-180' : ''
+                className={`mr-1 hidden text-[10px] text-(--slate) transition-transform duration-200 md:inline ${dropdownOpen ? 'rotate-180' : ''
                   }`}
               />
             </button>
@@ -120,7 +120,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
     <ul
       id="user-menu"
       role="menu"
-      className={`absolute right-0 mt-2 w-[250px] card-framed p-1.5 shadow-[var(--shadow-menu)] transition-[opacity,transform] duration-100 z-10 ${isOpen
+      className={`absolute right-0 mt-2 w-[250px] rounded-(--radius-control) border border-(--menu-border) bg-(--paper) p-1 shadow-[var(--shadow-menu)] transition-[opacity,transform] duration-100 z-10 ${isOpen
         ? 'translate-y-0 opacity-100 pointer-events-auto'
         : 'translate-y-[-4px] opacity-0 pointer-events-none'
         }`}
@@ -129,7 +129,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <Link
           to="/profile"
           role="menuitem"
-          className="block rounded-(--radius-control) px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="block rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
         >
           <FontAwesomeIcon icon={faUser} className="mr-2" />
           Profile
@@ -139,7 +139,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <Link
           to="/settings"
           role="menuitem"
-          className="block rounded-(--radius-control) px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="block rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
         >
           <FontAwesomeIcon icon={faCog} className="mr-2" />
           Settings
@@ -149,7 +149,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <button
           type="button"
           role="menuitem"
-          className="block w-full text-left rounded-(--radius-control) px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="block w-full text-left rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
           onClick={() => {
             dispatch(clearSession());
             navigate('/');

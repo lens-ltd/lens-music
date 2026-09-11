@@ -19,7 +19,7 @@ const SyncLyricsEmptyState = ({
   return (
     <section className="rounded-md border border-dashed border-(--line)/70 bg-white p-8 text-center">
       <Heading className="!text-(--ink)">{title}</Heading>
-      <p className="mt-3 text-[12px] text-(--muted)">
+      <p className="mt-3 text-[12px] text-(--slate)">
         {description}
       </p>
       <div className="mt-4 flex justify-center">

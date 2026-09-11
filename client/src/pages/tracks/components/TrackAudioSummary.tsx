@@ -25,7 +25,7 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
                   <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
@@ -52,7 +52,7 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           No audio files uploaded.
         </p>
       )}

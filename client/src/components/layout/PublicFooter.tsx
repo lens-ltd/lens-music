@@ -19,13 +19,13 @@ const PublicFooter: FC = () => (
           >
             <img src={LensLogo} alt="Lens Logo" className="w-10 h-10 invert" />
           </Link>
-          <p className="type-meta max-w-[200px]">
+          <p className="type-meta max-w-[200px] text-[#a9c1cf]">
             Distribution and analytics for independent artists and labels, built in Rwanda.
           </p>
         </section>
 
         <nav aria-label="Product links">
-          <p className="type-eyebrow mb-4">Product</p>
+          <p className="equipment-label mb-4 text-[#a9c1cf]">Product</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'How it works', href: '#how-it-works' },
@@ -43,7 +43,7 @@ const PublicFooter: FC = () => (
         </nav>
 
         <nav aria-label="Company links">
-          <p className="type-eyebrow mb-4">Company</p>
+          <p className="equipment-label mb-4 text-[#a9c1cf]">Company</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'About', href: '/#about' },
@@ -60,7 +60,7 @@ const PublicFooter: FC = () => (
         </nav>
 
         <nav aria-label="Legal links">
-          <p className="type-eyebrow mb-4">Legal</p>
+          <p className="equipment-label mb-4 text-[#a9c1cf]">Legal</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'Privacy Policy', href: '/privacy-policy' },
@@ -78,7 +78,7 @@ const PublicFooter: FC = () => (
       </section>
 
       <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-7">
-        <p className="type-meta">
+        <p className="type-meta text-[#a9c1cf]">
           Distribution is free. Lens charges a 15% revenue share on earnings generated through the platform.
         </p>
       </section>

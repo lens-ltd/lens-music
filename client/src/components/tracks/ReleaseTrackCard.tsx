@@ -62,7 +62,7 @@ const ReleaseTrackCard = ({
                 className="rounded-lg bg-(--surface) px-2.5 py-2"
               >
                 <dl>
-                  <dt className="text-[9px] uppercase tracking-[0.12em] text-(--muted) font-normal">
+                  <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
                     {label}
                   </dt>
                   <dd
@@ -156,7 +156,7 @@ const ReleaseTrackCard = ({
               className="rounded-md bg-(--surface) px-2.5 py-1"
             >
               <dl>
-                <dt className="text-[9px] uppercase tracking-[0.12em] text-(--muted) font-normal">
+                <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
                   {label}
                 </dt>
                 <dd className="mt-0.5 text-[12px] text-(--ink) font-normal">

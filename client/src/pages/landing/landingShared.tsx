@@ -98,7 +98,7 @@ const storeIcons: Record<string, IconDefinition> = {
 
 export function StoreIcon({ name }: { name: string }) {
   return (
-    <figure className="flex flex-col items-center gap-2 text-(--muted) hover:text-(--ink) transition-colors duration-200" aria-label={name}>
+    <figure className="flex flex-col items-center gap-2 text-(--slate) hover:text-(--ink) transition-colors duration-200" aria-label={name}>
       <span className="text-[15px]">
         <FontAwesomeIcon icon={storeIcons[name]} />
       </span>

@@ -485,7 +485,7 @@ const ManageReleaseTrack = () => {
               <h2 className="text-sm font-normal text-(--ink)">
                 Lyrics
               </h2>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[12px] text-(--slate)">
                 Lyrics records linked to this track. Open sync to edit timing,
                 or remove a record here.
               </p>
@@ -532,7 +532,7 @@ const ManageReleaseTrack = () => {
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-[12px] text-(--muted)">
+              <p className="mt-3 text-[12px] text-(--slate)">
                 No lyrics records yet. Use Sync lyrics (with audio uploaded) or
                 create lyrics from the Lyrics section.
               </p>
@@ -540,7 +540,7 @@ const ManageReleaseTrack = () => {
           </section>
 
           {isUpdatingTrack && (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[12px] text-(--slate)">
               Saving track updates...
             </p>
           )}

@@ -97,7 +97,7 @@ const StoreDetailsPage = () => {
             <Button route="/stores">Back to stores</Button>
           </nav>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
-            <p className="text-[13px] text-(--muted)">{message}</p>
+            <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
         </main>
       </UserLayout>
@@ -113,7 +113,7 @@ const StoreDetailsPage = () => {
             <Button route="/stores">Back to stores</Button>
           </nav>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
-            <p className="text-[13px] text-(--muted)">
+            <p className="text-[13px] text-(--slate)">
               Store not found.
             </p>
           </section>
@@ -152,7 +152,7 @@ const StoreDetailsPage = () => {
         <nav className="flex w-full items-center justify-between gap-3">
           <div>
             <Heading>Store Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-(--muted)">
+            <p className="mt-1 text-[13px] font-normal text-(--slate)">
               Review store identity and configure DDEX delivery metadata.
             </p>
           </div>
@@ -165,7 +165,7 @@ const StoreDetailsPage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {store?.name || "Store"}
               </h2>
-              <p className="mt-1 font-mono text-[12px] text-(--muted)">
+              <p className="mt-1 font-mono text-[12px] text-(--slate)">
                 {store?.slug || "—"}
               </p>
             </div>
@@ -178,7 +178,7 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Overview
             </Heading>
-            <p className="mt-1 text-[12px] text-(--muted)">
+            <p className="mt-1 text-[12px] text-(--slate)">
               Identity fields are managed by seeds and are read-only here.
             </p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -213,7 +213,7 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Delivery
             </Heading>
-            <p className="mt-1 text-[12px] text-(--muted)">
+            <p className="mt-1 text-[12px] text-(--slate)">
               Used during release validation and distribution routing.
             </p>
 

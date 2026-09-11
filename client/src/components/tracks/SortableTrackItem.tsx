@@ -47,7 +47,7 @@ const SortableTrackItem = ({
       <button
         type="button"
         aria-label="Drag to reorder track"
-        className={`flex shrink-0 items-center rounded-md px-1.5 text-(--muted) transition-colors hover:text-(--ink)/70 ${
+        className={`flex shrink-0 items-center rounded-md px-1.5 text-(--slate) transition-colors hover:text-(--ink)/70 ${
           disabled ? "cursor-not-allowed opacity-40" : "cursor-grab touch-none"
         }`}
         disabled={disabled}

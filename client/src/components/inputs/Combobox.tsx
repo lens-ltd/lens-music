@@ -108,12 +108,12 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                         'flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] type-body-sm',
                                         value
                                             ? selectedValueClassName
-                                            : 'text-(--muted)',
+                                            : 'text-(--placeholder)',
                                     )}
                                 >
                                     {value ? selectedLabel : (placeholder || 'Select option...')}
                                 </span>
-                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 text-(--muted) flex-none" />
+                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 text-(--slate) flex-none" />
                             </button>
                         )}
                     </PopoverTrigger>
@@ -129,7 +129,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                             <CommandList className="w-full">
                                 <CommandEmpty
                                     className={cn(
-                                        'w-full text-center type-body-sm text-(--muted) py-3',
+                                        'w-full text-center type-body-sm text-(--placeholder) py-3',
                                         optionsClassName,
                                     )}
                                 >
@@ -162,7 +162,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                             </p>
                                             <CheckIcon
                                                 className={cn(
-                                                    'ml-auto h-4 w-4 flex-none text-(--lens-blue)',
+                                                    'ml-auto h-4 w-4 flex-none text-(--signal)',
                                                     value === option.value ? 'opacity-100' : 'opacity-0'
                                                 )}
                                             />

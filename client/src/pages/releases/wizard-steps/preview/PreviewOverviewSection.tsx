@@ -55,13 +55,13 @@ const PreviewOverviewSection = ({
                 alt={`${release.title} cover art`}
                 className="h-40 w-40 rounded-lg border border-(--line) object-cover"
               />
-              <figcaption className="mt-2 max-w-[160px] truncate text-[11px] text-(--muted)">
+              <figcaption className="mt-2 max-w-[160px] truncate text-[11px] text-(--slate)">
                 {release.title}
               </figcaption>
             </figure>
           ) : (
             <figure className="flex h-40 w-40 shrink-0 items-center justify-center rounded-lg border border-dashed border-(--line) bg-(--surface)">
-              <figcaption className="text-[11px] text-(--muted)">
+              <figcaption className="text-[11px] text-(--slate)">
                 No cover art
               </figcaption>
             </figure>

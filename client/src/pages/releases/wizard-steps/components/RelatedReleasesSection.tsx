@@ -164,7 +164,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
           <h3 className="text-sm font-medium text-(--ink)">
             Related releases
           </h3>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[12px] text-(--slate)">
             Capture remasters, equivalent releases, and replacement
             relationships directly in the release workflow.
           </p>
@@ -220,11 +220,11 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="mt-5 border-t border-(--line)/50 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[12px] text-(--slate)">
               Loading related releases...
             </p>
           ) : relatedReleases.length === 0 ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[12px] text-(--slate)">
               No related releases linked yet.
             </p>
           ) : (
@@ -240,7 +240,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                         row.externalId ||
                         "External release"}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-[11px] text-(--slate)">
                       {row.relationType}
                     </p>
                   </div>

@@ -270,7 +270,7 @@ const ReleaseWizardDealsSection = () => {
         <h3 className="text-sm font-medium text-(--ink)">
           Commercial deals (DDEX)
         </h3>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[12px] text-(--slate)">
           At least one active deal is required before validation. Use a global
           deal (all stores) or add a deal per DSP. Leave territories empty for
           worldwide, or enter ISO 3166-1 alpha-2 codes comma-separated.
@@ -343,11 +343,11 @@ const ReleaseWizardDealsSection = () => {
           Active deals
         </h4>
         {isFetching ? (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[12px] text-(--slate)">
             Loading…
           </p>
         ) : deals.length === 0 ? (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[12px] text-(--slate)">
             No deals yet. Add one above.
           </p>
         ) : (
@@ -361,13 +361,13 @@ const ReleaseWizardDealsSection = () => {
                   <p className="font-medium text-(--ink)">
                     {deal.commercialModelType} · {deal.useType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {deal.territories.length > 0 ? deal.territories.join(', ') : 'Worldwide'}
                     {deal.store?.name
                       ? ` · Store: ${deal.store.name}`
                       : ' · All stores'}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-[11px] text-(--slate)">
                     {deal.startDate}
                     {deal.isActive === false ? ' · inactive' : ''}
                   </p>
