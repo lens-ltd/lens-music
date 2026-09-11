@@ -35,7 +35,7 @@ const RoleDetailsPage = () => {
       <UserLayout>
         <main className="w-full flex flex-col gap-4">
           <Heading>Role Details</Heading>
-          <div className="w-full rounded-lg bg-(--surface) p-8 text-center">
+          <div className="w-full card-framed p-8 text-center">
             <p className="text-(--slate)">Role not found</p>
           </div>
           <PageFooter back={<BackButton route="/roles">Back to roles</BackButton>} />
@@ -55,7 +55,7 @@ const RoleDetailsPage = () => {
         </header>
 
         <section className="w-full">
-          <div className="flex w-full flex-col gap-6 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-6 card-framed p-5 sm:p-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[18px] font-semibold text-(--ink)">
                 {role.name}
@@ -67,8 +67,8 @@ const RoleDetailsPage = () => {
               )}
             </div>
 
-            <div className="grid gap-3 border-t border-(--line)/70 pt-5">
-              <div className="flex flex-col gap-1 rounded-md bg-white p-4">
+            <div className="grid gap-3 border-t border-(--line) pt-5">
+              <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
                 <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   Role ID
                 </p>
@@ -77,7 +77,7 @@ const RoleDetailsPage = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-1 rounded-md bg-white p-4">
+              <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
                 <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   Permissions
                 </p>
@@ -86,7 +86,7 @@ const RoleDetailsPage = () => {
                     role.permissions.map((permission) => (
                       <span
                         key={permission.id}
-                        className="inline-flex items-center px-2 py-1 rounded-md bg-(--surface) text-[12px] text-(--ink)"
+                        className="inline-flex items-center px-2 py-1 rounded-md bg-(--paper) text-[12px] text-(--ink)"
                       >
                         {permission.permission?.name}
                       </span>
@@ -98,7 +98,7 @@ const RoleDetailsPage = () => {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex flex-col gap-1 rounded-md bg-white p-4">
+                <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
                   <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Created
                   </p>
@@ -107,7 +107,7 @@ const RoleDetailsPage = () => {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-1 rounded-md bg-white p-4">
+                <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
                   <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Last updated
                   </p>

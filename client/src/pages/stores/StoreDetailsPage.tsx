@@ -94,7 +94,7 @@ const StoreDetailsPage = () => {
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
           <Heading>Store Details</Heading>
-          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+          <section className="w-full card-framed p-8 text-center">
             <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
           <PageFooter back={<BackButton route="/stores">Back to stores</BackButton>} />
@@ -108,7 +108,7 @@ const StoreDetailsPage = () => {
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
           <Heading>Store Details</Heading>
-          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+          <section className="w-full card-framed p-8 text-center">
             <p className="text-[13px] text-(--slate)">
               Store not found.
             </p>
@@ -153,8 +153,8 @@ const StoreDetailsPage = () => {
           </p>
         </header>
 
-        <section className="flex w-full flex-col gap-5 rounded-lg bg-(--surface) p-5 sm:p-6">
-          <div className="flex flex-col gap-3 border-b border-(--line)/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
+          <div className="flex flex-col gap-3 border-b border-(--line) pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {store?.name || "Store"}
@@ -179,17 +179,17 @@ const StoreDetailsPage = () => {
               <KeyValuePair
                 keyText="Name"
                 valueText={store?.name || "—"}
-                className="h-full border border-(--line)/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Slug"
                 valueText={store?.slug || "—"}
-                className="h-full border border-(--line)/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Sort order"
                 valueText={String(store?.sortOrder ?? "—")}
-                className="h-full border border-(--line)/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Last updated"
@@ -198,7 +198,7 @@ const StoreDetailsPage = () => {
                     ? formatDate(store.updatedAt, "DD/MM/YYYY HH:mm")
                     : "—"
                 }
-                className="h-full border border-(--line)/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
             </div>
           </div>
@@ -211,7 +211,7 @@ const StoreDetailsPage = () => {
               Used during release validation and distribution routing.
             </p>
 
-            <div className="mt-4 flex flex-col gap-4 rounded-md border border-(--line)/50 bg-white p-4">
+            <div className="mt-4 flex flex-col gap-4 rounded-md border border-(--line) bg-(--paper) p-4">
               <Input
                 label="DDEX Party ID"
                 value={formState.ddexPartyId || ""}

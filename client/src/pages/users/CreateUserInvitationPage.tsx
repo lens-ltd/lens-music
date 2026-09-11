@@ -30,7 +30,7 @@ const CreateUserInvitationPage = () => {
         </header>
 
         <section className="grid w-full gap-5 xl:grid-cols-2">
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <h2 className="text-[14px] font-medium text-(--ink)">
               Send invitation
             </h2>
@@ -57,7 +57,7 @@ const CreateUserInvitationPage = () => {
             </Button>
           </div>
 
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <h2 className="text-[14px] font-medium text-(--ink)">
               Bulk invite (max 50)
             </h2>

@@ -72,15 +72,13 @@ const CreateRelase = () => {
             rules={{ required: 'Title is required' }}
             render={({ field }) => {
               return (
-                <label className="w-full flex flex-col gap-1">
-                  <Input
-                    {...field}
-                    placeholder="Enter release title"
-                    label="Title"
-                    required
-                    errorMessage={errors?.title?.message}
-                  />
-                </label>
+                <Input
+                  {...field}
+                  placeholder="Enter release title"
+                  label="Title"
+                  required
+                  errorMessage={errors?.title?.message}
+                />
               );
             }}
           />
@@ -90,19 +88,17 @@ const CreateRelase = () => {
             rules={{ required: 'Please select the type' }}
             render={({ field }) => {
               return (
-                <label className="w-full flex flex-col gap-1">
-                  <Combobox
-                    {...field}
-                    placeholder="Please select the type"
-                    label="Type"
-                    required
-                    options={Object.entries(ReleaseType).map(([key, value]) => ({
-                      label: capitalizeString(key),
-                      value: value,
-                    }))}
-                    errorMessage={errors?.type?.message}
-                  />
-                </label>
+                <Combobox
+                  {...field}
+                  placeholder="Please select the type"
+                  label="Type"
+                  required
+                  options={Object.entries(ReleaseType).map(([key, value]) => ({
+                    label: capitalizeString(key),
+                    value: value,
+                  }))}
+                  errorMessage={errors?.type?.message}
+                />
               );
             }}
           />

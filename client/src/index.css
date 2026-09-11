@@ -37,34 +37,34 @@
 
   --field: #ffffff;
   --paper: #ffffff;
-  --ink: #100e09;
-  --optical: #100e09;
+  --ink: #1c1917;
+  --optical: #1c1917;
   --signal: #1f628e;
   --signal-hover: #164869;
   --instrument: #4f8795;
   --caution: #a8742a;
-  --slate: #6f6a5f;
-  --rule: #e3dfd5;
-  --muted: #e4e2dd;
-  --surface: #ffffff;
-  --surface-hover: #d9d6cc;
+  --slate: #57534e;
+  --muted: #f4f7fa;
+  --surface: #f4f7fa;
+  --surface-hover: #e9f1f7;
   --surface-sunken: #ffffff;
-  --line: #e3dfd5;
-  --line-strong: #cfcbc1;
-  --menu-border: #d8d4c9;
-  --label-ink: #3d3830;
-  --placeholder: #8b867b;
-  --muted-weak: #6f6a5f;
-  --disabled-fg: #8b867b;
-  --overlay: rgba(16, 14, 9, 0.45);
-  --shadow-menu: 0 12px 32px rgba(16, 14, 9, 0.14);
-  --shadow-modal: 0 12px 34px rgba(16, 14, 9, 0.08);
+  --line: #e7e5e4;
+  --line-strong: #d6d3d1;
+  --menu-border: var(--line-strong);
+  --rule: var(--line);
+  --label-ink: #1c1917;
+  --placeholder: #a8a29e;
+  --muted-weak: var(--slate);
+  --disabled-fg: #a8a29e;
+  --overlay: rgba(0, 0, 0, 0.45);
+  --shadow-menu: 0 12px 32px rgba(0, 0, 0, 0.14);
+  --shadow-modal: 0 12px 34px rgba(0, 0, 0, 0.08);
   --radius-control: 6px;
   --radius-card: 8px;
   --radius-pill: 999px;
 
   --lens-blue: rgb(31, 98, 142);
-  --lens-blue-soft: #e8f0f5;
+  --lens-blue-soft: #e9f1f7;
   --lens-blue-hover: #164869;
   --lens-blue-ink: #ffffff;
   --lens-ink: rgb(16, 14, 9);
@@ -87,16 +87,16 @@
   --danger-text: #974444;
   --danger-surface: #f9ecec;
   --danger-line: #e3c2c2;
-  --approve: #4f8795;
-  --approve-strong: #3d6a75;
-  --approve-surface: #edf4f5;
-  --approve-line: #c3d9dd;
+  --approve: #3e7c4f;
+  --approve-strong: #356b45;
+  --approve-surface: #edf4ee;
+  --approve-line: #cbe0d0;
   --on-consequence: #ffffff;
 
   --chart-1: #1f628e;
   --chart-2: #4f8795;
-  --chart-3: #6f6a5f;
-  --chart-4: #cfcbc1;
+  --chart-3: #57534e;
+  --chart-4: #d6d3d1;
   --chart-5: #a54b4b;
 }
 
@@ -120,16 +120,21 @@
   --ring: var(--signal);
 }
 
-/* Warm-ink instrument panel for the landing footer, CTA band, testimonial
-   feature, and dashboard empty state. There is no dark theme. */
+/* Neutral-ink instrument panel for the in-app dashboard empty state.
+   There is no dark theme. */
 .invert-surface {
-  --paper: #100e09;
+  --paper: #1c1917;
   --ink: #ffffff;
-  --surface: #29251d;
-  --surface-hover: #29251d;
-  --line: #38332a;
-  --muted: #a9c1cf;
-  background-color: #100e09;
+  --surface: #292524;
+  --surface-hover: #292524;
+  --line: #44403c;
+  --line-strong: #6b6660;
+  --menu-border: var(--line-strong);
+  --rule: var(--line);
+  --muted: #d6d3d1;
+  --placeholder: #a8a29e;
+  --label-ink: #f5f5f4;
+  background-color: #1c1917;
   color: #ffffff;
 }
 
@@ -226,8 +231,8 @@
 
   ::selection,
   ::-moz-selection {
-    background: var(--signal);
-    color: #ffffff;
+    background-color: var(--lens-blue);
+    color: var(--lens-blue-ink);
   }
 
   input::selection,
@@ -236,8 +241,42 @@
   textarea::-moz-selection,
   [contenteditable]::selection,
   [contenteditable]::-moz-selection {
-    background: var(--signal);
-    color: #ffffff;
+    background-color: var(--lens-blue);
+    color: var(--lens-blue-ink);
+  }
+
+  :is(
+      .bg-primary,
+      [class~='bg-(--lens-blue)'],
+      [class~='bg-(--signal)'],
+      [class~='bg-(--lens-blue-hover)'],
+      [class~='bg-(--signal-hover)']
+    )::selection,
+  :is(
+      .bg-primary,
+      [class~='bg-(--lens-blue)'],
+      [class~='bg-(--signal)'],
+      [class~='bg-(--lens-blue-hover)'],
+      [class~='bg-(--signal-hover)']
+    )
+    *::selection,
+  :is(
+      .bg-primary,
+      [class~='bg-(--lens-blue)'],
+      [class~='bg-(--signal)'],
+      [class~='bg-(--lens-blue-hover)'],
+      [class~='bg-(--signal-hover)']
+    )::-moz-selection,
+  :is(
+      .bg-primary,
+      [class~='bg-(--lens-blue)'],
+      [class~='bg-(--signal)'],
+      [class~='bg-(--lens-blue-hover)'],
+      [class~='bg-(--signal-hover)']
+    )
+    *::-moz-selection {
+    background-color: var(--lens-blue-ink);
+    color: var(--lens-blue);
   }
 
   [role='tab'][aria-selected='true'],

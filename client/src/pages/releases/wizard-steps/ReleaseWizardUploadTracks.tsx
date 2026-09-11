@@ -202,7 +202,7 @@ const ReleaseWizardUploadTracks = ({
             </>
           )
         ) : (
-          <section className="rounded-xl border border-dashed border-(--line) bg-(--surface) p-5 text-center">
+          <section className="rounded-xl border border-dashed border-(--line) bg-(--paper) p-5 text-center">
             <p className="text-[12px] text-(--slate) font-normal">
               No tracks yet.
             </p>

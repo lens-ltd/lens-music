@@ -90,7 +90,7 @@ const UserDetailsPage = () => {
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
           <Heading>User Details</Heading>
-          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+          <section className="w-full card-framed p-8 text-center">
             <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
           <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
@@ -104,7 +104,7 @@ const UserDetailsPage = () => {
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
           <Heading>User Details</Heading>
-          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+          <section className="w-full card-framed p-8 text-center">
             <p className="text-[13px] text-(--slate)">
               User not found.
             </p>
@@ -127,8 +127,8 @@ const UserDetailsPage = () => {
           </div>
         </nav>
 
-        <section className="flex w-full flex-col gap-5 rounded-lg bg-(--surface) p-5 sm:p-6">
-          <div className="flex flex-col gap-4 border-b border-(--line)/70 pb-5 sm:flex-row sm:items-center">
+        <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
+          <div className="flex flex-col gap-4 border-b border-(--line) pb-5 sm:flex-row sm:items-center">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--lens-blue) text-xl font-semibold text-white">
               {user.avatarUrl ? (
                 <img
@@ -157,7 +157,7 @@ const UserDetailsPage = () => {
             {detailItems.map((item) => (
               <div
                 key={item.key}
-                className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
+                className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
               >
                 <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--lens-blue-soft) text-(--lens-blue)">
                   <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
@@ -173,7 +173,7 @@ const UserDetailsPage = () => {
           </div>
 
           <div className="grid gap-3 lg:grid-cols-2">
-            <div className="rounded-md bg-white p-4">
+            <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faShieldAlt}
@@ -218,7 +218,7 @@ const UserDetailsPage = () => {
               </div>
             </div>
 
-            <div className="rounded-md bg-white p-4">
+            <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faIdBadge}
@@ -249,7 +249,7 @@ const UserDetailsPage = () => {
             </div>
           </div>
 
-          <div className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-2">
+          <div className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-2">
             <div>
               <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                 Created

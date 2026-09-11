@@ -2,10 +2,10 @@ import {
     Command,
     CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
+import { Search } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
@@ -142,16 +142,37 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                         )}
                     </PopoverTrigger>
                     <PopoverContent
+                        data-combobox-menu=""
                         className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0 card-framed shadow-[var(--shadow-menu)]"
                         align="start"
+                        onOpenAutoFocus={(event) => {
+                            // Let the popover FocusScope autofocus proceed
+                            // deterministically to the search field below.
+                            if (event.defaultPrevented) return;
+                        }}
+                        onCloseAutoFocus={(event) => {
+                            event.preventDefault();
+                        }}
                     >
                         <Command ref={ref} className="w-full" shouldFilter={false}>
-                            <CommandInput
-                                placeholder="Search option..."
-                                value={search}
-                                onValueChange={setSearch}
-                                className={cn('type-body-sm', inputClassName)}
-                            />
+                            {/* Plain controlled input: search state never
+                                depends on cmdk store behavior, so typing and
+                                filtering work identically on pages and in
+                                modals. cmdk still owns list rendering,
+                                arrow/enter selection, and the empty state. */}
+                            <div className="flex items-center border-b border-(--line) px-3 z-50000" cmdk-input-wrapper="">
+                                <Search className="mr-2 h-4 w-4 shrink-0 text-(--slate)" />
+                                <input
+                                    value={search}
+                                    onChange={(event) => setSearch(event.target.value)}
+                                    placeholder="Search option..."
+                                    aria-label="Search options"
+                                    className={cn(
+                                        'flex h-(--control-sm) z-50000 w-full bg-transparent type-body-sm outline-none placeholder:text-(--placeholder) disabled:cursor-not-allowed disabled:opacity-50 z-50',
+                                        inputClassName,
+                                    )}
+                                />
+                            </div>
                             <CommandList className="w-full">
                                 <CommandEmpty
                                     className={cn(

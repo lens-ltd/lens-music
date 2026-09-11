@@ -45,7 +45,7 @@ const CreateRolePage = () => {
         </header>
 
         <section className="w-full">
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] uppercase tracking-wide text-(--slate)">

@@ -259,7 +259,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
       variant="open"
     >
       {deliveryHealth.total === 0 ? (
-        <div className="rounded-(--radius-control) border border-dashed border-(--line) bg-(--surface) px-5 py-8 text-center">
+        <div className="rounded-(--radius-control) border border-dashed border-(--line) bg-(--paper) px-5 py-8 text-center">
           <FontAwesomeIcon
             icon={faPaperPlane}
             className="text-(--slate)"
@@ -488,7 +488,7 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
         <FontAwesomeIcon icon={faCompactDisc} aria-hidden="true" />
       </span>
       <div className="mt-16">
-        <p className="type-eyebrow text-[#a9c1cf]">A clear first step</p>
+        <p className="type-eyebrow text-[#d6d3d1]">A clear first step</p>
         <h1 id="empty-dashboard-title" className="mt-4 max-w-xl type-h2 text-(--ink)">
           Your first release starts here.
         </h1>

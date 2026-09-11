@@ -76,8 +76,8 @@ const UserProfilePage = () => {
 
         <section className="flex w-full flex-col gap-5">
           {/* Profile Header */}
-          <div className="flex w-full flex-col items-start gap-4 rounded-lg bg-(--surface) p-5 sm:flex-row sm:items-center">
-            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-white">
+          <div className="flex w-full flex-col items-start gap-4 card-framed p-5 sm:flex-row sm:items-center">
+            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-(--surface)">
               {user?.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -115,7 +115,7 @@ const UserProfilePage = () => {
           </div>
 
           {/* Profile Information */}
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <h3 className="text-[14px] font-medium text-(--ink) mb-2">
               Account Information
             </h3>
@@ -195,8 +195,8 @@ const UserProfilePage = () => {
               </div>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                     <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
@@ -209,8 +209,8 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                     <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
@@ -223,8 +223,8 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                     <FontAwesomeIcon icon={faPhone} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
@@ -237,8 +237,8 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                     <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-(--slate)" />
                   </div>
                   <div className="flex-1">
@@ -252,8 +252,8 @@ const UserProfilePage = () => {
                 </div>
 
                 {user?.dateOfBirth && (
-                  <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                  <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                       <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-(--slate)" />
                     </div>
                     <div className="flex-1">
@@ -268,8 +268,8 @@ const UserProfilePage = () => {
                 )}
 
                 {user?.gender && (
-                  <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                  <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
                       <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
                     </div>
                     <div className="flex-1">
@@ -288,7 +288,7 @@ const UserProfilePage = () => {
 
           {/* Permissions Section */}
           {user?.permissions && user.permissions.length > 0 && (
-            <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+            <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
               <h3 className="text-[14px] font-medium text-(--ink) mb-2">
                 Your Permissions
               </h3>

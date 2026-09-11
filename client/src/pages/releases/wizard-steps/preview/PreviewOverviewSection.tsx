@@ -60,7 +60,7 @@ const PreviewOverviewSection = ({
               </figcaption>
             </figure>
           ) : (
-            <figure className="flex h-40 w-40 shrink-0 items-center justify-center rounded-lg border border-dashed border-(--line) bg-(--surface)">
+            <figure className="flex h-40 w-40 shrink-0 items-center justify-center rounded-lg border border-dashed border-(--line) bg-(--paper)">
               <figcaption className="text-[11px] text-(--slate)">
                 No cover art
               </figcaption>

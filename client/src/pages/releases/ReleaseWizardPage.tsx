@@ -186,7 +186,7 @@ const ReleaseWizardPage = () => {
     }
 
     return (
-      <article className="rounded-xl border border-dashed border-(--line) bg-(--surface) p-6 sm:p-8">
+      <article className="rounded-xl border border-dashed border-(--line) bg-(--paper) p-6 sm:p-8">
         <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)/70">
           Step unavailable
         </p>
