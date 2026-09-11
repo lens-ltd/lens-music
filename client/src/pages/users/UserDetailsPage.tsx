@@ -1,4 +1,4 @@
-import Button from "@/components/inputs/Button";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
@@ -89,13 +89,11 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>User Details</Heading>
-            <Button route="/users">Back to users</Button>
-          </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">{message}</p>
+          <Heading>User Details</Heading>
+          <section className="w-full card-framed p-8 text-center">
+            <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
+          <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -105,15 +103,13 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>User Details</Heading>
-            <Button route="/users">Back to users</Button>
-          </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">
+          <Heading>User Details</Heading>
+          <section className="w-full card-framed p-8 text-center">
+            <p className="text-[13px] text-(--slate)">
               User not found.
             </p>
           </section>
+          <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -125,15 +121,15 @@ const UserDetailsPage = () => {
         <nav className="flex w-full items-center justify-between gap-3">
           <div>
             <Heading>User Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-[color:var(--lens-ink)]/60">
+            <p className="mt-1 text-[13px] font-normal text-(--slate)">
               Review identity, account status, and access context.
             </p>
           </div>
         </nav>
 
-        <section className="flex w-full flex-col gap-5 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-          <div className="flex flex-col gap-4 border-b border-[color:var(--lens-sand)]/70 pb-5 sm:flex-row sm:items-center">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[color:var(--lens-blue)] text-xl font-semibold text-white">
+        <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
+          <div className="flex flex-col gap-4 border-b border-(--line) pb-5 sm:flex-row sm:items-center">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--lens-blue) text-xl font-semibold text-white">
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -145,10 +141,10 @@ const UserDetailsPage = () => {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="text-[20px] font-semibold text-[color:var(--lens-ink)]">
+              <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user.name || "Unnamed user"}
               </h2>
-              <p className="mt-1 truncate text-[13px] text-[color:var(--lens-ink)]/60">
+              <p className="mt-1 truncate text-[13px] text-(--slate)">
                 {user.email || "No email provided"}
               </p>
             </div>
@@ -161,15 +157,15 @@ const UserDetailsPage = () => {
             {detailItems.map((item) => (
               <div
                 key={item.key}
-                className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
+                className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--lens-blue-soft) text-(--lens-blue)">
                   <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
                 </span>
-                <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                   {item.label}
                 </p>
-                <p className="min-w-0 truncate text-[13px] text-[color:var(--lens-ink)]">
+                <p className="min-w-0 truncate text-[13px] text-(--ink)">
                   {user[item.key] || "—"}
                 </p>
               </div>
@@ -177,27 +173,27 @@ const UserDetailsPage = () => {
           </div>
 
           <div className="grid gap-3 lg:grid-cols-2">
-            <div className="rounded-md bg-white p-4">
+            <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faShieldAlt}
-                  className="text-[12px] text-[color:var(--lens-blue)]"
+                  className="text-[12px] text-(--lens-blue)"
                 />
-                <h3 className="text-[13px] font-medium text-[color:var(--lens-ink)]">
+                <h3 className="text-[13px] font-medium text-(--ink)">
                   Access
                 </h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Role
                   </p>
-                  <p className="mt-1 flex items-center gap-2 text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="mt-1 flex items-center gap-2 text-[13px] text-(--ink)">
                     {user.roleName || "No role assigned"}
                     {canAssignRole && (
                       <button
                         type="button"
-                        className="text-[12px] text-[color:var(--lens-blue)] hover:underline"
+                        className="text-[12px] text-(--lens-blue) hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
                           dispatch(setSelectedUser(user));
@@ -210,10 +206,10 @@ const UserDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Permissions
                   </p>
-                  <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="mt-1 text-[13px] text-(--ink)">
                     {user.permissions?.length
                       ? `${user.permissions.length} permission${user.permissions.length === 1 ? "" : "s"}`
                       : "—"}
@@ -222,30 +218,30 @@ const UserDetailsPage = () => {
               </div>
             </div>
 
-            <div className="rounded-md bg-white p-4">
+            <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faIdBadge}
-                  className="text-[12px] text-[color:var(--lens-blue)]"
+                  className="text-[12px] text-(--lens-blue)"
                 />
-                <h3 className="text-[13px] font-medium text-[color:var(--lens-ink)]">
+                <h3 className="text-[13px] font-medium text-(--ink)">
                   Workspace
                 </h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Labels
                   </p>
-                  <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="mt-1 text-[13px] text-(--ink)">
                     {user.labels?.length || 0}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                     Releases
                   </p>
-                  <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="mt-1 text-[13px] text-(--ink)">
                     {user.releases?.length || 0}
                   </p>
                 </div>
@@ -253,33 +249,35 @@ const UserDetailsPage = () => {
             </div>
           </div>
 
-          <div className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-2">
+          <div className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                 Created
               </p>
-              <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+              <p className="mt-1 text-[13px] text-(--ink)">
                 {user.createdAt ? formatDate(user.createdAt, "DD/MM/YYYY HH:mm") : "—"}
               </p>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
                 Last updated
               </p>
-              <p className="mt-1 text-[13px] text-[color:var(--lens-ink)]">
+              <p className="mt-1 text-[13px] text-(--ink)">
                 {user.updatedAt ? formatDate(user.updatedAt, "DD/MM/YYYY HH:mm") : "—"}
               </p>
             </div>
           </div>
         </section>
-        <menu>
-          <Button onClick={(e) => {
-            e.preventDefault();
-            navigate(-1);
-          }}>
-            Back
-          </Button>
-        </menu>
+        <PageFooter
+          back={
+            <BackButton onClick={(e) => {
+              e.preventDefault();
+              navigate(-1);
+            }}>
+              Back to users
+            </BackButton>
+          }
+        />
       </main>
       <AssignUserRole />
     </UserLayout>

@@ -7,6 +7,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { UUID } from 'crypto';
+import { useId } from 'react';
+import { cn } from '@/lib/utils';
+import { InputErrorMessage } from '../feedbacks/ErrorLabels';
+import {
+  FieldError,
+  FieldErrorsImpl,
+  FieldValues,
+  Merge,
+} from 'react-hook-form';
 
 const EMPTY_SELECT_VALUE = '__lens_empty_select_value__';
 
@@ -28,6 +37,11 @@ type SelectProps = {
   labelClassName?: string | undefined;
   name?: string | undefined;
   readOnly?: boolean;
+  errorMessage?:
+    | string
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<FieldValues>>
+    | undefined;
 };
 
 const Select = ({
@@ -42,12 +56,23 @@ const Select = ({
   labelClassName = undefined,
   name = undefined,
   readOnly = false,
+  errorMessage,
 }: SelectProps) => {
+  const generatedId = useId();
+  const describedBy = errorMessage ? `${generatedId}-error` : undefined;
+
   return (
-    <label className={`flex flex-col gap-1 w-full ${labelClassName}`}>
-      <p className={label ? 'flex items-center gap-1 text-[12px]' : 'hidden'}>
-        {label} <span className={required ? `text-red-600` : 'hidden'}>*</span>
-      </p>
+    <label className={cn('field-stack', labelClassName)}>
+      {label ? (
+        <span className="field-label">
+          {label}{' '}
+          {required && (
+            <span className="field-required" aria-hidden="true">
+              *
+            </span>
+          )}
+        </span>
+      ) : null}
       <SelectComponent
         onValueChange={(nextValue) => onChange?.(fromSelectValue(nextValue))}
         defaultValue={
@@ -55,16 +80,15 @@ const Select = ({
         }
         value={value === undefined ? undefined : toSelectValue(value)}
         name={name}
+        disabled={readOnly}
       >
         <SelectTrigger
-          className={`w-full cursor-pointer focus:ring-transparent ring-0 h-10 ${className}`}
+          className={cn('field-chrome', className)}
+          aria-required={required || undefined}
+          aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={describedBy}
         >
-          <SelectValue
-            className="text-[10px]!"
-            placeholder={
-              <p className="text-[12px] text-[color:var(--lens-ink)]/55">{placeholder}</p>
-            }
-          />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -74,15 +98,17 @@ const Select = ({
                   key={index}
                   value={toSelectValue(option.value)}
                   disabled={readOnly}
-                  className="cursor-pointer text-[12px] py-1 hover:bg-background"
                 >
-                  <p className="text-[12px] py-[3px]">{option.label}</p>
+                  {option.label}
                 </SelectItem>
               );
             })}
           </SelectGroup>
         </SelectContent>
       </SelectComponent>
+      {errorMessage && (
+        <InputErrorMessage id={describedBy} message={errorMessage} />
+      )}
     </label>
   );
 };

@@ -28,7 +28,7 @@ const columns: ColumnDef<TrackContributor, string>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => (
-      <span className="rounded-full border border-[color:var(--lens-sand)] px-2 py-0.5 text-[11px]">
+      <span className="rounded-full border border-(--line) px-2 py-0.5 text-[11px]">
         {capitalizeString(row.original.role)}
       </span>
     ),
@@ -60,7 +60,7 @@ const TrackContributorsSummary = ({
           containerClassName="border-0"
         />
       ) : (
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--slate)">
           No contributors added.
         </p>
       )}

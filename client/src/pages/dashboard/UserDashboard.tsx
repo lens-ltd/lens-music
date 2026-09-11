@@ -30,7 +30,7 @@ import { ReleaseStatus } from '@/types/models/release.types';
 import { ReleaseDeliveryStatus } from '@/types/models/releaseStore.types';
 import { formatDate, formatNumbers } from '@/utils/strings.helper';
 
-const serif = { fontFamily: 'var(--font-serif)', fontWeight: 700 } as const;
+const serif = { fontFamily: 'var(--font-serif)', fontWeight: 500 } as const;
 
 const releaseStatusMeta: Record<
   ReleaseStatus,
@@ -104,25 +104,24 @@ const DashboardContent = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: 'easeOut' }}
     >
-      <header className="flex flex-col gap-5 border-b border-[color:var(--lens-sand)] pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <header className="flex flex-col gap-5 border-b border-(--line) pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--lens-blue)]">
-            Catalog desk
+          <p className="type-eyebrow">
+            Catalog
           </p>
           <h1
-            className="mt-3 text-[clamp(30px,5vw,48px)] leading-[1.05] tracking-[-0.03em] text-[color:var(--lens-ink)]"
-            style={serif}
+            className="mt-2 type-page-title text-(--ink)"
           >
             {userName ? `${userName.split(' ')[0]}’s dashboard` : 'Dashboard'}
           </h1>
-          <p className="mt-3 max-w-xl text-[13px] leading-6 text-[color:var(--lens-ink)]/60">
+          <p className="mt-2 max-w-xl type-body-sm text-(--slate)">
             Follow every release from first draft to store delivery.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          <span className="inline-flex items-center gap-2 text-[11px] text-[color:var(--lens-ink)]/45">
+          <span className="inline-flex items-center gap-2 type-meta">
             <span
-              className={`h-1.5 w-1.5 rounded-full bg-[color:var(--lens-blue)] ${isRefreshing ? 'animate-pulse' : ''}`}
+              className={`h-1.5 w-1.5 rounded-full bg-(--lens-blue) ${isRefreshing ? 'animate-pulse' : ''}`}
             />
             Updated {formatDate(new Date(summary.generatedAt))}
           </span>
@@ -169,25 +168,25 @@ const TotalsStrip = ({ totals }: { totals: DashboardSummary['totals'] }) => {
 
   return (
     <section
-      className="grid overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm sm:grid-cols-2 xl:grid-cols-4"
+      className="grid overflow-hidden card-framed sm:grid-cols-2 xl:grid-cols-4"
       aria-label="Catalog totals"
     >
       {metrics.map((metric, index) => {
         const content = (
           <>
             <span className="flex items-center justify-between gap-3">
-              <span className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+              <span className="type-eyebrow">
                 {metric.label}
               </span>
-              <FontAwesomeIcon icon={metric.icon} className="text-[color:var(--lens-blue)]" aria-hidden="true" />
+              <FontAwesomeIcon icon={metric.icon} className="text-(--slate)" aria-hidden="true" />
             </span>
-            <strong className="mt-5 block text-[30px] text-[color:var(--lens-ink)]" style={serif}>
+            <strong className="mt-4 block type-metric text-(--ink)">
               {formatNumbers(metric.value)}
             </strong>
           </>
         );
-        const className = `min-h-[112px] p-5 transition-colors hover:bg-[color:var(--lens-sand)]/25 ${
-          index > 0 ? 'border-t border-[color:var(--lens-sand)] sm:border-t-0 sm:border-l' : ''
+        const className = `min-h-[112px] p-5 transition-colors hover:bg-(--surface) ${
+          index > 0 ? 'border-t border-(--line) sm:border-t-0 sm:border-l' : ''
         } ${index === 2 ? 'sm:border-l-0 xl:border-l' : ''}`;
         return metric.route ? (
           <Link key={metric.label} to={metric.route} className={className}>
@@ -215,27 +214,26 @@ const ReleasePipeline = ({
       subtitle={`${formatNumbers(total)} releases across your distribution journey`}
       variant="open"
     >
-        <ol className="grid gap-px overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)] sm:grid-cols-2 lg:grid-cols-7" aria-label="Release lifecycle counts">
+        <ol className="grid gap-px overflow-hidden rounded-(--radius-card) border border-(--line) bg-(--surface) sm:grid-cols-2 lg:grid-cols-7" aria-label="Release lifecycle counts">
           {pipeline.map((item) => {
             const meta = releaseStatusMeta[item.status];
             return (
               <li
                 key={item.status}
-                className="bg-white"
+                className="bg-(--paper)"
               >
                 <Link
                   to={`/releases?status=${item.status}`}
-                  className="group flex min-h-[98px] flex-row items-center justify-between gap-3 p-4 transition-colors hover:bg-[color:var(--lens-sand)]/25 lg:flex-col lg:items-start"
+                  className="group flex min-h-[98px] flex-row items-center justify-between gap-3 p-4 transition-colors hover:bg-(--surface) lg:flex-col lg:items-start"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="h-px w-4 bg-[color:var(--lens-blue)]" aria-hidden="true" />
-                  <span className="text-[10px] uppercase tracking-[0.08em] text-[color:var(--lens-ink)]/50">
+                    <span className="h-px w-4 bg-(--lens-blue)" aria-hidden="true" />
+                  <span className="type-meta">
                     {meta.label}
                   </span>
                 </span>
                 <strong
-                  className="text-[24px] text-[color:var(--lens-ink)] transition-colors group-hover:text-[color:var(--lens-blue)]"
-                  style={serif}
+                  className="type-metric text-[1.5rem] text-(--ink) transition-colors group-hover:text-(--lens-blue)"
                 >
                   {formatNumbers(item.count)}
                 </strong>
@@ -253,10 +251,6 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
   const delivered = deliveryHealth.byStatus.find(
     (item) => item.status === ReleaseDeliveryStatus.DELIVERED,
   )?.count ?? 0;
-  const ringStyle = {
-    background: `conic-gradient(var(--lens-blue) ${deliveryHealth.deliveredRate}%, var(--lens-sand) 0)`,
-  };
-
   return (
     <DashboardSection
       label="Store delivery"
@@ -265,36 +259,28 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
       variant="open"
     >
       {deliveryHealth.total === 0 ? (
-        <div className="rounded-md border border-dashed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/10 px-5 py-8 text-center">
+        <div className="rounded-(--radius-control) border border-dashed border-(--line) bg-(--paper) px-5 py-8 text-center">
           <FontAwesomeIcon
             icon={faPaperPlane}
-            className="text-[color:var(--lens-blue)]"
+            className="text-(--slate)"
             aria-hidden="true"
           />
-          <p className="mt-3 text-[12px] font-semibold text-[color:var(--lens-ink)]">
+          <p className="mt-3 type-label text-(--ink)">
             No store deliveries yet
           </p>
-          <p className="mx-auto mt-1 max-w-sm text-[11px] leading-relaxed text-[color:var(--lens-ink)]/50">
+          <p className="mx-auto mt-1 max-w-sm type-meta">
             Assign stores inside a release to start tracking delivery health here.
           </p>
         </div>
       ) : (
         <div className="grid items-center gap-7 sm:grid-cols-[150px_1fr]">
-          <div
-            className="relative mx-auto flex h-[142px] w-[142px] items-center justify-center rounded-full"
-            style={ringStyle}
-          >
-            <div className="flex h-[108px] w-[108px] flex-col items-center justify-center rounded-full bg-white">
-              <strong
-                className="text-[25px] text-[color:var(--lens-ink)]"
-                style={serif}
-              >
-                {deliveryHealth.deliveredRate}%
-              </strong>
-              <span className="mt-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/45">
-                delivered
-              </span>
-            </div>
+          <div className="card-quiet mx-auto flex h-[142px] w-[142px] flex-col items-center justify-center">
+            <strong className="type-metric tabular">
+              {deliveryHealth.deliveredRate}%
+            </strong>
+            <span className="mt-1 type-eyebrow">
+              delivered
+            </span>
           </div>
           <ul className="grid grid-cols-2 gap-x-6 gap-y-4">
             {deliveryHealth.byStatus.map((item) => {
@@ -302,15 +288,15 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
               return (
                 <li
                   key={item.status}
-                  className="border-l-2 border-[color:var(--lens-blue)] pl-3"
+                  className="border-l-2 border-(--ink) pl-3"
                 >
                   <strong
-                    className="block text-[17px] text-[color:var(--lens-ink)]"
+                    className="block type-card-title text-(--ink)"
                     style={serif}
                   >
                     {formatNumbers(item.count)}
                   </strong>
-                  <span className="text-[10px] text-[color:var(--lens-ink)]/50">
+                  <span className="type-meta">
                     {meta.label}
                   </span>
                 </li>
@@ -330,18 +316,18 @@ const ActionQueue = ({ items }: { items: DashboardActionItem[] }) => (
   <DashboardSection label="Quality control" title="Needs attention">
     {items.length === 0 ? (
       <div className="flex min-h-[190px] flex-col items-center justify-center text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-(--lens-blue-soft) text-(--lens-blue)">
           <FontAwesomeIcon icon={faCheck} aria-hidden="true" />
         </span>
-        <p className="mt-4 text-[12px] font-semibold text-[color:var(--lens-ink)]">
+        <p className="mt-4 type-label text-(--ink)">
           Your queue is clear
         </p>
-        <p className="mt-1 max-w-[230px] text-[11px] leading-relaxed text-[color:var(--lens-ink)]/50">
+        <p className="mt-1 max-w-[230px] type-meta">
           No review changes or failed deliveries need action.
         </p>
       </div>
     ) : (
-      <ul className="divide-y divide-[color:var(--lens-sand)]">
+      <ul className="divide-y divide-(--line)">
         {items.map((item) => (
           <li key={item.id}>
             <Link
@@ -351,8 +337,8 @@ const ActionQueue = ({ items }: { items: DashboardActionItem[] }) => (
               <span
                 className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                   item.kind === 'DELIVERY_FAILED'
-                    ? 'border border-[color:var(--lens-ink)]/25 bg-[color:var(--lens-sand)]/35 text-[color:var(--lens-ink)]'
-                    : 'bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]'
+                    ? 'border border-[color:var(--lens-ink)]/25 bg-(--surface) text-(--ink)'
+                    : 'bg-(--lens-blue-soft) text-(--lens-blue)'
                 }`}
               >
                 <FontAwesomeIcon
@@ -362,16 +348,16 @@ const ActionQueue = ({ items }: { items: DashboardActionItem[] }) => (
                 />
               </span>
               <span className="min-w-0 flex-1">
-                <strong className="block truncate text-[12px] font-semibold text-[color:var(--lens-ink)]">
+                <strong className="block truncate type-label text-(--ink)">
                   {item.releaseTitle}
                 </strong>
-                <span className="mt-1 line-clamp-2 block text-[11px] leading-relaxed text-[color:var(--lens-ink)]/55">
+                <span className="mt-1 line-clamp-2 block type-meta">
                   {item.message}
                 </span>
               </span>
               <FontAwesomeIcon
                 icon={faArrowRight}
-                className="mt-2 shrink-0 text-[color:var(--lens-ink)]/25 transition-transform group-hover:translate-x-1 group-hover:text-[color:var(--lens-blue)]"
+                className="mt-2 shrink-0 text-(--ink)/25 transition-transform group-hover:translate-x-1 group-hover:text-(--lens-blue)"
                 aria-hidden="true"
               />
             </Link>
@@ -396,13 +382,13 @@ const RecentReleases = ({ releases }: { releases: DashboardRelease[] }) => (
     }
   >
     {releases.length ? (
-      <ul className="divide-y divide-[color:var(--lens-sand)] border-t border-[color:var(--lens-sand)]">
+      <ul className="divide-y divide-(--line) border-t border-(--line)">
         {releases.map((release) => (
           <RecentReleaseRow key={release.id} release={release} />
         ))}
       </ul>
     ) : (
-      <p className="border-t border-[color:var(--lens-sand)] px-5 py-10 text-center text-[12px] text-[color:var(--lens-ink)]/55">
+      <p className="border-t border-(--line) px-5 py-10 text-center type-body-sm text-(--slate)">
         No recent release activity yet.
       </p>
     )}
@@ -415,7 +401,7 @@ const RecentReleaseRow = ({ release }: { release: DashboardRelease }) => {
     <li>
       <Link
         to={`/releases/${release.id}/wizard`}
-        className="group grid min-h-[82px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-[color:var(--lens-sand)]/20 sm:px-5 lg:grid-cols-[52px_minmax(160px,1.3fr)_0.45fr_0.45fr_0.8fr_auto] lg:gap-5"
+        className="group grid min-h-[82px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-(--surface) sm:px-5 lg:grid-cols-[52px_minmax(160px,1.3fr)_0.45fr_0.45fr_0.8fr_auto] lg:gap-5"
       >
         {release.coverArtUrl ? (
           <img
@@ -425,53 +411,53 @@ const RecentReleaseRow = ({ release }: { release: DashboardRelease }) => {
           />
         ) : (
           <span
-            className="h-12 w-12 rounded-md bg-[color:var(--lens-sand)] sm:h-[52px] sm:w-[52px]"
+            className="h-12 w-12 rounded-md bg-(--surface) sm:h-[52px] sm:w-[52px]"
             aria-label="No cover art"
             role="img"
           />
         )}
         <span className="min-w-0">
-          <strong className="block truncate text-[12px] font-semibold text-[color:var(--lens-ink)]">
+          <strong className="block truncate type-body-sm font-medium text-(--ink)">
             {release.title}
           </strong>
-          <span className="mt-1 block text-[10px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/42">
+          <span className="mt-1 block type-meta capitalize">
             {release.type?.toLowerCase() ?? 'Release'}
           </span>
         </span>
         <span className="hidden lg:block">
-          <span className="block text-[11px] text-[color:var(--lens-ink)]" style={serif}>
+          <span className="block type-body-sm text-(--ink)" style={serif}>
             {release.trackCount}
           </span>
-          <span className="text-[9px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/42">
+          <span className="type-meta">
             tracks
           </span>
         </span>
         <span className="hidden lg:block">
-          <span className="block text-[11px] text-[color:var(--lens-ink)]" style={serif}>
+          <span className="block type-body-sm text-(--ink)" style={serif}>
             {release.storeCount}
           </span>
-          <span className="text-[9px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/42">
+          <span className="type-meta">
             stores
           </span>
         </span>
         <span className="hidden lg:block">
-          <span className="block text-[11px] text-[color:var(--lens-ink)]">
+          <span className="block type-body-sm text-(--ink)">
             {release.digitalReleaseDate
               ? formatDate(release?.digitalReleaseDate, 'DD/MM/YYYY')
               : 'Not set'}
           </span>
-          <span className="text-[9px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/42">
+          <span className="type-meta">
             release date
           </span>
         </span>
         <span className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-[color:var(--lens-sand)] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[color:var(--lens-ink)]/70">
-            <span className="h-px w-3 bg-[color:var(--lens-blue)]" aria-hidden="true" />
+          <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-(--radius-pill) border border-(--line) px-2.5 py-1 type-meta text-(--ink)">
+            <span className="h-px w-3 bg-(--lens-blue)" aria-hidden="true" />
             {status.label}
           </span>
           <FontAwesomeIcon
             icon={faArrowRight}
-            className="hidden text-[color:var(--lens-ink)]/25 transition-transform group-hover:translate-x-1 group-hover:text-[color:var(--lens-blue)] md:block"
+            className="hidden text-(--ink)/25 transition-transform group-hover:translate-x-1 group-hover:text-(--lens-blue) md:block"
             aria-hidden="true"
           />
         </span>
@@ -494,19 +480,19 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
     initial={reduceMotion ? false : { opacity: 0, y: 14 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, ease: 'easeOut' }}
-    className="grid min-h-[560px] overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-white shadow-sm lg:grid-cols-[1.1fr_0.9fr]"
+    className="grid min-h-[560px] overflow-hidden card-framed lg:grid-cols-[1.1fr_0.9fr]"
     aria-labelledby="empty-dashboard-title"
   >
-    <div className="flex flex-col justify-between bg-[color:var(--lens-ink)] p-7 text-[color:var(--color-background)] sm:p-10 lg:p-12">
-      <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[color:var(--lens-sand)]/30 text-[color:var(--lens-sand)]">
+    <div className="flex flex-col justify-between invert-surface p-7 sm:p-10 lg:p-12">
+      <span className="flex h-12 w-12 items-center justify-center rounded-full border border-(--line)/30 text-(--muted)">
         <FontAwesomeIcon icon={faCompactDisc} aria-hidden="true" />
       </span>
       <div className="mt-16">
-        <p className="text-[10px] uppercase tracking-[0.22em] text-[color:var(--lens-sand)]/65">A clear first step</p>
-        <h1 id="empty-dashboard-title" className="mt-4 max-w-xl text-[clamp(36px,6vw,60px)] leading-[1.04] tracking-[-0.04em]" style={serif}>
+        <p className="type-eyebrow text-[#d6d3d1]">A clear first step</p>
+        <h1 id="empty-dashboard-title" className="mt-4 max-w-xl type-h2 text-(--ink)">
           Your first release starts here.
         </h1>
-        <p className="mt-5 max-w-lg text-[13px] leading-7 text-[color:var(--lens-sand)]/75">
+        <p className="mt-5 max-w-lg type-body-sm text-(--muted)">
           Build the release at your pace. Every step saves, so you can leave and return without losing your place.
         </p>
         <Button primary icon={faPlus} onClick={onCreateRelease} className="mt-7">
@@ -515,14 +501,14 @@ const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void 
       </div>
     </div>
     <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--lens-blue)]">From draft to delivery</p>
-      <ol className="mt-7 divide-y divide-[color:var(--lens-sand)]">
+      <p className="type-eyebrow text-(--lens-blue)">From draft to delivery</p>
+      <ol className="mt-7 divide-y divide-(--line)">
         {onboardingSteps.map(([number, title, description]) => (
           <li key={number} className="grid grid-cols-[42px_1fr] gap-4 py-6 first:pt-0">
-            <span className="text-[11px] text-[color:var(--lens-blue)]" style={serif}>{number}</span>
+            <span className="type-body-sm text-(--lens-blue)" style={serif}>{number}</span>
             <span>
-              <strong className="block text-[15px] text-[color:var(--lens-ink)]" style={serif}>{title}</strong>
-              <span className="mt-2 block text-[12px] leading-6 text-[color:var(--lens-ink)]/55">{description}</span>
+              <strong className="block type-card-title text-(--ink)">{title}</strong>
+              <span className="mt-2 block type-body-sm text-(--slate)">{description}</span>
             </span>
           </li>
         ))}
@@ -540,16 +526,16 @@ const DashboardError = ({
   isRetrying: boolean;
 }) => (
   <section
-    className="flex min-h-[420px] flex-col items-center justify-center rounded-xl border border-[color:var(--lens-sand)] bg-white px-6 text-center shadow-sm"
+    className="flex min-h-[420px] flex-col items-center justify-center card-framed px-6 text-center"
     role="alert"
   >
-    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[color:var(--lens-ink)]/25 bg-[color:var(--lens-sand)]/30 text-[color:var(--lens-ink)]">
+    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[color:var(--lens-ink)]/25 bg-(--surface) text-(--ink)">
       <FontAwesomeIcon icon={faTriangleExclamation} className="text-xl" aria-hidden="true" />
     </span>
-    <h1 className="mt-5 text-[22px] text-[color:var(--lens-ink)]" style={serif}>
+    <h1 className="mt-5 type-page-title text-(--ink)">
       Dashboard unavailable
     </h1>
-    <p className="mt-2 max-w-sm text-[12px] leading-relaxed text-[color:var(--lens-ink)]/55">
+    <p className="mt-2 max-w-sm type-body-sm text-(--slate)">
       The dashboard summary could not be loaded. Check the API connection and try again.
     </p>
     <Button
@@ -581,7 +567,7 @@ const DashboardSkeleton = () => (
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="min-h-[120px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5"
+          className="min-h-[120px] card-framed p-5"
         >
           <SkeletonLoader type="text" width="6rem" height="1rem" />
           <div className="mt-4">
@@ -590,14 +576,14 @@ const DashboardSkeleton = () => (
         </div>
       ))}
     </div>
-    <div className="h-[150px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+    <div className="h-[150px] card-framed p-5">
       <SkeletonLoader type="text" width="10rem" height="1rem" />
     </div>
     <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+      <div className="h-[320px] card-framed p-5">
         <SkeletonLoader type="text" width="10rem" height="1rem" />
       </div>
-      <div className="h-[320px] rounded-xl border border-[color:var(--lens-sand)] bg-white p-5">
+      <div className="h-[320px] card-framed p-5">
         <SkeletonLoader type="text" width="8rem" height="1rem" />
       </div>
     </div>

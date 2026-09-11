@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
@@ -347,12 +348,12 @@ const ReleaseWizardOverview = ({
         <menu className="w-full flex flex-col gap-3">
           <Heading type="h3">Cover Art</Heading>
           {!release?.coverArtUrl ? (
-            <p className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70">
+            <p className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70">
               Cover art is required before final validation. You can save the
               overview now and add it before submitting.
             </p>
           ) : null}
-          <article className="w-full rounded-md border border-[color:var(--lens-sand)] bg-white p-4 sm:p-5">
+          <article className="w-full rounded-md border border-(--line) bg-white p-4 sm:p-5">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
                 <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-md border border-secondary/20 bg-secondary/5">
@@ -364,7 +365,7 @@ const ReleaseWizardOverview = ({
                 </figure>
                 <menu className="flex items-center justify-between gap-3">
                   <menu className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-[color:var(--lens-ink)]">
+                    <p className="text-sm font-medium text-(--ink)">
                       Current cover art
                     </p>
                     <p className="text-[12px] text-secondary/80 font-normal">
@@ -384,7 +385,7 @@ const ReleaseWizardOverview = ({
             ) : (
               <section className="flex flex-col gap-4 rounded-xl border border-dashed border-secondary/30 bg-secondary/5 p-5">
                 <menu className="flex flex-col gap-1">
-                  <p className="text-sm font-medium text-[color:var(--lens-ink)]">
+                  <p className="text-sm font-medium text-(--ink)">
                     No cover art uploaded
                   </p>
                   <p className="text-[12px] text-secondary/80 font-normal">
@@ -742,8 +743,8 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
-          <Button
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+          <BackButton
             onClick={(e) => {
               e.preventDefault();
               if (previousStepName) {
@@ -757,7 +758,7 @@ const ReleaseWizardOverview = ({
             }}
           >
             Back
-          </Button>
+          </BackButton>
           <Button
             primary
             submit
@@ -794,12 +795,12 @@ const ReleaseWizardOverview = ({
 
           {selectedFileName && (
             <menu className="flex items-center justify-between gap-3 rounded-lg border border-secondary/20 bg-secondary/5 px-3 py-2">
-              <p className="truncate text-[12px] text-[color:var(--lens-ink)]">
+              <p className="truncate text-[12px] text-(--ink)">
                 {selectedFileName}
               </p>
               <button
                 type="button"
-                className="inline-flex items-center justify-center text-[color:var(--lens-ink)]"
+                className="inline-flex items-center justify-center text-(--ink)"
                 onClick={() => {
                   setSelectedCoverArt(undefined);
                   setCoverArtError(undefined);
@@ -812,7 +813,7 @@ const ReleaseWizardOverview = ({
           )}
 
           {coverArtError && (
-            <p className="text-[12px] text-[color:var(--lens-ink)]">{coverArtError}</p>
+            <p className="text-[12px] text-(--ink)">{coverArtError}</p>
           )}
 
           <menu className="flex items-center justify-between gap-3">

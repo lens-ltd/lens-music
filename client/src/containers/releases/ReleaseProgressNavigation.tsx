@@ -62,7 +62,7 @@ const ReleaseProgressNavigation = ({
   }
 
   return (
-    <section className="border-y border-[color:var(--lens-sand)] bg-white py-3">
+    <section className="border-y border-(--line) bg-white py-3">
       <nav
         className="flex gap-2 overflow-x-auto"
         aria-label="Release wizard tabs"
@@ -108,10 +108,10 @@ const ReleaseProgressNavigation = ({
               }}
               aria-current={navigationTab.active ? 'step' : undefined}
               className={`group min-w-[150px] flex-1 rounded-md border px-4 py-2 text-left transition-all duration-200 ${navigationTab.active
-                  ? 'border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)] text-white'
+                  ? 'border-[color:var(--lens-blue)] bg-(--lens-blue) text-white'
                   : navigationTab.completed
-                    ? 'border-[color:var(--lens-blue)]/25 bg-[color:var(--lens-blue)]/5 text-[color:var(--lens-blue)] hover:bg-[color:var(--lens-blue)]/10'
-                    : 'border-[color:var(--lens-sand)] bg-white text-[color:var(--lens-ink)]/65 hover:border-[color:var(--lens-blue)]/35'
+                    ? 'border-[color:var(--lens-blue)]/25 bg-(--lens-blue)/5 text-(--lens-blue) hover:bg-(--lens-blue-soft)'
+                    : 'border-(--line) bg-white text-(--slate) hover:border-[color:var(--lens-blue)]/35'
                 }`}
             >
               <span className="flex w-full items-center gap-3">
@@ -119,8 +119,8 @@ const ReleaseProgressNavigation = ({
                   className={`flex size-8 items-center justify-center rounded-full text-xs font-normal ${navigationTab?.active
                       ? 'bg-white/20 text-white'
                       : navigationTab?.completed
-                        ? 'bg-[color:var(--lens-blue)] text-white'
-                        : 'bg-[color:var(--lens-sand)]/45 text-[color:var(--lens-ink)]/55 group-hover:bg-[color:var(--lens-blue)]/10 group-hover:text-[color:var(--lens-blue)]'
+                        ? 'bg-(--lens-blue) text-white'
+                        : 'bg-(--surface) text-(--slate) group-hover:bg-(--lens-blue-soft) group-hover:text-(--lens-blue)'
                     }`}
                 >
                   {navigationTab?.completed ? (

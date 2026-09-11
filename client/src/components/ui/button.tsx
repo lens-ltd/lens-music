@@ -5,26 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer font-normal items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-(--radius-control) border text-[13px] font-normal whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+          "border-(--signal) bg-(--signal) text-white hover:border-(--signal-hover) hover:bg-(--signal-hover)",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
+          "border-(--danger) bg-(--danger) text-white hover:border-(--danger-strong) hover:bg-(--danger-strong)",
         outline:
-          "border border-input shadow-xs hover:border-gray-100 hover:bg-accent hover:text-accent-foreground",
+          "border-(--menu-border) bg-white text-(--ink) hover:bg-(--surface)",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border-(--menu-border) bg-white text-(--ink) hover:bg-(--surface)",
+        ghost:
+          "border-transparent bg-transparent text-(--muted-weak) hover:bg-(--surface) hover:text-(--ink)",
+        link: "border-transparent bg-transparent text-(--signal) p-0 h-auto link-sweep",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-(--control-md) min-h-(--control-md) px-3.5",
+        sm: "h-(--control-sm) min-h-(--control-sm) px-3",
+        lg: "h-(--control-md) min-h-(--control-md) px-5",
+        icon: "size-(--control-sm)",
       },
     },
     defaultVariants: {

@@ -67,7 +67,7 @@ const DeleteLyrics = () => {
       headingClassName="text-red-700"
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-[12px] text-[color:var(--lens-ink)]/75">
+        <p className="text-[12px] text-(--slate)">
           Are you sure you want to delete {selectedLyrics?.language}? This
           action cannot be undone.
         </p>

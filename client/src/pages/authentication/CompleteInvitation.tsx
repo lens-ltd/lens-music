@@ -74,21 +74,19 @@ const CompleteInvitation = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--field) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-lg rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 shadow-sm">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)] font-normal">
+        <article className="w-full max-w-[520px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
+          <p className="type-eyebrow">
             Invitation only
           </p>
           <h1
-            className="mt-4 text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-            style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-          >
+            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
             Complete your registration
           </h1>
-          <p className="mt-3 text-[13px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">
+          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
             Finish setting up your Lens Music account and create your password.
           </p>
 
@@ -100,12 +98,12 @@ const CompleteInvitation = () => {
             </div>
           ) : (
             <>
-              <div className="mt-6 rounded-xl border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/55">Invited email</p>
-                <p className="mt-2 text-[14px] text-[color:var(--lens-ink)] font-normal">{validationState.data?.data?.email}</p>
+              <div className="mt-6 card-quiet p-4">
+                <p className="type-eyebrow">Invited email</p>
+                <p className="mt-2 text-[14px] text-(--ink) font-normal">{validationState.data?.data?.email}</p>
               </div>
 
-              <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
+              <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                   control={control}
                   name="name"

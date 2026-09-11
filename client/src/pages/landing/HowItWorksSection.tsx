@@ -21,19 +21,15 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <FadeSection id="how-it-works" labelledBy="how-it-works-heading" className="py-24 bg-white">
+    <FadeSection id="how-it-works" labelledBy="how-it-works-heading" className="section-rhythm bg-(--paper)">
       {({ inView }) => (
-        <article className="max-w-6xl mx-auto px-6">
+        <article className="app-container">
           <header className="max-w-2xl" style={fadeUp(inView)}>
             <SectionLabel>How it works</SectionLabel>
-            <h2
-              id="how-it-works-heading"
-              className="mt-4 text-[clamp(28px,4vw,44px)] leading-tight tracking-[-0.02em]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
+            <h2 id="how-it-works-heading" className="mt-4 type-h2">
               A clear release workflow from upload to payout.
             </h2>
-            <p className="mt-4 text-[13px] leading-7 text-[color:var(--lens-ink)]/60 font-normal">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens keeps the release process simple and gives you the revenue reporting needed to make decisions after launch.
             </p>
           </header>
@@ -41,12 +37,10 @@ export default function HowItWorksSection() {
           <ol className="mt-10 grid md:grid-cols-3 gap-4 list-none p-0 m-0">
             {steps.map((item, index) => (
               <li key={item.step} style={fadeUp(inView, 0.08 * index)}>
-                <article className="h-full rounded-2xl border border-[color:var(--lens-sand)] p-6">
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)] font-normal">{item.step}</p>
-                  <h3 className="mt-4 text-[18px] leading-snug text-[color:var(--lens-ink)]" style={{ fontFamily: 'var(--font-serif)', fontWeight: 400 }}>
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">{item.text}</p>
+                <article className="h-full card-framed p-6">
+                  <p className="type-eyebrow tabular">{item.step}</p>
+                  <h3 className="mt-4 type-h3">{item.title}</h3>
+                  <p className="mt-3 type-body-sm text-(--slate)">{item.text}</p>
                 </article>
               </li>
             ))}

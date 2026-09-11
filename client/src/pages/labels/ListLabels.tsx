@@ -194,12 +194,14 @@ const ListLabels = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
         <nav className="w-full flex items-center gap-3 justify-between">
-          <Heading>Labels</Heading>
-          <Button onClick={openCreateModal}>
-            <menu className="w-full flex items-center gap-2">
-              <FontAwesomeIcon icon={faPlus} />
-              <p>Add new label</p>
-            </menu>
+          <div>
+            <Heading>Labels</Heading>
+            <p className="type-meta mt-1">
+              Imprints attached to your releases.
+            </p>
+          </div>
+          <Button primary icon={faPlus} onClick={openCreateModal}>
+            Add new label
           </Button>
         </nav>
         <section className="w-full flex flex-col gap-2">

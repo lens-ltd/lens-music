@@ -56,7 +56,7 @@ const ReleaseNavigationPanel = ({
   const hasStepSidebar = navigationSteps.length > 1;
 
   return (
-    <article className="w-full overflow-hidden rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm">
+    <article className="w-full overflow-hidden rounded-xl border border-(--line) bg-white shadow-sm">
       <section
         className={`w-full ${
           hasStepSidebar
@@ -65,12 +65,12 @@ const ReleaseNavigationPanel = ({
         }`}
       >
         {hasStepSidebar && (
-          <aside className="border-b border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 lg:border-r lg:border-b-0">
+          <aside className="border-b border-(--line) bg-(--surface) lg:border-r lg:border-b-0">
             <header className="px-5 py-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-[color:var(--lens-blue)]/70">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-(--lens-blue)/70">
                 Current Section
               </p>
-              <h2 className="mt-2 text-sm font-normal text-[color:var(--lens-ink)]">
+              <h2 className="mt-2 text-sm font-normal text-(--ink)">
                 {capitalizeString(
                   activeReleaseNavigationFlow?.staticReleaseNavigation?.tabName,
                 )}
@@ -97,19 +97,19 @@ const ReleaseNavigationPanel = ({
                     aria-current={isActive ? "step" : undefined}
                     className={`relative flex min-w-[190px] items-center gap-3 rounded-md border px-3 py-3 text-left transition-all duration-200 lg:min-w-0 ${
                       isActive
-                        ? "border-[color:var(--lens-blue)]/30 bg-[color:var(--lens-blue)]/8"
-                        : "border-transparent bg-white hover:border-[color:var(--lens-sand)] hover:bg-[color:var(--lens-sand)]/25"
+                        ? "border-[color:var(--lens-blue)]/30 bg-(--lens-blue)/8"
+                        : "border-transparent bg-white hover:border-(--line) hover:bg-(--surface)"
                     }`}
                   >
                     <span
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-normal ${
                         isCompleted
-                          ? "bg-[color:var(--lens-blue)] text-white"
+                          ? "bg-(--lens-blue) text-white"
                           : isActive
-                            ? "bg-[color:var(--lens-blue)] text-white"
+                            ? "bg-(--lens-blue) text-white"
                             : isPast
-                              ? "bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]"
-                              : "bg-[color:var(--lens-sand)]/45 text-[color:var(--lens-ink)]/55"
+                              ? "bg-(--lens-blue-soft) text-(--lens-blue)"
+                              : "bg-(--surface) text-(--slate)"
                       }`}
                     >
                       {isCompleted ? (
@@ -124,7 +124,7 @@ const ReleaseNavigationPanel = ({
                     <span className="min-w-0 flex-1">
                       <span
                         className={`block truncate text-[12px] font-normal ${
-                          isActive ? "text-[color:var(--lens-blue)]" : "text-[color:var(--lens-ink)]/70"
+                          isActive ? "text-(--lens-blue)" : "text-(--ink)/70"
                         }`}
                       >
                         {capitalizeString(step?.stepName)}
@@ -138,17 +138,17 @@ const ReleaseNavigationPanel = ({
         )}
 
         <div className="min-w-0 w-full">
-          <header className="border-b border-[color:var(--lens-sand)] bg-white px-5 py-5 sm:px-6">
+          <header className="border-b border-(--line) bg-white px-5 py-5 sm:px-6">
             <nav className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <menu className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)] font-normal">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue) font-normal">
                   {capitalizeString(
                     activeReleaseNavigationFlow?.staticReleaseNavigation
                       ?.stepName,
                   ) || "Release setup"}
                 </p>
                 <ul className="flex items-center gap-2 mt-1">
-                  <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[12px] text-(--slate)">
                     {isLoading ? (
                       <SkeletonLoader type="text" width="16rem" height="1rem" />
                     ) : (
@@ -156,12 +156,12 @@ const ReleaseNavigationPanel = ({
                       "Fill out each section to prepare this release."
                     )}
                   </p>{" "}
-                  <span className="text-[12px] text-[color:var(--lens-ink)]/45">•</span>{" "}
+                  <span className="text-[12px] text-(--slate)">•</span>{" "}
                   {release?.catalogNumber && (
-                    <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+                    <p className="text-[12px] text-(--slate)">
                       {release?.catalogNumber}{" "}
                       <FontAwesomeIcon
-                        className="ml-0.5 cursor-pointer text-[11px] text-[color:var(--lens-blue)]"
+                        className="ml-0.5 cursor-pointer text-[11px] text-(--lens-blue)"
                         icon={copied ? faCircleCheck : faCopy}
                         onClick={(e) => {
                           e.preventDefault();

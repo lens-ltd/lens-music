@@ -27,13 +27,13 @@ const PreviewTerritoriesSection = ({
       <DashboardSection title="Territories" label="Distribution">
         {territories.length > 0 ? (
           <section>
-            <p className="text-[12px] text-[color:var(--lens-ink)]/70">
+            <p className="text-[12px] text-(--ink)/70">
               {isWorldwide ? (
                 <span className="rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-[11px] font-normal text-green-900">
                   Worldwide
                 </span>
               ) : (
-                <span className="text-[12px] text-[color:var(--lens-ink)]/70">
+                <span className="text-[12px] text-(--ink)/70">
                   {territories.length} territor{territories.length === 1 ? "y" : "ies"} selected
                 </span>
               )}
@@ -43,7 +43,7 @@ const PreviewTerritoriesSection = ({
                 {territories.map((code) => (
                   <li
                     key={code}
-                    className="rounded-full border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 px-2.5 py-0.5 text-[11px] text-[color:var(--lens-ink)]/70"
+                    className="rounded-full border border-(--line) bg-(--surface) px-2.5 py-0.5 text-[11px] text-(--ink)/70"
                   >
                     {getCountryName(code)}
                   </li>
@@ -52,7 +52,7 @@ const PreviewTerritoriesSection = ({
             )}
           </section>
         ) : (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--slate)">
             No territories selected.
           </p>
         )}

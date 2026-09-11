@@ -30,10 +30,10 @@ const ContributorRoleMultiSelect = ({
 
   return (
     <fieldset className="min-w-0" disabled={disabled}>
-      <legend className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+      <legend className="field-label">
         Roles
       </legend>
-      <div className="mt-2 grid max-h-52 grid-cols-1 gap-2 overflow-y-auto rounded-md border border-[color:var(--lens-sand)] p-2 sm:grid-cols-2">
+      <div className="mt-1.5 grid max-h-52 grid-cols-1 gap-2 overflow-y-auto rounded-(--radius-control) border border-(--line) p-2 sm:grid-cols-2">
         {roles.map((role) => {
           const isUnavailable = unavailable.has(role);
           const isSelected = selected.has(role);
@@ -41,12 +41,12 @@ const ContributorRoleMultiSelect = ({
           return (
             <label
               key={role}
-              className={`flex items-center gap-2 rounded-sm border px-3 py-2 text-[11px] transition-colors ${
+              className={`flex items-center gap-2 rounded-(--radius-control) border px-3 py-2 type-body-sm transition-colors ${
                 isUnavailable
-                  ? "cursor-not-allowed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 text-[color:var(--lens-ink)]/40"
+                  ? "cursor-not-allowed border-(--line) bg-(--surface) text-(--slate)"
                   : isSelected
-                    ? "cursor-pointer border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)]/10 text-[color:var(--lens-blue)]"
-                    : "cursor-pointer border-transparent text-[color:var(--lens-ink)]/70 hover:border-[color:var(--lens-sand)]"
+                    ? "cursor-pointer border-[color:var(--lens-blue)] bg-(--lens-blue-soft) text-(--lens-blue)"
+                    : "cursor-pointer border-transparent text-(--ink)/70 hover:border-(--line)"
               }`}
             >
               <input
@@ -60,7 +60,7 @@ const ContributorRoleMultiSelect = ({
                 {capitalizeString(role)}
               </span>
               {isUnavailable ? (
-                <span className="text-[9px] uppercase tracking-[0.08em]">
+                <span className="type-meta">
                   Added
                 </span>
               ) : null}
@@ -68,7 +68,7 @@ const ContributorRoleMultiSelect = ({
           );
         })}
       </div>
-      <p className="mt-2 text-[10px] text-[color:var(--lens-ink)]/50">
+      <p className="mt-2 text-[10px] text-(--slate)">
         {value.length
           ? `${value.length} role${value.length === 1 ? "" : "s"} selected`
           : "Select at least one role"}

@@ -1,14 +1,9 @@
-import { FC } from 'react';
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-  TooltipProps,
-} from 'recharts';
+import { FC, useMemo } from 'react';
+import { defineChart, dot, lineY } from '@tanstack/charts';
+import { Chart } from '@tanstack/charts/react';
+import { scaleLinear } from '@tanstack/charts/scales/linear';
+import { scalePoint } from '@tanstack/charts/scales/point';
+import { tooltip } from '@tanstack/charts/tooltip';
 
 interface DashboardChartProps {
   data: {
@@ -16,8 +11,7 @@ interface DashboardChartProps {
     value: number;
   }[];
   dataKey: string;
-  height?: string;
-  width?: string;
+  height?: string | number;
   type?:
     | 'basis'
     | 'basisClosed'
@@ -39,177 +33,127 @@ interface DashboardChartProps {
   tooltipVariant?: 'default' | 'minimal';
 }
 
-// ── custom tooltip ─────────────────────────────────────────────────────────────
-const EditorialTooltip: FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  const val = payload[0].value ?? 0;
+const SIGNAL = '#1f628e';
 
-  return (
-    <figure
-      style={{
-        background: 'rgb(16,14,9)',
-        borderRadius: '10px',
-        padding: '10px 16px',
-        border: 'none',
-        boxShadow: '0 8px 24px rgba(16,14,9,0.18)',
-        minWidth: '100px',
-        margin: 0,
-      }}
-      aria-label={`${label}: ${val}`}
-    >
-      <figcaption
-        style={{
-          fontFamily: "'Poppins', system-ui, sans-serif",
-          fontSize: '10px',
-          fontWeight: 400,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.45)',
-          marginBottom: '4px',
-          display: 'block',
-        }}
-      >
-        {label}
-      </figcaption>
-      <p
-        style={{
-          fontFamily: "'Libre Baskerville', Georgia, serif",
-          fontSize: '20px',
-          fontWeight: 700,
-          color: 'white',
-          lineHeight: 1,
-          margin: 0,
-          letterSpacing: '-0.01em',
-        }}
-      >
-        {val.toLocaleString()}
-      </p>
-    </figure>
-  );
-};
+/** TanStack renders into SVG attributes where `var()` does not resolve. */
+const resolveColor = (fill: string | undefined) =>
+  fill && !fill.startsWith('var(') ? fill : SIGNAL;
 
-// ── custom active dot ──────────────────────────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PulseDot: FC<any> = (props) => {
-  const { cx, cy, fill } = props;
-  return (
-    <g>
-      <circle cx={cx} cy={cy} r={10} fill={fill} opacity={0.12} />
-      <circle cx={cx} cy={cy} r={5}  fill={fill} opacity={0.25} />
-      <circle cx={cx} cy={cy} r={3}  fill={fill} />
-      <circle cx={cx} cy={cy} r={1.5} fill="white" />
-    </g>
-  );
-};
+const compactNumber = (v: number) =>
+  v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : String(v);
 
-// ── chart ──────────────────────────────────────────────────────────────────────
+// ── empty state ──────────────────────────────────────────────────────────────
+const ChartEmpty: FC<{ label: string }> = ({ label }) => (
+  <div className="grid min-h-40 place-items-center rounded-md border border-dashed border-(--menu-border) bg-white p-6 text-center text-[12px] text-(--slate)">
+    {label}
+  </div>
+);
+
+// ── chart ────────────────────────────────────────────────────────────────────
 const DashboardChart: FC<DashboardChartProps> = ({
   data,
   dataKey,
-  height = '90%',
-  width = '100%',
-  type = 'natural',
-  vertical = false,
-  strokeWidth = 2,
-  fill = 'rgb(31,98,142)',
-  showArea = true,
-  areaFillMode = 'gradient',
-  areaOpacity = 0.12,
+  height = 220,
+  strokeWidth = 2.5,
+  fill = SIGNAL,
   showGrid = true,
   showYAxis = true,
-  tooltipVariant = 'default',
 }) => {
-  const gradId = 'lensAreaGrad';
-  const areaFillValue =
-    !showArea || areaFillMode === 'none'
-      ? 'transparent'
-      : areaFillMode === 'solid'
-        ? fill
-        : `url(#${gradId})`;
+  const color = resolveColor(fill);
+  const rows = useMemo(
+    () => data.map((row) => ({ label: String(row[dataKey as keyof typeof row]), value: row.value })),
+    [data, dataKey],
+  );
+  const definition = useMemo(
+    () =>
+      defineChart({
+        marks: [
+          lineY(rows, {
+            id: 'trend-line',
+            x: 'label',
+            y: 'value',
+            stroke: color,
+            strokeWidth,
+          }),
+          dot(rows, {
+            id: 'trend-points',
+            x: 'label',
+            y: 'value',
+            fill: color,
+            r: 3,
+          }),
+        ],
+        x: {
+          scale: () => scalePoint<string>().padding(0.35),
+        },
+        y: {
+          scale: scaleLinear,
+          nice: true,
+          grid: showGrid,
+          axis: showYAxis
+            ? {
+                ticks: {
+                  format: (value) => compactNumber(Number(value)),
+                },
+              }
+            : false,
+        },
+        tooltip,
+        svgAnimation: true,
+      }),
+    [rows, color, strokeWidth, showGrid, showYAxis],
+  );
+
+  if (!rows.length) return <ChartEmpty label="No data in this range" />;
 
   return (
-    <ResponsiveContainer height={height} width={width}>
-      <ComposedChart
-        data={data}
-        margin={{ top: 12, right: 4, left: 0, bottom: 0 }}
-        style={{ overflow: 'visible' }}
-      >
-        {areaFillMode === 'gradient' && (
-          <defs>
-            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={fill} stopOpacity={0.22} />
-              <stop offset="72%" stopColor={fill} stopOpacity={0.06} />
-              <stop offset="100%" stopColor={fill} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-        )}
-
-        {showGrid && (
-          <CartesianGrid
-            strokeDasharray="1 6"
-            vertical={vertical}
-            stroke="rgba(16,14,9,0.08)"
-            strokeWidth={1}
-          />
-        )}
-
-        <XAxis
-          dataKey={dataKey}
-          tick={{
-            fontSize: 10,
-            fill: 'rgba(16,14,9,0.4)',
-            fontFamily: "'Poppins', system-ui, sans-serif",
-            fontWeight: 400,
-          }}
-          tickLine={false}
-          axisLine={false}
-          dy={6}
-        />
-
-        {showYAxis && (
-          <YAxis
-            allowDataOverflow
-            tickSize={0}
-            tickMargin={12}
-            tick={{
-              fontSize: 10,
-              fill: 'rgba(16,14,9,0.35)',
-              fontFamily: "'Poppins', system-ui, sans-serif",
-              fontWeight: 400,
-            }}
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={(v: number) =>
-              v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : String(v)
-            }
-            width={36}
-          />
-        )}
-
-        <Tooltip
-          content={<EditorialTooltip />}
-          cursor={{
-            stroke: fill,
-            strokeWidth: 1,
-            strokeDasharray: '4 4',
-            strokeOpacity: tooltipVariant === 'minimal' ? 0.25 : 0.4,
-          }}
-        />
-
-        <Area
-          connectNulls
-          dataKey="value"
-          fill={areaFillValue}
-          fillOpacity={showArea && areaFillMode !== 'none' ? areaOpacity : 0}
-          strokeWidth={strokeWidth}
-          stroke={fill}
-          type={type}
-          dot={false}
-          activeDot={<PulseDot fill={fill} />}
-          style={tooltipVariant === 'minimal' ? undefined : { filter: `drop-shadow(0 2px 8px rgba(31,98,142,0.12))` }}
-        />
-      </ComposedChart>
-    </ResponsiveContainer>
+    <div>
+      <div className="mb-3 flex flex-wrap gap-4" aria-hidden>
+        <span className="flex items-center gap-1.5 text-[11px] text-(--slate)">
+          <span className="size-2 rounded-full" style={{ background: color }} />
+          Value
+        </span>
+      </div>
+      <Chart
+        definition={definition}
+        height={typeof height === 'number' ? height : 220}
+        initialWidth={520}
+        ariaLabel="Monthly value trend"
+        ariaDescription="Exact monthly values are available in the table below the chart."
+      />
+      <details className="mt-3 border-t border-[#e6e2d7] pt-3">
+        <summary className="cursor-pointer text-[11px] font-medium text-(--signal)">
+          View exact monthly values
+        </summary>
+        <div className="mt-2 max-h-56 overflow-auto">
+          <table className="w-full border-collapse text-left text-[11px]">
+            <caption className="sr-only">Monthly values</caption>
+            <thead className="text-(--slate)">
+              <tr>
+                <th scope="col" className="py-1.5">
+                  Month
+                </th>
+                <th scope="col" className="py-1.5 text-right">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label} className="border-t border-[#eae6db]">
+                  <th scope="row" className="py-1.5 font-normal">
+                    {row.label}
+                  </th>
+                  <td className="py-1.5 text-right tabular-nums">
+                    {row.value.toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
   );
 };
 

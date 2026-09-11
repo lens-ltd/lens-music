@@ -36,7 +36,7 @@ const StoresPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Stores</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="type-meta mt-1">
               Review distribution stores and open a store to configure DDEX
               delivery metadata.
             </p>

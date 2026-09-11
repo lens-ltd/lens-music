@@ -56,10 +56,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main
-      className="min-h-screen bg-white text-[color:var(--lens-ink)] overflow-x-hidden"
-      style={{ fontFamily: 'var(--font-sans)' }}
-    >
+    <main className="min-h-screen bg-(--paper) text-(--ink) overflow-x-hidden">
       <LandingPageStyles />
       {token ? <Navbar public /> : <PublicNavbar scrolled={scrolled} variant="landing" />}
       <HeroSection />

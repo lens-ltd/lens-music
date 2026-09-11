@@ -57,7 +57,12 @@ const ReleasesPage = () => {
     <UserLayout>
       <div className="w-full flex flex-col gap-4">
         <nav className="w-full flex items-center gap-3 justify-between">
-          <Heading>Releases</Heading>
+          <div>
+            <Heading>Releases</Heading>
+            <p className="type-meta mt-1">
+              Draft, review, and deliver your catalog to stores.
+            </p>
+          </div>
           <Button
             type="button"
             primary
@@ -71,8 +76,8 @@ const ReleasesPage = () => {
           </Button>
         </nav>
         {hasFilters ? (
-          <aside className="flex flex-col gap-3 rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-[11px] text-[color:var(--lens-ink)]/65">
+          <aside className="flex flex-col gap-3 rounded-md border border-(--line) bg-(--surface) px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="type-meta">
               Showing a filtered catalog
               {filters.status ? ` · ${filters.status.toLowerCase()}` : ''}
               {filters.digitalReleaseDateFrom && filters.digitalReleaseDateTo

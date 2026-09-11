@@ -1,5 +1,5 @@
 import FadeSection from './FadeSection';
-import { fadeUp } from './landingShared';
+import { fadeUp, SectionLabel } from './landingShared';
 
 const features = [
   ['Store delivery', 'Publish releases to 150+ stores from one workflow.'],
@@ -12,19 +12,15 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <FadeSection id="features" labelledBy="features-heading" className="py-24 bg-[color:var(--lens-ink)] text-white">
+    <FadeSection id="features" labelledBy="features-heading" className="section-rhythm bg-(--paper)">
       {({ inView }) => (
-        <article className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1fr_1fr] gap-12 items-start">
+        <article className="app-container grid lg:grid-cols-[1fr_1fr] gap-12 items-start">
           <header style={fadeUp(inView)}>
-            <span className="editorial-chip">Built around your needs</span>
-            <h2
-              id="features-heading"
-              className="mt-5 text-[clamp(28px,4vw,42px)] leading-tight tracking-[-0.02em] text-white"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
+            <SectionLabel>Built around your needs</SectionLabel>
+            <h2 id="features-heading" className="mt-4 type-h2">
               Distribution tools with reporting that stays readable.
             </h2>
-            <p className="mt-4 text-[13px] leading-7 text-white/70 font-normal">
+            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
               Lens is designed for artists, managers, labels, and small teams that need reliable delivery plus practical revenue visibility.
             </p>
           </header>
@@ -33,11 +29,11 @@ export default function FeaturesSection() {
             {features.map(([title, text], index) => (
               <article
                 key={title}
-                className="rounded-none border border-white/15 bg-[color:var(--lens-sand)] p-5 text-[color:var(--lens-ink)]"
+                className="card-framed p-5"
                 style={fadeUp(inView, 0.05 * index)}
               >
-                <h3 className="text-[14px] text-[color:var(--lens-ink)]" style={{ fontWeight: 400 }}>{title}</h3>
-                <p className="mt-3 text-[12px] leading-6 text-[color:var(--lens-ink)]/75 font-normal">{text}</p>
+                <h3 className="type-label">{title}</h3>
+                <p className="mt-3 type-body-sm text-(--slate)">{text}</p>
               </article>
             ))}
           </section>

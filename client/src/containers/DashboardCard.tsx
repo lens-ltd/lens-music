@@ -20,20 +20,19 @@ const DashboardCard = ({
 }: DashboardCardProps) => {
   return (
     <section
-      className="flex min-w-0 flex-col justify-between rounded-xl border border-[color:var(--lens-sand)] bg-white p-4 min-h-[120px] sm:p-5"
+      className="flex min-w-0 flex-col justify-between card-framed p-4 min-h-[120px] sm:p-5"
       aria-label={title}
     >
       <header className="mb-2 flex items-center justify-between gap-3">
-        <span className="text-[color:var(--lens-ink)]/55 text-xs font-normal uppercase tracking-[0.08em]">
+        <span className="type-eyebrow">
           {title}
         </span>
-        <span className="text-lg text-[color:var(--lens-blue)] opacity-50">
+        <span className="text-lg text-(--slate)">
           <FontAwesomeIcon icon={icon} />
         </span>
       </header>
       <span
-        className="text-[28px] font-normal text-[color:var(--lens-ink)] sm:text-3xl"
-        style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
+        className="type-metric"
         aria-live="polite"
       >
         {value}
@@ -41,7 +40,7 @@ const DashboardCard = ({
       {change !== undefined && (
         <span
           className={`flex items-center gap-1 text-xs font-normal mt-1 ${
-            change >= 0 ? 'text-[color:var(--lens-blue)]' : 'text-[color:var(--lens-ink)]/50'
+            change >= 0 ? 'text-(--signal)' : 'text-(--danger)'
           }`}
         >
           <FontAwesomeIcon

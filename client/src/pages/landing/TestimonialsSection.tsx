@@ -21,44 +21,38 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <FadeSection id="testimonials" labelledBy="testimonials-heading" className="py-24 bg-white">
+    <FadeSection id="testimonials" labelledBy="testimonials-heading" className="section-rhythm bg-(--paper)">
       {({ inView }) => (
-        <article className="max-w-6xl mx-auto px-6">
+        <article className="app-container">
           <header className="max-w-2xl" style={fadeUp(inView)}>
             <SectionLabel>Artist voices</SectionLabel>
-            <h2
-              id="testimonials-heading"
-              className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
+            <h2 id="testimonials-heading" className="mt-4 type-h2">
               What artists say after switching to a clearer workflow.
             </h2>
           </header>
 
-          <section className="mt-8 grid lg:grid-cols-2 border border-[color:var(--lens-sand)] rounded-2xl overflow-hidden" style={fadeUp(inView, 0.08)}>
-            <figure className="bg-primary text-white p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
+          <section className="mt-8 grid lg:grid-cols-2 card-framed overflow-hidden" style={fadeUp(inView, 0.08)}>
+            <figure className="bg-white p-8 md:p-10 min-h-[320px] flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-(--line)">
               <figcaption>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/70 font-normal">Featured quote</p>
-                <p className="mt-4 text-[clamp(26px,4vw,38px)] leading-[1.02] tracking-[-0.03em]" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}>
+                <p className="type-eyebrow">Featured quote</p>
+                <p className="mt-4 type-h2 max-w-[16ch]">
                   “The revenue view finally makes sense to our team.”
                 </p>
               </figcaption>
-              <figure className="mt-8 h-36 w-36 rounded-full border border-white/25 bg-white/10 flex items-center justify-center" aria-label="Artist story badge">
-                <figcaption className="text-[10px] uppercase tracking-[0.16em] text-white/80 font-normal">Artist story</figcaption>
-              </figure>
+              <p className="type-meta mt-8">Artist story</p>
             </figure>
 
-            <section className="bg-white p-6 md:p-8 grid gap-4" aria-label="Artist testimonials">
+            <section className="bg-(--paper) p-6 md:p-8 grid gap-4" aria-label="Artist testimonials">
               {testimonials.map(([quote, name, role], index) => (
                 <blockquote
                   key={name}
-                  className="border-b last:border-b-0 border-[color:var(--lens-sand)] pb-4 last:pb-0"
+                  className="border-b last:border-b-0 border-(--line) pb-4 last:pb-0"
                   style={fadeUp(inView, 0.12 + 0.05 * index)}
                 >
-                  <p className="text-[13px] leading-7 text-[color:var(--lens-ink)]/75 font-normal">{quote}</p>
+                  <p className="type-body-sm text-(--slate)">{quote}</p>
                   <footer className="mt-3">
-                    <p className="text-[12px] text-[color:var(--lens-ink)] font-normal">{name}</p>
-                    <p className="text-[11px] text-[color:var(--lens-ink)]/50 font-normal">{role}</p>
+                    <p className="type-label">{name}</p>
+                    <p className="type-meta">{role}</p>
                   </footer>
                 </blockquote>
               ))}

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import Button from "@/components/inputs/Button";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import UserLayout from "@/containers/UserLayout";
 import { useGetRelease } from "@/hooks/releases/release.hooks";
 import { useGetTrack } from "@/hooks/tracks/track.hooks";
@@ -37,17 +37,17 @@ const TrackDetailsPage = () => {
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <section className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)">
               Track details
             </p>
             <h1
-              className="text-[18px] leading-tight text-[color:var(--lens-ink)]"
-              style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
+              className="text-[18px] leading-tight text-(--ink)"
+              style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
             >
               {track?.title || "Loading..."}
             </h1>
             {release?.title && (
-              <p className="text-[12px] text-[color:var(--lens-ink)]/60">
+              <p className="text-[12px] text-(--slate)">
                 {release.title}
               </p>
             )}
@@ -103,20 +103,22 @@ const TrackDetailsPage = () => {
           </motion.section>
         </article>
 
-        <footer className="flex w-full items-center gap-3">
-          <Button
-            onClick={(event) => {
-              event.preventDefault();
-              if (id) {
-                navigate(`/releases/${id}/wizard`);
-              } else {
-                navigate(-1);
-              }
-            }}
-          >
-            Back to release
-          </Button>
-        </footer>
+        <PageFooter
+          back={
+            <BackButton
+              onClick={(event) => {
+                event.preventDefault();
+                if (id) {
+                  navigate(`/releases/${id}/wizard`);
+                } else {
+                  navigate(-1);
+                }
+              }}
+            >
+              Back to release
+            </BackButton>
+          }
+        />
       </main>
     </UserLayout>
   );

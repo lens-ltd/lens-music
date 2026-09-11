@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
 import { Heading } from "@/components/text/Headings";
@@ -414,14 +415,14 @@ const CreateContributorPage = () => {
           </section>
 
           <footer className="flex w-full items-center justify-between gap-3">
-            <Button
+            <BackButton
               onClick={(event) => {
                 event.preventDefault();
                 navigate(-1);
               }}
             >
               Back
-            </Button>
+            </BackButton>
             <Button icon={faSave} primary submit isLoading={isLoading}>
               Save
             </Button>

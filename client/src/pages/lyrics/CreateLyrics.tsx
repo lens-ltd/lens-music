@@ -1,5 +1,6 @@
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import CustomTooltip from "@/components/inputs/CustomTooltip";
 import Input from "@/components/inputs/Input";
 import TextArea from "@/components/inputs/TextArea";
@@ -224,7 +225,7 @@ const CreateLyrics = () => {
 
             <div className="mt-4">
               <div className="mb-2 flex items-center justify-between">
-                <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+                <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
                   Lyrics
                 </span>
                 <Button
@@ -277,7 +278,7 @@ const CreateLyrics = () => {
           </section>
 
           <footer className="flex items-center justify-between gap-3">
-            <Button
+            <BackButton
               onClick={(event) => {
                 event.preventDefault();
                 dispatch(setLyricsGuideLinesModal(false));
@@ -285,7 +286,7 @@ const CreateLyrics = () => {
               }}
             >
               Cancel
-            </Button>
+            </BackButton>
             <Button primary submit isLoading={isLoading}>
               Create and sync
             </Button>

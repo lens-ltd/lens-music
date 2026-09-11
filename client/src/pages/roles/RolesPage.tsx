@@ -41,7 +41,7 @@ const RolesPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Roles</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="type-meta mt-1">
               Manage user roles and their associated permissions.
             </p>
           </div>

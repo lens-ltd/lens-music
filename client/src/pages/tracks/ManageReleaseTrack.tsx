@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import UserLayout from "@/containers/UserLayout";
@@ -480,12 +481,12 @@ const ManageReleaseTrack = () => {
             isUpdatingSequence={isUpdatingContributorSequence}
           />
 
-          <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+          <section className="rounded-md border border-(--line)/70 bg-white p-4">
             <header className="space-y-1">
-              <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+              <h2 className="text-sm font-normal text-(--ink)">
                 Lyrics
               </h2>
-              <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+              <p className="text-[12px] text-(--slate)">
                 Lyrics records linked to this track. Open sync to edit timing,
                 or remove a record here.
               </p>
@@ -495,9 +496,9 @@ const ManageReleaseTrack = () => {
                 {sortTrackLyricsByNewest(track.lyrics).map((lyric) => (
                   <li
                     key={lyric.id}
-                    className="flex items-center justify-between gap-3 rounded-md border border-[color:var(--lens-sand)]/70 p-3"
+                    className="flex items-center justify-between gap-3 rounded-md border border-(--line)/70 p-3"
                   >
-                    <p className="text-[12px] text-[color:var(--lens-ink)]">
+                    <p className="text-[12px] text-(--ink)">
                       {formatTrackLyricsLabel(lyric)}
                     </p>
                     <div className="flex shrink-0 items-center gap-2">
@@ -532,7 +533,7 @@ const ManageReleaseTrack = () => {
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-[12px] text-[color:var(--lens-ink)]/55">
+              <p className="mt-3 text-[12px] text-(--slate)">
                 No lyrics records yet. Use Sync lyrics (with audio uploaded) or
                 create lyrics from the Lyrics section.
               </p>
@@ -540,7 +541,7 @@ const ManageReleaseTrack = () => {
           </section>
 
           {isUpdatingTrack && (
-            <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+            <p className="text-[12px] text-(--slate)">
               Saving track updates...
             </p>
           )}
@@ -556,7 +557,7 @@ const ManageReleaseTrack = () => {
             aria-live="polite"
             id="validation-result"
           >
-            <RelaxedHeading className="font-normal text-[color:var(--lens-ink)]">
+            <RelaxedHeading className="font-normal text-(--ink)">
               {validationResult.valid
                 ? "Track is complete."
                 : "Track still needs a few required details."}
@@ -565,7 +566,7 @@ const ManageReleaseTrack = () => {
               <ul className="mt-2 list-disc space-y-1 pl-4">
                 {validationResult.errors.map((error) => (
                   <li
-                    className="text-[12px] text-[color:var(--lens-ink)]/80"
+                    className="text-[12px] text-(--ink)/80"
                     key={error}
                   >
                     {error}
@@ -577,14 +578,14 @@ const ManageReleaseTrack = () => {
         )}
 
         <footer className="flex w-full items-center justify-between gap-3">
-          <Button
+          <BackButton
             onClick={(event) => {
               event.preventDefault();
               navigate(-1);
             }}
           >
             Back
-          </Button>
+          </BackButton>
           <Button
             primary
             submit

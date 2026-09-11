@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
 import {
@@ -140,8 +141,7 @@ const ReleaseWizardRegions = ({
 
   const navButtons = (
     <>
-      <Button
-        type="button"
+      <BackButton
         onClick={handleGoBack}
         disabled={
           !previousStepName ||
@@ -151,7 +151,7 @@ const ReleaseWizardRegions = ({
         }
       >
         Back
-      </Button>
+      </BackButton>
 
       <Button
         type="button"
@@ -176,14 +176,14 @@ const ReleaseWizardRegions = ({
   return (
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-[color:var(--lens-ink)]">Delivery regions</h2>
-        <p className="text-sm leading-6 text-[color:var(--lens-ink)]/55">
+        <h2 className="text-xl font-semibold text-(--ink)">Delivery regions</h2>
+        <p className="text-sm leading-6 text-(--slate)">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-[color:var(--lens-sand)] pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-(--line) pb-4">
         {navButtons}
       </menu>
 
@@ -220,7 +220,7 @@ const ReleaseWizardRegions = ({
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (
-          <p className="col-span-full text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="col-span-full text-[12px] text-(--slate)">
             No countries match &ldquo;{countrySearchQuery.trim()}&rdquo;.
           </p>
         ) : null}
@@ -240,7 +240,7 @@ const ReleaseWizardRegions = ({
                 onChange={() => toggleTerritory(country.code)}
                 className="h-4 w-4 cursor-pointer accent-primary"
               />
-              <span className="text-xs text-[color:var(--lens-ink)] leading-5">
+              <span className="text-xs text-(--ink) leading-5">
                 {country.name}
               </span>
             </label>
@@ -253,15 +253,15 @@ const ReleaseWizardRegions = ({
         selectedTerritories={selectedTerritories}
       />
 
-      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
-        <p className="text-xs text-[color:var(--lens-ink)]/55">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-(--line) bg-white/95 py-4">
+        <p className="text-xs text-(--slate)">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"
             : `${selectedTerritories.length} of ${COUNTRIES_LIST.length} countries selected`}
         </p>
 
         {territoriesError ? (
-          <p className="text-xs text-[color:var(--lens-ink)]">{territoriesError}</p>
+          <p className="text-xs text-(--ink)">{territoriesError}</p>
         ) : null}
 
         <menu className="w-full flex items-center justify-between gap-3">

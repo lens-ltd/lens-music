@@ -6,6 +6,7 @@ import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
 import { KeyValuePair } from "@/components/inputs/KeyValuePair";
 import Loader from "@/components/inputs/Loader";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { PERMISSIONS } from "@/constants/permission.constants";
@@ -92,13 +93,11 @@ const StoreDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>Store Details</Heading>
-            <Button route="/stores">Back to stores</Button>
-          </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">{message}</p>
+          <Heading>Store Details</Heading>
+          <section className="w-full card-framed p-8 text-center">
+            <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
+          <PageFooter back={<BackButton route="/stores">Back to stores</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -108,15 +107,13 @@ const StoreDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>Store Details</Heading>
-            <Button route="/stores">Back to stores</Button>
-          </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">
+          <Heading>Store Details</Heading>
+          <section className="w-full card-framed p-8 text-center">
+            <p className="text-[13px] text-(--slate)">
               Store not found.
             </p>
           </section>
+          <PageFooter back={<BackButton route="/stores">Back to stores</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -149,23 +146,20 @@ const StoreDetailsPage = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-5">
-        <nav className="flex w-full items-center justify-between gap-3">
-          <div>
-            <Heading>Store Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-[color:var(--lens-ink)]/60">
-              Review store identity and configure DDEX delivery metadata.
-            </p>
-          </div>
-          <Button route="/stores">Back to stores</Button>
-        </nav>
+        <header className="flex w-full flex-col gap-1">
+          <Heading>Store Details</Heading>
+          <p className="text-[13px] font-normal text-(--slate)">
+            Review store identity and configure DDEX delivery metadata.
+          </p>
+        </header>
 
-        <section className="flex w-full flex-col gap-5 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-          <div className="flex flex-col gap-3 border-b border-[color:var(--lens-sand)]/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
+          <div className="flex flex-col gap-3 border-b border-(--line) pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <h2 className="text-[20px] font-semibold text-[color:var(--lens-ink)]">
+              <h2 className="text-[20px] font-semibold text-(--ink)">
                 {store?.name || "Store"}
               </h2>
-              <p className="mt-1 font-mono text-[12px] text-[color:var(--lens-ink)]/55">
+              <p className="mt-1 font-mono text-[12px] text-(--slate)">
                 {store?.slug || "—"}
               </p>
             </div>
@@ -178,24 +172,24 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Overview
             </Heading>
-            <p className="mt-1 text-[12px] text-[color:var(--lens-ink)]/50">
+            <p className="mt-1 text-[12px] text-(--slate)">
               Identity fields are managed by seeds and are read-only here.
             </p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <KeyValuePair
                 keyText="Name"
                 valueText={store?.name || "—"}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Slug"
                 valueText={store?.slug || "—"}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Sort order"
                 valueText={String(store?.sortOrder ?? "—")}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
               <KeyValuePair
                 keyText="Last updated"
@@ -204,7 +198,7 @@ const StoreDetailsPage = () => {
                     ? formatDate(store.updatedAt, "DD/MM/YYYY HH:mm")
                     : "—"
                 }
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line) bg-(--paper) p-3"
               />
             </div>
           </div>
@@ -213,11 +207,11 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Delivery
             </Heading>
-            <p className="mt-1 text-[12px] text-[color:var(--lens-ink)]/50">
+            <p className="mt-1 text-[12px] text-(--slate)">
               Used during release validation and distribution routing.
             </p>
 
-            <div className="mt-4 flex flex-col gap-4 rounded-md border border-[color:var(--lens-sand)]/50 bg-white p-4">
+            <div className="mt-4 flex flex-col gap-4 rounded-md border border-(--line) bg-(--paper) p-4">
               <Input
                 label="DDEX Party ID"
                 value={formState.ddexPartyId || ""}
@@ -257,29 +251,34 @@ const StoreDetailsPage = () => {
                 placeholder="https:// or sftp:// destination"
               />
 
-              {canUpdate && (
-                <footer className="flex items-center justify-end gap-3 pt-1">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      navigate("/stores");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    primary
-                    isLoading={isSaving}
-                    onClick={() => void handleSave()}
-                  >
-                    Save delivery settings
-                  </Button>
-                </footer>
-              )}
             </div>
           </div>
         </section>
+
+        <PageFooter
+          back={
+            <BackButton
+              onClick={(event) => {
+                event.preventDefault();
+                navigate("/stores");
+              }}
+            >
+              Back to stores
+            </BackButton>
+          }
+          actions={
+            canUpdate ? (
+              <Button
+                type="button"
+                primary
+                isLoading={isSaving}
+                onClick={() => void handleSave()}
+              >
+                Save delivery settings
+              </Button>
+            ) : undefined
+          }
+        />
       </main>
     </UserLayout>
   );

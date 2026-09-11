@@ -164,12 +164,12 @@ const ReleaseTerritoryDetailsSection = ({
   }
 
   return (
-    <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-white p-4 sm:p-5">
+    <section className="rounded-xl border border-(--line)/70 bg-white p-4 sm:p-5">
       <header className="mb-4 space-y-1">
-        <h3 className="text-sm font-medium text-[color:var(--lens-ink)]">
+        <h3 className="text-sm font-medium text-(--ink)">
           Territory-specific metadata
         </h3>
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--slate)">
           Add overrides only where title, display artist, or label name must
           differ by territory. Changes save when a field loses focus.
         </p>
@@ -185,13 +185,13 @@ const ReleaseTerritoryDetailsSection = ({
           return (
             <article
               key={territory}
-              className="rounded-xl border border-[color:var(--lens-sand)]/50 p-4"
+              className="rounded-xl border border-(--line)/50 p-4"
             >
               <header className="mb-3">
-                <p className="text-sm font-medium text-[color:var(--lens-ink)]">
+                <p className="text-sm font-medium text-(--ink)">
                   {countryName}
                 </p>
-                <p className="text-[11px] text-[color:var(--lens-ink)]/50">
+                <p className="text-[11px] text-(--slate)">
                   {territory}
                 </p>
               </header>

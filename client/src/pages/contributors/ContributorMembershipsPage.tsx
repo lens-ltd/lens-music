@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
@@ -270,7 +271,7 @@ const ContributorMembershipsPage = () => {
             <div className="flex items-end gap-3 rounded-md border border-dashed border-gray-200 bg-gray-50/60 p-4">
               <div className="flex-1">
                 <label className="flex w-full flex-col gap-2">
-                  <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+                  <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
                     Select contributor
                   </span>
                   <div className="relative">
@@ -430,14 +431,14 @@ const ContributorMembershipsPage = () => {
         </section>
 
         <footer className="flex w-full items-center justify-between gap-3">
-          <Button
+          <BackButton
             onClick={(e) => {
               e.preventDefault();
               navigate(-1);
             }}
           >
             Back
-          </Button>
+          </BackButton>
         </footer>
       </main>
       <DeleteContributorMembership />

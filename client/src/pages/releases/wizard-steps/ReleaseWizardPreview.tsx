@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import store from "store";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useGetRelease, useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
@@ -147,7 +148,7 @@ const ReleaseWizardPreview = ({
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--slate)">
           Loading release data...
         </p>
       </section>
@@ -160,12 +161,12 @@ const ReleaseWizardPreview = ({
     <section className="flex w-full flex-col gap-5">
       <header>
         <h2
-          className="text-[18px] leading-tight text-[color:var(--lens-ink)]"
-          style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
+          className="text-[18px] leading-tight text-(--ink)"
+          style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
         >
           Review &amp; Submit
         </h2>
-        <p className="mt-1 text-[12px] font-normal text-[color:var(--lens-ink)]/50">
+        <p className="mt-1 text-[12px] font-normal text-(--slate)">
           Review all release information before submitting for distribution.
         </p>
       </header>
@@ -205,9 +206,9 @@ const ReleaseWizardPreview = ({
       />
 
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
-        <Button
-          isLoading={isNavigating}
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+        <BackButton
+          disabled={isNavigating}
           onClick={(event) => {
             event.preventDefault();
             if (previousStepName && release.id) {
@@ -219,7 +220,7 @@ const ReleaseWizardPreview = ({
           }}
         >
           Back
-        </Button>
+        </BackButton>
         <div className="flex items-center gap-2">
           {release.status === ReleaseStatus.VALIDATED && (
             <Button

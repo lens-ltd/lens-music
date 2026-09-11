@@ -75,7 +75,7 @@ const SubmitRelease = () => {
       className="sm:min-w-[540px]"
     >
       <article className="flex w-full flex-col gap-4">
-        <p className="text-[12px] text-[color:var(--lens-ink)]/75">
+        <p className="text-[12px] text-(--slate)">
           Submit this validated release for review. Submission will run the
           release validation checks again before changing its status to review.
         </p>

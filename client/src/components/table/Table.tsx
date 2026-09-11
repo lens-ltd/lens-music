@@ -136,7 +136,7 @@ export default function Table<TData, TValue>({
 
   return (
     <>
-      <section className={`w-full border rounded-md ${containerClassName}`}>
+      <section className={`panel overflow-hidden ${containerClassName}`}>
         <DataTable className={tableClassName}>
           <TableHeader className="px-0">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -144,7 +144,7 @@ export default function Table<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
-                      className={`text-[12px] text-black p-4 ${headerCellClassName}`}
+                      className={headerCellClassName}
                       key={header.id}
                       colSpan={header.colSpan}
                     >
@@ -176,8 +176,8 @@ export default function Table<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={`p-2 ${rowClickHandler ? 'cursor-pointer' : ''
-                    } hover:bg-background ${typeof rowClassName === 'function'
+                  className={`${rowClickHandler ? 'cursor-pointer' : ''
+                    } ${typeof rowClassName === 'function'
                       ? rowClassName(row.original)
                       : rowClassName
                     }`}
@@ -199,7 +199,7 @@ export default function Table<TData, TValue>({
                     return (
                       <TableCell
                         className={`${preventAction ? '!cursor-auto' : ''
-                          } text-[12px] text-black p-4 ${cellClassName}`}
+                          } ${cellClassName}`}
                         key={cell.id}
                         onClick={(e) => {
                           if (preventAction) {
@@ -221,28 +221,29 @@ export default function Table<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="px-4 py-10 text-center"
                 >
-                  <span className="text-gray-500 font-light text-[12px]">
-                    {noDataMessage}
-                  </span>
+                  <p className="text-[13px] text-(--ink)">{noDataMessage}</p>
+                  <p className="mt-1 text-[11px] text-(--slate)">
+                    Try adjusting the current filters.
+                  </p>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </DataTable>
+        {showPagination && (
+          <DataTablePagination
+            page={page}
+            size={size}
+            totalCount={totalCount}
+            totalPages={totalPages}
+            table={table}
+            setPage={setPage}
+            setSize={setSize}
+          />
+        )}
       </section>
-      {showPagination && (
-        <DataTablePagination
-          page={page}
-          size={size}
-          totalCount={totalCount}
-          totalPages={totalPages}
-          table={table}
-          setPage={setPage}
-          setSize={setSize}
-        />
-      )}
     </>
   );
 }

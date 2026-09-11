@@ -70,32 +70,28 @@ const RequestInvitation = () => {
 
   return (
     <main
-      className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col"
-      style={{ fontFamily: "var(--font-sans)" }}
+      className="min-h-screen bg-(--field) flex flex-col"
     >
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-md rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 shadow-sm">
+        <article className="w-full max-w-[400px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
           <p
-            className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]"
-            style={{ fontWeight: 400 }}
+            className="type-eyebrow"
           >
             Invite only
           </p>
           <h1
-            className="mt-4 text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-            style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
-          >
+            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
             Request an invitation
           </h1>
-          <p className="mt-3 text-[13px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">
+          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
             Share your details and an admin can review your request before
             sending you a Lens Music invitation email.
           </p>
 
           <form
-            className="mt-7 flex flex-col gap-5"
+            className="mt-6 flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
             <Controller
@@ -155,11 +151,11 @@ const RequestInvitation = () => {
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-[color:var(--lens-ink)]/45 font-normal">
+          <p className="mt-5 text-center text-(--slate) font-normal">
             Already have an invitation?{" "}
             <Link
               to="/auth/login"
-              className="text-[12px] text-[color:var(--lens-blue)] hover:underline"
+              className="link-sweep type-body-sm text-(--signal)"
             >
               Sign in
             </Link>

@@ -236,12 +236,12 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-xl border border-[color:var(--lens-sand)]/70 bg-white p-4 sm:p-5">
+      <section className="rounded-xl border border-(--line)/70 bg-white p-4 sm:p-5">
         <header className="mb-4 space-y-1">
-          <h3 className="text-sm font-medium text-[color:var(--lens-ink)]">
+          <h3 className="text-sm font-medium text-(--ink)">
             Release labels
           </h3>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--slate)">
             Optionally assign labels to this release. If no label is set, the
             primary artist will be used as fallback in DDEX submissions.
           </p>
@@ -249,7 +249,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="flex flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+            <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
               Label
             </span>
             <search className="relative">
@@ -262,18 +262,18 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                 prefixIcon={faSearch}
               />
               {labelSearchTerm?.trim()?.length > 0 && (
-                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
+                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
                   {isLabelSearchPending || isSearchingLabels ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
                       <Loader
                         size="small"
-                        className="text-[color:var(--lens-ink)]/40"
+                        className="text-(--slate)"
                       />
                       Searching labels...
                     </span>
                   ) : labelSearchTerm?.trim()?.length <
                     MIN_LABEL_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                    <p className="px-3 py-2 text-[12px] text-(--slate)">
                       Type at least {MIN_LABEL_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -286,13 +286,13 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                             <button
                               type="button"
                               onClick={() => handleSelectLabel(label)}
-                              className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-[color:var(--lens-sand)]/20"
+                              className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-(--surface)"
                             >
                               <p className="flex flex-col items-start">
-                                <span className="text-[12px] text-[color:var(--lens-ink)]">
+                                <span className="text-[12px] text-(--ink)">
                                   {label.name}
                                 </span>
-                                <span className="text-[11px] text-[color:var(--lens-ink)]/55">
+                                <span className="text-[11px] text-(--slate)">
                                   {[label.email, label.country]
                                     .filter(Boolean)
                                     .join(" · ") || "No extra details"}
@@ -308,7 +308,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     </ul>
                   ) : (
                     !(isLabelSearchPending || selectedLabelId) && (
-                      <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                      <p className="px-3 py-2 text-[12px] text-(--slate)">
                         No labels found.
                       </p>
                     )
@@ -348,11 +348,11 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
           </Button>
         </div>
 
-        <div className="mt-5 border-t border-[color:var(--lens-sand)]/50 pt-4">
+        <div className="mt-5 border-t border-(--line)/50 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-[color:var(--lens-ink)]/55">Loading labels...</p>
+            <p className="text-[12px] text-(--slate)">Loading labels...</p>
           ) : releaseLabels.length === 0 ? (
-            <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+            <p className="text-[12px] text-(--slate)">
               No labels assigned yet.
             </p>
           ) : (
@@ -360,19 +360,19 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
               {releaseLabels.map((releaseLabel) => (
                 <li
                   key={releaseLabel.id}
-                  className="flex items-start justify-between gap-3 rounded-md border border-[color:var(--lens-sand)]/40 p-3 text-[12px]"
+                  className="flex items-start justify-between gap-3 rounded-md border border-(--line)/40 p-3 text-[12px]"
                 >
                   <div className="space-y-0.5">
-                    <p className="font-medium text-[color:var(--lens-ink)]">
+                    <p className="font-medium text-(--ink)">
                       {releaseLabel.label?.name || "Unknown label"}
                     </p>
-                    <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                    <p className="text-[11px] text-(--slate)">
                       {releaseLabel.type}
                       {releaseLabel.ownership
                         ? ` · Ownership: ${releaseLabel.ownership}`
                         : ""}
                     </p>
-                    <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                    <p className="text-[11px] text-(--slate)">
                       DDEX Party ID: {releaseLabel?.label?.ddexPartyId || "—"}
                     </p>
                   </div>
@@ -380,7 +380,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     <button
                       type="button"
                       onClick={() => openEdit(releaseLabel)}
-                      className="text-[11px] text-[color:var(--lens-blue)] hover:underline"
+                      className="text-[11px] text-(--lens-blue) hover:underline"
                     >
                       Edit
                     </button>
@@ -388,7 +388,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                       type="button"
                       onClick={() => void handleDelete(releaseLabel.id)}
                       disabled={isDeleting}
-                      className="text-[11px] text-[color:var(--lens-ink)] hover:underline"
+                      className="text-[11px] text-(--ink) hover:underline"
                     >
                       Remove
                     </button>

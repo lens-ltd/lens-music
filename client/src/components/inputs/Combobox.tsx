@@ -1,12 +1,11 @@
-import { Button } from '@/components/ui/button';
 import {
     Command,
     CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
+import { Search } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
@@ -14,9 +13,8 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useId, useMemo, useState } from 'react';
 import { SkeletonLoader } from './Loader';
-import CustomTooltip from './CustomTooltip';
 import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
 import { InputErrorMessage } from '../feedbacks/ErrorLabels';
 
@@ -66,95 +64,147 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
         ref
     ) => {
         const [open, setOpen] = useState(false);
+        // Controlled search with manual filtering so results never depend on
+        // implicit cmdk store behavior.
+        const [search, setSearch] = useState('');
+        const generatedId = useId();
+        const describedBy = errorMessage ? `${generatedId}-error` : undefined;
+        const selectedLabel = options.find((option) => option.value === value)?.label;
+
+        const visibleOptions = useMemo(() => {
+            const query = search.trim().toLowerCase();
+            if (!query) return options;
+            return options.filter((option) =>
+                option.label.toLowerCase().includes(query)
+            );
+        }, [options, search]);
+
+        const handleOpenChange = (nextOpen: boolean) => {
+            setOpen(nextOpen);
+            // Reset the query whenever the menu closes so the next open
+            // starts from the full list.
+            if (!nextOpen) setSearch('');
+        };
+
+        const selectOption = (selectedValue: string) => {
+            onChange?.(selectedValue);
+            setOpen(false);
+            setSearch('');
+        };
 
         return (
-            <label className={`flex flex-col gap-1 w-full ${labelClassName}`}>
-                <p
-                    className={
-                        label ? 'flex items-center gap-1 text-sm font-normal text-black' : 'hidden'
-                    }
-                >
-                    {label}{' '}
-                    {required && (
-                        <CustomTooltip
-                            label={required ? `${label} is required` : ''}
-                            labelClassName="text-[12px] bg-red-700"
-                        >
-                            <span className="text-red-700 cursor-pointer">*</span>
-                        </CustomTooltip>
-                    )}
-                </p>
+            <div className={cn('field-stack', labelClassName)}>
+                {label ? (
+                    <span className="field-label">
+                        {label}{' '}
+                        {required && (
+                            <span className="field-required" aria-hidden="true">
+                                *
+                            </span>
+                        )}
+                    </span>
+                ) : null}
                 <Popover
                     open={open}
-                    onOpenChange={readOnly ? undefined : setOpen}
+                    onOpenChange={readOnly ? undefined : handleOpenChange}
                     modal
                 >
-                    <PopoverTrigger asChild className={`w-full ${className}`}>
+                    <PopoverTrigger asChild className={cn('w-full', className)}>
                         {isLoading ? (
-                            <SkeletonLoader />
+                            <SkeletonLoader type="input" />
                         ) : (
-                            <Button
+                            <button
                                 type="button"
-                                variant="outline"
                                 role="combobox"
                                 aria-expanded={open}
-                                className={`w-full flex hover:bg-gray-100 items-center justify-between font-normal ${inputClassName || 'text-[12px]'
-                                    } ${className || 'h-10 hover:bg-gray-100'}`}
+                                aria-required={required || undefined}
+                                aria-invalid={errorMessage ? true : undefined}
+                                aria-describedby={describedBy}
+                                disabled={readOnly}
+                                className={cn(
+                                    'field-chrome flex items-center justify-between font-normal',
+                                    inputClassName,
+                                    className,
+                                )}
                             >
                                 <span
-                                    className={`flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] ${value ?
-                                            (selectedValueClassName || inputClassName || 'text-[12px]') :
-                                            `text-[color:var(--lens-ink)]/55 ${inputClassName || 'text-[12px]'}`
-                                        }`}
+                                    className={cn(
+                                        'flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] type-body-sm',
+                                        value
+                                            ? selectedValueClassName
+                                            : 'text-(--placeholder)',
+                                    )}
                                 >
-                                    {value ?
-                                        options.find((option) => option.value === value)?.label :
-                                        (placeholder || 'Select option...')
-                                    }
+                                    {value ? selectedLabel : (placeholder || 'Select option...')}
                                 </span>
-                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[12px] flex-none" />
-                            </Button>
+                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 text-(--slate) flex-none" />
+                            </button>
                         )}
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                        <Command ref={ref} className="w-full">
-                            <CommandInput
-                                placeholder="Search option..."
-                                className={`h-9 w-full ${inputClassName || 'text-[12px]'}`}
-                            />
-                            <CommandList ref={ref} className="w-full">
+                    <PopoverContent
+                        data-combobox-menu=""
+                        className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0 card-framed shadow-[var(--shadow-menu)]"
+                        align="start"
+                        onOpenAutoFocus={(event) => {
+                            // Let the popover FocusScope autofocus proceed
+                            // deterministically to the search field below.
+                            if (event.defaultPrevented) return;
+                        }}
+                        onCloseAutoFocus={(event) => {
+                            event.preventDefault();
+                        }}
+                    >
+                        <Command ref={ref} className="w-full" shouldFilter={false}>
+                            {/* Plain controlled input: search state never
+                                depends on cmdk store behavior, so typing and
+                                filtering work identically on pages and in
+                                modals. cmdk still owns list rendering,
+                                arrow/enter selection, and the empty state. */}
+                            <div className="flex items-center border-b border-(--line) px-3 z-50000" cmdk-input-wrapper="">
+                                <Search className="mr-2 h-4 w-4 shrink-0 text-(--slate)" />
+                                <input
+                                    value={search}
+                                    onChange={(event) => setSearch(event.target.value)}
+                                    placeholder="Search option..."
+                                    aria-label="Search options"
+                                    className={cn(
+                                        'flex h-(--control-sm) z-50000 w-full bg-transparent type-body-sm outline-none placeholder:text-(--placeholder) disabled:cursor-not-allowed disabled:opacity-50 z-50',
+                                        inputClassName,
+                                    )}
+                                />
+                            </div>
+                            <CommandList className="w-full">
                                 <CommandEmpty
-                                    className={`w-full text-center text-primary ${optionsClassName || 'text-[12px] py-2'
-                                        }`}
+                                    className={cn(
+                                        'w-full text-center type-body-sm text-(--placeholder) py-3',
+                                        optionsClassName,
+                                    )}
                                 >
                                     No option found.
                                 </CommandEmpty>
                                 <CommandGroup className="w-full">
-                                    {(options ?? [])?.map((option) => (
+                                    {visibleOptions.map((option) => (
                                         <CommandItem
-                                            key={option.label}
+                                            key={option.value || option.label}
                                             defaultValue={defaultValue}
                                             disabled={option?.disabled}
-                                            className="flex items-center gap-2 w-full cursor-pointer overflow-hidden hover:bg-gray-100"
+                                            className="flex items-center gap-2 w-full cursor-pointer overflow-hidden type-body-sm"
                                             value={option.label}
-                                            onSelect={(currentValue) => {
-                                                const selectedOption = options.find(
-                                                    (option) => option.label === currentValue
-                                                );
-                                                onChange?.(selectedOption?.value || '');
-                                                setOpen(false);
-                                            }}
+                                            keywords={[option.value]}
+                                            onSelect={() => selectOption(option.value)}
                                         >
                                             <p
-                                                className={`${option?.disabled && `text-gray-400 cursor-not-allowed`
-                                                    } truncate max-w-[calc(100%-24px)] ${optionsClassName || 'text-[12px]'
-                                                    }`}
+                                                className={cn(
+                                                    'truncate max-w-[calc(100%-24px)] type-body-sm',
+                                                    option?.disabled && 'text-(--disabled-fg) cursor-not-allowed',
+                                                    optionsClassName,
+                                                )}
                                             >
                                                 {option.label}
                                             </p>
                                             <CheckIcon
                                                 className={cn(
-                                                    'ml-auto h-4 w-4 flex-none',
+                                                    'ml-auto h-4 w-4 flex-none text-(--signal)',
                                                     value === option.value ? 'opacity-100' : 'opacity-0'
                                                 )}
                                             />
@@ -166,9 +216,9 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                     </PopoverContent>
                 </Popover>
                 {errorMessage && (
-                    <InputErrorMessage message={errorMessage} className="mt-1.5" />
+                    <InputErrorMessage id={describedBy} message={errorMessage} />
                 )}
-            </label>
+            </div>
         );
     }
 );

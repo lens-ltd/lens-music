@@ -28,18 +28,18 @@ const TrackDetailsForm = ({
   stateLabel,
   onPersistField,
 }: TrackDetailsFormProps) => (
-  <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+  <section className="rounded-md border border-(--line)/70 bg-white p-4">
     <header className="flex items-center justify-between gap-3">
       <section>
-        <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+        <h2 className="text-sm font-normal text-(--ink)">
           Track details
         </h2>
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--slate)">
           Saved field by field when you leave an input.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-[color:var(--lens-blue)]">{stateLabel}</p>
+        <p className="text-[11px] text-(--lens-blue)">{stateLabel}</p>
       )}
     </header>
 
@@ -149,7 +149,7 @@ const TrackDetailsForm = ({
         control={control}
         render={({ field }) => (
           <label className="flex w-full flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+            <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
               Parental advisory
             </span>
             <Combobox

@@ -26,12 +26,12 @@ const TrackUploadProgress = ({
       : `${progress}%`;
 
   return (
-    <figure className="mt-3 rounded-md border border-[color:var(--lens-sand)]/70 bg-[color:var(--lens-sand)]/10 p-4">
+    <figure className="mt-3 rounded-md border border-(--line)/70 bg-(--surface) p-4">
       <figcaption className="flex items-center justify-between gap-3">
-        <p className="text-[12px] text-[color:var(--lens-ink)] truncate">
+        <p className="text-[12px] text-(--ink) truncate">
           {fileName}
         </p>
-        <output className="text-[12px] font-normal text-[color:var(--lens-ink)]/70 shrink-0">
+        <output className="text-[12px] font-normal text-(--ink)/70 shrink-0">
           {isComplete ? (
             <p className="flex text-[12px] font-normal items-center gap-1.5 bg-transparent text-green-700">
               <FontAwesomeIcon icon={faCheck} className="text-[11px]" />
@@ -44,7 +44,7 @@ const TrackUploadProgress = ({
       </figcaption>
 
       {phase === "registering" && !isComplete ? (
-        <p className="mt-2 text-[11px] text-[color:var(--lens-ink)]/55">
+        <p className="mt-2 text-[11px] text-(--slate)">
           Saving file details…
         </p>
       ) : null}
@@ -54,14 +54,14 @@ const TrackUploadProgress = ({
         max={100}
         className={`mt-2 h-1.5 w-full appearance-none overflow-hidden rounded-full
           [&::-webkit-progress-bar]:rounded-full
-          [&::-webkit-progress-bar]:bg-[color:var(--lens-sand)]/30
+          [&::-webkit-progress-bar]:bg-(--surface)
           [&::-webkit-progress-value]:rounded-full
           [&::-webkit-progress-value]:transition-all
           [&::-webkit-progress-value]:duration-300
           ${
             isComplete
               ? "[&::-webkit-progress-value]:bg-green-700 [&::-moz-progress-bar]:bg-green-700"
-              : "[&::-webkit-progress-value]:bg-[color:var(--lens-blue)] [&::-moz-progress-bar]:bg-[color:var(--lens-blue)]"
+              : "[&::-webkit-progress-value]:bg-(--lens-blue) [&::-moz-progress-bar]:bg-(--lens-blue)"
           }`}
       >
         {progress}%

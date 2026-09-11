@@ -23,19 +23,19 @@ const TrackCopyrightLinesForm = ({
   stateLabel,
   onPersistField,
 }: TrackCopyrightLinesFormProps) => (
-  <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+  <section className="rounded-md border border-(--line)/70 bg-white p-4">
     <header className="flex items-center justify-between gap-3">
       <section>
-        <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+        <h2 className="text-sm font-normal text-(--ink)">
           Copyright lines and flags
         </h2>
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--slate)">
           C-line and P-line are required before validation. Use “Rights controllers”
           below for DDEX making-available rights.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-[color:var(--lens-blue)]">{stateLabel}</p>
+        <p className="text-[11px] text-(--lens-blue)">{stateLabel}</p>
       )}
     </header>
 
@@ -103,7 +103,7 @@ const TrackCopyrightLinesForm = ({
     </form>
 
     <fieldset className="mt-4 border-0 p-0">
-      <legend className="text-[12px] text-[color:var(--lens-ink)]/70">
+      <legend className="text-[12px] text-(--ink)/70">
         Flags
       </legend>
       <ul className="mt-2 flex list-none flex-wrap gap-4 p-0">

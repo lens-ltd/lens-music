@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
 import ContributorRoleMultiSelect from "@/components/contributors/ContributorRoleMultiSelect";
@@ -293,21 +294,21 @@ const ReleaseWizardManageContributions = ({
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
-      <article className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+      <article className="rounded-md border border-(--line)/70 bg-white p-4">
         <header className="space-y-1">
-          <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+          <h2 className="text-sm font-normal text-(--ink)">
             Contributors
           </h2>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--slate)">
             Select a contributor once, then add every role they have on this
             release.
           </p>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55 mt-2">
+          <p className="text-[12px] text-(--slate) mt-2">
             Can't find the contributor you're looking for?{" "}
             <a
               href={`/contributors/create?redirect=CLOSE_TAB`}
               target="_blank"
-              className="text-[color:var(--lens-blue)] hover:underline underline-offset-2 text-[12px]"
+              className="text-(--lens-blue) hover:underline underline-offset-2 text-[12px]"
             >
               Create a new contributor{" "}
               <FontAwesomeIcon
@@ -324,7 +325,7 @@ const ReleaseWizardManageContributions = ({
         >
           <section className="grid w-full gap-4">
             <label className="flex flex-col gap-2">
-              <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+              <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
                 Contributor
               </span>
               <search className="relative">
@@ -337,18 +338,18 @@ const ReleaseWizardManageContributions = ({
                   prefixIcon={faSearch}
                 />
                 {contributorSearchTerm?.trim()?.length > 0 && (
-                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-[color:var(--lens-sand)]/70 bg-white shadow-sm">
+                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
                     {isSearchingContributors || isContributorSearchPending ? (
-                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
                         <Loader
                           size="small"
-                          className="text-[color:var(--lens-ink)]/40"
+                          className="text-(--slate)"
                         />
                         Searching contributors...
                       </span>
                     ) : contributorSearchTerm?.trim()?.length <
                       MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                      <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                      <p className="px-3 py-2 text-[12px] text-(--slate)">
                         Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters
                         to search.
                       </p>
@@ -364,13 +365,13 @@ const ReleaseWizardManageContributions = ({
                                 onClick={() =>
                                   handleSelectContributor(contributor)
                                 }
-                                className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-[color:var(--lens-sand)]/20"
+                                className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-(--surface)"
                               >
                                 <p className="flex flex-col items-start">
-                                  <span className="text-[12px] text-[color:var(--lens-ink)]">
+                                  <span className="text-[12px] text-(--ink)">
                                     {getContributorSearchName(contributor)}
                                   </span>
-                                  <span className="text-[11px] text-[color:var(--lens-ink)]/55">
+                                  <span className="text-[11px] text-(--slate)">
                                     {[
                                       contributor?.email,
                                       contributor?.phoneNumber,
@@ -390,7 +391,7 @@ const ReleaseWizardManageContributions = ({
                       </ul>
                     ) : (
                       !(isSearchingContributors || selectedContributorId) && (
-                        <p className="px-3 py-2 text-[12px] text-[color:var(--lens-ink)]/55">
+                        <p className="px-3 py-2 text-[12px] text-(--slate)">
                           No contributors found.
                         </p>
                       )
@@ -432,21 +433,21 @@ const ReleaseWizardManageContributions = ({
                 className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
               >
                 <section className="flex flex-col gap-0.5">
-                  <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
+                  <p className="text-[12px] font-normal text-(--ink)">
                     {getContributorCreditName(
                       releaseContributor?.contributor,
                       releaseContributor.role,
                     )}
                   </p>
-                  <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[11px] text-(--slate)">
                     {toTitleCase(releaseContributor?.role)}
                   </p>
-                  <label className="mt-1 flex items-center gap-2 text-[11px] text-[color:var(--lens-ink)]/70">
+                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--ink)/70">
                     <span className="shrink-0 text-[11px]">Order</span>
                     <input
                       type="number"
                       min={0}
-                      className="w-16 rounded border border-[color:var(--lens-sand)]/60 px-1 py-0.5 text-[11px] text-[color:var(--lens-ink)]/70"
+                      className="w-16 rounded border border-(--line)/60 px-1 py-0.5 text-[11px] text-(--ink)/70"
                       defaultValue={releaseContributor.sequenceNumber ?? ""}
                       disabled={isUpdatingReleaseContributorSequence}
                       onBlur={(e) => {
@@ -472,13 +473,13 @@ const ReleaseWizardManageContributions = ({
                         releaseContributor?.id ?? "",
                       );
                     }}
-                    className="cursor-pointer text-[12px] text-[color:var(--lens-ink)] transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer text-[12px] text-(--ink) transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 )}
               </li>
             ))
           ) : (
-            <li className="rounded-md border border-dashed border-[color:var(--lens-sand)]/70 p-3 text-[12px] text-[color:var(--lens-ink)]/55">
+            <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
               No contributors added yet.
             </li>
           )}
@@ -487,15 +488,15 @@ const ReleaseWizardManageContributions = ({
 
       {!hasPrimaryArtist ? (
         <p
-          className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70"
+          className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70"
           role="status"
         >
           Add at least one primary artist before continuing.
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
-        <Button
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+        <BackButton
           onClick={(e) => {
             e.preventDefault();
             previousStepName &&
@@ -507,7 +508,7 @@ const ReleaseWizardManageContributions = ({
           }}
         >
           Back
-        </Button>
+        </BackButton>
         <Button
           primary
           isLoading={

@@ -35,8 +35,8 @@ const DashboardSection = ({
     <section
       className={cn(
         variant === 'panel'
-          ? 'flex flex-col rounded-xl border border-[color:var(--lens-sand)] bg-white shadow-sm'
-          : 'flex flex-col border-t border-[color:var(--lens-sand)] pt-1',
+          ? 'flex flex-col card-framed'
+          : 'flex flex-col border-t border-(--line) pt-1',
         overflowHidden && 'overflow-hidden',
         contentClassName,
         className
@@ -54,16 +54,15 @@ const DashboardSection = ({
             {title && (
               <h2
                 className={cn(
-                  'text-[15px] font-normal leading-tight text-[color:var(--lens-ink)]',
-                  label && 'mt-2'
+                  'type-card-title text-(--ink)',
+                  label && 'mt-1.5'
                 )}
-                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
               >
                 {title}
               </h2>
             )}
             {subtitle && (
-              <p className="mt-0.5 text-[11px] font-normal text-[color:var(--lens-ink)]/45">
+              <p className="mt-0.5 type-meta">
                 {subtitle}
               </p>
             )}

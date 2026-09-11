@@ -23,11 +23,11 @@ const PreviewRelatedReleasesSection = ({ releaseId }: { releaseId: string }) => 
     >
       <DashboardSection title="Related Releases" label="Metadata">
         {isFetching ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--slate)">
             Loading related releases...
           </p>
         ) : relatedReleases.length === 0 ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--slate)">
             No related releases linked.
           </p>
         ) : (
@@ -35,12 +35,12 @@ const PreviewRelatedReleasesSection = ({ releaseId }: { releaseId: string }) => 
             {relatedReleases.map((row) => (
               <li
                 key={row.id}
-                className="rounded-md border border-[color:var(--lens-sand)]/50 p-3 text-[12px]"
+                className="rounded-md border border-(--line)/50 p-3 text-[12px]"
               >
-                <p className="font-medium text-[color:var(--lens-ink)]">
+                <p className="font-medium text-(--ink)">
                   {row.relatedRelease?.title || row.externalId || "External release"}
                 </p>
-                <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                <p className="text-[11px] text-(--slate)">
                   {row.relationType}
                 </p>
               </li>

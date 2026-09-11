@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { KeyValuePair } from "@/components/inputs/KeyValuePair";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { Heading } from "@/components/text/Headings";
@@ -383,14 +384,14 @@ const ContributorDetailsPage = () => {
               The contributor record could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
-              <Button
+              <BackButton
                 onClick={(event) => {
                   event.preventDefault();
                   navigate(-1);
                 }}
               >
                 Back
-              </Button>
+              </BackButton>
             </menu>
           </section>
         ) : (
@@ -606,14 +607,14 @@ const ContributorDetailsPage = () => {
           </>
         )}
         <footer className="flex w-full items-center justify-between gap-3">
-          <Button
+          <BackButton
             onClick={(event) => {
               event.preventDefault();
               navigate(-1);
             }}
           >
             Back
-          </Button>
+          </BackButton>
         </footer>
       </main>
       <AssignContributorManager />

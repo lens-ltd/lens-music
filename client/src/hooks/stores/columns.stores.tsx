@@ -24,7 +24,7 @@ export const useStoreColumns = () => {
         header: "Slug",
         accessorKey: "slug",
         cell: ({ row }) => (
-          <span className="font-mono text-[11px] text-[color:var(--lens-ink)]/70">
+          <span className="text-[11px] text-(--ink)/70">
             {row.original.slug || "—"}
           </span>
         ),
@@ -32,19 +32,19 @@ export const useStoreColumns = () => {
       {
         header: "DDEX Party ID",
         accessorKey: "ddexPartyId",
-        cell: ({ row }) => row.original.ddexPartyId || "—",
+        cell: ({ row }) => capitalizeString(row.original?.ddexPartyId) || "—",
       },
       {
         header: "Protocol",
         accessorKey: "deliveryProtocol",
-        cell: ({ row }) => row.original.deliveryProtocol || "—",
+        cell: ({ row }) => capitalizeString(row.original?.deliveryProtocol) || "—",
       },
       {
         header: "Endpoint",
         accessorKey: "deliveryEndpoint",
         cell: ({ row }) => (
-          <span className="block max-w-[180px] truncate" title={row.original.deliveryEndpoint}>
-            {row.original.deliveryEndpoint || "—"}
+          <span className="block max-w-[180px] truncate" title={row.original?.deliveryEndpoint}>
+            {row.original?.deliveryEndpoint || "—"}
           </span>
         ),
       },

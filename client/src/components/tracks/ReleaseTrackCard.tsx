@@ -37,16 +37,16 @@ const ReleaseTrackCard = ({
       <article className="w-full rounded-md bg-white/80 p-3 sm:p-3.5">
         <header className="flex items-start justify-between gap-3 pb-2">
           <section className="space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)] font-normal">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-(--lens-blue) font-normal">
               Track
             </p>
             <p
-              className="h-5 w-36 rounded-full bg-[color:var(--lens-sand)]/55"
+              className="h-5 w-36 rounded-full bg-(--surface)"
               aria-hidden="true"
             />
           </section>
           <p
-            className="h-5 w-16 rounded-full bg-[color:var(--lens-sand)]/55"
+            className="h-5 w-16 rounded-full bg-(--surface)"
             aria-hidden="true"
           />
         </header>
@@ -59,14 +59,14 @@ const ReleaseTrackCard = ({
             {["Disc", "Track", "Duration", "Advisory"].map((label) => (
               <li
                 key={label}
-                className="rounded-lg bg-[color:var(--lens-sand)]/15 px-2.5 py-2"
+                className="rounded-lg bg-(--surface) px-2.5 py-2"
               >
                 <dl>
-                  <dt className="text-[9px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/50 font-normal">
+                  <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
                     {label}
                   </dt>
                   <dd
-                    className="mt-1.5 h-4 w-12 rounded-full bg-[color:var(--lens-sand)]/55"
+                    className="mt-1.5 h-4 w-12 rounded-full bg-(--surface)"
                     aria-hidden="true"
                   />
                 </dl>
@@ -88,7 +88,7 @@ const ReleaseTrackCard = ({
     <article className="w-full rounded-md shadow-md bg-white/70 p-3 sm:p-3.5">
       <header className="flex items-start justify-between gap-2 pb-2">
         <section className="min-w-0 space-y-1">
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--lens-blue)] font-normal">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-(--lens-blue) font-normal">
             {track?.trackNumber}. {track?.title}{" "}
             {track?.titleVersion ? `(${track.titleVersion})` : ""}
           </p>
@@ -100,7 +100,7 @@ const ReleaseTrackCard = ({
               {secondaryLabels.map((label) => (
                 <li
                   key={label}
-                  className="rounded-full border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/20 px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-[color:var(--lens-ink)]/70"
+                  className="rounded-full border border-(--line) bg-(--surface) px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-(--ink)/70"
                 >
                   {label}
                 </li>
@@ -110,8 +110,8 @@ const ReleaseTrackCard = ({
         </section>
 
         <ul className="flex items-center gap-3 list-none flex-wrap gap-1.5 p-0 m-0">
-          <section className="rounded-full border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/18 px-2.5 py-1">
-            <p className="text-[9px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/70 font-normal">
+          <section className="rounded-full border border-(--line) bg-(--surface) px-2.5 py-1">
+            <p className="text-[9px] uppercase tracking-[0.12em] text-(--ink)/70 font-normal">
               {capitalizeString(track?.status)}
             </p>
           </section>
@@ -153,13 +153,13 @@ const ReleaseTrackCard = ({
           {["Disc", "Track", "Duration", "Advisory"].map((label) => (
             <li
               key={label}
-              className="rounded-md bg-[color:var(--lens-sand)]/12 px-2.5 py-1"
+              className="rounded-md bg-(--surface) px-2.5 py-1"
             >
               <dl>
-                <dt className="text-[9px] uppercase tracking-[0.12em] text-[color:var(--lens-ink)]/50 font-normal">
+                <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
                   {label}
                 </dt>
-                <dd className="mt-0.5 text-[12px] text-[color:var(--lens-ink)] font-normal">
+                <dd className="mt-0.5 text-[12px] text-(--ink) font-normal">
                   {label === "Disc"
                     ? discNumber
                     : label === "Track"

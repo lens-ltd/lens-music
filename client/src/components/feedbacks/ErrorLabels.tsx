@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 export const InputErrorMessage = ({
   message,
   className,
+  id,
 }: {
   message:
     | string
@@ -16,6 +17,11 @@ export const InputErrorMessage = ({
     | Merge<FieldError, FieldErrorsImpl<FieldValues>>
     | undefined;
   className?: string;
+  id?: string;
 }) => {
-  return <p className={cn("text-red-700 text-[12px] font-normal", className)}>{String(message)}</p>;
+  return (
+    <p id={id} className={cn('field-help text-(--danger-text)', className)} role="alert">
+      {String(message)}
+    </p>
+  );
 };

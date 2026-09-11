@@ -10,6 +10,6 @@ export const getGenderLabel = (gender?: string) => {
   )?.label;
 };
 
-export const ellipsisHClassName = `text-primary cursor-pointer text-md transition-all duration-300 hover:scale-[.98] bg-slate-200 hover:bg-slate-300 rounded-md p-1 px-4`;
+export const ellipsisHClassName = `text-(--ink) cursor-pointer type-body-sm transition-colors duration-200 bg-[#f5f3ee] hover:bg-(--surface-hover) rounded-(--radius-control) p-1.5 px-4`;
 
-export const tableActionClassName = `w-full flex items-center gap-2 text-[12px] text-center p-1 px-2 rounded-md hover:bg-gray-100`;
+export const tableActionClassName = `w-full flex items-center gap-2 type-body-sm text-center p-1 px-2 rounded-(--radius-control) hover:bg-(--surface-hover)`;

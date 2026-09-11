@@ -81,7 +81,7 @@ const AssignUserRole = () => {
       heading="Assign role"
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-[13px] text-[color:var(--lens-ink)]/70">
+        <p className="text-[13px] text-(--ink)/70">
           Select a role to assign to{" "}
           <strong>
             {selectedUser?.name || selectedUser?.email || "this user"}
