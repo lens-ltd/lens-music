@@ -12,35 +12,31 @@ const rows = [
 
 export default function CompareSection() {
   return (
-    <FadeSection id="compare" labelledBy="compare-heading" className="py-24 bg-[color:var(--lens-sand)]/20">
+    <FadeSection id="compare" labelledBy="compare-heading" className="section-rhythm bg-(--paper)">
       {({ inView }) => (
-        <article className="max-w-4xl mx-auto px-6">
+        <article className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
           <header className="mb-8" style={fadeUp(inView)}>
             <SectionLabel>Comparison</SectionLabel>
-            <h2
-              id="compare-heading"
-              className="mt-4 text-[clamp(28px,4vw,40px)] leading-tight tracking-[-0.02em]"
-              style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-            >
+            <h2 id="compare-heading" className="mt-4 type-h2">
               A straightforward model for independent releases.
             </h2>
           </header>
 
-          <figure className="overflow-hidden rounded-2xl border border-[color:var(--lens-sand)] bg-white" style={fadeUp(inView, 0.1)} aria-label="Feature comparison table">
+          <figure className="overflow-hidden card-framed" style={fadeUp(inView, 0.1)} aria-label="Feature comparison table">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-[color:var(--lens-sand)]">
-                  <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-ink)]/55" style={{ fontWeight: 400 }}>Category</th>
-                  <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-blue)]" style={{ fontWeight: 400 }}>Lens Music</th>
-                  <th className="text-left px-5 py-4 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lens-ink)]/45" style={{ fontWeight: 400 }}>Typical distributor</th>
+                <tr className="border-b border-(--line)">
+                  <th className="text-left px-5 py-4 type-eyebrow">Category</th>
+                  <th className="text-left px-5 py-4 type-eyebrow text-(--ink)">Lens Music</th>
+                  <th className="text-left px-5 py-4 type-eyebrow">Typical distributor</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, i) => (
-                  <tr key={row[0]} className={i % 2 === 0 ? '' : 'bg-[color:var(--lens-sand)]/10'}>
-                    <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)] font-normal">{row[0]}</td>
-                    <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)] font-normal">{row[1]}</td>
-                    <td className="px-5 py-4 text-[12px] text-[color:var(--lens-ink)]/60 font-normal">{row[2]}</td>
+                  <tr key={row[0]} className={i % 2 === 0 ? '' : 'bg-(--surface-sunken)'}>
+                    <td className="px-5 py-4 type-body-sm">{row[0]}</td>
+                    <td className="px-5 py-4 type-body-sm">{row[1]}</td>
+                    <td className="px-5 py-4 type-body-sm text-(--muted)">{row[2]}</td>
                   </tr>
                 ))}
               </tbody>

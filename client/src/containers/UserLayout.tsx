@@ -7,27 +7,19 @@ interface UserLayoutProps {
   variant?: 'card' | 'canvas';
 }
 
-const UserLayout = ({ children, variant = 'card' }: UserLayoutProps) => {
+const UserLayout = ({ children }: UserLayoutProps) => {
   const { isOpen } = useAppSelector((state) => state.sidebar);
 
   return (
-    <section className="min-h-screen w-full overflow-x-hidden bg-[color:var(--color-background)]">
+    <section className="min-h-screen w-full overflow-x-hidden bg-(--paper) text-(--ink)">
       <Navbar />
       <Sidebar />
       <main
-        className={`mt-20 min-h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-300 ease-in-out ${
-          isOpen
-            ? 'ml-[60px] sm:ml-[220px] lg:ml-[260px]'
-            : 'ml-[60px] lg:ml-[80px]'
+        className={`mt-16 min-h-[calc(100vh-64px)] overflow-x-hidden transition-[margin] duration-200 ease-[cubic-bezier(0,0,1,1)] ${
+          isOpen ? 'ml-16 sm:ml-60' : 'ml-16'
         }`}
       >
-        <article
-          className={`mx-auto w-full max-w-[1200px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 ${
-            variant === 'card'
-              ? 'rounded-md bg-white shadow-sm'
-              : 'rounded-xl bg-white'
-          }`}
-        >
+        <article className="mx-auto w-full max-w-[1280px] px-5 py-6 sm:px-8 lg:px-10">
           {children}
         </article>
       </main>

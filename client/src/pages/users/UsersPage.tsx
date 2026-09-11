@@ -41,7 +41,7 @@ const UsersPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Users</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="type-meta mt-1">
               Review dashboard users and their account status.
             </p>
           </div>

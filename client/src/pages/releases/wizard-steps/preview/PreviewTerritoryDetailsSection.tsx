@@ -25,11 +25,11 @@ const PreviewTerritoryDetailsSection = ({ releaseId }: { releaseId: string }) =>
     >
       <DashboardSection title="Territory Overrides" label="Metadata">
         {isFetching ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             Loading territory overrides...
           </p>
         ) : details.length === 0 ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             No territory-specific overrides configured.
           </p>
         ) : (
@@ -41,12 +41,12 @@ const PreviewTerritoryDetailsSection = ({ releaseId }: { releaseId: string }) =>
               return (
                 <li
                   key={detail.id}
-                  className="rounded-md border border-[color:var(--lens-sand)]/50 p-3 text-[12px]"
+                  className="rounded-md border border-(--line)/50 p-3 text-[12px]"
                 >
-                  <p className="font-medium text-[color:var(--lens-ink)]">
+                  <p className="font-medium text-(--ink)">
                     {countryName}
                   </p>
-                  <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[11px] text-(--muted)">
                     Title: {detail.title || "Default"} · Artist:{" "}
                     {detail.displayArtistName || "Default"} · Label:{" "}
                     {detail.labelName || "Default"}

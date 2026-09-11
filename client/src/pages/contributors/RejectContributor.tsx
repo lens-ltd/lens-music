@@ -43,12 +43,12 @@ const RejectContributor = () => {
       }`}
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-sm text-[color:var(--lens-ink)]/70">
+        <p className="text-sm text-(--ink)/70">
           This marks the contributor as not verified. You can optionally include
           a note explaining why.
         </p>
         <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-medium text-[color:var(--lens-ink)]">
+          <span className="text-[12px] font-medium text-(--ink)">
             Note (optional)
           </span>
           <textarea

@@ -204,13 +204,13 @@ const ReleaseWizardStores = ({
   return (
     <section className="w-full flex flex-col gap-4">
       <header>
-        <h2 className="text-xl font-semibold text-[color:var(--lens-ink)]">Stores</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-[color:var(--lens-ink)]/55">
+        <h2 className="text-xl font-semibold text-(--ink)">Stores</h2>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-(--muted)">
           Select the stores where this release should be delivered.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-[color:var(--lens-sand)] pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 border-b border-(--line) pb-4">
         {navButtons}
       </menu>
 
@@ -218,7 +218,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-(--line)/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
           >
             <UiInput
               type="checkbox"
@@ -234,12 +234,12 @@ const ReleaseWizardStores = ({
               }}
               className="h-4 w-4 cursor-pointer accent-primary"
             />
-            <span className="text-xs leading-5 text-[color:var(--lens-ink)]">
+            <span className="text-xs leading-5 text-(--ink)">
               Select all stores
             </span>
           </label>
         </menu>
-        <span className="text-[12px] text-[color:var(--lens-ink)]/60">
+        <span className="text-[12px] text-(--muted)">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
         {storesMissingDdex.length > 0 ? (
@@ -252,13 +252,13 @@ const ReleaseWizardStores = ({
         ) : null}
       </section>
 
-      <section className="grid grid-cols-1 gap-3 rounded-xl border border-[color:var(--lens-sand)]/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-3 rounded-xl border border-(--line)/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {storesIsFetching || releaseStoresIsFetching ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             Loading stores...
           </p>
         ) : stores.length === 0 ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             No stores available.
           </p>
         ) : (
@@ -269,7 +269,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-md border border-[color:var(--lens-sand)]/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+                className="flex cursor-pointer items-center gap-2 rounded-md border border-(--line)/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
               >
                 <UiInput
                   type="checkbox"
@@ -280,7 +280,7 @@ const ReleaseWizardStores = ({
                   }
                   className="h-4 w-4 cursor-pointer accent-primary"
                 />
-                <span className="text-xs leading-5 text-[color:var(--lens-ink)]">
+                <span className="text-xs leading-5 text-(--ink)">
                   {store.name}
                 </span>
                 <span
@@ -299,19 +299,19 @@ const ReleaseWizardStores = ({
       </section>
 
       {!allSelected && stores.length > 0 && (
-        <p className="text-[11px] text-[color:var(--lens-ink)]/50">
+        <p className="text-[11px] text-(--muted)">
           Tip: Use Select all for global distribution, then deselect stores you
           do not want.
         </p>
       )}
 
       {storesError ? (
-        <p className="text-[11px] text-[color:var(--lens-ink)]">{storesError}</p>
+        <p className="text-[11px] text-(--ink)">{storesError}</p>
       ) : null}
 
       <ReleaseWizardDealsSection />
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
         {navButtons}
       </footer>
     </section>

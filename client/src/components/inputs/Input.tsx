@@ -61,15 +61,6 @@ interface InputProps {
     | undefined;
 }
 
-const fieldLabelClasses =
-  "text-[12px] leading-none text-[color:var(--lens-ink)] font-normal";
-const helperRequiredClasses = "text-[12px] leading-none text-red-600";
-const baseInputClasses =
-  "h-10 rounded-lg border-[1.5px] border-secondary/40 bg-white px-3 text-[11px] font-normal shadow-none placeholder:text-[11px] placeholder:font-light placeholder:text-secondary/70 focus-visible:ring-0 focus-visible:border-primary";
-
-const inputTextClasses =
-  "text-[11px] font-normal placeholder:text-[11px] placeholder:font-light placeholder:text-secondary/70";
-
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -110,13 +101,33 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const normalizedDefaultValue =
       defaultValue instanceof Date ? defaultValue.toISOString() : defaultValue;
     const normalizedValue = value instanceof Date ? value.toISOString() : value;
+    const describedBy = errorMessage ? `${inputId}-error` : undefined;
+
+    const labelNode = label ? (
+      <span className="field-label">
+        {label}{" "}
+        {required && (
+          <span className="field-required" aria-hidden="true">
+            *
+          </span>
+        )}
+      </span>
+    ) : null;
+
+    const errorNode = errorMessage ? (
+      <InputErrorMessage
+        id={describedBy}
+        message={errorMessage}
+        className="mt-0.5"
+      />
+    ) : null;
 
     if (type === "checkbox") {
       return (
-        <div className={cn("flex w-full flex-col gap-1", labelClassName)}>
-          <label className="inline-flex w-fit items-center gap-2 text-[12px] font-normal">
+        <div className={cn("field-stack", labelClassName)}>
+          <label className="inline-flex w-fit items-center gap-2 type-body-sm">
             <Checkbox
-              className="border-secondary/50 cursor-pointer"
+              className="border-(--line) cursor-pointer"
               onCheckedChange={
                 onChange as unknown as
                   | ((checked: CheckedState) => void)
@@ -125,23 +136,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               name={name}
               checked={checked}
               defaultChecked={defaultChecked}
+              aria-required={required || undefined}
+              aria-invalid={errorMessage ? true : undefined}
             />
-            {label && <span className="text-[12px] font-normal">{label}</span>}
+            {label && <span className="type-body-sm">{label}</span>}
           </label>
-          {errorMessage && (
-            <InputErrorMessage
-              message={errorMessage}
-              className="mt-0.5 pl-0.5"
-            />
-          )}
+          {errorNode}
         </div>
       );
     }
 
     if (type === "radio") {
       return (
-        <div className={cn("flex w-full flex-col gap-1", labelClassName)}>
-          <label className="inline-flex items-center gap-2 text-[12px] font-normal">
+        <div className={cn("field-stack", labelClassName)}>
+          <label className="inline-flex items-center gap-2 type-body-sm">
             <input
               id={inputId}
               type="radio"
@@ -150,19 +158,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               defaultChecked={defaultChecked}
               checked={checked as boolean}
               onChange={onChange}
+              required={required}
+              aria-invalid={errorMessage ? true : undefined}
               className={cn(
-                "h-4 w-4 cursor-pointer accent-primary border-secondary/50",
+                "h-4 w-4 cursor-pointer accent-(--lens-blue) border-(--line)",
                 className,
               )}
             />
-            {label && <span className="text-[12px] font-normal">{label}</span>}
+            {label && <span className="type-body-sm">{label}</span>}
           </label>
-          {errorMessage && (
-            <InputErrorMessage
-              message={errorMessage}
-              className="mt-0.5 pl-0.5"
-            />
-          )}
+          {errorNode}
         </div>
       );
     }
@@ -170,17 +175,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     if (type === "file") {
       return (
         <div className={cn("w-fit", labelClassName)}>
-          {label && (
-            <p className={cn(fieldLabelClasses, "mb-2")}>
-              {label}{" "}
-              {required && <span className={helperRequiredClasses}>*</span>}
-            </p>
-          )}
+          {label && <p className="mb-1.5">{labelNode}</p>}
           <button
             type="button"
             onClick={() => hiddenFileInput.current?.click()}
             className={cn(
-              "inline-flex h-9 cursor-pointer items-center justify-center rounded-md border border-primary bg-white px-4 text-[12px] font-normal text-primary hover:bg-[color:var(--lens-sand)]",
+              "inline-flex h-(--control-sm) cursor-pointer items-center justify-center rounded-(--radius-control) border border-(--ink) bg-(--paper) px-3.5 type-label text-(--ink) hover:bg-(--surface)",
               className,
             )}
           >
@@ -194,9 +194,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             onChange={onChange}
             className="hidden"
             name={name}
+            required={required}
           />
           {errorMessage && (
-            <InputErrorMessage message={errorMessage} className="mt-2" />
+            <InputErrorMessage message={errorMessage} className="mt-1.5" />
           )}
         </div>
       );
@@ -204,13 +205,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     if (type === "date") {
       return (
-        <label className={cn("flex w-full flex-col gap-2", labelClassName)}>
-          {label && (
-            <span className={fieldLabelClasses}>
-              {label}{" "}
-              {required && <span className={helperRequiredClasses}>*</span>}
-            </span>
-          )}
+        <label className={cn("field-stack", labelClassName)}>
+          {labelNode}
           <DatePicker
             placeholder={placeholder}
             fromDate={fromDate}
@@ -223,9 +219,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             }
             value={(value || defaultValue) as Date | undefined}
           />
-          {errorMessage && (
-            <InputErrorMessage message={errorMessage} className="mt-0.5" />
-          )}
+          {errorNode}
         </label>
       );
     }
@@ -247,11 +241,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       onBlur,
       onKeyPress,
       placeholder: readOnly ? "" : placeholder,
+      required,
+      "aria-invalid": errorMessage ? true : undefined,
+      "aria-describedby": describedBy,
     };
-
-    const readOnlyInputClasses = readOnly
-      ? "border-background bg-background/40 text-secondary cursor-default"
-      : "";
 
     const prefixPaddingClasses = cn(
       prefixIcon && "pl-10",
@@ -261,28 +254,24 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const textInputPlain = (
       <ShadcnInput
         {...sharedInputProps}
-        className={cn(
-          baseInputClasses,
-          readOnlyInputClasses,
-          prefixPaddingClasses,
-          className,
-        )}
+        className={cn(prefixPaddingClasses, className)}
       />
     );
 
     const textInputWithSuffix = (
       <div
         className={cn(
-          "flex w-full overflow-hidden rounded-lg border-[1.5px] border-secondary/40 bg-white transition-[border-color] focus-within:border-primary",
-          readOnly && "border-background bg-background/40",
+          "flex w-full overflow-hidden rounded-(--radius-control) border border-(--line) bg-(--paper) transition-[border-color,box-shadow] duration-200 focus-within:border-(--lens-blue) focus-within:shadow-[0_0_0_3px_var(--lens-blue-soft)]",
+          readOnly && "border-(--line) bg-(--surface)",
+          errorMessage &&
+            "border-(--danger) focus-within:border-(--danger) focus-within:shadow-[0_0_0_3px_var(--danger-line)]",
         )}
       >
-        <ShadcnInput
+        <input
           {...sharedInputProps}
           className={cn(
-            "h-10 min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 shadow-none focus-visible:ring-0 focus-visible:outline-none",
-            inputTextClasses,
-            readOnly && "cursor-default text-secondary",
+            "h-(--control-sm) min-h-(--control-sm) min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 type-body-sm text-(--ink) shadow-none outline-none placeholder:text-(--muted) focus-visible:ring-0 focus-visible:shadow-none",
+            readOnly && "cursor-default text-(--muted)",
             prefixPaddingClasses,
             className,
           )}
@@ -291,14 +280,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           type="button"
           onClick={suffixIconHandler}
           className={cn(
-            "flex shrink-0 items-center justify-center self-stretch border-l-[1.5px] px-3 text-[12px]",
+            "flex shrink-0 items-center justify-center self-stretch border-l px-3 type-body-sm",
             suffixIconPrimary
-              ? "border-l-primary bg-primary text-white"
-              : "border-l-secondary/40 bg-white text-primary",
+              ? "border-l-(--lens-blue) bg-(--lens-blue) text-(--lens-blue-ink)"
+              : "border-l-(--line) bg-(--paper) text-(--ink)",
           )}
           aria-label={`${label || "Input"} action`}
         >
-          <FontAwesomeIcon className="text-[11px] cursor-pointer" icon={suffixIcon || faSearch} />
+          <FontAwesomeIcon className="text-[12px] cursor-pointer" icon={suffixIcon || faSearch} />
         </button>
       </div>
     );
@@ -306,20 +295,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const textInput = suffixIcon ? textInputWithSuffix : textInputPlain;
 
     return (
-      <label className={cn("flex w-full flex-col gap-2", labelClassName)}>
-        {label && (
-          <span className={cn(fieldLabelClasses, "pl-0.5")}>
-            {label}{" "}
-            {required && <span className={helperRequiredClasses}>*</span>}
-          </span>
-        )}
+      <label className={cn("field-stack", labelClassName)}>
+        {labelNode}
         <div className="relative w-full">
           {(prefixIcon || prefixText) && (
             <button
               type="button"
               onClick={prefixIconHandler}
               className={cn(
-                "absolute inset-y-0 left-0 flex items-center px-3 text-secondary",
+                "absolute inset-y-0 left-0 flex items-center px-3 text-(--muted)",
                 !prefixIconHandler && "pointer-events-none",
               )}
               aria-label={
@@ -328,18 +312,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                   : label || "Prefix action"
               }
             >
-              {prefixIcon && <FontAwesomeIcon className="text-[11px]" icon={prefixIcon} />}
+              {prefixIcon && <FontAwesomeIcon className="text-[12px]" icon={prefixIcon} />}
               {prefixText && (
-                <span className="text-[12px] font-normal">{prefixText}</span>
+                <span className="type-body-sm">{prefixText}</span>
               )}
             </button>
           )}
 
           {textInput}
         </div>
-        {errorMessage && (
-          <InputErrorMessage message={errorMessage} className="mt-0.5" />
-        )}
+        {errorNode}
       </label>
     );
   },

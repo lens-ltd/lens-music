@@ -224,7 +224,7 @@ const CreateLyrics = () => {
 
             <div className="mt-4">
               <div className="mb-2 flex items-center justify-between">
-                <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+                <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
                   Lyrics
                 </span>
                 <Button

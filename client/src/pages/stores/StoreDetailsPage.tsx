@@ -96,8 +96,8 @@ const StoreDetailsPage = () => {
             <Heading>Store Details</Heading>
             <Button route="/stores">Back to stores</Button>
           </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">{message}</p>
+          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+            <p className="text-[13px] text-(--muted)">{message}</p>
           </section>
         </main>
       </UserLayout>
@@ -112,8 +112,8 @@ const StoreDetailsPage = () => {
             <Heading>Store Details</Heading>
             <Button route="/stores">Back to stores</Button>
           </nav>
-          <section className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60">
+          <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
+            <p className="text-[13px] text-(--muted)">
               Store not found.
             </p>
           </section>
@@ -152,20 +152,20 @@ const StoreDetailsPage = () => {
         <nav className="flex w-full items-center justify-between gap-3">
           <div>
             <Heading>Store Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-[color:var(--lens-ink)]/60">
+            <p className="mt-1 text-[13px] font-normal text-(--muted)">
               Review store identity and configure DDEX delivery metadata.
             </p>
           </div>
           <Button route="/stores">Back to stores</Button>
         </nav>
 
-        <section className="flex w-full flex-col gap-5 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-          <div className="flex flex-col gap-3 border-b border-[color:var(--lens-sand)]/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <section className="flex w-full flex-col gap-5 rounded-lg bg-(--surface) p-5 sm:p-6">
+          <div className="flex flex-col gap-3 border-b border-(--line)/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <h2 className="text-[20px] font-semibold text-[color:var(--lens-ink)]">
+              <h2 className="text-[20px] font-semibold text-(--ink)">
                 {store?.name || "Store"}
               </h2>
-              <p className="mt-1 font-mono text-[12px] text-[color:var(--lens-ink)]/55">
+              <p className="mt-1 font-mono text-[12px] text-(--muted)">
                 {store?.slug || "—"}
               </p>
             </div>
@@ -178,24 +178,24 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Overview
             </Heading>
-            <p className="mt-1 text-[12px] text-[color:var(--lens-ink)]/50">
+            <p className="mt-1 text-[12px] text-(--muted)">
               Identity fields are managed by seeds and are read-only here.
             </p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <KeyValuePair
                 keyText="Name"
                 valueText={store?.name || "—"}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line)/50 bg-white p-3"
               />
               <KeyValuePair
                 keyText="Slug"
                 valueText={store?.slug || "—"}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line)/50 bg-white p-3"
               />
               <KeyValuePair
                 keyText="Sort order"
                 valueText={String(store?.sortOrder ?? "—")}
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line)/50 bg-white p-3"
               />
               <KeyValuePair
                 keyText="Last updated"
@@ -204,7 +204,7 @@ const StoreDetailsPage = () => {
                     ? formatDate(store.updatedAt, "DD/MM/YYYY HH:mm")
                     : "—"
                 }
-                className="h-full border border-[color:var(--lens-sand)]/50 bg-white p-3"
+                className="h-full border border-(--line)/50 bg-white p-3"
               />
             </div>
           </div>
@@ -213,11 +213,11 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Delivery
             </Heading>
-            <p className="mt-1 text-[12px] text-[color:var(--lens-ink)]/50">
+            <p className="mt-1 text-[12px] text-(--muted)">
               Used during release validation and distribution routing.
             </p>
 
-            <div className="mt-4 flex flex-col gap-4 rounded-md border border-[color:var(--lens-sand)]/50 bg-white p-4">
+            <div className="mt-4 flex flex-col gap-4 rounded-md border border-(--line)/50 bg-white p-4">
               <Input
                 label="DDEX Party ID"
                 value={formState.ddexPartyId || ""}

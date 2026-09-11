@@ -1,4 +1,12 @@
-import { FC, LegacyRef, ChangeEvent, useEffect, useRef } from 'react';
+import { FC, ChangeEvent, ReactNode, useEffect, useId, useRef } from 'react';
+import { cn } from '@/lib/utils';
+import { InputErrorMessage } from '../feedbacks/ErrorLabels';
+import {
+  FieldError,
+  FieldErrorsImpl,
+  FieldValues,
+  Merge,
+} from 'react-hook-form';
 
 interface TextAreaProps {
   cols?: number;
@@ -11,9 +19,14 @@ interface TextAreaProps {
   required?: boolean;
   readonly?: boolean;
   onBlur?: () => void | undefined;
-  label?: string | JSX.Element;
-  ref?: LegacyRef<HTMLTextAreaElement> | undefined;
+  label?: string | ReactNode;
   value?: string | number | readonly string[] | undefined;
+  errorMessage?:
+    | string
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<FieldValues>>
+    | undefined;
+  name?: string;
 }
 
 const TextArea: FC<TextAreaProps> = ({
@@ -29,8 +42,13 @@ const TextArea: FC<TextAreaProps> = ({
   onBlur,
   label = null,
   value,
+  errorMessage,
+  name,
 }) => {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const generatedId = useId();
+  const inputId = name || generatedId;
+  const describedBy = errorMessage ? `${inputId}-error` : undefined;
 
   useEffect(() => {
     if (!defaultValue && !value && ref?.current) {
@@ -39,27 +57,41 @@ const TextArea: FC<TextAreaProps> = ({
   }, [defaultValue, value]);
 
   return (
-    <label className="flex flex-col gap-[6px] item-start w-full">
-      <p
-        className={`text-[14px] flex items-center gap-1 ${!label && 'hidden'}`}
-      >
-        {label}{' '}
-        <span className={`${required ? 'text-red-500' : 'hidden'}`}>*</span>
-      </p>
+    <label className="field-stack">
+      {label ? (
+        <span className="field-label">
+          {label}{' '}
+          {required && (
+            <span className="field-required" aria-hidden="true">
+              *
+            </span>
+          )}
+        </span>
+      ) : null}
       <textarea
+        id={inputId}
         cols={cols}
         rows={rows}
         ref={ref}
+        name={name}
         value={value}
         readOnly={readonly}
         placeholder={placeholder}
-        className={`border-[1.5px] border-opacity-50 text-[14px] placeholder:text-[13px] border-secondary flex items-center justify-center px-4 py-[8px] w-full focus:border-[1.3px] focus:outline-hidden focus:border-primary rounded-md ${
-          resize ? null : 'resize-none'
-        } ${className}`}
+        required={required}
+        aria-invalid={errorMessage ? true : undefined}
+        aria-describedby={describedBy}
+        className={cn(
+          'field-chrome h-auto min-h-[7.5rem] py-2',
+          !resize && 'resize-none',
+          className,
+        )}
         onChange={onChange}
         onBlur={onBlur}
         defaultValue={defaultValue}
-      ></textarea>
+      />
+      {errorMessage && (
+        <InputErrorMessage id={describedBy} message={errorMessage} />
+      )}
     </label>
   );
 };

@@ -270,7 +270,7 @@ const ContributorMembershipsPage = () => {
             <div className="flex items-end gap-3 rounded-md border border-dashed border-gray-200 bg-gray-50/60 p-4">
               <div className="flex-1">
                 <label className="flex w-full flex-col gap-2">
-                  <span className="pl-0.5 text-[12px] leading-none text-[color:var(--lens-ink)]">
+                  <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
                     Select contributor
                   </span>
                   <div className="relative">

@@ -6,7 +6,6 @@ import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useEffect, useState } from 'react';
 import { useLoginMutation } from '../../state/api/apiMutationSlice';
 import { toast } from 'sonner';
-import Loader from '../../components/inputs/Loader';
 import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
 import { setSession } from '../../state/features/authSlice';
@@ -54,26 +53,22 @@ const Login = () => {
 
   return (
     <main
-      className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col"
-      style={{ fontFamily: 'var(--font-sans)' }}
+      className="min-h-screen bg-(--paper) flex flex-col"
     >
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-md rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 shadow-sm">
+        <article className="w-full max-w-md card-framed p-8 md:p-10">
           <p
-            className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]"
-            style={{ fontWeight: 400 }}
+            className="type-eyebrow"
           >
             Welcome back
           </p>
           <h1
-            className="mt-4 text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-            style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-          >
+            className="mt-4 type-h2 text-(--ink)">
             Sign in to Lens Music
           </h1>
-          <p className="mt-3 text-[13px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">
+          <p className="mt-3 type-body-sm text-(--muted)">
             Use your email and password to access your catalog, analytics, and payout activity.
           </p>
 
@@ -89,7 +84,7 @@ const Login = () => {
                 <div className="flex flex-col gap-1.5">
                   <Input label="Email" required placeholder="you@example.com" {...field} />
                   {errors?.email && (
-                    <p className="text-red-500 text-[12px] font-normal">{String(errors?.email?.message)}</p>
+                    <p className="type-meta text-(--danger)">{String(errors?.email?.message)}</p>
                   )}
                 </div>
               )}
@@ -114,7 +109,7 @@ const Login = () => {
                     {...field}
                   />
                   {errors?.password && (
-                    <p className="text-red-500 text-[12px] font-normal">{String(errors?.password?.message)}</p>
+                    <p className="type-meta text-(--danger)">{String(errors?.password?.message)}</p>
                   )}
                 </div>
               )}
@@ -123,7 +118,7 @@ const Login = () => {
             <div className="flex justify-end">
               <Link
                 to="/auth/forgot-password"
-                className="text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+                className="link-sweep type-body-sm text-(--lens-blue)"
               >
                 Forgot password?
               </Link>
@@ -132,28 +127,30 @@ const Login = () => {
             <Button
               primary
               submit
-              className="w-full py-3 text-[12px] tracking-[0.04em] shadow-none mt-1 font-normal"
+              className="w-full mt-1"
+              isLoading={isLoading}
+              disabled={isLoading}
             >
-              {isLoading ? <Loader /> : 'Sign in'}
+              Sign in
             </Button>
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
+            <p className="type-meta">
               Don&apos;t have an account?
             </p>
             <Link
               to="/auth/signup"
-              className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+              className="mt-2 inline-flex type-body-sm text-(--lens-blue) link-sweep"
             >
               Create account
             </Link>
-            <p className="mt-3 text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
+            <p className="mt-3 type-meta">
               Need admin approval instead?
             </p>
             <Link
               to="/auth/request-invitation"
-              className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+              className="mt-2 inline-flex type-body-sm text-(--lens-blue) link-sweep"
             >
               Request an invitation
             </Link>

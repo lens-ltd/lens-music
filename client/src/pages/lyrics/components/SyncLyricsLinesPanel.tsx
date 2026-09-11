@@ -25,13 +25,13 @@ const SyncLyricsLinesPanel = ({
   onResetPlayhead,
 }: SyncLyricsLinesPanelProps) => {
   return (
-    <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+    <section className="rounded-md border border-(--line)/70 bg-white p-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+          <h2 className="text-sm font-normal text-(--ink)">
             Lyrics lines
           </h2>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             Use ↑ and ↓ to move between lines, then press Space while the audio
             is playing to capture a timestamp.
           </p>
@@ -60,27 +60,27 @@ const SyncLyricsLinesPanel = ({
               key={line.index}
               className={`rounded-md border p-3 transition-colors ${
                 isActive
-                  ? "border-[color:var(--lens-blue)] bg-[color:var(--lens-blue)]/5"
-                  : "border-[color:var(--lens-sand)]/40 bg-[color:var(--lens-sand)]/10"
+                  ? "border-[color:var(--lens-blue)] bg-(--lens-blue)/5"
+                  : "border-(--line)/40 bg-(--surface)"
               }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
                     Line {line.index + 1}
                   </p>
                   <p
-                    className={`text-sm ${isSynced ? "font-normal text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/70"}`}
+                    className={`text-sm ${isSynced ? "font-normal text-(--ink)" : "text-(--ink)/70"}`}
                   >
                     {line.text || (
-                      <span className="italic text-[color:var(--lens-ink)]/40">
+                      <span className="italic text-(--muted)">
                         Blank line
                       </span>
                     )}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="min-w-16 text-right text-[11px] text-[color:var(--lens-blue)]">
+                  <span className="min-w-16 text-right text-[11px] text-(--lens-blue)">
                     {typeof line.time === "number"
                       ? `${line.time.toFixed(2)}s`
                       : "Not synced"}

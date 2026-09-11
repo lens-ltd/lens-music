@@ -1,4 +1,5 @@
 import { SkeletonLoader } from "@/components/inputs/Loader";
+import { cn } from "@/lib/utils";
 
 interface HeadingProps {
   children: React.ReactNode;
@@ -8,6 +9,15 @@ interface HeadingProps {
   isLoading?: boolean;
 }
 
+const headingClass: Record<NonNullable<HeadingProps["type"]>, string> = {
+  h1: "type-page-title text-(--ink)",
+  h2: "type-card-title text-(--ink)",
+  h3: "type-label text-(--ink)",
+  h4: "type-body-sm font-medium text-(--ink)",
+  h5: "type-meta text-(--ink)",
+  h6: "type-eyebrow text-(--ink)",
+};
+
 export const Heading = ({
   children,
   className,
@@ -15,71 +25,12 @@ export const Heading = ({
   type = "h1",
   isLoading,
 }: HeadingProps) => {
-  switch (type) {
-    case "h1":
-      return (
-        <h1
-          id={id}
-          className={`text-xl uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="20vw" /> : children}
-        </h1>
-      );
-    case "h2":
-      return (
-        <h2
-          id={id}
-          className={`text-lg uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
-        </h2>
-      );
-    case "h3":
-      return (
-        <h3
-          id={id}
-          className={`text-base uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
-        </h3>
-      );
-    case "h4":
-      return (
-        <h4
-          id={id}
-          className={`text-sm uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
-        </h4>
-      );
-    case "h5":
-      return (
-        <h5
-          id={id}
-          className={`text-xs uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
-        </h5>
-      );
-    case "h6":
-      return (
-        <h6
-          id={id}
-          className={`text-xs uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="15vw" /> : children}
-        </h6>
-      );
-    default:
-      return (
-        <h1
-          id={id}
-          className={`text-xl uppercase font-semibold text-primary ${className}`}
-        >
-          {isLoading ? <SkeletonLoader type="text" width="20vw" /> : children}
-        </h1>
-      );
-  }
+  const Tag = type;
+  return (
+    <Tag id={id} className={cn(headingClass[type], className)}>
+      {isLoading ? <SkeletonLoader type="text" width="20vw" /> : children}
+    </Tag>
+  );
 };
 
 interface RelaxedHeadingProps {
@@ -94,10 +45,7 @@ export const RelaxedHeading = ({
   id,
 }: RelaxedHeadingProps) => {
   return (
-    <p
-      id={id}
-      className={`text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)] font-normal ${className}`}
-    >
+    <p id={id} className={cn("type-eyebrow", className)}>
       {children}
     </p>
   );

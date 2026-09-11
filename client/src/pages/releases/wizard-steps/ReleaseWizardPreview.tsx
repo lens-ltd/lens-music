@@ -147,7 +147,7 @@ const ReleaseWizardPreview = ({
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--muted)">
           Loading release data...
         </p>
       </section>
@@ -160,12 +160,12 @@ const ReleaseWizardPreview = ({
     <section className="flex w-full flex-col gap-5">
       <header>
         <h2
-          className="text-[18px] leading-tight text-[color:var(--lens-ink)]"
+          className="text-[18px] leading-tight text-(--ink)"
           style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
         >
           Review &amp; Submit
         </h2>
-        <p className="mt-1 text-[12px] font-normal text-[color:var(--lens-ink)]/50">
+        <p className="mt-1 text-[12px] font-normal text-(--muted)">
           Review all release information before submitting for distribution.
         </p>
       </header>
@@ -205,7 +205,7 @@ const ReleaseWizardPreview = ({
       />
 
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
         <Button
           isLoading={isNavigating}
           onClick={(event) => {

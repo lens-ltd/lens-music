@@ -8,9 +8,9 @@ const App = () => {
         duration={1000}
         toastOptions={{
           classNames: {
-            toast: "text-[12px] font-light",
-            title: "text-[12px] font-light",
-            description: "text-[12px] font-light leading-snug",
+            toast: "type-body-sm",
+            title: "type-body-sm",
+            description: "type-meta leading-snug",
           },
         }}
       />

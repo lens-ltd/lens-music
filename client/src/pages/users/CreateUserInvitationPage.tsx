@@ -24,7 +24,7 @@ const CreateUserInvitationPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Create User Invitation</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="text-[13px] text-(--muted) font-normal mt-1">
               Send access invitations to teammates one by one or in bulk.
             </p>
           </div>
@@ -32,12 +32,12 @@ const CreateUserInvitationPage = () => {
         </nav>
 
         <section className="grid w-full gap-5 xl:grid-cols-2">
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-            <h2 className="text-[14px] font-medium text-[color:var(--lens-ink)]">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+            <h2 className="text-[14px] font-medium text-(--ink)">
               Send invitation
             </h2>
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+              <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                 Email
               </label>
               <Input
@@ -59,8 +59,8 @@ const CreateUserInvitationPage = () => {
             </Button>
           </div>
 
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-            <h2 className="text-[14px] font-medium text-[color:var(--lens-ink)]">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+            <h2 className="text-[14px] font-medium text-(--ink)">
               Bulk invite (max 50)
             </h2>
             <TextArea

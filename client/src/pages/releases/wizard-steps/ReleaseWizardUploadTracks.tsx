@@ -163,7 +163,7 @@ const ReleaseWizardUploadTracks = ({
           ) : (
             <>
               {orderedTracks.length > 1 && (
-                <p className="mb-2 px-1 text-[11px] text-[color:var(--lens-ink)]/55">
+                <p className="mb-2 px-1 text-[11px] text-(--muted)">
                   Drag the handle to reorder tracks.
                 </p>
               )}
@@ -201,8 +201,8 @@ const ReleaseWizardUploadTracks = ({
             </>
           )
         ) : (
-          <section className="rounded-xl border border-dashed border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/10 p-5 text-center">
-            <p className="text-[12px] text-[color:var(--lens-ink)]/65 font-normal">
+          <section className="rounded-xl border border-dashed border-(--line) bg-(--surface) p-5 text-center">
+            <p className="text-[12px] text-(--muted) font-normal">
               No tracks yet.
             </p>
             <Button
@@ -222,7 +222,7 @@ const ReleaseWizardUploadTracks = ({
 
       {!allTracksValidated ? (
         <p
-          className="rounded-md border border-[color:var(--lens-sand)] bg-[color:var(--lens-sand)]/25 px-4 py-3 text-[11px] leading-5 text-[color:var(--lens-ink)]/70"
+          className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70"
           role="status"
         >
           {hasTracks
@@ -231,7 +231,7 @@ const ReleaseWizardUploadTracks = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-[color:var(--lens-sand)] bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -277,7 +277,7 @@ const ReleaseWizardUploadTracks = ({
       <Modal
         isOpen={Boolean(trackToDelete)}
         onClose={() => setTrackToDelete(undefined)}
-        headingClassName="text-[color:var(--lens-ink)]"
+        headingClassName="text-(--ink)"
         heading={`Delete ${trackToDelete?.title ?? "track"}`}
       >
         <article className="flex w-full flex-col gap-4">

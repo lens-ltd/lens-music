@@ -37,17 +37,17 @@ const TrackDetailsPage = () => {
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <section className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)]">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)">
               Track details
             </p>
             <h1
-              className="text-[18px] leading-tight text-[color:var(--lens-ink)]"
+              className="text-[18px] leading-tight text-(--ink)"
               style={{ fontFamily: "var(--font-serif)", fontWeight: 700 }}
             >
               {track?.title || "Loading..."}
             </h1>
             {release?.title && (
-              <p className="text-[12px] text-[color:var(--lens-ink)]/60">
+              <p className="text-[12px] text-(--muted)">
                 {release.title}
               </p>
             )}

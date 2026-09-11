@@ -116,7 +116,7 @@ export const useUserInvitationColumns = ({
                 <CustomTooltip label="Resend invitation">
                   <button
                     type="button"
-                    className="p-2 rounded-full cursor-pointer bg-[color:var(--lens-blue)] text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                    className="p-2 rounded-full cursor-pointer bg-(--lens-blue) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isRetrying}
                     onClick={() => onRetry(invitation.email)}
                   >

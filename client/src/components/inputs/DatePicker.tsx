@@ -1,6 +1,5 @@
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
@@ -153,15 +152,15 @@ const DatePicker = ({
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild disabled={disabled}>
-        <Button
-          variant={'outline'}
+        <button
+          type="button"
           className={cn(
-            'w-full h-10 px-4 justify-start text-left font-normal text-sm text-gray-900 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 ease-in-out hover:border-gray-300 hover:bg-white/90',
-            !normalizedValue && 'text-gray-400'
+            'field-chrome flex items-center justify-start text-left font-normal',
+            !normalizedValue && 'text-(--muted)'
           )}
           onClick={() => setOpen(!open)}
         >
-          <CalendarIcon className="w-4 h-4 mr-3 text-gray-500" />
+          <CalendarIcon className="w-4 h-4 mr-2 text-(--muted)" />
           {normalizedValue ? (
             selectionType === 'recurringDate' ? (
               moment(normalizedValue).format('MMMM DD')
@@ -171,11 +170,11 @@ const DatePicker = ({
               moment(normalizedValue).format('MMMM DD')
             )
           ) : (
-            <span className="text-sm text-gray-400 font-light">{placeholder}</span>
+            <span className="type-body-sm text-(--muted)">{placeholder}</span>
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg" align="start">
+      <PopoverContent className="w-full p-0 card-framed shadow-[var(--shadow-menu)]" align="start">
         <menu className="flex flex-col w-full gap-3 p-4">
           <ul
             className={`w-full grid gap-3 p-0 ${selectionType === 'recurringDate' ? 'grid-cols-1' : 'grid-cols-2'
@@ -183,7 +182,6 @@ const DatePicker = ({
           >
             {selectionType !== 'recurringDate' && (
               <Select
-                className="!h-10"
                 placeholder="Year"
                 onChange={(e) => {
                   setYear(e);
@@ -234,7 +232,6 @@ const DatePicker = ({
               />
             )}
             <Select
-              className="!h-10"
               placeholder="Month"
               onChange={(e) => {
                 setDefaultMonth(moment(`${year}-${e}`, 'YYYY-MM-DD').toDate());

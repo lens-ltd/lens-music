@@ -70,7 +70,7 @@ const ReleaseReviewDetailPage = () => {
           <Heading isLoading={isFetching}>
             {release?.title || "Release review"}
           </Heading>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             Everything submitted for this release, along with any prior
             feedback, to help you decide whether to approve it.
           </p>
@@ -99,7 +99,7 @@ const ReleaseReviewDetailPage = () => {
           <>
             <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[color:var(--lens-ink)]/55">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--muted)">
                   <span>Catalog: {release?.catalogNumber || "—"}</span>
                   <span>
                     Submitted by:{" "}

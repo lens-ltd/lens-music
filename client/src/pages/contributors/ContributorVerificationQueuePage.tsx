@@ -52,7 +52,7 @@ const ContributorVerificationQueuePage = () => {
       <main className="w-full flex flex-col gap-4">
         <nav className="w-full flex flex-col gap-1">
           <Heading>Contributor Verification</Heading>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="type-meta">
             Contributors awaiting verification. Verify eligible profiles or
             reject them with an optional note.
           </p>

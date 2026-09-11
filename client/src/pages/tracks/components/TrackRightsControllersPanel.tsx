@@ -160,12 +160,12 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
   }
 
   return (
-    <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+    <section className="rounded-md border border-(--line)/70 bg-white p-4">
       <header className="space-y-1">
-        <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+        <h2 className="text-sm font-normal text-(--ink)">
           DDEX rights controllers
         </h2>
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--muted)">
           Each track needs at least one row with &quot;Making available&quot;
           before release validation. Use the label or licensor name as
           controller when unsure.
@@ -199,11 +199,11 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
         </Button>
       </div>
 
-      <div className="mt-4 border-t border-[color:var(--lens-sand)]/40 pt-3">
+      <div className="mt-4 border-t border-(--line)/40 pt-3">
         {isFetching ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">Loading…</p>
+          <p className="text-[12px] text-(--muted)">Loading…</p>
         ) : rows.length === 0 ? (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             No rights controllers yet.
           </p>
         ) : (
@@ -211,13 +211,13 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="flex items-start justify-between gap-2 rounded-md border border-[color:var(--lens-sand)]/30 p-2 text-[12px]"
+                className="flex items-start justify-between gap-2 rounded-md border border-(--line)/30 p-2 text-[12px]"
               >
                 <div>
-                  <p className="font-medium text-[color:var(--lens-ink)]">
+                  <p className="font-medium text-(--ink)">
                     {row.controllerName}
                   </p>
-                  <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[11px] text-(--muted)">
                     {row.rightType} · {row.territories.join(', ')}
                   </p>
                 </div>
@@ -225,7 +225,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                   <button
                     type="button"
                     onClick={() => openEdit(row)}
-                    className="text-[11px] text-[color:var(--lens-blue)] hover:underline"
+                    className="text-[11px] text-(--lens-blue) hover:underline"
                   >
                     Edit
                   </button>

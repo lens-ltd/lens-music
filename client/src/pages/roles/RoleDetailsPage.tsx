@@ -39,8 +39,8 @@ const RoleDetailsPage = () => {
             </div>
             <Button route="/roles">Back to roles</Button>
           </nav>
-          <div className="w-full rounded-lg bg-[color:var(--lens-sand)]/10 p-8 text-center">
-            <p className="text-[color:var(--lens-ink)]/60">Role not found</p>
+          <div className="w-full rounded-lg bg-(--surface) p-8 text-center">
+            <p className="text-(--muted)">Role not found</p>
           </div>
         </main>
       </UserLayout>
@@ -53,7 +53,7 @@ const RoleDetailsPage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Role Details</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="text-[13px] text-(--muted) font-normal mt-1">
               View role information and associated permissions.
             </p>
           </div>
@@ -64,30 +64,30 @@ const RoleDetailsPage = () => {
         </nav>
 
         <section className="w-full">
-          <div className="flex w-full flex-col gap-6 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
+          <div className="flex w-full flex-col gap-6 rounded-lg bg-(--surface) p-5 sm:p-6">
             <div className="flex flex-col gap-1">
-              <h2 className="text-[18px] font-semibold text-[color:var(--lens-ink)]">
+              <h2 className="text-[18px] font-semibold text-(--ink)">
                 {role.name}
               </h2>
               {role.description && (
-                <p className="text-[13px] text-[color:var(--lens-ink)]/70">
+                <p className="text-[13px] text-(--ink)/70">
                   {role.description}
                 </p>
               )}
             </div>
 
-            <div className="grid gap-3 border-t border-[color:var(--lens-sand)]/70 pt-5">
+            <div className="grid gap-3 border-t border-(--line)/70 pt-5">
               <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                   Role ID
                 </p>
-                <p className="text-[13px] text-[color:var(--lens-ink)] font-mono">
+                <p className="text-[13px] text-(--ink) font-mono">
                   {role.id}
                 </p>
               </div>
 
               <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                   Permissions
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -95,32 +95,32 @@ const RoleDetailsPage = () => {
                     role.permissions.map((permission) => (
                       <span
                         key={permission.id}
-                        className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-sand)]/30 text-[12px] text-[color:var(--lens-ink)]"
+                        className="inline-flex items-center px-2 py-1 rounded-md bg-(--surface) text-[12px] text-(--ink)"
                       >
                         {permission.permission?.name}
                       </span>
                     ))
                   ) : (
-                    <p className="text-[13px] text-[color:var(--lens-ink)]/50">No permissions assigned</p>
+                    <p className="text-[13px] text-(--muted)">No permissions assigned</p>
                   )}
                 </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Created
                   </p>
-                  <p className="text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="text-[13px] text-(--ink)">
                     {role.createdAt ? formatDate(role.createdAt, "DD/MM/YYYY HH:mm") : "—"}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-1 rounded-md bg-white p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                  <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Last updated
                   </p>
-                  <p className="text-[13px] text-[color:var(--lens-ink)]">
+                  <p className="text-[13px] text-(--ink)">
                     {role.updatedAt ? formatDate(role.updatedAt, "DD/MM/YYYY HH:mm") : "—"}
                   </p>
                 </div>

@@ -46,42 +46,13 @@ const EditorialTooltip: FC<TooltipProps<number, string>> = ({ active, payload, l
 
   return (
     <figure
-      style={{
-        background: 'rgb(16,14,9)',
-        borderRadius: '10px',
-        padding: '10px 16px',
-        border: 'none',
-        boxShadow: '0 8px 24px rgba(16,14,9,0.18)',
-        minWidth: '100px',
-        margin: 0,
-      }}
+      className="invert-surface rounded-(--radius-control) px-4 py-2.5 shadow-[var(--shadow-menu)] min-w-[100px] m-0"
       aria-label={`${label}: ${val}`}
     >
-      <figcaption
-        style={{
-          fontFamily: "'Poppins', system-ui, sans-serif",
-          fontSize: '10px',
-          fontWeight: 400,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.45)',
-          marginBottom: '4px',
-          display: 'block',
-        }}
-      >
+      <figcaption className="type-eyebrow mb-1 block">
         {label}
       </figcaption>
-      <p
-        style={{
-          fontFamily: "'Libre Baskerville', Georgia, serif",
-          fontSize: '20px',
-          fontWeight: 700,
-          color: 'white',
-          lineHeight: 1,
-          margin: 0,
-          letterSpacing: '-0.01em',
-        }}
-      >
+      <p className="type-h3 tabular m-0">
         {val.toLocaleString()}
       </p>
     </figure>
@@ -111,21 +82,16 @@ const DashboardChart: FC<DashboardChartProps> = ({
   type = 'natural',
   vertical = false,
   strokeWidth = 2,
-  fill = 'rgb(31,98,142)',
+  fill = 'var(--lens-blue)',
   showArea = true,
-  areaFillMode = 'gradient',
+  areaFillMode = 'solid',
   areaOpacity = 0.12,
   showGrid = true,
   showYAxis = true,
   tooltipVariant = 'default',
 }) => {
-  const gradId = 'lensAreaGrad';
   const areaFillValue =
-    !showArea || areaFillMode === 'none'
-      ? 'transparent'
-      : areaFillMode === 'solid'
-        ? fill
-        : `url(#${gradId})`;
+    !showArea || areaFillMode === 'none' ? 'transparent' : fill;
 
   return (
     <ResponsiveContainer height={height} width={width}>
@@ -134,21 +100,11 @@ const DashboardChart: FC<DashboardChartProps> = ({
         margin={{ top: 12, right: 4, left: 0, bottom: 0 }}
         style={{ overflow: 'visible' }}
       >
-        {areaFillMode === 'gradient' && (
-          <defs>
-            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={fill} stopOpacity={0.22} />
-              <stop offset="72%" stopColor={fill} stopOpacity={0.06} />
-              <stop offset="100%" stopColor={fill} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-        )}
-
         {showGrid && (
           <CartesianGrid
             strokeDasharray="1 6"
             vertical={vertical}
-            stroke="rgba(16,14,9,0.08)"
+            stroke="var(--line)"
             strokeWidth={1}
           />
         )}
@@ -156,8 +112,8 @@ const DashboardChart: FC<DashboardChartProps> = ({
         <XAxis
           dataKey={dataKey}
           tick={{
-            fontSize: 10,
-            fill: 'rgba(16,14,9,0.4)',
+            fontSize: 12,
+            fill: 'var(--muted)',
             fontFamily: "'Poppins', system-ui, sans-serif",
             fontWeight: 400,
           }}
@@ -172,8 +128,8 @@ const DashboardChart: FC<DashboardChartProps> = ({
             tickSize={0}
             tickMargin={12}
             tick={{
-              fontSize: 10,
-              fill: 'rgba(16,14,9,0.35)',
+              fontSize: 12,
+              fill: 'var(--muted)',
               fontFamily: "'Poppins', system-ui, sans-serif",
               fontWeight: 400,
             }}
@@ -206,7 +162,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
           type={type}
           dot={false}
           activeDot={<PulseDot fill={fill} />}
-          style={tooltipVariant === 'minimal' ? undefined : { filter: `drop-shadow(0 2px 8px rgba(31,98,142,0.12))` }}
+          style={undefined}
         />
       </ComposedChart>
     </ResponsiveContainer>

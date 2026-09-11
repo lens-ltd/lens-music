@@ -28,7 +28,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
         <span
-          className={`text-[12px] ${isPrimaryArtist ? "font-medium text-[color:var(--lens-ink)]" : "text-[color:var(--lens-ink)]/85"}`}
+          className={`text-[12px] ${isPrimaryArtist ? "font-medium text-(--ink)" : "text-(--ink)"}`}
         >
           {getContributorCreditName(contributor, row.original.role)}
         </span>
@@ -44,8 +44,8 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
         <span
           className={`rounded-md px-2 py-0.5 text-[11px] ${
             isPrimaryArtist
-              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-medium text-[color:var(--lens-ink)]"
-              : "border border-[color:var(--lens-sand)]/50 bg-[color:var(--lens-sand)]/10 text-[color:var(--lens-ink)]/85"
+              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-medium text-(--ink)"
+              : "border border-(--line)/50 bg-(--surface) text-(--ink)"
           }`}
         >
           {isPrimaryArtist ? "Primary Artist" : capitalizeString(row.original.role)}
@@ -123,7 +123,7 @@ const PreviewContributorsSection = ({
             containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             No contributors added yet.
           </p>
         )}

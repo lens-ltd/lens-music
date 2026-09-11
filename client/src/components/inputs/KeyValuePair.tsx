@@ -32,7 +32,7 @@ export const KeyValuePair = ({
     isLoading,
 }: KeyValuePairProps) => {
     const baseClassName =
-        'flex flex-col sm:flex-row items-start sm:items-start w-full gap-1 sm:gap-3 bg-gray-50 p-1 sm:p-2 rounded-md text-[12.5px] sm:text-sm';
+        'flex flex-col sm:flex-row items-start sm:items-start w-full gap-1 sm:gap-3 bg-(--surface) p-1 sm:p-2 rounded-(--radius-control) type-body-sm';
 
     if (isLoading) {
         return (
@@ -84,10 +84,10 @@ export const KeyValuePair = ({
     ) {
         return (
             <p className={`${baseClassName} ${className}`}>
-                <span className="w-full text-gray-600 text-sm">
+                <span className="w-full type-meta">
                     {capitalizeString(keyText)}:
                 </span>
-                <span className="font-normal text-[12.5px] sm:text-[12.5px] text-primary w-full">
+                <span className="font-normal type-body-sm text-(--ink) w-full">
                     {formatDate(new Date(valueText as string), 'DD/MM/YYYY')}
                 </span>
             </p>
@@ -107,10 +107,10 @@ export const KeyValuePair = ({
     ) {
         return (
             <p className={`${baseClassName} ${className}`}>
-                <span className="w-full text-gray-600 text-sm">
+                <span className="w-full type-meta">
                     {capitalizeString(keyText)}:
                 </span>
-                <span className="font-normal text-[12.5px] sm:text-[12.5px] text-primary w-full">
+                <span className="font-normal type-body-sm text-(--ink) w-full">
                     {getCountryName(valueText as string)}
                 </span>
             </p>
@@ -120,14 +120,14 @@ export const KeyValuePair = ({
     if (['boolean'].includes(typeof valueText)) {
         return (
             <p className={`${baseClassName} ${className}`}>
-                <span className="w-full text-gray-600 text-sm">
+                <span className="w-full type-meta">
                     {capitalizeString(keyText)}:
                 </span>
-                <span className="font-normal text-[12.5px] sm:text-[12.5px] text-primary w-full">
+                <span className="font-normal type-body-sm text-(--ink) w-full">
                     {valueText ? 'Yes' : 'No'}{' '}
                     <FontAwesomeIcon
                         icon={valueText ? faCircleCheck : faXmark}
-                        className={valueText ? 'text-green-700' : 'text-red-700'}
+                        className={valueText ? 'text-(--approve)' : 'text-(--danger)'}
                     />
                 </span>
             </p>
@@ -136,10 +136,10 @@ export const KeyValuePair = ({
 
     return (
         <p className={`${baseClassName} ${className}`}>
-            <span className="w-full text-gray-600 text-sm">
+            <span className="w-full type-meta">
                 {capitalizeString(keyText)}:
             </span>
-            <span className="font-normal text-[12.5px] sm:text-[12.5px] text-primary w-full">
+            <span className="font-normal type-body-sm text-(--ink) w-full">
                 {valueText}
             </span>
         </p>

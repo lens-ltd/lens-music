@@ -11,6 +11,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/state/store';
 import { setSidebarOpen } from '@/state/features/sidebarSlice';
 import { getSidebarNavigationForUser } from '@/constants/sidebar.constants';
+import { cn } from '@/lib/utils';
 
 const matchesPath = (pathname: string, targetPath: string) =>
   pathname === targetPath || pathname.startsWith(`${targetPath}/`);
@@ -94,23 +95,32 @@ const Sidebar = () => {
     );
   }, []);
 
+  const itemClass = (isActive: boolean, extra?: string) =>
+    cn(
+      'group relative flex items-center gap-3 overflow-hidden rounded-(--radius-control) type-body-sm transition-colors duration-200',
+      sidebarOpen ? 'px-2.5 py-2' : 'justify-center p-2',
+      isActive
+        ? 'bg-(--lens-blue-soft) text-(--ink)'
+        : 'text-(--ink) hover:bg-(--surface)',
+      extra,
+    );
+
   return (
     <motion.aside
-      className={`fixed left-0 top-[clamp(60px,8vh,64px)] z-40 h-[calc(100vh-clamp(60px,8vh,64px))] flex flex-col bg-primary text-white transition-all duration-300 ease-in-out
-        ${
-          sidebarOpen
-            ? 'w-[18vw] min-w-[220px] max-w-[260px] shadow-[4px_0_24px_-4px_rgba(0,40,80,0.18)]'
-            : 'w-[12vw] min-w-[60px] max-w-[80px] shadow-[2px_0_12px_-2px_rgba(0,40,80,0.1)]'
-        }
-        border-r border-white/10
-      `}
+      className={cn(
+        'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--paper) text-(--ink) transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)] border-r border-(--line)',
+        sidebarOpen ? 'w-60' : 'w-16',
+      )}
+      aria-expanded={sidebarOpen}
+      aria-label="Application"
     >
       <header
-        className={`flex w-full px-4 pt-5 pb-4 ${
+        className={cn(
+          'flex w-full px-3 pt-4 pb-3',
           sidebarOpen
             ? 'items-end justify-end'
-            : 'flex-col items-center justify-center gap-3'
-        }`}
+            : 'flex-col items-center justify-center gap-3',
+        )}
       >
         <button
           type="button"
@@ -118,8 +128,9 @@ const Sidebar = () => {
             e.preventDefault();
             dispatch(setSidebarOpen(!sidebarOpen));
           }}
-          className="flex h-8 w-8 items-center cursor-pointer justify-center rounded-lg bg-white/10 text-white/80 transition-all duration-200 hover:bg-white/20 hover:text-white"
+          className="flex h-8 w-8 items-center cursor-pointer justify-center rounded-(--radius-control) text-(--ink) transition-colors duration-200 hover:bg-(--surface)"
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-expanded={sidebarOpen}
         >
           <FontAwesomeIcon
             icon={sidebarOpen ? faAnglesLeft : faBars}
@@ -128,12 +139,12 @@ const Sidebar = () => {
         </button>
       </header>
 
-      <div className="mx-4 mb-3">
-        <div className="h-px bg-white/10" />
+      <div className="mx-3 mb-2">
+        <div className="h-px bg-(--line)" />
       </div>
 
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3">
-        <ul className="flex flex-col gap-2">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2">
+        <ul className="flex flex-col gap-1">
           {sidebarNavItems.map((nav) => {
             const selected = pathname === nav.path;
             const hasSubcategories =
@@ -147,61 +158,82 @@ const Sidebar = () => {
 
             return (
               <li key={nav.title} className="flex flex-col">
-                <Link
-                  to={nav.path}
-                  className={`group relative flex items-center gap-3 overflow-hidden rounded-lg text-[12px] font-normal transition-all duration-200
-                    ${sidebarOpen ? 'px-3 py-3' : 'justify-center p-3'}
-                    ${
-                      isActive
-                        ? 'bg-white/[0.14] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
-                        : 'text-white/95 hover:bg-white/[0.07] hover:text-white'
-                    }
-                  `}
-                  onClick={(e) => {
-                    if (hasSubcategories) {
-                      e.preventDefault();
+                {hasSubcategories ? (
+                  <button
+                    type="button"
+                    className={itemClass(isActive, 'w-full text-left')}
+                    onClick={() => {
                       if (!sidebarOpen) {
                         dispatch(setSidebarOpen(true));
                         return;
                       }
                       toggleCategory(nav.title);
-                      return;
-                    }
-
-                    if (!sidebarOpen) {
-                      dispatch(setSidebarOpen(true));
-                    }
-                  }}
-                  title={nav.title}
-                >
-                  <FontAwesomeIcon
-                    icon={nav.icon}
-                    className={`text-[15px] flex-shrink-0 transition-colors duration-200 ${
-                      isActive
-                        ? 'text-white'
-                        : 'text-white/75 group-hover:text-white/90'
-                    }`}
-                  />
-
-                  {sidebarOpen && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={textControls}
-                      className="whitespace-nowrap text-[12px] font-normal"
-                    >
-                      {nav.title}
-                    </motion.span>
-                  )}
-
-                  {hasSubcategories && sidebarOpen && (
+                    }}
+                    aria-expanded={sidebarOpen ? isSubcategoriesOpen : false}
+                    title={nav.title}
+                  >
+                    {isActive && (
+                      <span
+                        className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-(--lens-blue)"
+                        aria-hidden="true"
+                      />
+                    )}
                     <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={`ml-auto text-[10px] text-white/40 transition-transform duration-300 ${
-                        isSubcategoriesOpen ? 'rotate-180' : ''
-                      }`}
+                      icon={nav.icon}
+                      className="text-[15px] flex-shrink-0"
                     />
-                  )}
-                </Link>
+                    {sidebarOpen && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={textControls}
+                        className="whitespace-nowrap type-body-sm"
+                      >
+                        {nav.title}
+                      </motion.span>
+                    )}
+                    {sidebarOpen && (
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        className={cn(
+                          'ml-auto text-[10px] text-(--muted) transition-transform duration-200',
+                          isSubcategoriesOpen && 'rotate-180',
+                        )}
+                      />
+                    )}
+                  </button>
+                ) : (
+                  <Link
+                    to={nav.path}
+                    className={itemClass(isActive)}
+                    title={nav.title}
+                    aria-current={selected ? 'page' : undefined}
+                    onClick={() => {
+                      if (!sidebarOpen) {
+                        dispatch(setSidebarOpen(true));
+                      }
+                    }}
+                  >
+                    {isActive && (
+                      <span
+                        className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-(--lens-blue)"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <FontAwesomeIcon
+                      icon={nav.icon}
+                      className="text-[15px] flex-shrink-0"
+                    />
+                    {sidebarOpen && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={textControls}
+                        className="whitespace-nowrap type-body-sm"
+                      >
+                        {nav.title}
+                      </motion.span>
+                    )}
+                  </Link>
+                )}
 
                 <AnimatePresence>
                   {hasSubcategories && isSubcategoriesOpen && sidebarOpen && (
@@ -212,7 +244,7 @@ const Sidebar = () => {
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="my-1 overflow-hidden"
                     >
-                      <ul className="ml-[14px] flex flex-col gap-1.5 border-l border-white/10 py-1.5 pl-2 pr-1">
+                      <ul className="ml-[14px] flex flex-col gap-0.5 border-l border-(--line) py-1 pl-2 pr-1">
                         {nav.subCategories?.map((subCategory) => {
                           const isSubActive =
                             activeSubcategoryPath === subCategory.path;
@@ -221,21 +253,27 @@ const Sidebar = () => {
                             <li key={subCategory.title}>
                               <Link
                                 to={subCategory.path}
-                                className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
+                                className={cn(
+                                  'relative flex items-center gap-2.5 rounded-(--radius-control) px-2.5 py-1.5 type-body-sm transition-colors duration-200',
                                   isSubActive
-                                    ? 'bg-white/[0.12] text-white'
-                                    : 'text-white/85 hover:bg-white/[0.06] hover:text-white/90'
-                                }`}
+                                    ? 'bg-(--lens-blue-soft) text-(--ink)'
+                                    : 'text-(--ink) hover:bg-(--surface)',
+                                )}
+                                aria-current={isSubActive ? 'page' : undefined}
                               >
+                                {isSubActive && (
+                                  <span
+                                    className="absolute left-0 top-1 bottom-1 w-0.5 rounded-full bg-(--lens-blue)"
+                                    aria-hidden="true"
+                                  />
+                                )}
                                 <FontAwesomeIcon
                                   icon={subCategory.icon}
-                                  className={`text-[12px] flex-shrink-0 ${
-                                    isSubActive ? 'text-white' : 'text-white/50'
-                                  }`}
+                                  className="text-[12px] flex-shrink-0"
                                 />
                                 <motion.span
                                   animate={textControls}
-                                  className="whitespace-nowrap text-[12px] font-normal"
+                                  className="whitespace-nowrap type-body-sm"
                                 >
                                   {subCategory.title}
                                 </motion.span>
@@ -252,22 +290,6 @@ const Sidebar = () => {
           })}
         </ul>
       </nav>
-
-      <footer className="mt-auto px-4 py-6">
-        <div className="mb-3 h-px bg-white/10" />
-        {sidebarOpen ? (
-          <motion.p
-            animate={textControls}
-            className="text-center text-[10px] font-light uppercase tracking-wide text-white/25"
-          >
-            Lens Music
-          </motion.p>
-        ) : (
-          <figure className="flex justify-center">
-            <hr className="h-2 w-2 rounded-full bg-white/15" />
-          </figure>
-        )}
-      </footer>
     </motion.aside>
   );
 };

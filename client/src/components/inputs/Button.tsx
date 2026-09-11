@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type FC, type MouseEventHandler, type ReactNode, type HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader } from './Loader.tsx';
-import { Button as ButtonUI } from '../ui/button';
+import { Button as ButtonUI, buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, 'onClick'> {
@@ -21,25 +21,11 @@ interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchor
   children?: ReactNode;
 }
 
-const baseStyles =
-  'inline-flex items-center gap-2 justify-center text-center text-[12px] font-normal! h-9 min-h-9 py-2! px-4! rounded-sm border transition-colors duration-200 cursor-pointer';
-
-const variantStyles = {
-  default:
-    'border-[color:var(--lens-blue)] text-[color:var(--lens-blue)] bg-transparent hover:bg-[color:var(--lens-blue)] hover:text-white',
-  primary:
-    'bg-[color:var(--lens-blue)] text-white border-[color:var(--lens-blue)] hover:bg-[color:var(--color-primary)]/90',
-  danger: 'bg-red-700 text-white border-red-700 hover:bg-red-700',
-  unstyled:
-    'bg-transparent border-transparent text-[color:var(--lens-blue)] hover:opacity-70',
-  disabled: 'opacity-50 cursor-not-allowed pointer-events-none',
-};
-
 const Button: FC<ButtonProps> = ({
-  route = '#',
+  route,
   value,
   onClick,
-  type = null,
+  type = 'button',
   disabled = false,
   primary = false,
   styled = true,
@@ -51,67 +37,64 @@ const Button: FC<ButtonProps> = ({
   children,
   ...rest
 }) => {
-  const variant = disabled
-    ? 'disabled'
-    : danger
-      ? 'danger'
-      : !styled
-        ? 'unstyled'
-        : primary
-          ? 'primary'
-          : 'default';
+  const variant = danger
+    ? 'destructive'
+    : !styled
+      ? 'ghost'
+      : primary
+        ? 'default'
+        : 'outline';
 
-  const classes = cn(baseStyles, variantStyles[variant], className);
+  const classes = cn(
+    buttonVariants({ variant }),
+    disabled && 'pointer-events-none opacity-40',
+    className,
+  );
+  const buttonType = submit ? 'submit' : type;
+  const isLink = Boolean(route) && route !== '#' && buttonType !== 'submit' && buttonType !== 'reset';
 
-  if (submit || type === 'submit' || type === 'reset') {
+  const content = isLoading ? (
+    <Loader className={primary || danger ? 'text-(--lens-blue-ink)' : 'text-(--ink)'} />
+  ) : (
+    <>
+      {icon && <FontAwesomeIcon icon={icon} />}
+      {children || value}
+    </>
+  );
+
+  if (isLink) {
     return (
-      <ButtonUI
-        type={type || 'submit'}
-        onClick={onClick as MouseEventHandler<HTMLButtonElement> | undefined}
+      <Link
+        to={route as string}
+        onClick={(e) => {
+          if (disabled) {
+            e.preventDefault();
+            return;
+          }
+          if (onClick) {
+            onClick(e);
+          }
+        }}
         className={classes}
-        disabled={disabled}
+        aria-disabled={disabled || undefined}
         {...rest}
       >
-        {isLoading ? (
-          <Loader
-            className={primary ? 'text-primary' : 'text-[color:var(--lens-blue)]'}
-          />
-        ) : (
-          <>
-            {icon && <FontAwesomeIcon icon={icon} />}
-            {children || value}
-          </>
-        )}
-      </ButtonUI>
+        {content}
+      </Link>
     );
   }
 
   return (
-    <Link
-      to={route}
-      onClick={(e) => {
-        if (disabled) {
-          e.preventDefault();
-          return;
-        }
-        if (onClick) {
-          onClick(e);
-        }
-      }}
-      className={classes}
+    <ButtonUI
+      type={buttonType}
+      variant={variant}
+      onClick={onClick as MouseEventHandler<HTMLButtonElement> | undefined}
+      className={className}
+      disabled={disabled}
       {...rest}
     >
-      {isLoading ? (
-        <Loader
-          className={primary ? 'text-primary' : 'text-[color:var(--lens-blue)]'}
-        />
-      ) : (
-        <>
-          {icon && <FontAwesomeIcon icon={icon} />}
-          {children || value}
-        </>
-      )}
-    </Link>
+      {content}
+    </ButtonUI>
   );
 };
 

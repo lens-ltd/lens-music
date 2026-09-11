@@ -13,7 +13,7 @@ export interface TableActionButtonProps {
     iconClassName?: string;
 }
 
-const TableActionButton = ({ to = '#', onClick, className = tableActionClassName, children, icon, iconClassName = 'text-primary text-[12px]' }: TableActionButtonProps) => {
+const TableActionButton = ({ to = '#', onClick, className = tableActionClassName, children, icon, iconClassName = 'text-(--ink) text-[12px]' }: TableActionButtonProps) => {
     return (
         <Link className={className} to={to} onClick={onClick}>
             {icon && <FontAwesomeIcon icon={icon} className={iconClassName} />}

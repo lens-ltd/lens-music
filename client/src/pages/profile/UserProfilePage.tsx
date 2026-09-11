@@ -68,7 +68,7 @@ const UserProfilePage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Profile</Heading>
-            <p className="text-[13px] text-[color:var(--lens-ink)]/60 font-normal mt-1">
+            <p className="text-[13px] text-(--muted) font-normal mt-1">
               Manage your account information and preferences.
             </p>
           </div>
@@ -76,7 +76,7 @@ const UserProfilePage = () => {
 
         <section className="flex w-full flex-col gap-5">
           {/* Profile Header */}
-          <div className="flex w-full flex-col items-start gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:flex-row sm:items-center">
+          <div className="flex w-full flex-col items-start gap-4 rounded-lg bg-(--surface) p-5 sm:flex-row sm:items-center">
             <div className="relative h-20 w-20 overflow-hidden rounded-full bg-white">
               {user?.avatarUrl ? (
                 <img
@@ -85,24 +85,24 @@ const UserProfilePage = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[color:var(--lens-blue)] text-white text-2xl font-semibold">
+                <div className="flex h-full w-full items-center justify-center bg-(--lens-blue) text-white text-2xl font-semibold">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <h2 className="text-[20px] font-semibold text-[color:var(--lens-ink)]">
+              <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user?.name || 'User'}
               </h2>
-              <p className="text-[13px] text-[color:var(--lens-ink)]/60 mt-1">
+              <p className="text-[13px] text-(--muted) mt-1">
                 {user?.email || 'No email provided'}
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-sand)]/30 text-[11px] text-[color:var(--lens-ink)]">
+                <span className="inline-flex items-center px-2 py-1 rounded-md bg-(--surface) text-[11px] text-(--ink)">
                   <FontAwesomeIcon icon={faShieldAlt} className="mr-1.5 text-[10px]" />
                   {user?.roleName || 'No role assigned'}
                 </span>
-                <span className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-blue)]/10 text-[11px] text-[color:var(--lens-blue)]">
+                <span className="inline-flex items-center px-2 py-1 rounded-md bg-(--lens-blue-soft) text-[11px] text-(--lens-blue)">
                   {user?.status || 'Active'}
                 </span>
               </div>
@@ -115,15 +115,15 @@ const UserProfilePage = () => {
           </div>
 
           {/* Profile Information */}
-          <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-            <h3 className="text-[14px] font-medium text-[color:var(--lens-ink)] mb-2">
+          <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+            <h3 className="text-[14px] font-medium text-(--ink) mb-2">
               Account Information
             </h3>
 
             {isEditing ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Full name
                   </label>
                   <Input
@@ -134,7 +134,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Email address
                   </label>
                   <Input
@@ -147,7 +147,7 @@ const UserProfilePage = () => {
 
                 {emailChanged && (
                   <div className="flex flex-col gap-2">
-                    <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                    <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                       Current password
                     </label>
                     <Input
@@ -156,14 +156,14 @@ const UserProfilePage = () => {
                       placeholder="Confirm your current password"
                       type="password"
                     />
-                    <p className="text-[11px] text-[color:var(--lens-ink)]/50">
+                    <p className="text-[11px] text-(--muted)">
                       Required because you are changing your login email.
                     </p>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Phone number
                   </label>
                   <Input
@@ -174,7 +174,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/50">
+                  <label className="text-[11px] uppercase tracking-wide text-(--muted)">
                     Country
                   </label>
                   <Input
@@ -196,56 +196,56 @@ const UserProfilePage = () => {
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                    <FontAwesomeIcon icon={faUser} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                    <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                       Full name
                     </p>
-                    <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                    <p className="text-[13px] text-(--ink) mt-0.5">
                       {user?.name || '—'}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                    <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                    <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                       Email address
                     </p>
-                    <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                    <p className="text-[13px] text-(--ink) mt-0.5">
                       {user?.email || '—'}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                    <FontAwesomeIcon icon={faPhone} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                    <FontAwesomeIcon icon={faPhone} className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                       Phone number
                     </p>
-                    <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                    <p className="text-[13px] text-(--ink) mt-0.5">
                       {user?.phoneNumber || '—'}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                    <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                    <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                    <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                       Country
                     </p>
-                    <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                    <p className="text-[13px] text-(--ink) mt-0.5">
                       {user?.country || '—'}
                     </p>
                   </div>
@@ -253,14 +253,14 @@ const UserProfilePage = () => {
 
                 {user?.dateOfBirth && (
                   <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                      <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                      <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                      <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                         Date of birth
                       </p>
-                      <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                      <p className="text-[13px] text-(--ink) mt-0.5">
                         {new Date(user.dateOfBirth).toLocaleDateString()}
                       </p>
                     </div>
@@ -269,14 +269,14 @@ const UserProfilePage = () => {
 
                 {user?.gender && (
                   <div className="flex items-start gap-3 rounded-md bg-white p-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--lens-sand)]/30">
-                      <FontAwesomeIcon icon={faUser} className="text-[12px] text-[color:var(--lens-ink)]/60" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--surface)">
+                      <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-[color:var(--lens-ink)]/45">
+                      <p className="text-[11px] uppercase tracking-wide text-(--muted)">
                         Gender
                       </p>
-                      <p className="text-[13px] text-[color:var(--lens-ink)] mt-0.5">
+                      <p className="text-[13px] text-(--ink) mt-0.5">
                         {user.gender}
                       </p>
                     </div>
@@ -288,15 +288,15 @@ const UserProfilePage = () => {
 
           {/* Permissions Section */}
           {user?.permissions && user.permissions.length > 0 && (
-            <div className="flex w-full flex-col gap-4 rounded-lg bg-[color:var(--lens-sand)]/10 p-5 sm:p-6">
-              <h3 className="text-[14px] font-medium text-[color:var(--lens-ink)] mb-2">
+            <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
+              <h3 className="text-[14px] font-medium text-(--ink) mb-2">
                 Your Permissions
               </h3>
               <div className="flex flex-wrap gap-2">
                 {user?.permissions?.map((permission: string) => (
                   <span
                     key={permission}
-                    className="inline-flex items-center px-2 py-1 rounded-md bg-[color:var(--lens-blue)]/10 text-[11px] text-[color:var(--lens-blue)]"
+                    className="inline-flex items-center px-2 py-1 rounded-md bg-(--lens-blue-soft) text-[11px] text-(--lens-blue)"
                   >
                     {permission.replace(/_/g, ' ').toLowerCase()}
                   </span>

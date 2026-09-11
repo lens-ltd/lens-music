@@ -18,17 +18,17 @@ const SyncLyricsAudioPanel = ({
   totalLines,
 }: SyncLyricsAudioPanelProps) => {
   return (
-    <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+    <section className="rounded-md border border-(--line)/70 bg-white p-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">
+          <h2 className="text-sm font-normal text-(--ink)">
             Audio reference
           </h2>
-          <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="text-[12px] text-(--muted)">
             Primary uploaded audio · {primaryAudio.fileType}
           </p>
         </div>
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--muted)">
           Use the native audio controls to play and pause the track.
         </p>
       </header>
@@ -41,28 +41,28 @@ const SyncLyricsAudioPanel = ({
         controls
       />
 
-      <dl className="mt-4 grid gap-3 rounded-md bg-[color:var(--lens-sand)]/10 p-4 sm:grid-cols-3">
+      <dl className="mt-4 grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-3">
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
             Current time
           </dt>
-          <dd className="text-sm text-[color:var(--lens-ink)]">
+          <dd className="text-sm text-(--ink)">
             {currentTime.toFixed(2)}s
           </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
             Active line
           </dt>
-          <dd className="text-sm text-[color:var(--lens-ink)]">
+          <dd className="text-sm text-(--ink)">
             {currentLineIndex + 1}
           </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
             Synced lines
           </dt>
-          <dd className="text-sm text-[color:var(--lens-ink)]">
+          <dd className="text-sm text-(--ink)">
             {syncedLinesCount} / {totalLines}
           </dd>
         </div>

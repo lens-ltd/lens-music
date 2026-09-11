@@ -64,21 +64,19 @@ const SignUp = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[color:var(--lens-sand)]/35 flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-lg rounded-2xl border border-[color:var(--lens-sand)] bg-white p-8 md:p-10 shadow-sm">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--lens-blue)] font-normal">
+        <article className="w-full max-w-lg card-framed p-8 md:p-10">
+          <p className="type-eyebrow">
             Get started
           </p>
           <h1
-            className="mt-4 text-[clamp(28px,4vw,38px)] leading-tight tracking-[-0.02em] text-[color:var(--lens-ink)]"
-            style={{ fontFamily: 'var(--font-serif)', fontWeight: 700 }}
-          >
+            className="mt-4 type-h2 text-(--ink)">
             Create your Lens Music account
           </h1>
-          <p className="mt-3 text-[13px] leading-6 text-[color:var(--lens-ink)]/60 font-normal">
+          <p className="mt-3 type-body-sm text-(--muted)">
             Set up your account to distribute releases, manage contributors, and track your catalog.
           </p>
 
@@ -167,12 +165,12 @@ const SignUp = () => {
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-[11px] text-[color:var(--lens-ink)]/40 font-normal">
+            <p className="text-[11px] text-(--muted) font-normal">
               Already have an account?
             </p>
             <Link
               to="/auth/login"
-              className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline font-normal"
+              className="mt-2 inline-flex text-[12px] text-(--lens-blue) hover:underline font-normal"
             >
               Sign in
             </Link>

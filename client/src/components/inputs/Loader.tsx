@@ -15,7 +15,7 @@ const spinnerVariants = cva('flex-col items-center justify-center', {
   },
 });
 
-const loaderVariants = cva('animate-spin text-black', {
+const loaderVariants = cva('animate-spin text-current', {
   variants: {
     size: {
       small: 'size-4',
@@ -39,7 +39,7 @@ const Loader = ({
   size,
   show,
   children,
-  className = 'text-white',
+  className = 'text-current',
 }: SpinnerContentProps) => {
   return (
     <span className={spinnerVariants({ show })}>
@@ -83,7 +83,7 @@ export const SkeletonLoader = ({
 
   return (
     <figure
-      className={`animate-pulse bg-gray-200 rounded-[4px]`}
+      className={`animate-pulse bg-(--surface) rounded-(--radius-control)`}
       style={style}
     />
   );

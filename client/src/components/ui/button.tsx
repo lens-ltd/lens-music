@@ -5,26 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer font-normal items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-(--radius-control) type-label transition-[background-color,color,border-color,box-shadow] duration-200 ease-[cubic-bezier(0,0,1,1)] focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+          "border border-(--lens-blue) bg-(--lens-blue) text-(--lens-blue-ink) hover:bg-(--lens-blue-hover) hover:border-(--lens-blue-hover) active:shadow-[var(--press-on-ink)_999px_999px_0_inset]",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
+          "border border-(--danger) bg-(--danger) text-(--on-consequence) hover:bg-(--danger-strong)",
         outline:
-          "border border-input shadow-xs hover:border-gray-100 hover:bg-accent hover:text-accent-foreground",
+          "border border-(--ink) bg-transparent text-(--ink) hover:bg-(--surface) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border border-transparent bg-(--surface) text-(--ink) hover:bg-(--surface-hover) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
+        ghost:
+          "border-transparent bg-transparent text-(--ink) hover:bg-(--surface) active:shadow-[var(--press-on-paper)_999px_999px_0_inset]",
+        link: "border-transparent bg-transparent text-(--lens-blue) p-0 h-auto link-sweep",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-(--control-sm) min-h-(--control-sm) px-3.5",
+        sm: "h-(--control-sm) min-h-(--control-sm) px-3",
+        lg: "h-(--control-md) min-h-(--control-md) px-5",
+        icon: "size-(--control-sm)",
       },
     },
     defaultVariants: {

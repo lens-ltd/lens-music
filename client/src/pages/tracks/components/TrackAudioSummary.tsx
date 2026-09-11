@@ -18,21 +18,21 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
           {audioFiles.map((audioFile) => (
             <li
               key={audioFile.id}
-              className="rounded-md border border-[color:var(--lens-sand)]/70 p-3"
+              className="rounded-md border border-(--line)/70 p-3"
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
-                  <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
+                  <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[11px] text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-[color:var(--lens-blue)]">
+                    <p className="text-[11px] text-(--lens-blue)">
                       Primary audio
                     </p>
                   )}
@@ -43,7 +43,7 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
                   href={audioFile.storagePath}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline"
+                  className="mt-2 inline-flex text-[12px] text-(--lens-blue) hover:underline"
                 >
                   Open file
                 </a>
@@ -52,7 +52,7 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+        <p className="text-[12px] text-(--muted)">
           No audio files uploaded.
         </p>
       )}

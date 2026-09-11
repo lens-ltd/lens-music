@@ -39,12 +39,12 @@ const TrackAudioPanel = ({
     track?.audioFiles?.[0];
 
   return (
-    <section className="rounded-md border border-[color:var(--lens-sand)]/70 bg-white p-4">
+    <section className="rounded-md border border-(--line)/70 bg-white p-4">
       <header className="space-y-1">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-sm font-normal text-[color:var(--lens-ink)]">Audio</h2>
-            <p className="text-[12px] text-[color:var(--lens-ink)]/55">
+            <h2 className="text-sm font-normal text-(--ink)">Audio</h2>
+            <p className="text-[12px] text-(--muted)">
               Uploading a new file makes it the primary audio.
             </p>
           </div>
@@ -59,20 +59,20 @@ const TrackAudioPanel = ({
         </div>
       </header>
 
-      <dl className="mt-3 grid gap-2 rounded-md bg-[color:var(--lens-sand)]/10 p-3">
+      <dl className="mt-3 grid gap-2 rounded-md bg-(--surface) p-3">
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
             Duration
           </dt>
-          <dd className="text-[12px] text-[color:var(--lens-ink)]">
+          <dd className="text-[12px] text-(--ink)">
             {formatDuration(track?.durationMs)}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--lens-ink)]/50">
+          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--muted)">
             Status
           </dt>
-          <dd className="text-[12px] text-[color:var(--lens-ink)]">
+          <dd className="text-[12px] text-(--ink)">
             {capitalizeString(track?.status)}
           </dd>
         </div>
@@ -94,7 +94,7 @@ const TrackAudioPanel = ({
           fileName={uploadFileName}
         />
         {isDeletingAudio && (
-          <p className="mt-2 text-[12px] text-[color:var(--lens-ink)]/55">
+          <p className="mt-2 text-[12px] text-(--muted)">
             Updating audio...
           </p>
         )}
@@ -105,21 +105,21 @@ const TrackAudioPanel = ({
           track.audioFiles.map((audioFile) => (
             <li
               key={audioFile.id}
-              className="rounded-md border border-[color:var(--lens-sand)]/70 p-3"
+              className="rounded-md border border-(--line)/70 p-3"
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
-                  <p className="text-[12px] font-normal text-[color:var(--lens-ink)]">
+                  <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-[color:var(--lens-ink)]/55">
+                  <p className="text-[11px] text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-[color:var(--lens-blue)]">
+                    <p className="text-[11px] text-(--lens-blue)">
                       Primary audio
                     </p>
                   )}
@@ -137,14 +137,14 @@ const TrackAudioPanel = ({
                 href={audioFile.storagePath}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 inline-flex text-[12px] text-[color:var(--lens-blue)] hover:underline"
+                className="mt-2 inline-flex text-[12px] text-(--lens-blue) hover:underline"
               >
                 Open file
               </a>
             </li>
           ))
         ) : (
-          <li className="rounded-md border border-dashed border-[color:var(--lens-sand)]/70 p-3 text-[12px] text-[color:var(--lens-ink)]/55">
+          <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--muted)">
             No audio uploaded yet.
           </li>
         )}
