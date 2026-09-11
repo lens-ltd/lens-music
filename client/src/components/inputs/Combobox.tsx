@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { forwardRef, useId, useState } from 'react';
+import { forwardRef, useId, useMemo, useState } from 'react';
 import { SkeletonLoader } from './Loader';
 import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
 import { InputErrorMessage } from '../feedbacks/ErrorLabels';
@@ -64,9 +64,33 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
         ref
     ) => {
         const [open, setOpen] = useState(false);
+        // Controlled search with manual filtering so results never depend on
+        // implicit cmdk store behavior.
+        const [search, setSearch] = useState('');
         const generatedId = useId();
         const describedBy = errorMessage ? `${generatedId}-error` : undefined;
         const selectedLabel = options.find((option) => option.value === value)?.label;
+
+        const visibleOptions = useMemo(() => {
+            const query = search.trim().toLowerCase();
+            if (!query) return options;
+            return options.filter((option) =>
+                option.label.toLowerCase().includes(query)
+            );
+        }, [options, search]);
+
+        const handleOpenChange = (nextOpen: boolean) => {
+            setOpen(nextOpen);
+            // Reset the query whenever the menu closes so the next open
+            // starts from the full list.
+            if (!nextOpen) setSearch('');
+        };
+
+        const selectOption = (selectedValue: string) => {
+            onChange?.(selectedValue);
+            setOpen(false);
+            setSearch('');
+        };
 
         return (
             <div className={cn('field-stack', labelClassName)}>
@@ -82,7 +106,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                 ) : null}
                 <Popover
                     open={open}
-                    onOpenChange={readOnly ? undefined : setOpen}
+                    onOpenChange={readOnly ? undefined : handleOpenChange}
                     modal
                 >
                     <PopoverTrigger asChild className={cn('w-full', className)}>
@@ -121,9 +145,11 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                         className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0 card-framed shadow-[var(--shadow-menu)]"
                         align="start"
                     >
-                        <Command ref={ref} className="w-full">
+                        <Command ref={ref} className="w-full" shouldFilter={false}>
                             <CommandInput
                                 placeholder="Search option..."
+                                value={search}
+                                onValueChange={setSearch}
                                 className={cn('type-body-sm', inputClassName)}
                             />
                             <CommandList className="w-full">
@@ -136,20 +162,15 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                     No option found.
                                 </CommandEmpty>
                                 <CommandGroup className="w-full">
-                                    {(options ?? [])?.map((option) => (
+                                    {visibleOptions.map((option) => (
                                         <CommandItem
                                             key={option.value || option.label}
                                             defaultValue={defaultValue}
                                             disabled={option?.disabled}
                                             className="flex items-center gap-2 w-full cursor-pointer overflow-hidden type-body-sm"
                                             value={option.label}
-                                            onSelect={(currentValue) => {
-                                                const selectedOption = options.find(
-                                                    (item) => item.label === currentValue
-                                                );
-                                                onChange?.(selectedOption?.value || '');
-                                                setOpen(false);
-                                            }}
+                                            keywords={[option.value]}
+                                            onSelect={() => selectOption(option.value)}
                                         >
                                             <p
                                                 className={cn(

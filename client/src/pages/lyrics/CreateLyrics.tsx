@@ -1,5 +1,6 @@
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import CustomTooltip from "@/components/inputs/CustomTooltip";
 import Input from "@/components/inputs/Input";
 import TextArea from "@/components/inputs/TextArea";
@@ -277,7 +278,7 @@ const CreateLyrics = () => {
           </section>
 
           <footer className="flex items-center justify-between gap-3">
-            <Button
+            <BackButton
               onClick={(event) => {
                 event.preventDefault();
                 dispatch(setLyricsGuideLinesModal(false));
@@ -285,7 +286,7 @@ const CreateLyrics = () => {
               }}
             >
               Cancel
-            </Button>
+            </BackButton>
             <Button primary submit isLoading={isLoading}>
               Create and sync
             </Button>

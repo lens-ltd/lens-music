@@ -1,6 +1,7 @@
 import Button from "@/components/inputs/Button";
 import Input from "@/components/inputs/Input";
 import TextArea from "@/components/inputs/TextArea";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useUpdateRole } from "@/hooks/roles/roleMutations.hooks";
@@ -67,15 +68,12 @@ const EditRolePage = () => {
   return (
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
-        <nav className="w-full flex items-center gap-3 justify-between">
-          <div>
-            <Heading>Edit Role</Heading>
-            <p className="text-[13px] text-(--slate) font-normal mt-1">
-              Update role information and permissions.
-            </p>
-          </div>
-          <Button route={`/roles/${id}`}>Back to details</Button>
-        </nav>
+        <header className="w-full flex flex-col gap-1">
+          <Heading>Edit Role</Heading>
+          <p className="text-[13px] text-(--slate) font-normal">
+            Update role information and permissions.
+          </p>
+        </header>
 
         <section className="w-full">
           <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
@@ -104,25 +102,24 @@ const EditRolePage = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <Button
-                  type="button"
-                  onClick={() => navigate(`/roles/${id}`)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  primary
-                  isLoading={isUpdating}
-                  disabled={isUpdating || !formData.name.trim()}
-                >
-                  Save changes
-                </Button>
-              </div>
             </form>
           </div>
         </section>
+
+        <PageFooter
+          back={<BackButton route={`/roles/${id}`}>Back to details</BackButton>}
+          actions={
+            <Button
+              type="submit"
+              primary
+              isLoading={isUpdating}
+              disabled={isUpdating || !formData.name.trim()}
+              onClick={handleSubmit}
+            >
+              Save changes
+            </Button>
+          }
+        />
       </main>
     </UserLayout>
   );

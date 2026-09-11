@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
@@ -743,7 +744,7 @@ const ReleaseWizardOverview = ({
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
         <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
-          <Button
+          <BackButton
             onClick={(e) => {
               e.preventDefault();
               if (previousStepName) {
@@ -757,7 +758,7 @@ const ReleaseWizardOverview = ({
             }}
           >
             Back
-          </Button>
+          </BackButton>
           <Button
             primary
             submit

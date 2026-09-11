@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
 import {
@@ -140,8 +141,7 @@ const ReleaseWizardRegions = ({
 
   const navButtons = (
     <>
-      <Button
-        type="button"
+      <BackButton
         onClick={handleGoBack}
         disabled={
           !previousStepName ||
@@ -151,7 +151,7 @@ const ReleaseWizardRegions = ({
         }
       >
         Back
-      </Button>
+      </BackButton>
 
       <Button
         type="button"

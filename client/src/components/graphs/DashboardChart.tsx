@@ -33,7 +33,7 @@ interface DashboardChartProps {
   tooltipVariant?: 'default' | 'minimal';
 }
 
-const SIGNAL = '#3f7ca6';
+const SIGNAL = '#1f628e';
 
 /** TanStack renders into SVG attributes where `var()` does not resolve. */
 const resolveColor = (fill: string | undefined) =>
@@ -44,7 +44,7 @@ const compactNumber = (v: number) =>
 
 // ── empty state ──────────────────────────────────────────────────────────────
 const ChartEmpty: FC<{ label: string }> = ({ label }) => (
-  <div className="grid min-h-40 place-items-center rounded-md border border-dashed border-(--menu-border) bg-[#f9fbfc] p-6 text-center text-[12px] text-(--slate)">
+  <div className="grid min-h-40 place-items-center rounded-md border border-dashed border-(--menu-border) bg-white p-6 text-center text-[12px] text-(--slate)">
     {label}
   </div>
 );
@@ -121,7 +121,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
         ariaLabel="Monthly value trend"
         ariaDescription="Exact monthly values are available in the table below the chart."
       />
-      <details className="mt-3 border-t border-[#e1e8ed] pt-3">
+      <details className="mt-3 border-t border-[#e6e2d7] pt-3">
         <summary className="cursor-pointer text-[11px] font-medium text-(--signal)">
           View exact monthly values
         </summary>
@@ -140,7 +140,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-t border-[#edf1f4]">
+                <tr key={row.label} className="border-t border-[#eae6db]">
                   <th scope="row" className="py-1.5 font-normal">
                     {row.label}
                   </th>

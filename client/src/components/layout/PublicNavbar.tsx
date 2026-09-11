@@ -90,14 +90,6 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                   Create account
                 </Button>
               </li>
-              <li>
-                <Link
-                  to="/auth/request-invitation"
-                  className="inline-flex min-h-10 items-center rounded-lg px-3 type-body-sm text-(--slate) hover:text-(--ink)"
-                >
-                  Request invite
-                </Link>
-              </li>
             </ul>
 
             <details className="md:hidden relative" id="mobile-nav">
@@ -139,15 +131,6 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                       className="w-full justify-start"
                     >
                       Create account
-                    </Button>
-                  </li>
-                  <li>
-                    <Button
-                      route="/auth/request-invitation"
-                      styled={false}
-                      className="w-full justify-start"
-                    >
-                      Request invite
                     </Button>
                   </li>
                   <li>

@@ -16,7 +16,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
       <Sidebar />
       <main
         className={`mt-16 min-h-[calc(100vh-64px)] overflow-x-hidden transition-[margin] duration-200 ease-[cubic-bezier(0,0,1,1)] ${
-          isOpen ? 'ml-16 sm:ml-60' : 'ml-16'
+          isOpen ? 'ml-18 sm:ml-60' : 'ml-18'
         }`}
       >
         <article className="mx-auto w-full max-w-[1280px] px-5 py-6 sm:px-8 lg:px-10">

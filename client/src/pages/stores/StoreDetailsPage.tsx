@@ -6,6 +6,7 @@ import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
 import { KeyValuePair } from "@/components/inputs/KeyValuePair";
 import Loader from "@/components/inputs/Loader";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { PERMISSIONS } from "@/constants/permission.constants";
@@ -92,13 +93,11 @@ const StoreDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>Store Details</Heading>
-            <Button route="/stores">Back to stores</Button>
-          </nav>
+          <Heading>Store Details</Heading>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
             <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
+          <PageFooter back={<BackButton route="/stores">Back to stores</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -108,15 +107,13 @@ const StoreDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>Store Details</Heading>
-            <Button route="/stores">Back to stores</Button>
-          </nav>
+          <Heading>Store Details</Heading>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
             <p className="text-[13px] text-(--slate)">
               Store not found.
             </p>
           </section>
+          <PageFooter back={<BackButton route="/stores">Back to stores</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -149,15 +146,12 @@ const StoreDetailsPage = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-5">
-        <nav className="flex w-full items-center justify-between gap-3">
-          <div>
-            <Heading>Store Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-(--slate)">
-              Review store identity and configure DDEX delivery metadata.
-            </p>
-          </div>
-          <Button route="/stores">Back to stores</Button>
-        </nav>
+        <header className="flex w-full flex-col gap-1">
+          <Heading>Store Details</Heading>
+          <p className="text-[13px] font-normal text-(--slate)">
+            Review store identity and configure DDEX delivery metadata.
+          </p>
+        </header>
 
         <section className="flex w-full flex-col gap-5 rounded-lg bg-(--surface) p-5 sm:p-6">
           <div className="flex flex-col gap-3 border-b border-(--line)/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -257,29 +251,34 @@ const StoreDetailsPage = () => {
                 placeholder="https:// or sftp:// destination"
               />
 
-              {canUpdate && (
-                <footer className="flex items-center justify-end gap-3 pt-1">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      navigate("/stores");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    primary
-                    isLoading={isSaving}
-                    onClick={() => void handleSave()}
-                  >
-                    Save delivery settings
-                  </Button>
-                </footer>
-              )}
             </div>
           </div>
         </section>
+
+        <PageFooter
+          back={
+            <BackButton
+              onClick={(event) => {
+                event.preventDefault();
+                navigate("/stores");
+              }}
+            >
+              Back to stores
+            </BackButton>
+          }
+          actions={
+            canUpdate ? (
+              <Button
+                type="button"
+                primary
+                isLoading={isSaving}
+                onClick={() => void handleSave()}
+              >
+                Save delivery settings
+              </Button>
+            ) : undefined
+          }
+        />
       </main>
     </UserLayout>
   );

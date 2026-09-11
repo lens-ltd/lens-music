@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import UserLayout from "@/containers/UserLayout";
@@ -577,14 +578,14 @@ const ManageReleaseTrack = () => {
         )}
 
         <footer className="flex w-full items-center justify-between gap-3">
-          <Button
+          <BackButton
             onClick={(event) => {
               event.preventDefault();
               navigate(-1);
             }}
           >
             Back
-          </Button>
+          </BackButton>
           <Button
             primary
             submit

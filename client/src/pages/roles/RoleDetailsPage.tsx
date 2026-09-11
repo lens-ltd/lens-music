@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useFetchRoleById } from "@/hooks/roles/roles.hooks";
@@ -33,15 +34,11 @@ const RoleDetailsPage = () => {
     return (
       <UserLayout>
         <main className="w-full flex flex-col gap-4">
-          <nav className="w-full flex items-center gap-3 justify-between">
-            <div>
-              <Heading>Role Details</Heading>
-            </div>
-            <Button route="/roles">Back to roles</Button>
-          </nav>
+          <Heading>Role Details</Heading>
           <div className="w-full rounded-lg bg-(--surface) p-8 text-center">
             <p className="text-(--slate)">Role not found</p>
           </div>
+          <PageFooter back={<BackButton route="/roles">Back to roles</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -50,18 +47,12 @@ const RoleDetailsPage = () => {
   return (
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
-        <nav className="w-full flex items-center gap-3 justify-between">
-          <div>
-            <Heading>Role Details</Heading>
-            <p className="text-[13px] text-(--slate) font-normal mt-1">
-              View role information and associated permissions.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button route={`/roles/${id}/edit`}>Edit</Button>
-            <Button route="/roles">Back to roles</Button>
-          </div>
-        </nav>
+        <header className="w-full flex flex-col gap-1">
+          <Heading>Role Details</Heading>
+          <p className="text-[13px] text-(--slate) font-normal">
+            View role information and associated permissions.
+          </p>
+        </header>
 
         <section className="w-full">
           <div className="flex w-full flex-col gap-6 rounded-lg bg-(--surface) p-5 sm:p-6">
@@ -128,6 +119,11 @@ const RoleDetailsPage = () => {
             </div>
           </div>
         </section>
+
+        <PageFooter
+          back={<BackButton route="/roles">Back to roles</BackButton>}
+          actions={<Button route={`/roles/${id}/edit`}>Edit</Button>}
+        />
       </main>
     </UserLayout>
   );

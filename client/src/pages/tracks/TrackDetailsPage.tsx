@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import Button from "@/components/inputs/Button";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import UserLayout from "@/containers/UserLayout";
 import { useGetRelease } from "@/hooks/releases/release.hooks";
 import { useGetTrack } from "@/hooks/tracks/track.hooks";
@@ -103,20 +103,22 @@ const TrackDetailsPage = () => {
           </motion.section>
         </article>
 
-        <footer className="flex w-full items-center gap-3">
-          <Button
-            onClick={(event) => {
-              event.preventDefault();
-              if (id) {
-                navigate(`/releases/${id}/wizard`);
-              } else {
-                navigate(-1);
-              }
-            }}
-          >
-            Back to release
-          </Button>
-        </footer>
+        <PageFooter
+          back={
+            <BackButton
+              onClick={(event) => {
+                event.preventDefault();
+                if (id) {
+                  navigate(`/releases/${id}/wizard`);
+                } else {
+                  navigate(-1);
+                }
+              }}
+            >
+              Back to release
+            </BackButton>
+          }
+        />
       </main>
     </UserLayout>
   );

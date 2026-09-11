@@ -35,42 +35,42 @@
   --font-family-sans: 'DM Sans', system-ui, sans-serif;
   --font-family-serif: 'DM Sans', system-ui, sans-serif;
 
-  --field: #f6f9fb;
+  --field: #ffffff;
   --paper: #ffffff;
-  --ink: #173b57;
-  --optical: #173b57;
-  --signal: #3f7ca6;
-  --signal-hover: #346b92;
+  --ink: #100e09;
+  --optical: #100e09;
+  --signal: #1f628e;
+  --signal-hover: #164869;
   --instrument: #4f8795;
   --caution: #a8742a;
-  --slate: #667987;
-  --rule: #d7e1e8;
-  --muted: #eaf2f7;
-  --surface: #eaf2f7;
-  --surface-hover: #dfeaf2;
-  --surface-sunken: #f6f9fb;
-  --line: #d7e1e8;
-  --line-strong: #b8c8d3;
-  --menu-border: #c7d5de;
-  --label-ink: #28475e;
-  --placeholder: #7d8e9a;
-  --muted-weak: #667987;
-  --disabled-fg: #7d8e9a;
-  --overlay: rgba(23, 59, 87, 0.45);
-  --shadow-menu: 0 12px 32px rgba(23, 59, 87, 0.14);
-  --shadow-modal: 0 12px 34px rgba(23, 59, 87, 0.08);
+  --slate: #6f6a5f;
+  --rule: #e3dfd5;
+  --muted: #e4e2dd;
+  --surface: #e4e2dd;
+  --surface-hover: #d9d6cc;
+  --surface-sunken: #ffffff;
+  --line: #e3dfd5;
+  --line-strong: #cfcbc1;
+  --menu-border: #d8d4c9;
+  --label-ink: #3d3830;
+  --placeholder: #8b867b;
+  --muted-weak: #6f6a5f;
+  --disabled-fg: #8b867b;
+  --overlay: rgba(16, 14, 9, 0.45);
+  --shadow-menu: 0 12px 32px rgba(16, 14, 9, 0.14);
+  --shadow-modal: 0 12px 34px rgba(16, 14, 9, 0.08);
   --radius-control: 6px;
   --radius-card: 8px;
   --radius-pill: 999px;
 
-  --lens-blue: #3f7ca6;
-  --lens-blue-soft: #eaf2f7;
-  --lens-blue-hover: #346b92;
+  --lens-blue: rgb(31, 98, 142);
+  --lens-blue-soft: #e8f0f5;
+  --lens-blue-hover: #164869;
   --lens-blue-ink: #ffffff;
-  --lens-ink: var(--ink);
-  --lens-sand: var(--line);
+  --lens-ink: rgb(16, 14, 9);
+  --lens-sand: rgb(228, 226, 221);
   --nav-open: 240px;
-  --nav-collapsed: 64px;
+  --nav-collapsed: 72px;
 
   --control-sm: 32px;
   --control-md: 36px;
@@ -93,10 +93,10 @@
   --approve-line: #c3d9dd;
   --on-consequence: #ffffff;
 
-  --chart-1: #3f7ca6;
+  --chart-1: #1f628e;
   --chart-2: #4f8795;
-  --chart-3: #667987;
-  --chart-4: #b8c8d3;
+  --chart-3: #6f6a5f;
+  --chart-4: #cfcbc1;
   --chart-5: #a54b4b;
 }
 
@@ -120,16 +120,16 @@
   --ring: var(--signal);
 }
 
-/* Dark instrument panel kept only for chart tooltips until the TanStack
-   charts swap removes the last usage. There is no dark theme. */
+/* Warm-ink instrument panel for the landing footer, CTA band, testimonial
+   feature, and dashboard empty state. There is no dark theme. */
 .invert-surface {
-  --paper: #173b57;
+  --paper: #100e09;
   --ink: #ffffff;
-  --surface: #28475e;
-  --surface-hover: #28475e;
-  --line: #28475e;
+  --surface: #29251d;
+  --surface-hover: #29251d;
+  --line: #38332a;
   --muted: #a9c1cf;
-  background-color: #173b57;
+  background-color: #100e09;
   color: #ffffff;
 }
 
@@ -220,7 +220,7 @@
   }
 
   :focus-visible {
-    outline: 3px solid rgba(63, 124, 166, 0.26);
+    outline: 3px solid rgba(31, 98, 142, 0.25);
     outline-offset: 2px;
   }
 
@@ -270,7 +270,7 @@
     min-height: 2rem;
     padding: 0 0.875rem;
     border-bottom: 1px solid var(--rule);
-    background: #f9fbfc;
+    background: #ffffff;
     color: var(--slate);
     font-size: 0.6875rem;
     font-weight: 500;

@@ -31,9 +31,9 @@ export default function CompareSection() {
                   <th className="text-left px-5 py-4 type-eyebrow">Typical distributor</th>
                 </tr>
               </thead>
-              <tbody>
-                {rows.map((row, i) => (
-                  <tr key={row[0]} className={i % 2 === 0 ? '' : 'bg-(--surface-sunken)'}>
+              <tbody className="divide-y divide-(--line)">
+                {rows.map((row) => (
+                  <tr key={row[0]}>
                     <td className="px-5 py-4 type-body-sm">{row[0]}</td>
                     <td className="px-5 py-4 type-body-sm">{row[1]}</td>
                     <td className="px-5 py-4 type-body-sm text-(--slate)">{row[2]}</td>

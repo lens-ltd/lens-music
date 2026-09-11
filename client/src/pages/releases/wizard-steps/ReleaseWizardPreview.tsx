@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import store from "store";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
 import { useGetRelease, useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
@@ -206,8 +207,8 @@ const ReleaseWizardPreview = ({
 
 
       <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
-        <Button
-          isLoading={isNavigating}
+        <BackButton
+          disabled={isNavigating}
           onClick={(event) => {
             event.preventDefault();
             if (previousStepName && release.id) {
@@ -219,7 +220,7 @@ const ReleaseWizardPreview = ({
           }}
         >
           Back
-        </Button>
+        </BackButton>
         <div className="flex items-center gap-2">
           {release.status === ReleaseStatus.VALIDATED && (
             <Button

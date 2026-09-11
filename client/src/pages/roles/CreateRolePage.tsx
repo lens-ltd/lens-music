@@ -1,6 +1,7 @@
 import Button from "@/components/inputs/Button";
 import Input from "@/components/inputs/Input";
 import TextArea from "@/components/inputs/TextArea";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useCreateRole } from "@/hooks/roles/roleMutations.hooks";
@@ -36,15 +37,12 @@ const CreateRolePage = () => {
   return (
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
-        <nav className="w-full flex items-center gap-3 justify-between">
-          <div>
-            <Heading>Create Role</Heading>
-            <p className="text-[13px] text-(--slate) font-normal mt-1">
-              Define a new role with specific permissions for dashboard users.
-            </p>
-          </div>
-          <Button route="/roles">Back to roles</Button>
-        </nav>
+        <header className="w-full flex flex-col gap-1">
+          <Heading>Create Role</Heading>
+          <p className="text-[13px] text-(--slate) font-normal">
+            Define a new role with specific permissions for dashboard users.
+          </p>
+        </header>
 
         <section className="w-full">
           <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
@@ -73,25 +71,24 @@ const CreateRolePage = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <Button
-                  type="button"
-                  onClick={() => navigate("/roles")}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  primary
-                  isLoading={isCreating}
-                  disabled={isCreating || !formData.name.trim()}
-                >
-                  Create role
-                </Button>
-              </div>
             </form>
           </div>
         </section>
+
+        <PageFooter
+          back={<BackButton route="/roles">Back to roles</BackButton>}
+          actions={
+            <Button
+              type="submit"
+              primary
+              isLoading={isCreating}
+              disabled={isCreating || !formData.name.trim()}
+              onClick={handleSubmit}
+            >
+              Create role
+            </Button>
+          }
+        />
       </main>
     </UserLayout>
   );

@@ -1,4 +1,5 @@
 import Button from '@/components/inputs/Button';
+import { BackButton, PageFooter } from '@/components/layout/PageFooter';
 import Input from '@/components/inputs/Input';
 import TextArea from '@/components/inputs/TextArea';
 import { Heading } from '@/components/text/Headings';
@@ -21,15 +22,12 @@ const CreateUserInvitationPage = () => {
   return (
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
-        <nav className="w-full flex items-center gap-3 justify-between">
-          <div>
-            <Heading>Create User Invitation</Heading>
-            <p className="text-[13px] text-(--slate) font-normal mt-1">
-              Send access invitations to teammates one by one or in bulk.
-            </p>
-          </div>
-          <Button route="/users/invitations">Back to invitations</Button>
-        </nav>
+        <header className="w-full flex flex-col gap-1">
+          <Heading>Create User Invitation</Heading>
+          <p className="text-[13px] text-(--slate) font-normal">
+            Send access invitations to teammates one by one or in bulk.
+          </p>
+        </header>
 
         <section className="grid w-full gap-5 xl:grid-cols-2">
           <div className="flex w-full flex-col gap-4 rounded-lg bg-(--surface) p-5 sm:p-6">
@@ -81,6 +79,10 @@ const CreateUserInvitationPage = () => {
             </Button>
           </div>
         </section>
+
+        <PageFooter
+          back={<BackButton route="/users/invitations">Back to invitations</BackButton>}
+        />
       </main>
     </UserLayout>
   );

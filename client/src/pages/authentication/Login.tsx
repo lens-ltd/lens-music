@@ -145,15 +145,6 @@ const Login = () => {
             >
               Create account
             </Link>
-            <p className="mt-3 type-meta">
-              Need admin approval instead?
-            </p>
-            <Link
-              to="/auth/request-invitation"
-              className="mt-2 inline-flex type-body-sm text-(--signal) link-sweep"
-            >
-              Request an invitation
-            </Link>
           </div>
         </article>
       </section>

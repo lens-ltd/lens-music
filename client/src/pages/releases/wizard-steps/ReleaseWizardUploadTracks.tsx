@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import {
   useCompleteReleaseNavigationFlow,
@@ -232,7 +233,7 @@ const ReleaseWizardUploadTracks = ({
       ) : null}
 
       <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
-        <Button
+        <BackButton
           onClick={(e) => {
             e.preventDefault();
             previousStepName &&
@@ -244,7 +245,7 @@ const ReleaseWizardUploadTracks = ({
           }}
         >
           Back
-        </Button>
+        </BackButton>
         <Button
           primary
           isLoading={

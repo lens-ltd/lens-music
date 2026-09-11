@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import {
   useCompleteReleaseNavigationFlow,
   useCreateReleaseNavigationFlow,
@@ -164,9 +165,7 @@ const ReleaseWizardStores = ({
 
   const navButtons = (
     <>
-      <Button
-        type="button"
-        isLoading={createNavigationFlowIsLoading}
+      <BackButton
         disabled={
           createNavigationFlowIsLoading || completeNavigationFlowIsLoading
         }
@@ -176,7 +175,7 @@ const ReleaseWizardStores = ({
         }}
       >
         Back
-      </Button>
+      </BackButton>
       <Button
         type="button"
         primary

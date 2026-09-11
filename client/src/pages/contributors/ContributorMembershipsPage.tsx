@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
@@ -430,14 +431,14 @@ const ContributorMembershipsPage = () => {
         </section>
 
         <footer className="flex w-full items-center justify-between gap-3">
-          <Button
+          <BackButton
             onClick={(e) => {
               e.preventDefault();
               navigate(-1);
             }}
           >
             Back
-          </Button>
+          </BackButton>
         </footer>
       </main>
       <DeleteContributorMembership />

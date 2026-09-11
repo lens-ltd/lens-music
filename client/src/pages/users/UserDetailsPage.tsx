@@ -1,4 +1,4 @@
-import Button from "@/components/inputs/Button";
+import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
@@ -89,13 +89,11 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>User Details</Heading>
-            <Button route="/users">Back to users</Button>
-          </nav>
+          <Heading>User Details</Heading>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
             <p className="text-[13px] text-(--slate)">{message}</p>
           </section>
+          <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -105,15 +103,13 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <nav className="flex w-full items-center justify-between gap-3">
-            <Heading>User Details</Heading>
-            <Button route="/users">Back to users</Button>
-          </nav>
+          <Heading>User Details</Heading>
           <section className="w-full rounded-lg bg-(--surface) p-8 text-center">
             <p className="text-[13px] text-(--slate)">
               User not found.
             </p>
           </section>
+          <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
         </main>
       </UserLayout>
     );
@@ -272,14 +268,16 @@ const UserDetailsPage = () => {
             </div>
           </div>
         </section>
-        <menu>
-          <Button onClick={(e) => {
-            e.preventDefault();
-            navigate(-1);
-          }}>
-            Back
-          </Button>
-        </menu>
+        <PageFooter
+          back={
+            <BackButton onClick={(e) => {
+              e.preventDefault();
+              navigate(-1);
+            }}>
+              Back to users
+            </BackButton>
+          }
+        />
       </main>
       <AssignUserRole />
     </UserLayout>

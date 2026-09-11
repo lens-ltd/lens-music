@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { PERMISSIONS } from "@/constants/permission.constants";
@@ -85,14 +86,14 @@ const ReleaseReviewDetailPage = () => {
               This release could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
-              <Button
+              <BackButton
                 onClick={(event) => {
                   event.preventDefault();
                   navigate(-1);
                 }}
               >
                 Back
-              </Button>
+              </BackButton>
             </menu>
           </section>
         ) : (
@@ -159,14 +160,14 @@ const ReleaseReviewDetailPage = () => {
             </section>
 
             <footer className="flex w-full items-center justify-between gap-3">
-              <Button
+              <BackButton
                 onClick={(event) => {
                   event.preventDefault();
                   navigate(-1);
                 }}
               >
                 Back
-              </Button>
+              </BackButton>
               {canReview && (canApprove || canReject) && (
                 <div className="flex items-center gap-2">
                   {canReject && (

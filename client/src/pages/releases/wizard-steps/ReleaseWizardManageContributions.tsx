@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
 import ContributorRoleMultiSelect from "@/components/contributors/ContributorRoleMultiSelect";
@@ -495,7 +496,7 @@ const ReleaseWizardManageContributions = ({
       ) : null}
 
       <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
-        <Button
+        <BackButton
           onClick={(e) => {
             e.preventDefault();
             previousStepName &&
@@ -507,7 +508,7 @@ const ReleaseWizardManageContributions = ({
           }}
         >
           Back
-        </Button>
+        </BackButton>
         <Button
           primary
           isLoading={

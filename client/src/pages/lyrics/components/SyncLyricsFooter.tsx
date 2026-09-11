@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { BackButton } from "@/components/layout/PageFooter";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 
 type SyncLyricsFooterProps = {
@@ -14,14 +15,14 @@ const SyncLyricsFooter = ({
 }: SyncLyricsFooterProps) => {
   return (
     <footer className="flex w-full items-center justify-between gap-3">
-      <Button
+      <BackButton
         onClick={(event) => {
           event.preventDefault();
           onBack();
         }}
       >
         Back
-      </Button>
+      </BackButton>
       <Button
         primary
         icon={faSave}
