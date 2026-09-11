@@ -32,14 +32,14 @@ export default function TestimonialsSection() {
           </header>
 
           <section className="mt-8 grid lg:grid-cols-2 card-framed overflow-hidden" style={fadeUp(inView, 0.08)}>
-            <figure className="invert-surface p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
+            <figure className="bg-white p-8 md:p-10 min-h-[320px] flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-(--line)">
               <figcaption>
-                <p className="type-eyebrow text-[#a9c1cf]">Featured quote</p>
+                <p className="type-eyebrow">Featured quote</p>
                 <p className="mt-4 type-h2 max-w-[16ch]">
                   “The revenue view finally makes sense to our team.”
                 </p>
               </figcaption>
-              <p className="type-meta mt-8 text-[#a9c1cf]">Artist story</p>
+              <p className="type-meta mt-8">Artist story</p>
             </figure>
 
             <section className="bg-(--paper) p-6 md:p-8 grid gap-4" aria-label="Artist testimonials">

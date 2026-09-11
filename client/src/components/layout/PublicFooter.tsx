@@ -5,7 +5,7 @@ import LensLogo from '/logo.png';
 const PublicFooter: FC = () => (
   <footer
     id="contact"
-    className="invert-surface"
+    className="bg-white border-t border-(--line)"
     role="contentinfo"
   >
     <section className="app-container pt-16 pb-8">
@@ -17,15 +17,15 @@ const PublicFooter: FC = () => (
             className="flex items-center gap-2.5 mb-4 rounded w-fit"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <img src={LensLogo} alt="Lens Logo" className="w-10 h-10 invert" />
+            <img src={LensLogo} alt="Lens Logo" className="w-10 h-10" />
           </Link>
-          <p className="type-meta max-w-[200px] text-[#a9c1cf]">
+          <p className="type-meta max-w-[200px]">
             Distribution and analytics for independent artists and labels, built in Rwanda.
           </p>
         </section>
 
         <nav aria-label="Product links">
-          <p className="equipment-label mb-4 text-[#a9c1cf]">Product</p>
+          <p className="equipment-label mb-4">Product</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'How it works', href: '#how-it-works' },
@@ -34,7 +34,7 @@ const PublicFooter: FC = () => (
               { label: 'Dashboard', href: '#analytics' },
             ].map(({ label, href }) => (
               <li key={label}>
-                <a href={href} className="link-sweep type-body-sm text-(--muted) hover:text-(--ink)">
+                <a href={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
                   {label}
                 </a>
               </li>
@@ -43,7 +43,7 @@ const PublicFooter: FC = () => (
         </nav>
 
         <nav aria-label="Company links">
-          <p className="equipment-label mb-4 text-[#a9c1cf]">Company</p>
+          <p className="equipment-label mb-4">Company</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'About', href: '/#about' },
@@ -51,7 +51,7 @@ const PublicFooter: FC = () => (
               { label: 'FAQ', href: '/#faq' },
             ].map(({ label, href }) => (
               <li key={label}>
-                <a href={href} className="link-sweep type-body-sm text-(--muted) hover:text-(--ink)">
+                <a href={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
                   {label}
                 </a>
               </li>
@@ -60,7 +60,7 @@ const PublicFooter: FC = () => (
         </nav>
 
         <nav aria-label="Legal links">
-          <p className="equipment-label mb-4 text-[#a9c1cf]">Legal</p>
+          <p className="equipment-label mb-4">Legal</p>
           <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
             {[
               { label: 'Privacy Policy', href: '/privacy-policy' },
@@ -68,7 +68,7 @@ const PublicFooter: FC = () => (
               { label: 'Artist Agreement', href: '/artist-agreement' },
             ].map(({ label, href }) => (
               <li key={label}>
-                <Link to={href} className="link-sweep type-body-sm text-(--muted) hover:text-(--ink)">
+                <Link to={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
                   {label}
                 </Link>
               </li>
@@ -78,7 +78,7 @@ const PublicFooter: FC = () => (
       </section>
 
       <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-7">
-        <p className="type-meta text-[#a9c1cf]">
+        <p className="type-meta">
           Distribution is free. Lens charges a 15% revenue share on earnings generated through the platform.
         </p>
       </section>
