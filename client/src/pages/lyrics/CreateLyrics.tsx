@@ -11,8 +11,6 @@ import { useGetTrack } from "@/hooks/tracks/track.hooks";
 import { setLyricsGuideLinesModal } from "@/state/features/lyricSlice";
 import { useCreateLyricsMutation } from "@/state/api/apiMutationSlice";
 import { AppDispatch } from "@/state/store";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useCallback, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -22,6 +20,9 @@ import { useAppSelector } from "@/state/hooks";
 import Combobox from "@/components/inputs/Combobox";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import LyricsGuidelines from "./LyricsGuidelines";
+
+import { LuInfo } from 'react-icons/lu';
+import { iconButtonClassName } from '@/constants/input.constants';
 
 type CreateLyricsFormValues = {
   trackId: string;
@@ -146,23 +147,26 @@ const CreateLyrics = () => {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-1">
               <RelaxedHeading>Lyrics</RelaxedHeading>
-              <Heading type="h3" className="!text-gray-900">
+              <Heading type="h3" className="!text-(--ink)">
                 Create lyrics record
               </Heading>
-              <p className="text-[12px] text-gray-500">
+              <p className="text-[12px] text-(--muted)">
                 Create a track-linked lyrics record before syncing it against
                 the uploaded primary audio.
               </p>
             </div>
             <CustomTooltip label="Lyrics guidelines">
-              <FontAwesomeIcon
-                className="cursor-pointer text-primary"
-                icon={faCircleInfo}
+              <button
+                type="button"
+                aria-label="Show lyrics guidelines"
+                className={iconButtonClassName}
                 onClick={(event) => {
                   event.preventDefault();
                   dispatch(setLyricsGuideLinesModal(true));
                 }}
-              />
+              >
+                <LuInfo className="size-4" aria-hidden="true" />
+              </button>
             </CustomTooltip>
           </div>
         </header>
@@ -170,10 +174,10 @@ const CreateLyrics = () => {
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <section className="rounded-md">
             <header className="mb-4 space-y-1">
-              <Heading type="h3" className="!text-gray-900">
+              <Heading type="h3" className="!text-(--ink)">
                 Record details
               </Heading>
-              <p className="text-[12px] text-gray-500">
+              <p className="text-[12px] text-(--muted)">
                 {trackResponse?.data?.title
                   ? `Creating lyrics for ${trackResponse.data.title}.`
                   : "Associate the lyrics with a track and add the base text."}
@@ -269,7 +273,7 @@ const CreateLyrics = () => {
             </div>
 
             {validateErrors.length > 0 && (
-              <ul className="mt-4 flex flex-col gap-2 rounded-md border border-red-200 bg-red-50/70 p-4 text-[12px] text-red-700">
+              <ul className="mt-4 flex flex-col gap-2 rounded-md bg-(--danger-soft) p-4 text-[12px] text-(--danger)">
                 {validateErrors.map((error, index) => (
                   <li key={`${error}-${index}`}>{error}</li>
                 ))}

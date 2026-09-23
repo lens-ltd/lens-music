@@ -9,16 +9,13 @@ import {
   getContributorCreditName,
   getContributorSearchName,
 } from "@/utils/contributorCredit.helper";
-import {
-  faExternalLinkAlt,
-  faSearch,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import { Check } from "lucide-react";
 import { FormEvent } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MIN_CONTRIBUTOR_SEARCH_CHARS, toTitleCase } from "./trackForm.helpers";
 
+import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
+import { iconButtonDangerClassName } from '@/constants/input.constants';
+
+import ExternalLink from '@/components/ui/ExternalLink';
 type TrackContributorsPanelProps = {
   contributorSearchTerm: string;
   contributorSearchResults: Contributor[];
@@ -64,28 +61,20 @@ const TrackContributorsPanel = ({
     .map((contributor) => contributor.role);
 
   return (
-    <section className="rounded-md border border-(--line)/70 bg-white p-4">
+    <section className="rounded-(--radius-card) bg-(--paper)">
       <header className="space-y-1">
         <h2 className="text-sm font-normal text-(--ink)">
           Contributors
         </h2>
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           Select a contributor once, then add every role they have on this
           track.
         </p>
-        <p className="text-[12px] text-(--slate) mt-2">
+        <p className="text-[12px] text-(--muted) mt-2">
           Can't find the contributor you're looking for?{" "}
-          <a
-            href={`/contributors/create?redirect=CLOSE_TAB`}
-            target="_blank"
-            className="text-(--lens-blue) hover:underline underline-offset-2 text-[12px]"
-          >
-            Create a new contributor{" "}
-            <FontAwesomeIcon
-              icon={faExternalLinkAlt}
-              className="text-[11px] inline-block ml-1"
-            />
-          </a>
+          <ExternalLink href="/contributors/create?redirect=CLOSE_TAB">
+              Create a new contributor
+            </ExternalLink>
         </p>
       </header>
 
@@ -105,21 +94,21 @@ const TrackContributorsPanel = ({
                   onContributorSearchChange(event.target.value)
                 }
                 placeholder="Search contributors by name, email, phone, or country"
-                prefixIcon={faSearch}
+                prefixIcon={LuSearch}
               />
               {contributorSearchTerm?.trim()?.length > 0 && (
-                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
+                <aside className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                   {isSearchingContributors ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
                       <Loader
                         size="small"
-                        className="text-(--slate)"
+                        className="text-(--muted)"
                       />
                       Searching contributors...
                     </span>
                   ) : contributorSearchTerm?.trim()?.length <
                     MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-(--slate)">
+                    <p className="px-3 py-2 text-[12px] text-(--muted)">
                       Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -139,7 +128,7 @@ const TrackContributorsPanel = ({
                                 <span className="text-[12px] text-(--ink)">
                                   {getContributorSearchName(contributor)}
                                 </span>
-                                <span className="text-[11px] text-(--slate)">
+                                <span className="text-[11px] text-(--muted)">
                                   {[
                                     contributor?.email,
                                     contributor?.phoneNumber,
@@ -150,7 +139,7 @@ const TrackContributorsPanel = ({
                                 </span>
                               </p>
                               {isSelected && (
-                                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                <LuCheck className="h-3.5 w-3.5 shrink-0 text-(--signal)" />
                               )}
                             </button>
                           </li>
@@ -159,7 +148,7 @@ const TrackContributorsPanel = ({
                     </ul>
                   ) : (
                     !(isSearchingContributors || selectedContributorId) && (
-                      <p className="px-3 py-2 text-[12px] text-(--slate)">
+                      <p className="px-3 py-2 text-[12px] text-(--muted)">
                         No contributors found.
                       </p>
                     )
@@ -207,16 +196,16 @@ const TrackContributorsPanel = ({
                     trackContributor.role,
                   )}
                 </p>
-                <p className="text-[11px] text-(--slate)">
+                <p className="text-[11px] text-(--muted)">
                   {toTitleCase(trackContributor?.role)}
                 </p>
                 {onUpdateSequence ? (
-                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--ink)/70">
+                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--muted)">
                     <span className="shrink-0">Order</span>
                     <input
                       type="number"
                       min={0}
-                      className="w-16 rounded border border-(--line)/60 px-1 py-0.5 text-[11px]"
+                      className="field-chrome h-(--control-sm) min-h-(--control-sm) w-20 px-2"
                       defaultValue={
                         trackContributor.sequenceNumber ?? ""
                       }
@@ -232,21 +221,24 @@ const TrackContributorsPanel = ({
                 ) : null}
               </section>
               {isDeletingContributor ? (
-                <Loader className="text-primary" />
+                <Loader className="text-(--signal)" />
               ) : (
-                <FontAwesomeIcon
-                  icon={faTrash}
+                <button
+                  type="button"
+                  aria-label="Delete"
+                  className={iconButtonDangerClassName}
                   onClick={(e) => {
                     e.preventDefault();
                     void onDeleteContributor(trackContributor?.id ?? "");
                   }}
-                  className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                >
+                  <LuTrash2 className="size-4" aria-hidden="true" />
+                </button>
               )}
             </li>
           ))
         ) : (
-          <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
+          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px] text-(--muted)">
             No contributors added yet.
           </li>
         )}

@@ -136,7 +136,7 @@ export default function Table<TData, TValue>({
 
   return (
     <>
-      <section className={`panel overflow-hidden ${containerClassName}`}>
+      <section className={`overflow-hidden ${containerClassName}`}>
         <DataTable className={tableClassName}>
           <TableHeader className="px-0">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -224,7 +224,7 @@ export default function Table<TData, TValue>({
                   className="px-4 py-10 text-center"
                 >
                   <p className="text-[13px] text-(--ink)">{noDataMessage}</p>
-                  <p className="mt-1 text-[11px] text-(--slate)">
+                  <p className="mt-1 text-[11px] text-(--muted)">
                     Try adjusting the current filters.
                   </p>
                 </TableCell>

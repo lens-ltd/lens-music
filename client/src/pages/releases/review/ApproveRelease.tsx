@@ -38,7 +38,7 @@ const ApproveRelease = () => {
       heading={`Approve ${selectedRelease?.title ?? "release"}`}
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-sm text-(--ink)/70">
+        <p className="text-sm text-(--muted)">
           Approving marks this release as ready for delivery. The submitter will
           be notified by email.
         </p>

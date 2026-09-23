@@ -21,7 +21,7 @@ export class EmailService {
   }
 
   private get logoUrl(): string {
-    return process.env.LOGO_URL || `${this.appUrl}/logo.png`;
+    return process.env.LOGO_URL || `${this.appUrl}/logo.webp`;
   }
 
   private async sendEmail({

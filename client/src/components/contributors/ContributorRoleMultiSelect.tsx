@@ -33,7 +33,7 @@ const ContributorRoleMultiSelect = ({
       <legend className="field-label">
         Roles
       </legend>
-      <div className="mt-1.5 grid max-h-52 grid-cols-1 gap-2 overflow-y-auto rounded-(--radius-control) border border-(--line) p-2 sm:grid-cols-2">
+      <div className="mt-1.5 grid max-h-52 grid-cols-1 gap-2 overflow-y-auto rounded-(--radius-control) bg-(--surface) p-2 sm:grid-cols-2">
         {roles.map((role) => {
           const isUnavailable = unavailable.has(role);
           const isSelected = selected.has(role);
@@ -41,12 +41,12 @@ const ContributorRoleMultiSelect = ({
           return (
             <label
               key={role}
-              className={`flex items-center gap-2 rounded-(--radius-control) border px-3 py-2 type-body-sm transition-colors ${
+              className={`flex items-center gap-2 rounded-(--radius-control) px-3 py-2 type-body-sm transition-colors ${
                 isUnavailable
-                  ? "cursor-not-allowed border-(--line) bg-(--surface) text-(--slate)"
+                  ? "cursor-not-allowed text-(--muted) opacity-60"
                   : isSelected
-                    ? "cursor-pointer border-[color:var(--lens-blue)] bg-(--lens-blue-soft) text-(--lens-blue)"
-                    : "cursor-pointer border-transparent text-(--ink)/70 hover:border-(--line)"
+                    ? "cursor-pointer bg-(--signal-soft) text-(--signal)"
+                    : "cursor-pointer text-(--ink) hover:bg-(--paper)"
               }`}
             >
               <input
@@ -54,7 +54,7 @@ const ContributorRoleMultiSelect = ({
                 checked={isSelected}
                 disabled={disabled || isUnavailable}
                 onChange={() => toggleRole(role)}
-                className="accent-[color:var(--lens-blue)]"
+                className="accent-[color:var(--signal)]"
               />
               <span className="min-w-0 flex-1">
                 {capitalizeString(role)}
@@ -68,7 +68,7 @@ const ContributorRoleMultiSelect = ({
           );
         })}
       </div>
-      <p className="mt-2 text-[10px] text-(--slate)">
+      <p className="mt-2 text-[10px] text-(--muted)">
         {value.length
           ? `${value.length} role${value.length === 1 ? "" : "s"} selected`
           : "Select at least one role"}

@@ -1,7 +1,8 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import Button from "@/components/inputs/Button";
-import LensLogo from "/logo.png";
+import LensLogo from "/logo-mark.png";
+import { LuMenu } from "react-icons/lu";
 
 interface PublicNavbarProps {
   scrolled?: boolean;
@@ -13,18 +14,17 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
   variant = "landing",
 }) => {
   const landingLinks = [
-    { label: "How it works", href: "#how-it-works" },
-    { label: "Revenue analytics", href: "#analytics" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "FAQ", href: "#faq" },
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "FAQ", href: "/#faq" },
   ];
 
   const authCta = { label: "Sign in", to: "/auth/login" };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-(--paper) ${
-        scrolled || variant === "auth" ? "border-b border-(--line)" : ""
+      className={`fixed top-0 left-0 right-0 z-50 bg-(--paper) transition-shadow duration-(--dur-state) ${
+        scrolled && variant === "landing" ? "shadow-[0_4px_20px_rgba(0,0,0,0.06)]" : ""
       }`}
       style={{ height: "64px" }}
     >
@@ -40,8 +40,8 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
         >
           <img
             src={LensLogo}
-            alt="Lens Logo"
-            className="h-10 w-10 rounded-(--radius-control) object-contain"
+            alt="Lens Music"
+            className="h-7 w-auto"
           />
         </Link>
 
@@ -50,7 +50,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
             <li className="hidden sm:block">
               <Link
                 to="/"
-                className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)"
+                className="link-sweep text-sm text-(--muted) hover:text-(--ink)"
               >
                 Back to home
               </Link>
@@ -71,7 +71,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                 <li key={label}>
                   <a
                     href={href}
-                    className="inline-flex min-h-10 items-center rounded-lg px-3 type-body-sm text-(--ink) transition-[background-color] duration-200 hover:bg-(--surface)"
+                    className="inline-flex h-(--control-md) items-center rounded-(--radius-control) px-3 text-sm text-(--ink) transition-colors duration-(--dur-state) hover:bg-(--surface)"
                   >
                     {label}
                   </a>
@@ -80,36 +80,26 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
               <li>
                 <Link
                   to="/auth/login"
-                  className="inline-flex min-h-10 items-center rounded-lg px-3 type-body-sm text-(--ink) transition-[background-color] duration-200 hover:bg-(--surface)"
+                  className="inline-flex h-(--control-md) items-center rounded-(--radius-control) px-3 text-sm text-(--ink) transition-colors duration-(--dur-state) hover:bg-(--surface)"
                 >
                   Sign in
                 </Link>
               </li>
               <li className="pl-2">
                 <Button route="/auth/signup" primary>
-                  Create account
+                  Create free account
                 </Button>
               </li>
             </ul>
 
             <details className="md:hidden relative" id="mobile-nav">
               <summary
-                className="list-none cursor-pointer p-2 rounded-(--radius-control)"
+                className="grid size-(--control-md) cursor-pointer list-none place-items-center rounded-(--radius-control) hover:bg-(--surface) [&::-webkit-details-marker]:hidden"
                 aria-label="Open navigation menu"
               >
-                <svg
-                  width="22"
-                  height="16"
-                  viewBox="0 0 22 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <rect y="0" width="22" height="1.5" rx="1" fill="currentColor" />
-                  <rect y="7" width="22" height="1.5" rx="1" fill="currentColor" />
-                  <rect y="14" width="22" height="1.5" rx="1" fill="currentColor" />
-                </svg>
+                <LuMenu className="size-5" aria-hidden="true" />
               </summary>
-              <div className="absolute top-full right-0 mt-2 w-60 rounded-(--radius-control) border border-(--menu-border) bg-(--paper) p-3 shadow-[var(--shadow-menu)]">
+              <div className="absolute top-full right-0 mt-2 w-64 rounded-(--radius-control) bg-(--paper) p-2 shadow-(--shadow-menu)">
                 <ul
                   className="flex flex-col gap-1 list-none m-0 p-0"
                   role="list"
@@ -118,28 +108,23 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
                     <li key={label}>
                       <a
                         href={href}
-                        className="block px-3 py-2 rounded type-body-sm text-(--ink) hover:bg-(--surface)"
+                        className="flex h-10 items-center rounded-(--radius-control) px-3 text-sm text-(--ink) hover:bg-(--surface)"
                       >
                         {label}
                       </a>
                     </li>
                   ))}
-                  <li className="pt-2 mt-1 border-t border-(--line)">
-                    <Button
-                      route="/auth/signup"
-                      primary
-                      className="w-full justify-start"
-                    >
-                      Create account
-                    </Button>
-                  </li>
                   <li>
-                    <Button
-                      route="/auth/login"
-                      styled={false}
-                      className="w-full justify-start"
+                    <Link
+                      to="/auth/login"
+                      className="flex h-10 items-center rounded-(--radius-control) px-3 text-sm text-(--ink) hover:bg-(--surface)"
                     >
                       Sign in
+                    </Link>
+                  </li>
+                  <li className="mt-2">
+                    <Button route="/auth/signup" primary className="w-full">
+                      Create free account
                     </Button>
                   </li>
                 </ul>

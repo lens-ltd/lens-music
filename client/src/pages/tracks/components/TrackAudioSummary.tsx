@@ -2,6 +2,7 @@ import DashboardSection from "@/pages/dashboard/components/DashboardSection";
 import { Track } from "@/types/models/track.types";
 import { formatDuration } from "./trackForm.helpers";
 
+import ExternalLink from '@/components/ui/ExternalLink';
 interface TrackAudioSummaryProps {
   track?: Track;
 }
@@ -18,41 +19,36 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
           {audioFiles.map((audioFile) => (
             <li
               key={audioFile.id}
-              className="rounded-md border border-(--line)/70 p-3"
+              className="rounded-(--radius-control) bg-(--surface) p-3"
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
                   <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--slate)">
+                  <p className="text-[11px] text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-(--lens-blue)">
+                    <p className="text-[11px] text-(--signal)">
                       Primary audio
                     </p>
                   )}
                 </section>
               </header>
               {audioFile.storagePath && (
-                <a
-                  href={audioFile.storagePath}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-flex text-[12px] text-(--lens-blue) hover:underline"
-                >
+                <ExternalLink href={audioFile.storagePath} className="mt-2 text-[13px]">
                   Open file
-                </a>
+                </ExternalLink>
               )}
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           No audio files uploaded.
         </p>
       )}

@@ -37,11 +37,11 @@ const DeleteRole = ({ onDeleted }: DeleteRoleProps) => {
     <Modal
       isOpen={deleteRoleModal}
       onClose={closeModal}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
       heading={`Delete ${selectedRole?.name || "role"}`}
     >
       <article className="flex w-full flex-col gap-4">
-        <p className="text-[13px] leading-6 text-(--ink)/70">
+        <p className="text-[13px] leading-6 text-(--muted)">
           Delete {selectedRole?.name || "this role"}? People assigned to this
           role may lose access tied to its permissions. This action cannot be
           undone.

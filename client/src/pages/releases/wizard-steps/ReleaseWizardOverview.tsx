@@ -16,14 +16,11 @@ import {
 } from "@/types/models/release.types";
 import { getProductionYearOptions } from "@/utils/releases.helper";
 import Modal from "@/components/modals/Modal";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   useUpdateReleaseOverview,
   useUploadReleaseCoverArt,
 } from "@/hooks/releases/release.hooks";
 import { toast } from "sonner";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
@@ -32,6 +29,9 @@ import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 import ReleaseLabelsSection from "./components/ReleaseLabelsSection";
 import RelatedReleasesSection from "./components/RelatedReleasesSection";
 import moment from "moment";
+
+import { LuSquarePen, LuTrash2 } from 'react-icons/lu';
+import { iconButtonClassName } from '@/constants/input.constants';
 
 interface ReleaseOverviewFormValues {
   type: ReleaseType;
@@ -346,17 +346,17 @@ const ReleaseWizardOverview = ({
       >
         {/* COVER ART */}
         <menu className="w-full flex flex-col gap-3">
-          <Heading type="h3">Cover Art</Heading>
+          <Heading type="h3">Cover art</Heading>
           {!release?.coverArtUrl ? (
-            <p className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70">
+            <p className="rounded-md bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--muted)">
               Cover art is required before final validation. You can save the
               overview now and add it before submitting.
             </p>
           ) : null}
-          <article className="w-full rounded-md border border-(--line) bg-white p-4 sm:p-5">
+          <article className="w-full rounded-(--radius-card) bg-(--paper)">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
-                <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-md border border-secondary/20 bg-secondary/5">
+                <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-(--radius-control) bg-(--surface)">
                   <img
                     src={release.coverArtUrl}
                     alt={`${release?.title || "Release"} cover art`}
@@ -368,27 +368,30 @@ const ReleaseWizardOverview = ({
                     <p className="text-sm font-medium text-(--ink)">
                       Current cover art
                     </p>
-                    <p className="text-[12px] text-secondary/80 font-normal">
+                    <p className="text-[12px] text-(--muted) font-normal">
                       This image will represent the release in the overview.
                     </p>
                   </menu>
-                  <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    className="cursor-pointer text-primary hover:text-primary/80"
+                  <button
+                    type="button"
+                    aria-label="Edit"
+                    className={iconButtonClassName}
                     onClick={(e) => {
                       e.preventDefault();
                       setCoverArtModalOpen(true);
                     }}
-                  />
+                  >
+                    <LuSquarePen className="size-4" aria-hidden="true" />
+                  </button>
                 </menu>
               </section>
             ) : (
-              <section className="flex flex-col gap-4 rounded-xl border border-dashed border-secondary/30 bg-secondary/5 p-5">
+              <section className="flex flex-col gap-4 rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5">
                 <menu className="flex flex-col gap-1">
                   <p className="text-sm font-medium text-(--ink)">
                     No cover art uploaded
                   </p>
-                  <p className="text-[12px] text-secondary/80 font-normal">
+                  <p className="text-[12px] text-(--muted) font-normal">
                     Upload a release cover image to make it visible at the top
                     of this overview.
                   </p>
@@ -472,7 +475,7 @@ const ReleaseWizardOverview = ({
         </menu>
         {/* PRODUCTION INFORMATION */}
         <menu className="w-full flex flex-col gap-3">
-          <Heading type="h3">Production Information</Heading>
+          <Heading type="h3">Production information</Heading>
           <fieldset className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Controller
               name="productionYear"
@@ -607,7 +610,7 @@ const ReleaseWizardOverview = ({
           </fieldset>
         </menu>
         <menu className="w-full flex flex-col gap-4">
-          <Heading type="h3">Additional Information</Heading>
+          <Heading type="h3">Additional information</Heading>
           <fieldset className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Controller
               name="parentalAdvisory"
@@ -743,7 +746,7 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
           <BackButton
             onClick={(e) => {
               e.preventDefault();
@@ -777,7 +780,7 @@ const ReleaseWizardOverview = ({
         className="min-w-[min(92vw,32rem)]"
       >
         <section className="flex w-full flex-col gap-4">
-          <p className="text-[12px] text-secondary/80">
+          <p className="text-[12px] text-(--muted)">
             Choose an image file and save it to update the release cover art.
           </p>
 
@@ -794,7 +797,7 @@ const ReleaseWizardOverview = ({
           />
 
           {selectedFileName && (
-            <menu className="flex items-center justify-between gap-3 rounded-lg border border-secondary/20 bg-secondary/5 px-3 py-2">
+            <menu className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) px-3 py-2">
               <p className="truncate text-[12px] text-(--ink)">
                 {selectedFileName}
               </p>
@@ -807,7 +810,7 @@ const ReleaseWizardOverview = ({
                 }}
                 aria-label="Remove selected cover art"
               >
-                <FontAwesomeIcon icon={faTrash} />
+                <LuTrash2 />
               </button>
             </menu>
           )}

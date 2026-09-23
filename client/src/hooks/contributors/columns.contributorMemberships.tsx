@@ -7,10 +7,10 @@ import {
   formatDate,
   getStatusBackgroundColor,
 } from "@/utils/strings.helper";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+
+import { LuEllipsis, LuInfo } from 'react-icons/lu';
 
 // MEMBER CONTRIBUTOR MEMBERSHIPS COLUMNS
 export const useMemberContributorMembershipsColumns = () => {
@@ -51,16 +51,13 @@ export const useMemberContributorMembershipsColumns = () => {
           return (
             <CustomPopover
               trigger={
-                <FontAwesomeIcon
-                  icon={faEllipsisH}
-                  className={ellipsisHClassName}
-                />
+                <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
               }
             >
-              <menu className="w-full flex flex-col items-center gap-1">
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
                 <TableActionButton
                   to={`/contributors/${row?.original?.parentContributor?.id}`}
-                  icon={faCircleInfo}
+                  icon={LuInfo}
                 >
                   View details
                 </TableActionButton>

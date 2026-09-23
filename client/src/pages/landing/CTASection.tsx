@@ -1,29 +1,25 @@
 import Button from '@/components/inputs/Button';
-import FadeSection from './FadeSection';
-import { fadeUp } from './landingShared';
 
 export default function CTASection() {
   return (
-    <FadeSection id="cta" labelledBy="cta-heading" className="bg-white py-16 md:py-20 border-t border-(--line)">
-      {({ inView }) => (
-        <article className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-10">
-          <section className="text-center" style={fadeUp(inView)}>
-            <p className="type-eyebrow">Start now</p>
-            <h2 id="cta-heading" className="mt-4 type-h2 max-w-[22ch] mx-auto">
-              Launch your next release with distribution and revenue reporting in one place.
-            </h2>
-            <p className="mt-4 max-w-2xl mx-auto type-body text-(--slate)">
-              Create your Lens account to distribute to 150+ stores and monitor earnings with a clear analytics dashboard.
-            </p>
-            <menu className="mt-7 flex flex-wrap justify-center gap-3 p-0 m-0">
-              <Button route="/auth/signup" primary>
-                Create account
-              </Button>
-              <Button route="/auth/login">Sign in</Button>
-            </menu>
-          </section>
-        </article>
-      )}
-    </FadeSection>
+    <section className="bg-(--signal) py-20 text-white md:py-24" aria-labelledby="cta-heading">
+      <div className="app-container flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 id="cta-heading" className="type-h2 max-w-[18ch]">
+            Release your next track for free.
+          </h2>
+          <p className="mt-3 type-body text-white/80">
+            Create an account and start your first release.
+          </p>
+        </div>
+        <Button
+          route="/auth/signup"
+          primary
+          className="h-12 bg-white px-6 text-base text-(--signal) hover:bg-white/90"
+        >
+          Create free account
+        </Button>
+      </div>
+    </section>
   );
 }

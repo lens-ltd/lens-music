@@ -1,6 +1,6 @@
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { TrackAudioUploadPhase } from "@/hooks/tracks/useTrackAudioUpload";
+
+import { LuCheck } from 'react-icons/lu';
 
 type TrackUploadProgressProps = {
   progress: number;
@@ -26,15 +26,15 @@ const TrackUploadProgress = ({
       : `${progress}%`;
 
   return (
-    <figure className="mt-3 rounded-md border border-(--line)/70 bg-(--surface) p-4">
+    <figure className="mt-3 rounded-md bg-(--surface) p-4">
       <figcaption className="flex items-center justify-between gap-3">
         <p className="text-[12px] text-(--ink) truncate">
           {fileName}
         </p>
-        <output className="text-[12px] font-normal text-(--ink)/70 shrink-0">
+        <output className="text-[12px] font-normal text-(--muted) shrink-0">
           {isComplete ? (
-            <p className="flex text-[12px] font-normal items-center gap-1.5 bg-transparent text-green-700">
-              <FontAwesomeIcon icon={faCheck} className="text-[11px]" />
+            <p className="flex text-[12px] font-normal items-center gap-1.5 bg-transparent text-(--success)">
+              <LuCheck className="text-[11px]" />
               Uploaded
             </p>
           ) : (
@@ -44,7 +44,7 @@ const TrackUploadProgress = ({
       </figcaption>
 
       {phase === "registering" && !isComplete ? (
-        <p className="mt-2 text-[11px] text-(--slate)">
+        <p className="mt-2 text-[11px] text-(--muted)">
           Saving file details…
         </p>
       ) : null}
@@ -60,8 +60,8 @@ const TrackUploadProgress = ({
           [&::-webkit-progress-value]:duration-300
           ${
             isComplete
-              ? "[&::-webkit-progress-value]:bg-green-700 [&::-moz-progress-bar]:bg-green-700"
-              : "[&::-webkit-progress-value]:bg-(--lens-blue) [&::-moz-progress-bar]:bg-(--lens-blue)"
+              ? "[&::-webkit-progress-value]:bg-(--success) [&::-moz-progress-bar]:bg-(--success)"
+              : "[&::-webkit-progress-value]:bg-(--signal) [&::-moz-progress-bar]:bg-(--signal)"
           }`}
       >
         {progress}%

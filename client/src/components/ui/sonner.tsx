@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast rounded-md border border-(--menu-border) bg-(--paper) px-3.5 py-3 shadow-[var(--shadow-menu)] type-body-sm text-(--ink)",
+            "group toast rounded-(--radius-control) bg-(--paper) px-4 py-3 shadow-(--shadow-menu) type-body-sm text-(--ink)",
           description: "group-[.toast]:type-meta",
           actionButton:
             "group-[.toast]:bg-(--signal) group-[.toast]:text-white",

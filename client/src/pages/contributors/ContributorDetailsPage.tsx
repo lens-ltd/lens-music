@@ -29,8 +29,6 @@ import { useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { socialProfileFields, storeProfileFields } from "./contributorForm";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faCertificate, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { getGenderLabel } from "@/constants/input.constants";
 import { useMemberContributorMembershipsColumns } from "@/hooks/contributors/columns.contributorMemberships";
 import { useFetchContributorMemberships } from "@/hooks/contributors/contributorMembership.hooks";
@@ -39,12 +37,14 @@ import AssignContributorManager from "./AssignContributorManager";
 import UnassignContributorManager from "./UnassignContributorManager";
 import { useRequestContributorVerificationMutation } from "@/state/api/apiMutationSlice";
 
+import { LuBadgeCheck, LuPlus, LuSquarePen, LuTrash2 } from 'react-icons/lu';
+
 const statusBadgeClassNames: Record<string, string> = {
-  ACTIVE: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
-  INACTIVE: "bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200",
-  VERIFIED: "bg-primary/10 text-primary ring-1 ring-inset ring-primary/20",
-  PENDING: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
-  NOT_VERIFIED: "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200",
+  ACTIVE: "bg-(--success-soft) text-(--success) ring-1 ring-inset ring-(--success-soft)",
+  INACTIVE: "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)",
+  VERIFIED: "bg-(--signal-soft) text-(--signal) ring-1 ring-inset ring-primary/20",
+  PENDING: "bg-(--surface) text-(--ink) ring-1 ring-inset ring-(--line)",
+  NOT_VERIFIED: "bg-(--danger-soft) text-(--danger) ring-1 ring-inset ring-(--danger-soft)",
 };
 
 type FieldConfig = {
@@ -54,12 +54,12 @@ type FieldConfig = {
 
 const getBadgeClassName = (status?: string) => {
   if (!status) {
-    return "bg-gray-100 text-gray-500 ring-1 ring-inset ring-gray-200";
+    return "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)";
   }
 
   return (
     statusBadgeClassNames[status] ||
-    "bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200"
+    "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)"
   );
 };
 
@@ -289,12 +289,12 @@ const ContributorDetailsPage = () => {
     const hasValues = fields.some((field) => field.valueText);
 
     return (
-      <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+      <section className="rounded-(--radius-card) bg-(--paper)">
         <header className="flex flex-col gap-1">
-          <Heading type="h3" className="!text-gray-900">
+          <Heading type="h3" className="!text-(--ink)">
             {title}
           </Heading>
-          <p className="text-[12px] text-gray-500">{description}</p>
+          <p className="text-[12px] text-(--muted)">{description}</p>
         </header>
 
         {isFetching ? (
@@ -316,12 +316,12 @@ const ContributorDetailsPage = () => {
                   key={field.keyText}
                   keyText={field.keyText}
                   valueText={field.valueText}
-                  className="h-full border border-gray-100 bg-gray-50/80 p-3"
+                  className="h-full rounded-(--radius-control) bg-(--surface) p-3"
                 />
               ))}
           </div>
         ) : (
-          <p className="mt-4 rounded-md border border-dashed border-gray-200 bg-gray-50/60 px-4 py-3 text-[12px] text-gray-500">
+          <p className="mt-4 rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
             {emptyState}
           </p>
         )}
@@ -339,7 +339,7 @@ const ContributorDetailsPage = () => {
                 contributorDetails?.name ||
                 "Contributor details"}
             </Heading>
-            <p className="mt-2 text-[12px] text-gray-500">
+            <p className="mt-2 text-[12px] text-(--muted)">
               Review the contributor record, supported profile links, and
               current verification metadata.
             </p>
@@ -348,7 +348,7 @@ const ContributorDetailsPage = () => {
             <div className="flex flex-wrap items-center gap-2">
               {(canRequestVerification || verificationRequested) && (
                 <Button
-                  icon={faCertificate}
+                  icon={LuBadgeCheck}
                   primary={canRequestVerification}
                   disabled={verificationRequested || isRequestingVerification}
                   isLoading={isRequestingVerification}
@@ -363,7 +363,7 @@ const ContributorDetailsPage = () => {
                 </Button>
               )}
               <Button
-                icon={faPenToSquare}
+                icon={LuSquarePen}
                 onClick={(event) => {
                   event.preventDefault();
                   navigate(`/contributors/${id}/update`);
@@ -376,11 +376,11 @@ const ContributorDetailsPage = () => {
         </header>
 
         {isNotFound ? (
-          <section className="rounded-md border border-dashed border-gray-300 bg-white p-8 text-center shadow-sm">
-            <Heading type="h3" className="!text-gray-900">
+          <section className="rounded-(--radius-card) bg-(--surface) p-8 text-center">
+            <Heading type="h3" className="!text-(--ink)">
               Contributor not found
             </Heading>
-            <p className="mt-2 text-[12px] text-gray-500">
+            <p className="mt-2 text-[12px] text-(--muted)">
               The contributor record could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
@@ -396,13 +396,13 @@ const ContributorDetailsPage = () => {
           </section>
         ) : (
           <>
-            <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+            <section className="rounded-(--radius-card) bg-(--paper)">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-primary/70">
+                  <p className="text-xs text-(--muted)">
                     Contributor overview
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold text-gray-900">
+                  <h2 className="mt-2 text-lg font-semibold text-(--ink)">
                     {isFetching
                       ? "Loading contributor..."
                       : contributorDetails?.displayName ||
@@ -410,20 +410,20 @@ const ContributorDetailsPage = () => {
                         "Contributor details"}
                   </h2>
                   {!isFetching && (
-                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-gray-500">
+                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--muted)">
                       {contributorDetails?.email && (
-                        <span className="text-primary text-[12px]">
+                        <span className="text-(--signal) text-[12px]">
                           {contributorDetails?.email}
                         </span>
                       )}
                       {contributorDetails?.phoneNumber && (
-                        <span className="text-primary text-[12px]">
+                        <span className="text-(--signal) text-[12px]">
                           {contributorDetails?.phoneNumber}
                         </span>
                       )}
                       {!contributorDetails?.email &&
                         !contributorDetails?.phoneNumber && (
-                          <span className="text-[12px] text-gray-500">
+                          <span className="text-[12px] text-(--muted)">
                             No direct contact details available.
                           </span>
                         )}
@@ -434,8 +434,8 @@ const ContributorDetailsPage = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   {isFetching ? (
                     <>
-                      <span className="h-7 w-24 animate-pulse rounded-full bg-gray-100" />
-                      <span className="h-7 w-28 animate-pulse rounded-full bg-gray-100" />
+                      <span className="h-7 w-24 animate-pulse rounded-full bg-(--surface)" />
+                      <span className="h-7 w-28 animate-pulse rounded-full bg-(--surface)" />
                     </>
                   ) : (
                     <>
@@ -456,12 +456,12 @@ const ContributorDetailsPage = () => {
               </div>
             </section>
 
-            <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+            <section className="rounded-(--radius-card) bg-(--paper)">
               <header className="flex flex-col gap-1">
-                <Heading type="h3" className="!text-gray-900">
+                <Heading type="h3" className="!text-(--ink)">
                   Personal information
                 </Heading>
-                <p className="text-[12px] text-gray-500">
+                <p className="text-[12px] text-(--muted)">
                   Supported contributor identity, contact, and lifecycle fields.
                 </p>
               </header>
@@ -473,7 +473,7 @@ const ContributorDetailsPage = () => {
                     keyText={field.keyText}
                     valueText={field.valueText}
                     isLoading={isFetching}
-                    className="h-full border border-gray-100 bg-gray-50/80 p-3"
+                    className="h-full rounded-(--radius-control) bg-(--surface) p-3"
                   />
                 ))}
               </div>
@@ -498,12 +498,12 @@ const ContributorDetailsPage = () => {
                 contributorDetails.type as ContributorType,
               ) &&
               canManage && (
-                <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+                <section className="rounded-(--radius-card) bg-(--paper)">
                   <header className="flex flex-col gap-1">
-                    <Heading type="h3" className="!text-gray-900">
+                    <Heading type="h3" className="!text-(--ink)">
                       Members
                     </Heading>
-                    <p className="text-[12px] text-gray-500">
+                    <p className="text-[12px] text-(--muted)">
                       This contributor is a group. You can manage its members.
                     </p>
                   </header>
@@ -516,20 +516,20 @@ const ContributorDetailsPage = () => {
               )}
 
             {canAssignManagers && (
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-(--radius-card) bg-(--paper)">
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-1">
-                    <Heading type="h3" className="!text-gray-900">
+                    <Heading type="h3" className="!text-(--ink)">
                       Managers
                     </Heading>
-                    <p className="text-[12px] text-gray-500">
+                    <p className="text-[12px] text-(--muted)">
                       Users assigned to manage this contributor. Assignment is
                       admin-only; managers also need contributor permissions.
                     </p>
                   </div>
                   <Button
                     primary
-                    icon={faPlus}
+                    icon={LuPlus}
                     onClick={(e) => {
                       e.preventDefault();
                       dispatch(setAssignManagerModal(true));
@@ -540,9 +540,9 @@ const ContributorDetailsPage = () => {
                 </header>
                 <div className="mt-4 flex flex-col gap-2">
                   {managersIsFetching ? (
-                    <p className="text-[12px] text-gray-500">Loading managers…</p>
+                    <p className="text-[12px] text-(--muted)">Loading managers…</p>
                   ) : managersList.length === 0 ? (
-                    <p className="rounded-md border border-dashed border-gray-200 bg-gray-50/60 px-4 py-3 text-[12px] text-gray-500">
+                    <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
                       No managers assigned yet. The creator is auto-assigned on
                       create; assign additional users as needed.
                     </p>
@@ -550,16 +550,16 @@ const ContributorDetailsPage = () => {
                     managersList.map((manager) => (
                       <div
                         key={manager.id}
-                        className="flex flex-col gap-2 rounded-md border border-gray-100 bg-gray-50/80 p-3 sm:flex-row sm:items-center sm:justify-between"
+                        className="flex flex-col gap-2 rounded-md bg-(--surface) p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-gray-900">
+                          <p className="text-[13px] font-medium text-(--ink)">
                             {manager.user?.name || "User"}
                           </p>
-                          <p className="truncate text-[12px] text-gray-500">
+                          <p className="truncate text-[12px] text-(--muted)">
                             {manager.user?.email || manager.userId}
                           </p>
-                          <p className="mt-1 text-[11px] text-gray-400">
+                          <p className="mt-1 text-[11px] text-(--muted)">
                             Assigned{" "}
                             {manager.createdAt
                               ? formatDate(manager.createdAt, "DD/MM/YYYY HH:mm")
@@ -567,8 +567,8 @@ const ContributorDetailsPage = () => {
                           </p>
                         </div>
                         <TableActionButton
-                          icon={faTrash}
-                          iconClassName="text-red-700"
+                          icon={LuTrash2}
+                          iconClassName="text-(--danger)"
                           onClick={(e) => {
                             e.preventDefault();
                             dispatch(setSelectedManager(manager));
@@ -585,9 +585,9 @@ const ContributorDetailsPage = () => {
             )}
 
             {membershipsIsSuccess && contributorMembershipsList.length > 0 && (
-              <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+              <section className="rounded-(--radius-card) bg-(--paper)">
                 <header className="flex flex-col gap-1">
-                  <Heading type="h3" className="!text-gray-900">
+                  <Heading type="h3" className="!text-(--ink)">
                     This contributor is a member of the following groups:
                   </Heading>
                   <Table

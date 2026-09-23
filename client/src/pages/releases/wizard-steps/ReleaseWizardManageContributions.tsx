@@ -29,17 +29,14 @@ import {
   MIN_CONTRIBUTOR_SEARCH_CHARS,
   toTitleCase,
 } from "@/pages/tracks/components/trackForm.helpers";
-import {
-  faExternalLinkAlt,
-  faSearch,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Check } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 
+import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
+import { iconButtonDangerClassName } from '@/constants/input.constants';
+
+import ExternalLink from '@/components/ui/ExternalLink';
 const ReleaseWizardManageContributions = ({
   currentStepName,
   nextStepName,
@@ -294,28 +291,20 @@ const ReleaseWizardManageContributions = ({
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
-      <article className="rounded-md border border-(--line)/70 bg-white p-4">
+      <article className="rounded-(--radius-card) bg-(--paper)">
         <header className="space-y-1">
           <h2 className="text-sm font-normal text-(--ink)">
             Contributors
           </h2>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Select a contributor once, then add every role they have on this
             release.
           </p>
-          <p className="text-[12px] text-(--slate) mt-2">
+          <p className="text-[12px] text-(--muted) mt-2">
             Can't find the contributor you're looking for?{" "}
-            <a
-              href={`/contributors/create?redirect=CLOSE_TAB`}
-              target="_blank"
-              className="text-(--lens-blue) hover:underline underline-offset-2 text-[12px]"
-            >
-              Create a new contributor{" "}
-              <FontAwesomeIcon
-                icon={faExternalLinkAlt}
-                className="text-[11px] inline-block ml-1"
-              />
-            </a>
+            <ExternalLink href="/contributors/create?redirect=CLOSE_TAB">
+              Create a new contributor
+            </ExternalLink>
           </p>
         </header>
 
@@ -335,21 +324,21 @@ const ReleaseWizardManageContributions = ({
                     handleContributorSearchChange(event.target.value)
                   }
                   placeholder="Search contributors by name, email, phone, or country"
-                  prefixIcon={faSearch}
+                  prefixIcon={LuSearch}
                 />
                 {contributorSearchTerm?.trim()?.length > 0 && (
-                  <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
+                  <aside className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                     {isSearchingContributors || isContributorSearchPending ? (
-                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
+                      <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
                         <Loader
                           size="small"
-                          className="text-(--slate)"
+                          className="text-(--muted)"
                         />
                         Searching contributors...
                       </span>
                     ) : contributorSearchTerm?.trim()?.length <
                       MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                      <p className="px-3 py-2 text-[12px] text-(--slate)">
+                      <p className="px-3 py-2 text-[12px] text-(--muted)">
                         Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters
                         to search.
                       </p>
@@ -371,7 +360,7 @@ const ReleaseWizardManageContributions = ({
                                   <span className="text-[12px] text-(--ink)">
                                     {getContributorSearchName(contributor)}
                                   </span>
-                                  <span className="text-[11px] text-(--slate)">
+                                  <span className="text-[11px] text-(--muted)">
                                     {[
                                       contributor?.email,
                                       contributor?.phoneNumber,
@@ -382,7 +371,7 @@ const ReleaseWizardManageContributions = ({
                                   </span>
                                 </p>
                                 {isSelected && (
-                                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                  <LuCheck className="h-3.5 w-3.5 shrink-0 text-(--signal)" />
                                 )}
                               </button>
                             </li>
@@ -391,7 +380,7 @@ const ReleaseWizardManageContributions = ({
                       </ul>
                     ) : (
                       !(isSearchingContributors || selectedContributorId) && (
-                        <p className="px-3 py-2 text-[12px] text-(--slate)">
+                        <p className="px-3 py-2 text-[12px] text-(--muted)">
                           No contributors found.
                         </p>
                       )
@@ -439,15 +428,15 @@ const ReleaseWizardManageContributions = ({
                       releaseContributor.role,
                     )}
                   </p>
-                  <p className="text-[11px] text-(--slate)">
+                  <p className="text-[11px] text-(--muted)">
                     {toTitleCase(releaseContributor?.role)}
                   </p>
-                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--ink)/70">
+                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--muted)">
                     <span className="shrink-0 text-[11px]">Order</span>
                     <input
                       type="number"
                       min={0}
-                      className="w-16 rounded border border-(--line)/60 px-1 py-0.5 text-[11px] text-(--ink)/70"
+                      className="field-chrome h-(--control-sm) min-h-(--control-sm) w-20 px-2"
                       defaultValue={releaseContributor.sequenceNumber ?? ""}
                       disabled={isUpdatingReleaseContributorSequence}
                       onBlur={(e) => {
@@ -463,23 +452,26 @@ const ReleaseWizardManageContributions = ({
                   </label>
                 </section>
                 {isDeletingContributor ? (
-                  <Loader className="text-primary" />
+                  <Loader className="text-(--signal)" />
                 ) : (
-                  <FontAwesomeIcon
-                    icon={faTrash}
+                  <button
+                    type="button"
+                    aria-label="Delete"
+                    className={iconButtonDangerClassName}
                     onClick={(e) => {
                       e.preventDefault();
                       void handleDeleteContributor(
                         releaseContributor?.id ?? "",
                       );
                     }}
-                    className="cursor-pointer text-[12px] text-(--ink) transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
+                  >
+                    <LuTrash2 className="size-4" aria-hidden="true" />
+                  </button>
                 )}
               </li>
             ))
           ) : (
-            <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
+            <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px] text-(--muted)">
               No contributors added yet.
             </li>
           )}
@@ -488,14 +480,14 @@ const ReleaseWizardManageContributions = ({
 
       {!hasPrimaryArtist ? (
         <p
-          className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70"
+          className="rounded-md bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--muted)"
           role="status"
         >
           Add at least one primary artist before continuing.
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
         <BackButton
           onClick={(e) => {
             e.preventDefault();

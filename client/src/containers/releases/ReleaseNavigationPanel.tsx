@@ -9,10 +9,10 @@ import {
 import { capitalizeString } from "@/utils/strings.helper";
 import { Link, useParams } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCopy } from "@fortawesome/free-regular-svg-icons";
 import { toast } from "sonner";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+
+import { LuCheck, LuCircleCheck, LuCopy } from 'react-icons/lu';
+import { Icon } from '@/components/ui/icon';
 
 type ReleaseNavigationPanelProps = {
   children: ReactNode;
@@ -56,18 +56,18 @@ const ReleaseNavigationPanel = ({
   const hasStepSidebar = navigationSteps.length > 1;
 
   return (
-    <article className="w-full overflow-hidden rounded-xl border border-(--line) bg-white shadow-sm">
+    <article className="w-full">
       <section
         className={`w-full ${
           hasStepSidebar
-            ? "grid gap-0 lg:grid-cols-[300px_minmax(0,1fr)]"
+            ? "grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]"
             : "block"
         }`}
       >
         {hasStepSidebar && (
-          <aside className="border-b border-(--line) bg-(--surface) lg:border-r lg:border-b-0">
+          <aside className="self-start rounded-(--radius-card) bg-(--surface) lg:sticky lg:top-20">
             <header className="px-5 py-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-(--lens-blue)/70">
+              <p className="text-xs text-(--muted)">
                 Current Section
               </p>
               <h2 className="mt-2 text-sm font-normal text-(--ink)">
@@ -95,36 +95,33 @@ const ReleaseNavigationPanel = ({
                     to={wizardRoute}
                     onClick={() => onActivateStep(step.stepName)}
                     aria-current={isActive ? "step" : undefined}
-                    className={`relative flex min-w-[190px] items-center gap-3 rounded-md border px-3 py-3 text-left transition-all duration-200 lg:min-w-0 ${
+                    className={`relative flex min-w-[190px] items-center gap-3 rounded-(--radius-control) px-3 py-2.5 text-left transition-colors duration-(--dur-state) lg:min-w-0 ${
                       isActive
-                        ? "border-[color:var(--lens-blue)]/30 bg-(--lens-blue)/8"
-                        : "border-transparent bg-white hover:border-(--line) hover:bg-(--surface)"
+                        ? "bg-(--paper)"
+                        : "hover:bg-(--surface-hover)"
                     }`}
                   >
                     <span
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-normal ${
                         isCompleted
-                          ? "bg-(--lens-blue) text-white"
+                          ? "bg-(--signal) text-white"
                           : isActive
-                            ? "bg-(--lens-blue) text-white"
+                            ? "bg-(--signal) text-white"
                             : isPast
-                              ? "bg-(--lens-blue-soft) text-(--lens-blue)"
-                              : "bg-(--surface) text-(--slate)"
+                              ? "bg-(--signal-soft) text-(--signal)"
+                              : "bg-(--surface) text-(--muted)"
                       }`}
                     >
                       {isCompleted ? (
-                        <FontAwesomeIcon
-                          icon={faCheck}
-                          className="text-white text-[10px]"
-                        />
+                        <LuCheck className="size-4" aria-hidden="true" />
                       ) : (
                         `${index + 1}`.padStart(2, "0")
                       )}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
-                        className={`block truncate text-[12px] font-normal ${
-                          isActive ? "text-(--lens-blue)" : "text-(--ink)/70"
+                        className={`block truncate text-sm ${
+                          isActive ? "font-medium text-(--signal)" : "text-(--ink)"
                         }`}
                       >
                         {capitalizeString(step?.stepName)}
@@ -138,17 +135,17 @@ const ReleaseNavigationPanel = ({
         )}
 
         <div className="min-w-0 w-full">
-          <header className="border-b border-(--line) bg-white px-5 py-5 sm:px-6">
+          <header className="pb-6">
             <nav className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <menu className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue) font-normal">
+                <p className="text-xs text-(--muted) font-normal">
                   {capitalizeString(
                     activeReleaseNavigationFlow?.staticReleaseNavigation
                       ?.stepName,
                   ) || "Release setup"}
                 </p>
                 <ul className="flex items-center gap-2 mt-1">
-                  <p className="text-[12px] text-(--slate)">
+                  <p className="text-[12px] text-(--muted)">
                     {isLoading ? (
                       <SkeletonLoader type="text" width="16rem" height="1rem" />
                     ) : (
@@ -156,13 +153,14 @@ const ReleaseNavigationPanel = ({
                       "Fill out each section to prepare this release."
                     )}
                   </p>{" "}
-                  <span className="text-[12px] text-(--slate)">•</span>{" "}
+                  <span className="text-[12px] text-(--muted)">•</span>{" "}
                   {release?.catalogNumber && (
-                    <p className="text-[12px] text-(--slate)">
+                    <p className="text-[12px] text-(--muted)">
                       {release?.catalogNumber}{" "}
-                      <FontAwesomeIcon
-                        className="ml-0.5 cursor-pointer text-[11px] text-(--lens-blue)"
-                        icon={copied ? faCircleCheck : faCopy}
+                      <button
+                        type="button"
+                        className="ml-1 inline-grid size-6 cursor-pointer place-items-center rounded-(--radius-control) align-middle text-(--signal) hover:bg-(--surface)"
+                        aria-label="Copy catalog number"
                         onClick={(e) => {
                           e.preventDefault();
                           navigator.clipboard.writeText(
@@ -170,9 +168,11 @@ const ReleaseNavigationPanel = ({
                           );
                           setCopied(true);
                           setTimeout(() => setCopied(false), 2000);
-                          toast.success("Copied to clipboard");
+                          toast.success("Catalog number copied");
                         }}
-                      />
+                      >
+                        <Icon icon={copied ? LuCircleCheck : LuCopy} className="size-3.5" />
+                      </button>
                     </p>
                   )}
                 </ul>
@@ -181,11 +181,11 @@ const ReleaseNavigationPanel = ({
           </header>
 
           {isLoading ? (
-            <section className="min-h-[320px] p-6">
+            <section className="min-h-[320px]">
               <FormSkeletonLoader />
             </section>
           ) : (
-            <section className="p-5 sm:p-6 w-full">{children}</section>
+            <section className="w-full">{children}</section>
           )}
         </div>
       </section>

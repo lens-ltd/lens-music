@@ -31,7 +31,7 @@ const TrackLyricsSummary = ({ track }: TrackLyricsSummaryProps) => {
           {sortByNewest(lyrics).map((lyric) => (
             <li
               key={lyric.id}
-              className="flex items-center justify-between gap-3 rounded-md border border-(--line)/70 p-3"
+              className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3"
             >
               <p className="text-[12px] text-(--ink)">
                 {formatLyricsLabel(lyric)}
@@ -40,7 +40,7 @@ const TrackLyricsSummary = ({ track }: TrackLyricsSummaryProps) => {
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           No lyrics records.
         </p>
       )}

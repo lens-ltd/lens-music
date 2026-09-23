@@ -38,8 +38,8 @@ const CreateRolePage = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
         <header className="w-full flex flex-col gap-1">
-          <Heading>Create Role</Heading>
-          <p className="text-[13px] text-(--slate) font-normal">
+          <Heading>Create role</Heading>
+          <p className="text-[13px] text-(--muted) font-normal">
             Define a new role with specific permissions for dashboard users.
           </p>
         </header>
@@ -48,7 +48,7 @@ const CreateRolePage = () => {
           <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                <label className="text-xs text-(--muted)">
                   Role name *
                 </label>
                 <Input
@@ -60,7 +60,7 @@ const CreateRolePage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                <label className="text-xs text-(--muted)">
                   Description
                 </label>
                 <TextArea

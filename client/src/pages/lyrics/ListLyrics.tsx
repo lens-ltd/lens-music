@@ -1,7 +1,8 @@
 import { Heading } from '@/components/text/Headings';
 import Button from '@/components/inputs/Button';
 import UserLayout from '@/containers/UserLayout';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+
+import { LuPlus } from 'react-icons/lu';
 
 const ListLyrics = () => {
   return (
@@ -14,8 +15,8 @@ const ListLyrics = () => {
               Write and time lyrics for your tracks.
             </p>
           </div>
-          <Button primary icon={faPlus} route='create'>
-            Add new lyrics
+          <Button primary icon={LuPlus} route='create'>
+            Add lyrics
           </Button>
         </nav>
       </main>

@@ -7,7 +7,6 @@ import { COUNTRIES_LIST } from "@/constants/countries.constants";
 import UserLayout from "@/containers/UserLayout";
 import { useCreateContributorMutation } from "@/state/api/apiMutationSlice";
 import { capitalizeString } from "@/utils/strings.helper";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -24,6 +23,8 @@ import {
 } from "./contributorForm";
 import { Contributor } from "@/types/models/contributor.types";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
+
+import { LuSave } from 'react-icons/lu';
 
 const CreateContributorPage = () => {
   // NAVIGATION
@@ -122,7 +123,7 @@ const CreateContributorPage = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-6">
         <header className="flex w-full items-center justify-between gap-3">
-          <Heading>Create new contributor</Heading>
+          <Heading>Create contributor</Heading>
         </header>
 
         <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
@@ -134,7 +135,7 @@ const CreateContributorPage = () => {
               <Heading type="h3" id="contributor-personal-heading">
                 Personal information
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Capture the supported contributor details and optional profile
                 references.
               </p>
@@ -315,7 +316,7 @@ const CreateContributorPage = () => {
               <Heading type="h3" id="contributor-group-heading">
                 Group membership
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Optionally associate this contributor with a parent group.
               </p>
             </header>
@@ -325,9 +326,9 @@ const CreateContributorPage = () => {
                 type="checkbox"
                 checked={belongsToGroup}
                 onChange={(e) => setBelongsToGroup(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                className="size-4 accent-(--signal)"
               />
-              <span className="text-[13px] text-gray-700">
+              <span className="text-[13px] text-(--muted)">
                 This contributor belongs to a group
               </span>
             </label>
@@ -359,7 +360,7 @@ const CreateContributorPage = () => {
               <Heading type="h3" id="contributor-social-heading">
                 Social media
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Supported links are stored as contributor profile links.
               </p>
             </header>
@@ -390,7 +391,7 @@ const CreateContributorPage = () => {
               <Heading type="h3" id="contributor-stores-heading">
                 Store IDs
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Enter supported store identifiers or profile URLs. Unsupported
                 services from the reference screen are intentionally excluded.
               </p>
@@ -423,7 +424,7 @@ const CreateContributorPage = () => {
             >
               Back
             </BackButton>
-            <Button icon={faSave} primary submit isLoading={isLoading}>
+            <Button icon={LuSave} primary submit isLoading={isLoading}>
               Save
             </Button>
           </footer>

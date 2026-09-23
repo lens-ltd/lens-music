@@ -13,14 +13,10 @@ import {
   formatDate,
   getStatusBackgroundColor,
 } from "@/utils/strings.helper";
-import {
-  faCircleInfo,
-  faEllipsisH,
-  faShieldAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+
+import { LuEllipsis, LuInfo, LuShield } from 'react-icons/lu';
 
 export const useUserColumns = () => {
   const dispatch = useAppDispatch();
@@ -68,22 +64,19 @@ export const useUserColumns = () => {
           return (
             <CustomPopover
               trigger={
-                <FontAwesomeIcon
-                  icon={faEllipsisH}
-                  className={ellipsisHClassName}
-                />
+                <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
               }
             >
-              <menu className="w-full flex flex-col items-center gap-1">
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
                 <TableActionButton
-                  icon={faCircleInfo}
+                  icon={LuInfo}
                   to={`/users/${row?.original?.id}`}
                 >
                   View details
                 </TableActionButton>
                 {canAssignRole && (
                   <TableActionButton
-                    icon={faShieldAlt}
+                    icon={LuShield}
                     onClick={(e) => {
                       e.preventDefault();
                       dispatch(setSelectedUser(row?.original));

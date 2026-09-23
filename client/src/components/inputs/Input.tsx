@@ -6,9 +6,6 @@ import {
   useId,
   useRef,
 } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Checkbox } from "../ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import DatePicker from "./DatePicker";
@@ -22,6 +19,11 @@ import {
   Merge,
 } from "react-hook-form";
 
+import { LuSearch, LuUpload } from 'react-icons/lu';
+import { buttonVariants } from '@/components/ui/button';
+import type { IconType } from 'react-icons';
+import { Icon } from '@/components/ui/icon';
+
 interface InputProps {
   label?: string;
   placeholder?: string;
@@ -32,8 +34,8 @@ interface InputProps {
   submit?: boolean;
   type?: string;
   value?: string | number | Date | boolean;
-  suffixIcon?: IconProp;
-  prefixIcon?: IconProp;
+  suffixIcon?: IconType;
+  prefixIcon?: IconType;
   suffixIconHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
   name?: string;
   suffixIconPrimary?: boolean;
@@ -127,7 +129,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className={cn("field-stack", labelClassName)}>
           <label className="inline-flex w-fit items-center gap-2 type-body-sm">
             <Checkbox
-              className="border-(--line-strong) cursor-pointer"
+              className="cursor-pointer"
               onCheckedChange={
                 onChange as unknown as
                   | ((checked: CheckedState) => void)
@@ -161,7 +163,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               required={required}
               aria-invalid={errorMessage ? true : undefined}
               className={cn(
-                "h-4 w-4 cursor-pointer accent-(--signal) border-(--line-strong)",
+                "h-4 w-4 cursor-pointer accent-(--signal) border-(--line)",
                 className,
               )}
             />
@@ -179,11 +181,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <button
             type="button"
             onClick={() => hiddenFileInput.current?.click()}
-            className={cn(
-              "inline-flex h-(--control-md) cursor-pointer items-center justify-center rounded-(--radius-control) border border-(--menu-border) bg-white px-3.5 type-label text-(--ink) transition-colors hover:bg-(--surface)",
-              className,
-            )}
+            className={cn(buttonVariants({ variant: "secondary" }), className)}
           >
+            <LuUpload />
             Choose file{multiple ? "s" : ""}
           </button>
           <input
@@ -260,17 +260,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const textInputWithSuffix = (
       <div
-        className={cn(
-          "flex w-full overflow-hidden rounded-(--radius-control) border border-(--line-strong) bg-(--paper) transition-colors focus-within:border-(--signal)",
-          readOnly && "bg-(--surface)",
-          errorMessage && "border-(--danger) focus-within:border-(--danger)",
-        )}
+        className="field-chrome flex items-stretch overflow-hidden px-0"
+        aria-invalid={errorMessage ? true : undefined}
+        data-disabled={readOnly || undefined}
       >
         <input
           {...sharedInputProps}
           className={cn(
-            "h-(--control-md) min-h-(--control-md) min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 type-body-sm text-(--ink) shadow-none outline-none placeholder:text-(--placeholder)",
-            readOnly && "cursor-default text-(--disabled-fg)",
+            "h-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-0 text-sm text-(--ink) shadow-none outline-none placeholder:text-(--placeholder)",
+            readOnly && "cursor-not-allowed text-(--muted)",
             prefixPaddingClasses,
             className,
           )}
@@ -279,14 +277,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           type="button"
           onClick={suffixIconHandler}
           className={cn(
-            "flex shrink-0 items-center justify-center self-stretch border-l px-3 type-body-sm",
+            "flex shrink-0 items-center justify-center px-3 transition-colors",
             suffixIconPrimary
-              ? "border-l-(--signal) bg-(--signal) text-white"
-              : "border-l-(--line-strong) bg-(--paper) text-(--slate)",
+              ? "bg-(--signal) text-white hover:bg-(--signal-hover)"
+              : "text-(--muted) hover:text-(--ink)",
           )}
           aria-label={`${label || "Input"} action`}
         >
-          <FontAwesomeIcon className="text-[12px] cursor-pointer" icon={suffixIcon || faSearch} />
+          <Icon className="size-4" icon={suffixIcon || LuSearch} />
         </button>
       </div>
     );
@@ -302,7 +300,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={prefixIconHandler}
               className={cn(
-                "absolute inset-y-0 left-0 flex items-center px-3 text-(--slate)",
+                "absolute inset-y-0 left-0 flex items-center px-3 text-(--muted)",
                 !prefixIconHandler && "pointer-events-none",
               )}
               aria-label={
@@ -311,7 +309,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                   : label || "Prefix action"
               }
             >
-              {prefixIcon && <FontAwesomeIcon className="text-[12px]" icon={prefixIcon} />}
+              {prefixIcon && <Icon className="size-4" icon={prefixIcon} />}
               {prefixText && (
                 <span className="type-body-sm">{prefixText}</span>
               )}

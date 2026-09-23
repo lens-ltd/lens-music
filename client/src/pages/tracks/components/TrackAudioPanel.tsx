@@ -5,10 +5,12 @@ import { Track } from "@/types/models/track.types";
 import { formatDuration } from "./trackForm.helpers";
 import type { TrackAudioUploadPhase } from "@/hooks/tracks/useTrackAudioUpload";
 import TrackUploadProgress from "./TrackUploadProgress";
-import { faAlignLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from "@/components/inputs/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { LuAlignLeft, LuTrash2 } from 'react-icons/lu';
+import { iconButtonDangerClassName } from '@/constants/input.constants';
+
+import ExternalLink from '@/components/ui/ExternalLink';
 type TrackAudioPanelProps = {
   track?: Track;
   isUploadingAudio: boolean;
@@ -39,17 +41,17 @@ const TrackAudioPanel = ({
     track?.audioFiles?.[0];
 
   return (
-    <section className="rounded-md border border-(--line)/70 bg-white p-4">
+    <section className="rounded-(--radius-card) bg-(--paper)">
       <header className="space-y-1">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-normal text-(--ink)">Audio</h2>
-            <p className="text-[12px] text-(--slate)">
+            <p className="text-[12px] text-(--muted)">
               Uploading a new file makes it the primary audio.
             </p>
           </div>
           {primaryAudio && onSyncLyrics && (
-            <Button icon={faAlignLeft} onClick={(event) => {
+            <Button icon={LuAlignLeft} onClick={(event) => {
               event.preventDefault();
               onSyncLyrics();
             }}>
@@ -61,7 +63,7 @@ const TrackAudioPanel = ({
 
       <dl className="mt-3 grid gap-2 rounded-md bg-(--surface) p-3">
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
+          <dt className="text-xs text-(--muted)">
             Duration
           </dt>
           <dd className="text-[12px] text-(--ink)">
@@ -69,7 +71,7 @@ const TrackAudioPanel = ({
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
+          <dt className="text-xs text-(--muted)">
             Status
           </dt>
           <dd className="text-[12px] text-(--ink)">
@@ -94,7 +96,7 @@ const TrackAudioPanel = ({
           fileName={uploadFileName}
         />
         {isDeletingAudio && (
-          <p className="mt-2 text-[12px] text-(--slate)">
+          <p className="mt-2 text-[12px] text-(--muted)">
             Updating audio...
           </p>
         )}
@@ -105,46 +107,44 @@ const TrackAudioPanel = ({
           track.audioFiles.map((audioFile) => (
             <li
               key={audioFile.id}
-              className="rounded-md border border-(--line)/70 p-3"
+              className="rounded-(--radius-control) bg-(--surface) p-3"
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
                   <p className="text-[12px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--slate)">
+                  <p className="text-[11px] text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-(--lens-blue)">
+                    <p className="text-[11px] text-(--signal)">
                       Primary audio
                     </p>
                   )}
                 </section>
-                <FontAwesomeIcon
-                  icon={faTrash}
+                <button
+                  type="button"
+                  aria-label="Delete"
+                  className={iconButtonDangerClassName}
                   onClick={(e) => {
                     e.preventDefault();
                     void onDeleteAudio(audioFile.id);
                   }}
-                  className="text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                />
+                >
+                  <LuTrash2 className="size-4" aria-hidden="true" />
+                </button>
               </header>
-              <a
-                href={audioFile.storagePath}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-2 inline-flex text-[12px] text-(--lens-blue) hover:underline"
-              >
-                Open file
-              </a>
+              <ExternalLink href={audioFile.storagePath} className="mt-2 text-[13px]">
+                  Open file
+                </ExternalLink>
             </li>
           ))
         ) : (
-          <li className="rounded-md border border-dashed border-(--line)/70 p-3 text-[12px] text-(--slate)">
+          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px] text-(--muted)">
             No audio uploaded yet.
           </li>
         )}

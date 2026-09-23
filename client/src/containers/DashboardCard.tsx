@@ -1,14 +1,12 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  IconDefinition,
-  faArrowTrendUp,
-  faArrowTrendDown,
-} from '@fortawesome/free-solid-svg-icons';
+import { LuTrendingDown, LuTrendingUp } from 'react-icons/lu';
+import type { IconType } from 'react-icons';
+
+import { Icon } from '@/components/ui/icon';
 
 interface DashboardCardProps {
   title: string;
   value: string | number;
-  icon: IconDefinition;
+  icon: IconType;
   change?: number;
 }
 
@@ -24,11 +22,11 @@ const DashboardCard = ({
       aria-label={title}
     >
       <header className="mb-2 flex items-center justify-between gap-3">
-        <span className="type-eyebrow">
+        <span className="type-meta">
           {title}
         </span>
-        <span className="text-lg text-(--slate)">
-          <FontAwesomeIcon icon={icon} />
+        <span className="text-lg text-(--muted)">
+          <Icon icon={icon} />
         </span>
       </header>
       <span
@@ -43,8 +41,8 @@ const DashboardCard = ({
             change >= 0 ? 'text-(--signal)' : 'text-(--danger)'
           }`}
         >
-          <FontAwesomeIcon
-            icon={change >= 0 ? faArrowTrendUp : faArrowTrendDown}
+          <Icon
+            icon={change >= 0 ? LuTrendingUp : LuTrendingDown}
             className="text-[10px]"
           />
           {change >= 0 ? '+' : ''}

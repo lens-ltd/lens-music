@@ -44,7 +44,7 @@ const ReleaseReviewPage = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
         <nav className="w-full flex flex-col gap-1">
-          <Heading>Release Review</Heading>
+          <Heading>Release review</Heading>
           <p className="type-meta">
             Releases submitted for review. Approve to advance them, or request
             changes with feedback.

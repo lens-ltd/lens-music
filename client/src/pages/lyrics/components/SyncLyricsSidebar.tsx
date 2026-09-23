@@ -1,11 +1,11 @@
 import Button from "@/components/inputs/Button";
 import Combobox from "@/components/inputs/Combobox";
 import type { SyncStateLine } from "@/hooks/lyrics/sync-lyrics.hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { Lyrics } from "@/types/models/lyrics.types";
+
+import { LuBook, LuTrash2 } from 'react-icons/lu';
 
 type SyncLyricsSidebarProps = {
   lyricsRecords: Lyrics[];
@@ -40,12 +40,12 @@ const SyncLyricsSidebar = ({
 }: SyncLyricsSidebarProps) => {
   return (
     <aside className="flex flex-col gap-4">
-      <section className="rounded-md border border-(--line)/70 bg-white p-4">
+      <section className="rounded-(--radius-card) bg-(--paper)">
         <header className="space-y-1">
           <h2 className="text-sm font-normal text-(--ink)">
             Record selection
           </h2>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Multiple lyrics records can exist per track. Saving overwrites the
             currently selected record.
           </p>
@@ -68,7 +68,7 @@ const SyncLyricsSidebar = ({
           <div className="mt-3">
             <Button
               danger
-              icon={faTrash}
+              icon={LuTrash2}
               onClick={(event) => {
                 event.preventDefault();
                 onDeleteLyrics();
@@ -90,12 +90,12 @@ const SyncLyricsSidebar = ({
         </div>
       </section>
 
-      <section className="rounded-md border border-(--line)/70 bg-white p-4">
+      <section className="rounded-(--radius-card) bg-(--paper)">
         <header className="space-y-1">
           <h2 className="text-sm font-normal text-(--ink)">
             Lyrics editor
           </h2>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Update the plain lyric lines here before syncing timestamps.
           </p>
         </header>
@@ -105,11 +105,11 @@ const SyncLyricsSidebar = ({
           onChange={(event) => onChangePlainTextLyrics(event.target.value)}
           onKeyDown={onEditorKeyDown}
           rows={18}
-          className="mt-4 w-full rounded-md border border-(--line)/70 bg-(--surface) p-3 text-[13px] text-(--ink) outline-hidden transition-colors focus:border-[color:var(--lens-blue)]"
+          className="field-chrome mt-4 h-auto py-2"
           placeholder="Enter one lyric line per row"
         />
 
-        <p className="mt-3 text-[12px] text-(--slate)">
+        <p className="mt-3 text-[12px] text-(--muted)">
           {syncState.length} editor line{syncState.length === 1 ? "" : "s"} ready
           for syncing.
         </p>
@@ -121,9 +121,9 @@ const SyncLyricsSidebar = ({
           event.preventDefault();
           onOpenGuidelines();
         }}
-        className="self-start text-[12px] text-(--lens-blue) hover:underline underline-offset-2"
+        className="self-start text-[12px] text-(--signal) hover:underline underline-offset-2"
       >
-        <FontAwesomeIcon icon={faBook} className="mr-1.5" />
+        <LuBook className="mr-1.5" />
         View lyrics guidelines
       </Link>
     </aside>

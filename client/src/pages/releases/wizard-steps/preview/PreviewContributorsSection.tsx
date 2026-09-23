@@ -7,11 +7,11 @@ import { useFetchReleaseContributors } from "@/hooks/releases/release-contributo
 import { ContributorRole, ReleaseContributor } from "@/types/models/releaseContributor.types";
 import { capitalizeString, formatDate } from "@/utils/strings.helper";
 import CustomPopover from "@/components/inputs/CustomPopover";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { ellipsisHClassName } from "@/constants/input.constants";
 import { getContributorCreditName } from "@/utils/contributorCredit.helper";
+
+import { LuEllipsis, LuInfo } from 'react-icons/lu';
 
 interface PreviewContributorsSectionProps {
   releaseId: string;
@@ -44,8 +44,8 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
         <span
           className={`rounded-md px-2 py-0.5 text-[11px] ${
             isPrimaryArtist
-              ? "border border-[color:var(--lens-gold)]/50 bg-[color:var(--lens-gold)]/15 font-medium text-(--ink)"
-              : "border border-(--line)/50 bg-(--surface) text-(--ink)"
+              ? "bg-(--signal-soft) font-medium text-(--signal)"
+              : "bg-(--surface) text-(--ink)"
           }`}
         >
           {isPrimaryArtist ? "Primary Artist" : capitalizeString(row.original.role)}
@@ -78,9 +78,9 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       header: "Actions",
       cell: ({ row }) => {
         return (
-          <CustomPopover trigger={<FontAwesomeIcon icon={faEllipsisH} className={ellipsisHClassName} />}>
-          <menu className="w-full flex flex-col items-center gap-1">
-            <TableActionButton icon={faCircleInfo} to={`/contributors/${row?.original?.contributor?.id}`}>
+          <CustomPopover trigger={<button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>}>
+          <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
+            <TableActionButton icon={LuInfo} to={`/contributors/${row?.original?.contributor?.id}`}>
               View details
             </TableActionButton>
           </menu>
@@ -123,7 +123,7 @@ const PreviewContributorsSection = ({
             containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             No contributors added yet.
           </p>
         )}

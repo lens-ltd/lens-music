@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { LuArrowLeft } from 'react-icons/lu';
 import PublicFooter from '@/components/layout/PublicFooter';
 import PublicNavbar from '@/components/layout/PublicNavbar';
-import { LandingPageStyles } from '@/pages/landing/landingShared';
 
 export default function ArtistAgreement() {
   const [scrolled, setScrolled] = useState(false);
@@ -19,7 +19,6 @@ export default function ArtistAgreement() {
       className="min-h-screen bg-(--paper) text-(--ink)"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <LandingPageStyles />
       <PublicNavbar scrolled={scrolled} variant="landing" />
       
       <article className="max-w-4xl mx-auto px-6 py-24">
@@ -27,9 +26,10 @@ export default function ArtistAgreement() {
         <header className="mb-12">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 type-body-sm text-(--lens-blue) link-sweep mb-6"
+            className="mb-6 inline-flex items-center gap-2 type-body-sm text-(--signal) link-sweep"
           >
-            ← Back to Home
+            <LuArrowLeft className="size-4" aria-hidden="true" />
+            Back to home
           </Link>
           <h1 className="type-display mb-4" >
             Artist Agreement
@@ -426,7 +426,7 @@ export default function ArtistAgreement() {
             <p className="mb-4 leading-relaxed" >
               For questions about this Artist Agreement, please contact:
             </p>
-            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <div className="bg-(--surface) p-6 rounded-(--radius-card)">
               <p className="mb-2" >
                 <strong>Lens Music</strong>
               </p>
@@ -442,7 +442,7 @@ export default function ArtistAgreement() {
             </div>
           </section>
 
-          <section className="mb-10 bg-blue-50 p-6 rounded-lg border border-blue-200">
+          <section className="mb-10 bg-(--signal-soft) p-6 rounded-(--radius-card)">
             <h2 className="type-h2 mb-4" >
               Acknowledgment
             </h2>

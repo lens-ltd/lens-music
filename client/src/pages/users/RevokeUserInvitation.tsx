@@ -41,11 +41,11 @@ const RevokeUserInvitation = ({
     <Modal
       isOpen={revokeInvitationModal}
       onClose={closeModal}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
       heading="Revoke invitation"
     >
       <article className="flex w-full flex-col gap-4">
-        <p className="text-[13px] leading-6 text-(--ink)/70">
+        <p className="text-[13px] leading-6 text-(--muted)">
           Revoke the pending invitation for{" "}
           <span className="font-medium text-(--ink)">
             {selectedUserInvitation?.email || "this user"}

@@ -26,14 +26,13 @@ interface DashboardChartProps {
   strokeWidth?: number;
   fill?: string;
   showArea?: boolean;
-  areaFillMode?: 'gradient' | 'solid' | 'none';
-  areaOpacity?: number;
   showGrid?: boolean;
   showYAxis?: boolean;
   tooltipVariant?: 'default' | 'minimal';
 }
 
-const SIGNAL = '#1f628e';
+/** Mirrors `--signal` in index.css. */
+const SIGNAL = 'rgb(31, 98, 142)';
 
 /** TanStack renders into SVG attributes where `var()` does not resolve. */
 const resolveColor = (fill: string | undefined) =>
@@ -44,7 +43,7 @@ const compactNumber = (v: number) =>
 
 // ── empty state ──────────────────────────────────────────────────────────────
 const ChartEmpty: FC<{ label: string }> = ({ label }) => (
-  <div className="grid min-h-40 place-items-center rounded-md border border-dashed border-(--menu-border) bg-white p-6 text-center text-[12px] text-(--slate)">
+  <div className="grid min-h-40 place-items-center rounded-(--radius-card) bg-(--surface) p-6 text-center text-sm text-(--muted)">
     {label}
   </div>
 );
@@ -108,12 +107,6 @@ const DashboardChart: FC<DashboardChartProps> = ({
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap gap-4" aria-hidden>
-        <span className="flex items-center gap-1.5 text-[11px] text-(--slate)">
-          <span className="size-2 rounded-full" style={{ background: color }} />
-          Value
-        </span>
-      </div>
       <Chart
         definition={definition}
         height={typeof height === 'number' ? height : 220}
@@ -121,14 +114,14 @@ const DashboardChart: FC<DashboardChartProps> = ({
         ariaLabel="Monthly value trend"
         ariaDescription="Exact monthly values are available in the table below the chart."
       />
-      <details className="mt-3 border-t border-[#e6e2d7] pt-3">
-        <summary className="cursor-pointer text-[11px] font-medium text-(--signal)">
+      <details className="mt-3">
+        <summary className="cursor-pointer text-xs font-medium text-(--signal)">
           View exact monthly values
         </summary>
         <div className="mt-2 max-h-56 overflow-auto">
-          <table className="w-full border-collapse text-left text-[11px]">
+          <table className="w-full border-collapse text-left text-xs">
             <caption className="sr-only">Monthly values</caption>
-            <thead className="text-(--slate)">
+            <thead className="text-(--muted)">
               <tr>
                 <th scope="col" className="py-1.5">
                   Month
@@ -140,7 +133,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-t border-[#eae6db]">
+                <tr key={row.label} className="border-t border-(--line)">
                   <th scope="row" className="py-1.5 font-normal">
                     {row.label}
                   </th>

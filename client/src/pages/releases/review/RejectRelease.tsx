@@ -54,13 +54,13 @@ const RejectRelease = () => {
       heading={`Request changes on ${selectedRelease?.title ?? "release"}`}
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-sm text-(--ink)/70">
+        <p className="text-sm text-(--muted)">
           Rejecting sends this release back to draft so the submitter can make
           changes. Your feedback is required and will be emailed to them.
         </p>
         <label className="flex flex-col gap-1">
           <span className="text-[12px] font-medium text-(--ink)">
-            Feedback <span className="text-red-600">*</span>
+            Feedback <span className="text-(--danger)">*</span>
           </span>
           <textarea
             value={reviewNotes}
@@ -70,7 +70,7 @@ const RejectRelease = () => {
             }}
             rows={4}
             placeholder="Explain what needs to change before this release can be approved"
-            className="w-full rounded-md border border-secondary/30 bg-white p-3 text-sm outline-none focus:border-primary"
+            className="field-chrome h-auto min-h-[7.5rem] py-2"
           />
         </label>
         {error && <InputErrorMessage message={error} />}

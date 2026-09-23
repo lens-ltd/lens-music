@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { toast } from 'sonner';
 import Input from '@/components/inputs/Input';
 import Button from '@/components/inputs/Button';
@@ -14,6 +13,8 @@ import {
 } from '@/state/api/apiMutationSlice';
 import { setSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
+
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 const CompleteInvitation = () => {
   const { token } = useParams();
@@ -74,32 +75,28 @@ const CompleteInvitation = () => {
   };
 
   return (
-    <main className="min-h-screen bg-(--field) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[520px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
-          <p className="type-eyebrow">
-            Invitation only
-          </p>
-          <h1
-            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
+        <article className="w-full max-w-[520px]">
+          <h1 className="type-page-title text-2xl">
             Complete your registration
           </h1>
-          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
+          <p className="mt-2 text-[13px] leading-5 text-(--muted)">
             Finish setting up your Lens Music account and create your password.
           </p>
 
           {validationState.isLoading ? (
             <div className="mt-8 flex justify-center"><Loader /></div>
           ) : invitationUnavailable ? (
-            <div className="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">
+            <div className="mt-8 rounded-xl bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
               This invitation is invalid or has expired. Please ask your admin to send a new invite.
             </div>
           ) : (
             <>
               <div className="mt-6 card-quiet p-4">
-                <p className="type-eyebrow">Invited email</p>
+                <p className="type-meta">Invited email</p>
                 <p className="mt-2 text-[14px] text-(--ink) font-normal">{validationState.data?.data?.email}</p>
               </div>
 
@@ -134,7 +131,7 @@ const CompleteInvitation = () => {
                       required
                       placeholder="Create a password"
                       type={showPassword ? 'text' : 'password'}
-                      suffixIcon={showPassword ? faEyeSlash : faEye}
+                      suffixIcon={showPassword ? LuEyeOff : LuEye}
                       suffixIconHandler={(event) => {
                         event.preventDefault();
                         setShowPassword(!showPassword);
@@ -159,7 +156,7 @@ const CompleteInvitation = () => {
                       required
                       placeholder="Re-enter your password"
                       type={showPassword ? 'text' : 'password'}
-                      suffixIcon={showPassword ? faEyeSlash : faEye}
+                      suffixIcon={showPassword ? LuEyeOff : LuEye}
                       suffixIconHandler={(event) => {
                         event.preventDefault();
                         setShowPassword(!showPassword);

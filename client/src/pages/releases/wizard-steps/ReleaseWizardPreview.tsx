@@ -148,7 +148,7 @@ const ReleaseWizardPreview = ({
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           Loading release data...
         </p>
       </section>
@@ -166,17 +166,17 @@ const ReleaseWizardPreview = ({
         >
           Review &amp; Submit
         </h2>
-        <p className="mt-1 text-[12px] font-normal text-(--slate)">
+        <p className="mt-1 text-[12px] font-normal text-(--muted)">
           Review all release information before submitting for distribution.
         </p>
       </header>
 
       {release.status === ReleaseStatus.DRAFT && release.reviewNotes && (
-        <aside className="rounded-md border border-amber-200 bg-amber-50 p-4">
-          <p className="text-[12px] font-medium text-amber-800">
+        <aside className="rounded-md bg-(--surface) p-4">
+          <p className="text-[12px] font-medium text-(--ink)">
             Changes requested by the review team
           </p>
-          <p className="mt-1 text-[12px] text-amber-700 whitespace-pre-line">
+          <p className="mt-1 text-[12px] text-(--ink) whitespace-pre-line">
             {release.reviewNotes}
           </p>
         </aside>
@@ -206,7 +206,7 @@ const ReleaseWizardPreview = ({
       />
 
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
         <BackButton
           disabled={isNavigating}
           onClick={(event) => {

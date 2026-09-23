@@ -71,18 +71,18 @@ const ReleaseReviewDetailPage = () => {
           <Heading isLoading={isFetching}>
             {release?.title || "Release review"}
           </Heading>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Everything submitted for this release, along with any prior
             feedback, to help you decide whether to approve it.
           </p>
         </nav>
 
         {isNotFound ? (
-          <section className="rounded-md border border-dashed border-gray-300 bg-white p-8 text-center shadow-sm">
-            <Heading type="h3" className="!text-gray-900">
+          <section className="rounded-(--radius-card) bg-(--surface) p-8 text-center">
+            <Heading type="h3" className="!text-(--ink)">
               Release not found
             </Heading>
-            <p className="mt-2 text-[12px] text-gray-500">
+            <p className="mt-2 text-[12px] text-(--muted)">
               This release could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
@@ -98,9 +98,9 @@ const ReleaseReviewDetailPage = () => {
           </section>
         ) : (
           <>
-            <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm">
+            <section className="rounded-(--radius-card) bg-(--paper)">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--slate)">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--muted)">
                   <span>Catalog: {release?.catalogNumber || "—"}</span>
                   <span>
                     Submitted by:{" "}
@@ -119,15 +119,15 @@ const ReleaseReviewDetailPage = () => {
             </section>
 
             {release?.reviewNotes && (
-              <aside className="rounded-md border border-amber-200 bg-amber-50 p-4">
-                <p className="text-[12px] font-medium text-amber-800">
+              <aside className="rounded-md bg-(--surface) p-4">
+                <p className="text-[12px] font-medium text-(--ink)">
                   Feedback from{" "}
                   {release.reviewedBy?.name || release.reviewedBy?.email || "reviewer"}
                   {release.reviewedAt
                     ? ` · ${formatDate(release.reviewedAt, "DD/MM/YYYY HH:mm")}`
                     : ""}
                 </p>
-                <p className="mt-1 text-[12px] text-amber-700 whitespace-pre-line">
+                <p className="mt-1 text-[12px] text-(--ink) whitespace-pre-line">
                   {release.reviewNotes}
                 </p>
               </aside>

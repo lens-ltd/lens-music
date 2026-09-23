@@ -58,7 +58,7 @@ const CreateRelase = () => {
     <Modal
       isOpen={createReleaseModal}
       onClose={closeModal}
-      heading="Add new Release"
+      heading="Create release"
       className="min-w-[60vw]"
     >
       <form

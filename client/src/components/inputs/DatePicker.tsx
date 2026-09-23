@@ -1,4 +1,3 @@
-import { CalendarIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -9,6 +8,8 @@ import {
 import { ChangeEvent, useState, useMemo, useEffect } from 'react';
 import moment from 'moment';
 import Select from './Select';
+
+import { LuCalendar } from 'react-icons/lu';
 
 type DatePickerProps = {
   value: Date | string | undefined;
@@ -155,12 +156,12 @@ const DatePicker = ({
         <button
           type="button"
           className={cn(
-            'field-chrome flex items-center justify-start text-left font-normal',
+            'field-chrome flex items-center justify-start gap-2 text-left',
             !normalizedValue && 'text-(--placeholder)'
           )}
           onClick={() => setOpen(!open)}
         >
-          <CalendarIcon className="w-4 h-4 mr-2 text-(--slate)" />
+          <LuCalendar className="size-4 shrink-0 text-(--muted)" aria-hidden="true" />
           {normalizedValue ? (
             selectionType === 'recurringDate' ? (
               moment(normalizedValue).format('MMMM DD')
@@ -170,11 +171,11 @@ const DatePicker = ({
               moment(normalizedValue).format('MMMM DD')
             )
           ) : (
-            <span className="type-body-sm text-(--placeholder)">{placeholder}</span>
+            <span className="text-(--placeholder)">{placeholder}</span>
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 card-framed shadow-[var(--shadow-menu)]" align="start">
+      <PopoverContent className="w-auto p-0" align="start">
         <menu className="flex flex-col w-full gap-3 p-4">
           <ul
             className={`w-full grid gap-3 p-0 ${selectionType === 'recurringDate' ? 'grid-cols-1' : 'grid-cols-2'

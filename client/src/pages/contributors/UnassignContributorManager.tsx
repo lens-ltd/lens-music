@@ -63,7 +63,7 @@ const UnassignContributorManager = () => {
     <Modal
       isOpen={unassignManagerModal}
       onClose={closeModal}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
       heading={`Remove manager`}
     >
       <article className="w-full flex flex-col gap-4">

@@ -64,10 +64,10 @@ const DeleteLyrics = () => {
       isOpen={deleteLyricsModal}
       onClose={closeModal}
       heading={`Delete ${selectedLyrics?.language}`}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           Are you sure you want to delete {selectedLyrics?.language}? This
           action cannot be undone.
         </p>

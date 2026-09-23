@@ -17,8 +17,9 @@ import {
   setSelectedUserInvitation,
 } from '@/state/features/userInvitationSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useEffect, useState } from 'react';
+
+import { LuPlus } from 'react-icons/lu';
 
 const UserInvitationsPage = () => {
   // STATE
@@ -99,12 +100,12 @@ const UserInvitationsPage = () => {
       <main className="w-full flex flex-col gap-4">
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
-            <Heading>User Invitations</Heading>
+            <Heading>User invitations</Heading>
             <p className="type-meta mt-1">
               Track invitation status and manage pending access requests.
             </p>
           </div>
-          <Button icon={faPlus} primary route="/users/invitations/create">
+          <Button icon={LuPlus} primary route="/users/invitations/create">
             Create invitation
           </Button>
         </nav>

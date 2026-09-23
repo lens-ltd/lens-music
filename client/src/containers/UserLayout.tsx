@@ -11,7 +11,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
   const { isOpen } = useAppSelector((state) => state.sidebar);
 
   return (
-    <section className="min-h-screen w-full overflow-x-hidden bg-(--field) text-(--ink)">
+    <section className="min-h-screen w-full overflow-x-hidden bg-(--paper) text-(--ink)">
       <Navbar />
       <Sidebar />
       <main

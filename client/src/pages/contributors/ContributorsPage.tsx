@@ -5,11 +5,12 @@ import UserLayout from "@/containers/UserLayout";
 import { useContributorColumns } from "@/hooks/contributors/columns.contributors";
 import { useFetchContributors } from "@/hooks/contributors/contributor.hooks";
 import { useAppSelector } from "@/state/hooks";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import DeleteContributor from "./DeleteContributor";
 import VerifyContributor from "./VerifyContributor";
 import RejectContributor from "./RejectContributor";
+
+import { LuPlus } from 'react-icons/lu';
 
 const ContributorsPage = () => {
   // STATE
@@ -63,8 +64,8 @@ const ContributorsPage = () => {
               People credited on your catalog, and their verification status.
             </p>
           </div>
-          <Button icon={faPlus} primary route="/contributors/create">
-            Add new contributor
+          <Button icon={LuPlus} primary route="/contributors/create">
+            Create contributor
           </Button>
         </nav>
         <Table

@@ -1,7 +1,8 @@
 import Button from "@/components/inputs/Button";
 import type { Ref } from "react";
 import type { SyncStateLine } from "@/hooks/lyrics/sync-lyrics.hooks";
-import { faArrowRotateLeft } from "@fortawesome/free-solid-svg-icons";
+
+import { LuRotateCcw } from 'react-icons/lu';
 
 type SyncLyricsLinesPanelProps = {
   lyricsRef: Ref<HTMLDivElement>;
@@ -25,19 +26,19 @@ const SyncLyricsLinesPanel = ({
   onResetPlayhead,
 }: SyncLyricsLinesPanelProps) => {
   return (
-    <section className="rounded-md border border-(--line)/70 bg-white p-4">
+    <section className="rounded-(--radius-card) bg-(--paper)">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-normal text-(--ink)">
             Lyrics lines
           </h2>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Use ↑ and ↓ to move between lines, then press Space while the audio
             is playing to capture a timestamp.
           </p>
         </div>
         <Button
-          icon={faArrowRotateLeft}
+          icon={LuRotateCcw}
           onClick={(event) => {
             event.preventDefault();
             onResetPlayhead();
@@ -58,29 +59,29 @@ const SyncLyricsLinesPanel = ({
           return (
             <section
               key={line.index}
-              className={`rounded-md border p-3 transition-colors ${
+              className={`rounded-(--radius-control) p-3 transition-colors ${
                 isActive
-                  ? "border-[color:var(--lens-blue)] bg-(--lens-blue)/5"
-                  : "border-(--line)/40 bg-(--surface)"
+                  ? "bg-(--signal-soft)"
+                  : "bg-(--surface)"
               }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Line {line.index + 1}
                   </p>
                   <p
-                    className={`text-sm ${isSynced ? "font-normal text-(--ink)" : "text-(--ink)/70"}`}
+                    className={`text-sm ${isSynced ? "font-normal text-(--ink)" : "text-(--muted)"}`}
                   >
                     {line.text || (
-                      <span className="italic text-(--slate)">
+                      <span className="italic text-(--muted)">
                         Blank line
                       </span>
                     )}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="min-w-16 text-right text-[11px] text-(--lens-blue)">
+                  <span className="min-w-16 text-right text-[11px] text-(--signal)">
                     {typeof line.time === "number"
                       ? `${line.time.toFixed(2)}s`
                       : "Not synced"}

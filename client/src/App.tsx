@@ -8,10 +8,10 @@ const App = () => {
         duration={4000}
         toastOptions={{
           classNames: {
-            toast: 'rounded-md border border-(--menu-border) bg-(--paper) px-3.5 py-3 shadow-[var(--shadow-menu)] type-body-sm text-(--ink)',
+            toast: 'rounded-(--radius-control) bg-(--paper) px-4 py-3 shadow-(--shadow-menu) type-body-sm text-(--ink)',
             title: 'type-body-sm text-(--ink)',
             description: 'type-meta leading-snug',
-            error: 'border-(--danger-line)',
+            error: 'text-(--danger)',
           },
         }}
       />

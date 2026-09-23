@@ -6,10 +6,9 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
 import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
-import { faCircleInfo, faEllipsisH, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ellipsisHClassName } from "@/constants/input.constants";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+
+import { LuEllipsis, LuInfo, LuSquarePen, LuTrash2 } from 'react-icons/lu';
 
 export const useReleaseColumns = () => {
   const dispatch = useAppDispatch();
@@ -55,15 +54,15 @@ export const useReleaseColumns = () => {
         accessorKey: 'actions',
         cell: ({ row }: { row: Row<Release> }) => {
           return (
-            <CustomPopover trigger={<FontAwesomeIcon icon={faEllipsisH} className={ellipsisHClassName} />}>
-              <menu className="w-full flex flex-col items-center gap-1">
-                <TableActionButton icon={faCircleInfo} to={`/releases/${row?.original?.id}`}>
+            <CustomPopover trigger={<button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>}>
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
+                <TableActionButton icon={LuInfo} to={`/releases/${row?.original?.id}`}>
                   View details
                 </TableActionButton>
-                <TableActionButton icon={faPenToSquare} to={`/releases/${row?.original?.id}/wizard`}>
+                <TableActionButton icon={LuSquarePen} to={`/releases/${row?.original?.id}/wizard`}>
                   Resume
                 </TableActionButton>
-                <TableActionButton icon={faTrash} iconClassName="text-red-700" onClick={(e) => {
+                <TableActionButton icon={LuTrash2} iconClassName="text-(--danger)" onClick={(e) => {
                   e.preventDefault();
                   if (row?.original?.id) {
                     dispatch(setSelectedRelease(row.original));

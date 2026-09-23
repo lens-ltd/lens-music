@@ -6,7 +6,6 @@ import {
   useCreateReleaseNavigationFlow,
 } from "@/hooks/releases/navigation.hooks";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
-import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { setCreateReleaseTrackModal } from "@/state/features/trackSlice";
 import CreateReleaseTrack from "../../tracks/CreateReleaseTrack";
 import {
@@ -38,6 +37,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+
+import { LuSquarePlus } from 'react-icons/lu';
 
 const sortTracksForDisplay = (tracks: Track[]) =>
   [...tracks].sort(
@@ -138,7 +139,7 @@ const ReleaseWizardUploadTracks = ({
         <Button
           primary
           className="self-end"
-          icon={faPlusSquare}
+          icon={LuSquarePlus}
           onClick={(e) => {
             e.preventDefault();
             dispatch(setCreateReleaseTrackModal(true));
@@ -164,7 +165,7 @@ const ReleaseWizardUploadTracks = ({
           ) : (
             <>
               {orderedTracks.length > 1 && (
-                <p className="mb-2 px-1 text-[11px] text-(--slate)">
+                <p className="mb-2 px-1 text-[11px] text-(--muted)">
                   Drag the handle to reorder tracks.
                 </p>
               )}
@@ -202,13 +203,13 @@ const ReleaseWizardUploadTracks = ({
             </>
           )
         ) : (
-          <section className="rounded-xl border border-dashed border-(--line) bg-(--paper) p-5 text-center">
-            <p className="text-[12px] text-(--slate) font-normal">
+          <section className="rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5 text-center">
+            <p className="text-[12px] text-(--muted) font-normal">
               No tracks yet.
             </p>
             <Button
               primary
-              icon={faPlusSquare}
+              icon={LuSquarePlus}
               className="mt-3"
               onClick={(e) => {
                 e.preventDefault();
@@ -223,7 +224,7 @@ const ReleaseWizardUploadTracks = ({
 
       {!allTracksValidated ? (
         <p
-          className="rounded-md border border-(--line) bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--ink)/70"
+          className="rounded-md bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--muted)"
           role="status"
         >
           {hasTracks
@@ -232,7 +233,7 @@ const ReleaseWizardUploadTracks = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
         <BackButton
           onClick={(e) => {
             e.preventDefault();

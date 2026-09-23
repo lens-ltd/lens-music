@@ -53,15 +53,15 @@ const PreviewOverviewSection = ({
               <img
                 src={release.coverArtUrl}
                 alt={`${release.title} cover art`}
-                className="h-40 w-40 rounded-lg border border-(--line) object-cover"
+                className="h-40 w-40 rounded-(--radius-card) object-cover"
               />
-              <figcaption className="mt-2 max-w-[160px] truncate text-[11px] text-(--slate)">
+              <figcaption className="mt-2 max-w-[160px] truncate text-[11px] text-(--muted)">
                 {release.title}
               </figcaption>
             </figure>
           ) : (
-            <figure className="flex h-40 w-40 shrink-0 items-center justify-center rounded-lg border border-dashed border-(--line) bg-(--paper)">
-              <figcaption className="text-[11px] text-(--slate)">
+            <figure className="flex h-40 w-40 shrink-0 items-center justify-center rounded-(--radius-card) bg-(--surface)">
+              <figcaption className="text-[11px] text-(--muted)">
                 No cover art
               </figcaption>
             </figure>
@@ -102,7 +102,7 @@ const PreviewOverviewSection = ({
           </section>
         </section>
 
-        <fieldset className="mt-4 grid grid-cols-1 gap-3 border-t border-(--line)/50 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+        <fieldset className="mt-4 grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2 lg:grid-cols-4">
           <legend className="sr-only">Rights Lines</legend>
           <Input label="C-Line Year" value={release.cLine?.year || "—"} readOnly />
           <Input label="C-Line Owner" value={release.cLine?.owner || "—"} readOnly />

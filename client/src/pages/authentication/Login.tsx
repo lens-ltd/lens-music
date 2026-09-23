@@ -2,7 +2,6 @@ import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { validateInputs } from '../../utils/validations.helper';
 import Input from '../../components/inputs/Input';
 import Button from '../../components/inputs/Button';
-import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useEffect, useState } from 'react';
 import { useLoginMutation } from '../../state/api/apiMutationSlice';
 import { toast } from 'sonner';
@@ -13,6 +12,8 @@ import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
 import { useAppSelector } from '@/state/hooks';
+
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 const Login = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -53,22 +54,16 @@ const Login = () => {
 
   return (
     <main
-      className="min-h-screen bg-(--field) flex flex-col"
+      className="min-h-screen bg-(--paper) flex flex-col"
     >
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[400px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
-          <p
-            className="type-eyebrow"
-          >
-            Welcome back
-          </p>
-          <h1
-            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
+        <article className="w-full max-w-[400px]">
+          <h1 className="type-page-title text-2xl">
             Sign in to Lens Music
           </h1>
-          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
+          <p className="mt-2 text-[13px] leading-5 text-(--muted)">
             Use your email and password to access your catalog, analytics, and payout activity.
           </p>
 
@@ -84,7 +79,7 @@ const Login = () => {
                 <div className="flex flex-col gap-1.5">
                   <Input label="Email" required placeholder="you@example.com" {...field} />
                   {errors?.email && (
-                    <p className="type-meta text-(--danger-text)">{String(errors?.email?.message)}</p>
+                    <p className="type-meta text-(--danger)">{String(errors?.email?.message)}</p>
                   )}
                 </div>
               )}
@@ -101,7 +96,7 @@ const Login = () => {
                     required
                     placeholder="Enter your password"
                     label="Password"
-                    suffixIcon={showPassword ? faEyeSlash : faEye}
+                    suffixIcon={showPassword ? LuEyeOff : LuEye}
                     suffixIconHandler={(event) => {
                       event.preventDefault();
                       setShowPassword(!showPassword);
@@ -109,7 +104,7 @@ const Login = () => {
                     {...field}
                   />
                   {errors?.password && (
-                    <p className="type-meta text-(--danger-text)">{String(errors?.password?.message)}</p>
+                    <p className="type-meta text-(--danger)">{String(errors?.password?.message)}</p>
                   )}
                 </div>
               )}

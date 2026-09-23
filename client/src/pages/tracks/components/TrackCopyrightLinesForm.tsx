@@ -23,19 +23,19 @@ const TrackCopyrightLinesForm = ({
   stateLabel,
   onPersistField,
 }: TrackCopyrightLinesFormProps) => (
-  <section className="rounded-md border border-(--line)/70 bg-white p-4">
+  <section className="rounded-(--radius-card) bg-(--paper)">
     <header className="flex items-center justify-between gap-3">
       <section>
         <h2 className="text-sm font-normal text-(--ink)">
           Copyright lines and flags
         </h2>
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           C-line and P-line are required before validation. Use “Rights controllers”
           below for DDEX making-available rights.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-(--lens-blue)">{stateLabel}</p>
+        <p className="text-[11px] text-(--signal)">{stateLabel}</p>
       )}
     </header>
 
@@ -103,7 +103,7 @@ const TrackCopyrightLinesForm = ({
     </form>
 
     <fieldset className="mt-4 border-0 p-0">
-      <legend className="text-[12px] text-(--ink)/70">
+      <legend className="text-[12px] text-(--muted)">
         Flags
       </legend>
       <ul className="mt-2 flex list-none flex-wrap gap-4 p-0">
@@ -121,7 +121,7 @@ const TrackCopyrightLinesForm = ({
                     field.onChange(checked);
                     void onPersistField("isBonusTrack", checked);
                   }}
-                  className="h-4 w-4 cursor-pointer accent-[color:var(--lens-blue)]"
+                  className="h-4 w-4 cursor-pointer accent-[color:var(--signal)]"
                 />
                 Bonus track
               </label>
@@ -142,7 +142,7 @@ const TrackCopyrightLinesForm = ({
                     field.onChange(checked);
                     void onPersistField("isHiddenTrack", checked);
                   }}
-                  className="h-4 w-4 cursor-pointer accent-[color:var(--lens-blue)]"
+                  className="h-4 w-4 cursor-pointer accent-[color:var(--signal)]"
                 />
                 Hidden track
               </label>

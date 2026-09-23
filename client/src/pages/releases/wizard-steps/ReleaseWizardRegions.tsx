@@ -13,8 +13,9 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { Input as UiInput } from "@/components/ui/input";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import ReleaseTerritoryDetailsSection from "./components/ReleaseTerritoryDetailsSection";
+
+import { LuSearch } from 'react-icons/lu';
 
 const ALL_COUNTRY_CODES = COUNTRIES_LIST.map((country) => country.code);
 
@@ -177,13 +178,13 @@ const ReleaseWizardRegions = ({
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
         <h2 className="text-xl font-semibold text-(--ink)">Delivery regions</h2>
-        <p className="text-sm leading-6 text-(--slate)">
+        <p className="text-sm leading-6 text-(--muted)">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-(--line) pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 pb-4">
         {navButtons}
       </menu>
 
@@ -191,7 +192,7 @@ const ReleaseWizardRegions = ({
         label="Search countries"
         name="release-wizard-regions-country-search"
         placeholder="Filter by country name…"
-        prefixIcon={faSearch}
+        prefixIcon={LuSearch}
         value={countrySearchQuery}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
           setCountrySearchQuery(e.target.value)
@@ -220,7 +221,7 @@ const ReleaseWizardRegions = ({
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (
-          <p className="col-span-full text-[12px] text-(--slate)">
+          <p className="col-span-full text-[12px] text-(--muted)">
             No countries match &ldquo;{countrySearchQuery.trim()}&rdquo;.
           </p>
         ) : null}
@@ -231,7 +232,7 @@ const ReleaseWizardRegions = ({
             <label
               key={country.code}
               htmlFor={`country-${country.code}`}
-              className={`flex items-center gap-2 rounded-md shadow-sm p-3 cursor-pointer transition-colors hover:bg-secondary/5`}
+              className={`flex items-center gap-2 rounded-md shadow-sm p-3 cursor-pointer transition-colors hover:bg-(--surface)`}
             >
               <UiInput
                 type="checkbox"
@@ -253,8 +254,8 @@ const ReleaseWizardRegions = ({
         selectedTerritories={selectedTerritories}
       />
 
-      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 border-t border-(--line) bg-white/95 py-4">
-        <p className="text-xs text-(--slate)">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-white/95 py-4">
+        <p className="text-xs text-(--muted)">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"
             : `${selectedTerritories.length} of ${COUNTRIES_LIST.length} countries selected`}

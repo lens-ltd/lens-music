@@ -9,7 +9,6 @@ import { useUpdateContributorMutation } from "@/state/api/apiMutationSlice";
 import { useAppSelector } from "@/state/hooks";
 import { UUID } from "@/types/common.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -26,6 +25,8 @@ import {
 } from "./contributorForm";
 import { Contributor } from "@/types/models/contributor.types";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
+
+import { LuSave } from 'react-icons/lu';
 
 const UpdateContributorPage = () => {
   // STATE
@@ -158,7 +159,7 @@ const UpdateContributorPage = () => {
               <Heading type="h3" id="contributor-personal-heading">
                 Personal information
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Review and update the supported contributor details and profile
                 references.
               </p>
@@ -339,7 +340,7 @@ const UpdateContributorPage = () => {
               <Heading type="h3" id="contributor-group-heading">
                 Group membership
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Optionally associate this contributor with a parent group.
               </p>
             </header>
@@ -349,9 +350,9 @@ const UpdateContributorPage = () => {
                 type="checkbox"
                 checked={belongsToGroup}
                 onChange={(e) => setBelongsToGroup(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                className="size-4 accent-(--signal)"
               />
-              <span className="text-[13px] text-gray-700">
+              <span className="text-[13px] text-(--muted)">
                 This contributor belongs to a group
               </span>
             </label>
@@ -383,7 +384,7 @@ const UpdateContributorPage = () => {
               <Heading type="h3" id="contributor-social-heading">
                 Social media
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Supported links are stored as contributor profile links.
               </p>
             </header>
@@ -414,7 +415,7 @@ const UpdateContributorPage = () => {
               <Heading type="h3" id="contributor-stores-heading">
                 Store IDs
               </Heading>
-              <p className="text-[12px] font-normal text-gray-500">
+              <p className="text-[12px] font-normal text-(--muted)">
                 Update supported store identifiers or profile URLs. Unsupported
                 services from the reference screen are intentionally excluded.
               </p>
@@ -448,7 +449,7 @@ const UpdateContributorPage = () => {
               Back
             </Button>
             <Button
-              icon={faSave}
+              icon={LuSave}
               primary
               submit
               isLoading={isLoading || isFetching}

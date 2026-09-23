@@ -1,12 +1,12 @@
 import { FC, MouseEventHandler, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
 import Button from '../inputs/Button';
 
+import { LuChevronLeft } from 'react-icons/lu';
+
 const backClass =
-  'inline-flex cursor-pointer items-center gap-1.5 rounded p-1 px-4 text-[13px] font-normal text-(--slate) transition-colors hover:bg-(--surface) hover:text-(--ink)';
+  'inline-flex h-(--control-md) cursor-pointer items-center gap-1.5 rounded-(--radius-control) bg-transparent px-3 text-sm font-medium text-(--ink) transition-colors hover:bg-(--surface)';
 
 /**
  * Breadcrumb-style back control. Rendered as a quiet inline control with
@@ -24,7 +24,7 @@ export const BackButton: FC<{
   <>
     {route && !disabled ? (
       <Link to={route} aria-label={ariaLabel} className={cn(backClass, className)}>
-        <FontAwesomeIcon icon={faChevronLeft} className="text-[11px]" />
+        <LuChevronLeft className="size-4" aria-hidden="true" />
         {children}
       </Link>
     ) : (
@@ -36,7 +36,7 @@ export const BackButton: FC<{
         aria-disabled={disabled || undefined}
         className={cn(backClass, disabled && 'pointer-events-none opacity-45', className)}
       >
-        <FontAwesomeIcon icon={faChevronLeft} className="text-[11px]" />
+        <LuChevronLeft className="size-4" aria-hidden="true" />
         {children}
       </Button>
     )}
@@ -54,7 +54,7 @@ export const PageFooter: FC<{
 }> = ({ back, actions, className }) => (
   <footer
     className={cn(
-      'flex w-full items-center justify-between gap-3 border-t border-(--line) pt-4',
+      'flex w-full items-center justify-between gap-3 pt-4',
       className,
     )}
   >

@@ -41,11 +41,11 @@ const DeclineUserInvitation = ({
     <Modal
       isOpen={declineInvitationModal}
       onClose={closeModal}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
       heading="Decline request"
     >
       <article className="flex w-full flex-col gap-4">
-        <p className="text-[13px] leading-6 text-(--ink)/70">
+        <p className="text-[13px] leading-6 text-(--muted)">
           Decline the access request from{" "}
           <span className="font-medium text-(--ink)">
             {selectedUserInvitation?.email || "this user"}

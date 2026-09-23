@@ -15,7 +15,7 @@ const headingClass: Record<NonNullable<HeadingProps["type"]>, string> = {
   h3: "type-label text-(--ink)",
   h4: "type-body-sm font-medium text-(--ink)",
   h5: "type-meta text-(--ink)",
-  h6: "type-eyebrow text-(--ink)",
+  h6: "text-xs font-medium text-(--muted)",
 };
 
 export const Heading = ({
@@ -45,7 +45,7 @@ export const RelaxedHeading = ({
   id,
 }: RelaxedHeadingProps) => {
   return (
-    <p id={id} className={cn("type-eyebrow", className)}>
+    <p id={id} className={cn("type-meta", className)}>
       {children}
     </p>
   );

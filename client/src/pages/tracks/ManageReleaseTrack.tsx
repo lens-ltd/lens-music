@@ -1,7 +1,5 @@
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import UserLayout from "@/containers/UserLayout";
 import { useGetRelease } from "@/hooks/releases/release.hooks";
 import {
@@ -51,6 +49,9 @@ import useTrackMetadataAutosave from "./components/useTrackMetadataAutosave";
 import { Lyrics } from "@/types/models/lyrics.types";
 import { RelaxedHeading } from "@/components/text/Headings";
 import { getContributorSearchName } from "@/utils/contributorCredit.helper";
+
+import { LuTrash2 } from 'react-icons/lu';
+import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 const formatTrackLyricsLabel = (lyrics: Lyrics) => {
   const createdAt = lyrics.createdAt
@@ -481,12 +482,12 @@ const ManageReleaseTrack = () => {
             isUpdatingSequence={isUpdatingContributorSequence}
           />
 
-          <section className="rounded-md border border-(--line)/70 bg-white p-4">
+          <section className="rounded-(--radius-card) bg-(--paper)">
             <header className="space-y-1">
               <h2 className="text-sm font-normal text-(--ink)">
                 Lyrics
               </h2>
-              <p className="text-[12px] text-(--slate)">
+              <p className="text-[12px] text-(--muted)">
                 Lyrics records linked to this track. Open sync to edit timing,
                 or remove a record here.
               </p>
@@ -496,7 +497,7 @@ const ManageReleaseTrack = () => {
                 {sortTrackLyricsByNewest(track.lyrics).map((lyric) => (
                   <li
                     key={lyric.id}
-                    className="flex items-center justify-between gap-3 rounded-md border border-(--line)/70 p-3"
+                    className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3"
                   >
                     <p className="text-[12px] text-(--ink)">
                       {formatTrackLyricsLabel(lyric)}
@@ -515,25 +516,24 @@ const ManageReleaseTrack = () => {
                       >
                         Open sync
                       </Button>
-                      <FontAwesomeIcon
-                        icon={faTrash}
+                      <button
+                        type="button"
+                        aria-label="Delete"
+                        className={iconButtonDangerClassName}
                         onClick={(event) => {
                           event.preventDefault();
                           if (isDeletingLyrics) return;
                           void handleDeleteLyrics(lyric.id);
                         }}
-                        className={`text-[12px] cursor-pointer text-red-700 transition-colors hover:text-red-700 ${
-                          isDeletingLyrics
-                            ? "cursor-not-allowed opacity-50"
-                            : ""
-                        }`}
-                      />
+                      >
+                        <LuTrash2 className="size-4" aria-hidden="true" />
+                      </button>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-[12px] text-(--slate)">
+              <p className="mt-3 text-[12px] text-(--muted)">
                 No lyrics records yet. Use Sync lyrics (with audio uploaded) or
                 create lyrics from the Lyrics section.
               </p>
@@ -541,7 +541,7 @@ const ManageReleaseTrack = () => {
           </section>
 
           {isUpdatingTrack && (
-            <p className="text-[12px] text-(--slate)">
+            <p className="text-[12px] text-(--muted)">
               Saving track updates...
             </p>
           )}
@@ -549,10 +549,10 @@ const ManageReleaseTrack = () => {
 
         {validationResult && (
           <aside
-            className={`relative rounded-md border px-4 py-3 text-[12px] ${
+            className={`relative rounded-(--radius-control) px-4 py-3 text-[13px] ${
               validationResult.valid
-                ? "border-green-200 bg-green-50 text-green-700"
-                : "border-red-200 bg-red-50 text-red-700"
+                ? "bg-(--success-soft) text-(--success)"
+                : "bg-(--danger-soft) text-(--danger)"
             }`}
             aria-live="polite"
             id="validation-result"
@@ -566,7 +566,7 @@ const ManageReleaseTrack = () => {
               <ul className="mt-2 list-disc space-y-1 pl-4">
                 {validationResult.errors.map((error) => (
                   <li
-                    className="text-[12px] text-(--ink)/80"
+                    className="text-[12px] text-(--muted)"
                     key={error}
                   >
                     {error}

@@ -20,19 +20,10 @@ import {
   formatDate,
   getStatusBackgroundColor,
 } from "@/utils/strings.helper";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import {
-  faCertificate,
-  faCircleCheck,
-  faCircleInfo,
-  faCircleXmark,
-  faEllipsisH,
-  faTrash,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+
+import { LuBadgeCheck, LuCircleCheck, LuCircleX, LuEllipsis, LuInfo, LuSquarePen, LuTrash2, LuUsers } from 'react-icons/lu';
 
 // CONTRIBUTOR COLUMNS
 export const useContributorColumns = () => {
@@ -55,10 +46,9 @@ export const useContributorColumns = () => {
             {row?.original?.verificationStatus ===
               ContributorVerificationStatus.VERIFIED && (
               <CustomTooltip label="Verified">
-                <FontAwesomeIcon
-                  icon={faCircleCheck}
-                  className="text-primary cursor-pointer text-[12px]"
-                />
+                <LuCircleCheck
+                 
+                  className="text-(--signal) cursor-pointer text-[12px]" />
               </CustomTooltip>
             )}
           </p>
@@ -118,31 +108,28 @@ export const useContributorColumns = () => {
           const showMutateActions = Boolean(isAdminAssigner || canUpdate || canVerify || canDelete);
 
           let verificationLabel = "Verify";
-          let verificationIcon = faCertificate;
+          let verificationIcon = LuBadgeCheck;
           if (['PENDING_VERIFICATION'].includes(row?.original?.verificationStatus)) {
             verificationLabel = "Approve verification";
-            verificationIcon = faCircleCheck;
+            verificationIcon = LuCircleCheck;
           }
 
           return (
             <CustomPopover
               trigger={
-                <FontAwesomeIcon
-                  icon={faEllipsisH}
-                  className={ellipsisHClassName}
-                />
+                <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
               }
             >
-              <menu className="w-full flex flex-col items-center gap-1">
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
                 <TableActionButton
-                  icon={faCircleInfo}
+                  icon={LuInfo}
                   to={`/contributors/${row?.original?.id}`}
                 >
                   View details
                 </TableActionButton>
                 {canUpdate && showMutateActions && (
                   <TableActionButton
-                    icon={faPenToSquare}
+                    icon={LuSquarePen}
                     to={`/contributors/${row?.original?.id}/update`}
                   >
                     Manage
@@ -151,7 +138,7 @@ export const useContributorColumns = () => {
                 {canVerify && !['VERIFIED'].includes(row?.original?.verificationStatus) && (
                   <TableActionButton
                     icon={verificationIcon}
-                    iconClassName="text-primary"
+                    iconClassName="text-(--signal)"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {
@@ -168,8 +155,8 @@ export const useContributorColumns = () => {
                     ContributorVerificationStatus.NOT_VERIFIED,
                   ] as string[]).includes(row?.original?.verificationStatus) && (
                     <TableActionButton
-                      icon={faCircleXmark}
-                      iconClassName="text-red-700 text-[12px]"
+                      icon={LuCircleX}
+                      iconClassName="text-(--danger) text-[12px]"
                       onClick={(e) => {
                         e.preventDefault();
                         if (row?.original?.id) {
@@ -186,7 +173,7 @@ export const useContributorColumns = () => {
                     row?.original?.type as ContributorType,
                   ) && (
                   <TableActionButton
-                    icon={faUsers}
+                    icon={LuUsers}
                     to={`/contributors/${row?.original?.id}/memberships`}
                   >
                     Manage memberships
@@ -194,8 +181,8 @@ export const useContributorColumns = () => {
                 )}
                 {canDelete && (
                   <TableActionButton
-                    icon={faTrash}
-                    iconClassName="text-red-700"
+                    icon={LuTrash2}
+                    iconClassName="text-(--danger)"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {

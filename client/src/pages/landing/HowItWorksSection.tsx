@@ -1,52 +1,44 @@
-import FadeSection from './FadeSection';
-import { fadeUp, SectionLabel } from './landingShared';
+import { landingSectionClassName } from './landingShared';
 
 const steps = [
   {
-    step: '01',
-    title: 'Prepare your release',
-    text: 'Add audio, cover art, metadata, and credits in one structured submission flow.',
+    title: 'Upload your release',
+    text: 'Add audio, cover art, credits and release details in one guided form.',
   },
   {
-    step: '02',
-    title: 'Deliver to stores',
-    text: 'Send your release to major streaming and download platforms from a single dashboard.',
+    title: 'Lens delivers it',
+    text: 'Your release goes out to 150+ streaming and download stores at once.',
   },
   {
-    step: '03',
-    title: 'Track earnings',
-    text: 'Review platform and territory performance with revenue trends and payout summaries.',
+    title: 'Track what it earns',
+    text: 'See earnings by store, country and month, and follow every payout.',
   },
 ];
 
 export default function HowItWorksSection() {
   return (
-    <FadeSection id="how-it-works" labelledBy="how-it-works-heading" className="section-rhythm bg-(--paper)">
-      {({ inView }) => (
-        <article className="app-container">
-          <header className="max-w-2xl" style={fadeUp(inView)}>
-            <SectionLabel>How it works</SectionLabel>
-            <h2 id="how-it-works-heading" className="mt-4 type-h2">
-              A clear release workflow from upload to payout.
-            </h2>
-            <p className="mt-4 type-body text-(--slate) max-w-[46ch]">
-              Lens keeps the release process simple and gives you the revenue reporting needed to make decisions after launch.
-            </p>
-          </header>
+    <section
+      id="how-it-works"
+      className={landingSectionClassName}
+      aria-labelledby="how-it-works-heading"
+    >
+      <div className="app-container">
+        <h2 id="how-it-works-heading" className="type-h2 max-w-[20ch]">
+          From upload to payout in three steps.
+        </h2>
 
-          <ol className="mt-10 grid md:grid-cols-3 gap-4 list-none p-0 m-0">
-            {steps.map((item, index) => (
-              <li key={item.step} style={fadeUp(inView, 0.08 * index)}>
-                <article className="h-full card-framed p-6">
-                  <p className="type-eyebrow tabular">{item.step}</p>
-                  <h3 className="mt-4 type-h3">{item.title}</h3>
-                  <p className="mt-3 type-body-sm text-(--slate)">{item.text}</p>
-                </article>
-              </li>
-            ))}
-          </ol>
-        </article>
-      )}
-    </FadeSection>
+        <ol className="mt-14 grid list-none gap-12 p-0 md:grid-cols-3 md:gap-10" role="list">
+          {steps.map(({ title, text }, index) => (
+            <li key={title}>
+              <span className="block text-5xl font-medium leading-none text-(--signal) tabular">
+                {index + 1}
+              </span>
+              <h3 className="mt-6 type-h3">{title}</h3>
+              <p className="mt-2 max-w-[34ch] type-body text-(--muted)">{text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
   );
 }

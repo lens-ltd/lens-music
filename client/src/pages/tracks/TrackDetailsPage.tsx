@@ -37,7 +37,7 @@ const TrackDetailsPage = () => {
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <section className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)">
+            <p className="text-xs text-(--muted)">
               Track details
             </p>
             <h1
@@ -47,7 +47,7 @@ const TrackDetailsPage = () => {
               {track?.title || "Loading..."}
             </h1>
             {release?.title && (
-              <p className="text-[12px] text-(--slate)">
+              <p className="text-[12px] text-(--muted)">
                 {release.title}
               </p>
             )}

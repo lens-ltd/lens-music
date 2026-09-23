@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
-import { RelaxedHeading } from '@/components/text/Headings';
 import { cn } from '@/lib/utils';
 
 interface DashboardSectionProps {
   title?: ReactNode;
   subtitle?: ReactNode;
+  /** @deprecated Section labels are no longer shown. */
   label?: ReactNode;
   action?: ReactNode;
   children: ReactNode;
@@ -13,13 +13,13 @@ interface DashboardSectionProps {
   headerClassName?: string;
   bodyClassName?: string;
   overflowHidden?: boolean;
+  /** @deprecated Sections no longer differ visually. */
   variant?: 'panel' | 'open';
 }
 
 const DashboardSection = ({
   title,
   subtitle,
-  label,
   action,
   children,
   className,
@@ -27,16 +27,13 @@ const DashboardSection = ({
   headerClassName,
   bodyClassName,
   overflowHidden = false,
-  variant = 'panel',
 }: DashboardSectionProps) => {
-  const hasHeader = Boolean(title || subtitle || label || action);
+  const hasHeader = Boolean(title || subtitle || action);
 
   return (
     <section
       className={cn(
-        variant === 'panel'
-          ? 'flex flex-col card-framed'
-          : 'flex flex-col border-t border-(--line) pt-1',
+        'flex flex-col',
         overflowHidden && 'overflow-hidden',
         contentClassName,
         className
@@ -45,18 +42,14 @@ const DashboardSection = ({
       {hasHeader && (
         <header
           className={cn(
-            'flex flex-col items-start gap-3 px-4 pt-4 sm:px-5 sm:pt-5 md:flex-row md:justify-between',
+            'flex flex-col items-start gap-3 md:flex-row md:justify-between',
             headerClassName
           )}
         >
           <div className="min-w-0">
-            {label && <RelaxedHeading>{label}</RelaxedHeading>}
             {title && (
               <h2
-                className={cn(
-                  'type-card-title text-(--ink)',
-                  label && 'mt-1.5'
-                )}
+                className="type-card-title text-(--ink)"
               >
                 {title}
               </h2>
@@ -77,7 +70,7 @@ const DashboardSection = ({
 
       <div
         className={cn(
-          hasHeader ? 'px-4 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4' : 'p-4 sm:p-5',
+          hasHeader ? 'pt-4' : '',
           bodyClassName
         )}
       >

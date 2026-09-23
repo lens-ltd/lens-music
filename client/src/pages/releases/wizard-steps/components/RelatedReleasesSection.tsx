@@ -159,12 +159,12 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-xl border border-(--line)/70 bg-white p-4 sm:p-5">
+      <section className="rounded-(--radius-card) bg-(--paper)">
         <header className="mb-4 space-y-1">
           <h3 className="text-sm font-medium text-(--ink)">
             Related releases
           </h3>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Capture remasters, equivalent releases, and replacement
             relationships directly in the release workflow.
           </p>
@@ -218,13 +218,13 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
           </Button>
         </div>
 
-        <div className="mt-5 border-t border-(--line)/50 pt-4">
+        <div className="mt-5 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--slate)">
+            <p className="text-[12px] text-(--muted)">
               Loading related releases...
             </p>
           ) : relatedReleases.length === 0 ? (
-            <p className="text-[12px] text-(--slate)">
+            <p className="text-[12px] text-(--muted)">
               No related releases linked yet.
             </p>
           ) : (
@@ -232,7 +232,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
               {relatedReleases.map((row) => (
                 <li
                   key={row.id}
-                  className="flex items-start justify-between gap-3 rounded-md border border-(--line)/40 p-3 text-[12px]"
+                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
                 >
                   <div className="space-y-0.5">
                     <p className="font-medium text-(--ink)">
@@ -240,7 +240,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                         row.externalId ||
                         "External release"}
                     </p>
-                    <p className="text-[11px] text-(--slate)">
+                    <p className="text-[11px] text-(--muted)">
                       {row.relationType}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                     <button
                       type="button"
                       onClick={() => openEdit(row)}
-                      className="text-[11px] text-(--lens-blue) hover:underline"
+                      className="text-[11px] text-(--signal) hover:underline"
                     >
                       Edit
                     </button>

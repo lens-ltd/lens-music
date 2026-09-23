@@ -5,11 +5,12 @@ import UserLayout from "@/containers/UserLayout";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { useUpdateProfileMutation } from "@/state/api/apiMutationSlice";
 import { setSession } from "@/state/features/authSlice";
-import { faUser, faEnvelope, faPhone, faGlobe, faCalendar, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { LuCalendar, LuGlobe, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
+
+import StatusBadge from '@/components/feedbacks/StatusBadge';
 const UserProfilePage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -68,7 +69,7 @@ const UserProfilePage = () => {
         <nav className="w-full flex items-center gap-3 justify-between">
           <div>
             <Heading>Profile</Heading>
-            <p className="text-[13px] text-(--slate) font-normal mt-1">
+            <p className="text-[13px] text-(--muted) font-normal mt-1">
               Manage your account information and preferences.
             </p>
           </div>
@@ -85,7 +86,7 @@ const UserProfilePage = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-(--lens-blue) text-white text-2xl font-semibold">
+                <div className="flex h-full w-full items-center justify-center bg-(--signal) text-white text-2xl font-semibold">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
               )}
@@ -94,17 +95,15 @@ const UserProfilePage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user?.name || 'User'}
               </h2>
-              <p className="text-[13px] text-(--slate) mt-1">
+              <p className="text-[13px] text-(--muted) mt-1">
                 {user?.email || 'No email provided'}
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-md bg-(--surface) text-[11px] text-(--ink)">
-                  <FontAwesomeIcon icon={faShieldAlt} className="mr-1.5 text-[10px]" />
+                <span className="inline-flex h-6 items-center gap-1.5 rounded-(--radius-pill) bg-(--paper) px-2.5 text-xs text-(--ink)">
+                  <LuShield className="size-3.5" aria-hidden="true" />
                   {user?.roleName || 'No role assigned'}
                 </span>
-                <span className="inline-flex items-center px-2 py-1 rounded-md bg-(--lens-blue-soft) text-[11px] text-(--lens-blue)">
-                  {user?.status || 'Active'}
-                </span>
+                <StatusBadge status={user?.status || 'ACTIVE'} />
               </div>
             </div>
             {!isEditing && (
@@ -117,13 +116,13 @@ const UserProfilePage = () => {
           {/* Profile Information */}
           <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
             <h3 className="text-[14px] font-medium text-(--ink) mb-2">
-              Account Information
+              Account information
             </h3>
 
             {isEditing ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <label className="text-xs text-(--muted)">
                     Full name
                   </label>
                   <Input
@@ -134,7 +133,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <label className="text-xs text-(--muted)">
                     Email address
                   </label>
                   <Input
@@ -147,7 +146,7 @@ const UserProfilePage = () => {
 
                 {emailChanged && (
                   <div className="flex flex-col gap-2">
-                    <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                    <label className="text-xs text-(--muted)">
                       Current password
                     </label>
                     <Input
@@ -156,14 +155,14 @@ const UserProfilePage = () => {
                       placeholder="Confirm your current password"
                       type="password"
                     />
-                    <p className="text-[11px] text-(--slate)">
+                    <p className="text-[11px] text-(--muted)">
                       Required because you are changing your login email.
                     </p>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <label className="text-xs text-(--muted)">
                     Phone number
                   </label>
                   <Input
@@ -174,7 +173,7 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <label className="text-xs text-(--muted)">
                     Country
                   </label>
                   <Input
@@ -197,10 +196,10 @@ const UserProfilePage = () => {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
+                    <LuUser className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                    <p className="text-xs text-(--muted)">
                       Full name
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -211,10 +210,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <FontAwesomeIcon icon={faEnvelope} className="text-[12px] text-(--slate)" />
+                    <LuMail className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                    <p className="text-xs text-(--muted)">
                       Email address
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -225,10 +224,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <FontAwesomeIcon icon={faPhone} className="text-[12px] text-(--slate)" />
+                    <LuPhone className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                    <p className="text-xs text-(--muted)">
                       Phone number
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -239,10 +238,10 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <FontAwesomeIcon icon={faGlobe} className="text-[12px] text-(--slate)" />
+                    <LuGlobe className="text-[12px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                    <p className="text-xs text-(--muted)">
                       Country
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
@@ -254,10 +253,10 @@ const UserProfilePage = () => {
                 {user?.dateOfBirth && (
                   <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                      <FontAwesomeIcon icon={faCalendar} className="text-[12px] text-(--slate)" />
+                      <LuCalendar className="text-[12px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                      <p className="text-xs text-(--muted)">
                         Date of birth
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">
@@ -270,10 +269,10 @@ const UserProfilePage = () => {
                 {user?.gender && (
                   <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                      <FontAwesomeIcon icon={faUser} className="text-[12px] text-(--slate)" />
+                      <LuUser className="text-[12px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                      <p className="text-xs text-(--muted)">
                         Gender
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">
@@ -296,7 +295,7 @@ const UserProfilePage = () => {
                 {user?.permissions?.map((permission: string) => (
                   <span
                     key={permission}
-                    className="inline-flex items-center px-2 py-1 rounded-md bg-(--lens-blue-soft) text-[11px] text-(--lens-blue)"
+                    className="inline-flex items-center px-2 py-1 rounded-md bg-(--signal-soft) text-[11px] text-(--signal)"
                   >
                     {permission.replace(/_/g, ' ').toLowerCase()}
                   </span>

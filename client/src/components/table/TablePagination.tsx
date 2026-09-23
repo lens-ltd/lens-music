@@ -1,11 +1,11 @@
-import { ChevronLeftIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from "@radix-ui/react-icons";
-import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { UnknownAction } from "@reduxjs/toolkit";
 import { Table } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { formatNumbers } from "@/utils/strings.helper";
+
+import { LuChevronLeft, LuChevronRight, LuChevronsLeft, LuChevronsRight } from 'react-icons/lu';
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -53,7 +53,7 @@ export function DataTablePagination<TData>({
   }, [totalCount]);
 
   return (
-    <footer className="flex flex-col gap-3 border-t border-(--line) bg-white px-4 py-3 text-[13px] text-(--slate) sm:flex-row sm:items-center sm:justify-between">
+    <footer className="flex flex-col gap-3 px-4 py-3 text-[13px] text-(--muted) sm:flex-row sm:items-center sm:justify-between">
       <span>
         {totalCount > 0 ? (
           <>{formatNumbers(totalCount)} {totalCount === 1 ? 'record' : 'records'}</>
@@ -76,7 +76,7 @@ export function DataTablePagination<TData>({
               }
             }}
           >
-            <SelectTrigger className="h-8 w-[68px] px-2" aria-label="Rows per page">
+            <SelectTrigger className="h-(--control-sm) min-h-(--control-sm) w-[72px] px-2" aria-label="Rows per page">
               <SelectValue placeholder={size} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -95,8 +95,8 @@ export function DataTablePagination<TData>({
           {page + 1} / {Math.max(totalPages || 1, 1)}
         </span>
         <Button
-          size="icon"
-          variant="secondary"
+          size="icon-sm"
+          variant="ghost"
           aria-label="Go to first page"
           onClick={() => {
             table.setPageIndex(0);
@@ -104,11 +104,11 @@ export function DataTablePagination<TData>({
           }}
           disabled={page === 0}
         >
-          <DoubleArrowLeftIcon className="w-4 h-4" />
+          <LuChevronsLeft className="w-4 h-4" />
         </Button>
         <Button
-          size="icon"
-          variant="secondary"
+          size="icon-sm"
+          variant="ghost"
           aria-label="Go to previous page"
           onClick={() => {
             table.previousPage();
@@ -116,11 +116,11 @@ export function DataTablePagination<TData>({
           }}
           disabled={page === 0}
         >
-          <ChevronLeftIcon className="w-4 h-4" />
+          <LuChevronLeft className="w-4 h-4" />
         </Button>
         <Button
-          size="icon"
-          variant="secondary"
+          size="icon-sm"
+          variant="ghost"
           aria-label="Go to next page"
           onClick={() => {
             table.nextPage();
@@ -128,11 +128,11 @@ export function DataTablePagination<TData>({
           }}
           disabled={totalPages === 0 || page >= (totalPages - 1)}
         >
-          <ChevronRightIcon className="w-4 h-4" />
+          <LuChevronRight className="w-4 h-4" />
         </Button>
         <Button
-          size="icon"
-          variant="secondary"
+          size="icon-sm"
+          variant="ghost"
           aria-label="Go to last page"
           onClick={() => {
             table.setPageIndex((totalPages - 1) || 0);
@@ -140,7 +140,7 @@ export function DataTablePagination<TData>({
           }}
           disabled={totalPages === 0 || page >= (totalPages - 1)}
         >
-          <DoubleArrowRightIcon className="w-4 h-4" />
+          <LuChevronsRight className="w-4 h-4" />
         </Button>
       </div>
     </footer>

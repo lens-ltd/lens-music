@@ -1,10 +1,11 @@
-import { type IconProp } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type FC, type MouseEventHandler, type ReactNode, type HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader } from './Loader.tsx';
 import { Button as ButtonUI, buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
+
+import type { IconType } from 'react-icons';
+import { Icon } from '@/components/ui/icon';
 
 interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, 'onClick'> {
   route?: string;
@@ -16,7 +17,8 @@ interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchor
   styled?: boolean;
   submit?: boolean;
   danger?: boolean;
-  icon?: IconProp;
+  icon?: IconType;
+  size?: 'md' | 'sm';
   isLoading?: boolean;
   children?: ReactNode;
 }
@@ -33,6 +35,7 @@ const Button: FC<ButtonProps> = ({
   submit = false,
   danger = false,
   icon = undefined,
+  size = 'md',
   isLoading = false,
   children,
   ...rest
@@ -42,11 +45,11 @@ const Button: FC<ButtonProps> = ({
     : !styled
       ? 'ghost'
       : primary
-        ? 'default'
-        : 'outline';
+        ? 'primary'
+        : 'secondary';
 
   const classes = cn(
-    buttonVariants({ variant }),
+    buttonVariants({ variant, size }),
     disabled && 'pointer-events-none opacity-40',
     className,
   );
@@ -54,10 +57,10 @@ const Button: FC<ButtonProps> = ({
   const isLink = Boolean(route) && route !== '#' && buttonType !== 'submit' && buttonType !== 'reset';
 
   const content = isLoading ? (
-    <Loader className={primary || danger ? 'text-(--lens-blue-ink)' : 'text-(--ink)'} />
+    <Loader className={primary || danger ? 'text-white' : 'text-(--ink)'} />
   ) : (
     <>
-      {icon && <FontAwesomeIcon icon={icon} />}
+      {icon && <Icon icon={icon} />}
       {children || value}
     </>
   );
@@ -88,6 +91,7 @@ const Button: FC<ButtonProps> = ({
     <ButtonUI
       type={buttonType}
       variant={variant}
+      size={size}
       onClick={onClick as MouseEventHandler<HTMLButtonElement> | undefined}
       className={className}
       disabled={disabled}

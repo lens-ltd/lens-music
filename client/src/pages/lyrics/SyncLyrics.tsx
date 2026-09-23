@@ -7,7 +7,6 @@ import {
   useSyncLyricsPage,
   useSyncLyricsPlayback,
 } from "@/hooks/lyrics/sync-lyrics.hooks";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import DeleteLyrics from "./DeleteLyrics";
 import LyricsGuidelines from "./LyricsGuidelines";
@@ -16,6 +15,8 @@ import SyncLyricsEmptyState from "./components/SyncLyricsEmptyState";
 import SyncLyricsFooter from "./components/SyncLyricsFooter";
 import SyncLyricsLinesPanel from "./components/SyncLyricsLinesPanel";
 import SyncLyricsSidebar from "./components/SyncLyricsSidebar";
+
+import { LuPlus } from 'react-icons/lu';
 
 const SyncLyrics = () => {
   const navigate = useNavigate();
@@ -44,21 +45,21 @@ const SyncLyrics = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-4">
-        <header className="rounded-md border border-(--line)/70 bg-white p-4">
+        <header className="rounded-(--radius-card) bg-(--paper)">
           <nav className="flex flex-wrap items-start justify-between gap-4">
             <menu className="space-y-1">
               <RelaxedHeading>Lyrics sync</RelaxedHeading>
               <Heading className="!text-(--ink)">
                 {page.track?.title || "Track lyrics sync"}
               </Heading>
-              <p className="text-[12px] text-(--slate)">
+              <p className="text-[12px] text-(--muted)">
                 Sync lyrics against the uploaded primary audio and overwrite the
                 selected lyrics record when you save.
               </p>
             </menu>
             <menu className="flex flex-wrap items-center gap-2">
               <Button
-                icon={faPlus}
+                icon={LuPlus}
                 route={`/lyrics/create?trackId=${page.trackId}`}
               >
                 New lyrics record

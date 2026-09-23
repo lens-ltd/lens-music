@@ -1,9 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Track } from "@/types/models/track.types";
 import ReleaseTrackCard from "./ReleaseTrackCard";
+
+import { LuGripVertical } from 'react-icons/lu';
 
 export interface SortableTrackItemProps {
   track: Track;
@@ -47,14 +47,14 @@ const SortableTrackItem = ({
       <button
         type="button"
         aria-label="Drag to reorder track"
-        className={`flex shrink-0 items-center rounded-md px-1.5 text-(--slate) transition-colors hover:text-(--ink)/70 ${
+        className={`flex shrink-0 items-center rounded-md px-1.5 text-(--muted) transition-colors hover:text-(--muted) ${
           disabled ? "cursor-not-allowed opacity-40" : "cursor-grab touch-none"
         }`}
         disabled={disabled}
         {...attributes}
         {...listeners}
       >
-        <FontAwesomeIcon icon={faGripVertical} className="text-[13px]" />
+        <LuGripVertical className="text-[13px]" />
       </button>
       <div className="min-w-0 flex-1">
         <ReleaseTrackCard

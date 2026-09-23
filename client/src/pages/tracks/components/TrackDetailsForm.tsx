@@ -28,18 +28,18 @@ const TrackDetailsForm = ({
   stateLabel,
   onPersistField,
 }: TrackDetailsFormProps) => (
-  <section className="rounded-md border border-(--line)/70 bg-white p-4">
+  <section className="rounded-(--radius-card) bg-(--paper)">
     <header className="flex items-center justify-between gap-3">
       <section>
         <h2 className="text-sm font-normal text-(--ink)">
           Track details
         </h2>
-        <p className="text-[12px] text-(--slate)">
+        <p className="text-[12px] text-(--muted)">
           Saved field by field when you leave an input.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-(--lens-blue)">{stateLabel}</p>
+        <p className="text-[11px] text-(--signal)">{stateLabel}</p>
       )}
     </header>
 

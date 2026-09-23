@@ -1,6 +1,7 @@
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+
+import { LuSave } from 'react-icons/lu';
 
 type SyncLyricsFooterProps = {
   isBusy: boolean;
@@ -25,7 +26,7 @@ const SyncLyricsFooter = ({
       </BackButton>
       <Button
         primary
-        icon={faSave}
+        icon={LuSave}
         onClick={(event) => {
           event.preventDefault();
           onSave();

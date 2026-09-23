@@ -1,8 +1,9 @@
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
-import { CheckIcon } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/utils"
+
+import { LuCheck } from 'react-icons/lu';
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -11,7 +12,7 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer h-4 w-4 shrink-0 rounded-xs border border-(--line-strong) shadow-none focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-(--lens-blue) data-[state=checked]:bg-(--lens-blue) data-[state=checked]:text-(--lens-blue-ink)",
+      "peer h-4 w-4 shrink-0 rounded-xs border border-(--line) shadow-none focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-(--signal) data-[state=checked]:bg-(--signal) data-[state=checked]:text-(--paper)",
       className
     )}
     {...props}
@@ -19,7 +20,7 @@ const Checkbox = React.forwardRef<
     <CheckboxPrimitive.Indicator
       className={cn("flex items-center justify-center text-current")}
     >
-      <CheckIcon className="h-4 w-4" />
+      <LuCheck className="h-4 w-4" />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ))

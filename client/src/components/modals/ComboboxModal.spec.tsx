@@ -72,7 +72,7 @@ describe('Combobox inside Modal', () => {
     const menu = await screen.findByRole('listbox');
     expect(within(menu).getByRole('option', { name: 'Single' })).toBeInTheDocument();
 
-    await user.click(screen.getByPlaceholderText('Search option...'));
+    await user.click(screen.getByPlaceholderText('Search options'));
     await user.keyboard('sin');
     await waitFor(() => {
       expect(within(menu).queryByRole('option', { name: 'Album' })).not.toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('Combobox inside Modal', () => {
 
     await user.click(screen.getByRole('combobox'));
     await screen.findByRole('listbox');
-    await user.click(screen.getByPlaceholderText('Search option...'));
+    await user.click(screen.getByPlaceholderText('Search options'));
     await user.keyboard('{ArrowDown}{Enter}');
 
     await waitFor(() => {

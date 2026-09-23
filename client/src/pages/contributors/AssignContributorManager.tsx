@@ -83,7 +83,7 @@ const AssignContributorManager = () => {
       heading="Assign manager"
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-[13px] text-(--ink)/70">
+        <p className="text-[13px] text-(--muted)">
           Select a platform user who may manage{" "}
           <strong>
             {contributor?.displayName || contributor?.name || "this contributor"}

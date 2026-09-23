@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ErrorResponse, Link, useNavigate, useParams } from "react-router-dom";
-import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { toast } from "sonner";
 import Input from "@/components/inputs/Input";
 import Button from "@/components/inputs/Button";
@@ -12,6 +11,8 @@ import {
   useConfirmPasswordResetMutation,
   useValidatePasswordResetTokenMutation,
 } from "@/state/api/apiMutationSlice";
+
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -68,20 +69,16 @@ const ResetPassword = () => {
 
   return (
     <main
-      className="min-h-screen bg-(--field) flex flex-col"
+      className="min-h-screen bg-(--paper) flex flex-col"
     >
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[400px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
-          <p className="type-eyebrow">
-            Account security
-          </p>
-          <h1
-            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
+        <article className="w-full max-w-[400px]">
+          <h1 className="type-page-title text-2xl">
             Choose a new password
           </h1>
-          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
+          <p className="mt-2 text-[13px] leading-5 text-(--muted)">
             Create a new password for your Lens Music account.
           </p>
 
@@ -90,7 +87,7 @@ const ResetPassword = () => {
               <Loader />
             </div>
           ) : unavailable ? (
-            <div className="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">
+            <div className="mt-8 rounded-xl bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
               This password reset link is invalid or has expired.
             </div>
           ) : (
@@ -117,7 +114,7 @@ const ResetPassword = () => {
                     required
                     placeholder="Enter a new password"
                     type={showPassword ? "text" : "password"}
-                    suffixIcon={showPassword ? faEyeSlash : faEye}
+                    suffixIcon={showPassword ? LuEyeOff : LuEye}
                     suffixIconHandler={(event) => {
                       event.preventDefault();
                       setShowPassword(!showPassword);
@@ -146,7 +143,7 @@ const ResetPassword = () => {
                     required
                     placeholder="Re-enter your new password"
                     type={showPassword ? "text" : "password"}
-                    suffixIcon={showPassword ? faEyeSlash : faEye}
+                    suffixIcon={showPassword ? LuEyeOff : LuEye}
                     suffixIconHandler={(event) => {
                       event.preventDefault();
                       setShowPassword(!showPassword);
@@ -168,7 +165,7 @@ const ResetPassword = () => {
             </form>
           )}
 
-          <p className="mt-5 text-center text-[12px] text-(--slate) font-normal">
+          <p className="mt-5 text-center text-[12px] text-(--muted) font-normal">
             <Link
               to="/auth/login"
               className="link-sweep type-body-sm text-(--signal)"

@@ -15,9 +15,6 @@ import {
   ContributorMembership,
 } from "@/types/models/contributor.types";
 import { UUID } from "@/types/common.types";
-import { faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Check } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,6 +23,9 @@ import {
   setSelectedContributorMembership,
 } from "@/state/features/contributorMembershipSlice";
 import DeleteContributorMembership from "./DeleteContributorMembership";
+
+import { LuCheck, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
+import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 const getContributorLabel = (contributor: Contributor) =>
   contributor.displayName ||
@@ -247,16 +247,16 @@ const ContributorMembershipsPage = () => {
           <Heading isLoading={isFetchingContributor}>
             {contributorName} — Members
           </Heading>
-          <p className="text-[12px] text-gray-500">
+          <p className="text-[12px] text-(--muted)">
             Manage the members that belong to this group.
           </p>
         </header>
 
-        <section className="rounded-md border border-gray-200/80 bg-white p-5 shadow-sm flex flex-col gap-4">
+        <section className="rounded-(--radius-card) bg-(--paper) flex flex-col gap-4">
           <div className="flex items-center justify-between gap-3">
             <Heading type="h3">Current members</Heading>
             <Button
-              icon={faPlus}
+              icon={LuPlus}
               primary
               onClick={(e) => {
                 e.preventDefault();
@@ -268,7 +268,7 @@ const ContributorMembershipsPage = () => {
           </div>
 
           {showAddMember && (
-            <div className="flex items-end gap-3 rounded-md border border-dashed border-gray-200 bg-gray-50/60 p-4">
+            <div className="flex items-end gap-3 rounded-(--radius-control) bg-(--surface) p-4">
               <div className="flex-1">
                 <label className="flex w-full flex-col gap-2">
                   <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
@@ -281,18 +281,18 @@ const ContributorMembershipsPage = () => {
                         handleMemberSearchChange(event.target.value)
                       }
                       placeholder="Search contributors by name, email, phone, or country"
-                      prefixIcon={faSearch}
+                      prefixIcon={LuSearch}
                     />
                     {memberSearchTerm.trim().length > 0 && (
-                      <div className="mt-2 animate-in fade-in duration-150 rounded-md border border-gray-200 bg-white shadow-sm">
+                      <div className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                         {isMemberSearchPending ? (
-                          <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-gray-500">
-                            <Loader size="small" className="text-gray-400" />
+                          <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                            <Loader size="small" className="text-(--muted)" />
                             Searching contributors...
                           </span>
                         ) : memberSearchTerm.trim().length <
                           MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                          <p className="px-3 py-2 text-[12px] text-gray-500">
+                          <p className="px-3 py-2 text-[12px] text-(--muted)">
                             Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS}{" "}
                             characters to search.
                           </p>
@@ -306,17 +306,17 @@ const ContributorMembershipsPage = () => {
                                   <button
                                     type="button"
                                     onClick={() => handleSelectMember(member)}
-                                    className={`flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-gray-50 ${
+                                    className={`flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-(--surface) ${
                                       isSelected
-                                        ? "border-l-2 border-l-primary bg-gray-100"
+                                        ? "bg-(--signal-soft)"
                                         : ""
                                     }`}
                                   >
                                     <span className="flex flex-col items-start">
-                                      <span className="text-[12px] text-gray-900">
+                                      <span className="text-[12px] text-(--ink)">
                                         {getContributorLabel(member)}
                                       </span>
-                                      <span className="text-[11px] text-gray-500">
+                                      <span className="text-[11px] text-(--muted)">
                                         {[
                                           member.email,
                                           member.phoneNumber,
@@ -327,7 +327,7 @@ const ContributorMembershipsPage = () => {
                                       </span>
                                     </span>
                                     {isSelected && (
-                                      <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                      <LuCheck className="h-3.5 w-3.5 shrink-0 text-(--signal)" />
                                     )}
                                   </button>
                                 </li>
@@ -336,7 +336,7 @@ const ContributorMembershipsPage = () => {
                           </ul>
                         ) : (
                           !(isMemberSearchPending || selectedMemberId) && (
-                            <p className="px-3 py-2 text-[12px] text-gray-500">
+                            <p className="px-3 py-2 text-[12px] text-(--muted)">
                               No contributors found.
                             </p>
                           )
@@ -376,12 +376,12 @@ const ContributorMembershipsPage = () => {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-12 animate-pulse rounded-md bg-gray-100"
+                  className="h-12 animate-pulse rounded-md bg-(--surface)"
                 />
               ))}
             </div>
           ) : contributorMembershipsList.length === 0 ? (
-            <p className="rounded-md border border-dashed border-gray-200 bg-gray-50/60 px-4 py-3 text-[12px] text-gray-500">
+            <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
               No members have been added to this group yet.
             </p>
           ) : (
@@ -392,27 +392,29 @@ const ContributorMembershipsPage = () => {
                   return (
                     <div
                       key={membership.id}
-                      className="flex items-center justify-between gap-3 rounded-md border border-gray-100 bg-gray-50/80 p-3"
+                      className="flex items-center justify-between gap-3 rounded-md bg-(--surface) p-3"
                     >
                       <div className="flex flex-col gap-0.5">
-                        <p className="text-[13px] font-medium text-gray-900">
+                        <p className="text-[13px] font-medium text-(--ink)">
                           {member?.displayName ||
                             member?.name ||
                             "Unknown contributor"}
                         </p>
                         {member?.email && (
-                          <p className="text-[11px] text-gray-500">
+                          <p className="text-[11px] text-(--muted)">
                             {member.email}
                           </p>
                         )}
                         {member?.type && (
-                          <span className="text-[10px] uppercase tracking-wider text-gray-400">
+                          <span className="text-xs text-(--muted)">
                             {member.type}
                           </span>
                         )}
                       </div>
-                      <FontAwesomeIcon
-                        icon={faTrash}
+                      <button
+                        type="button"
+                        aria-label="Delete"
+                        className={iconButtonDangerClassName}
                         onClick={(e) => {
                           e.preventDefault();
                           dispatch(
@@ -420,8 +422,9 @@ const ContributorMembershipsPage = () => {
                           );
                           dispatch(setDeleteContributorMembershipModal(true));
                         }}
-                        className="text-[12px] cursor-pointer text-red-700"
-                      />
+                      >
+                        <LuTrash2 className="size-4" aria-hidden="true" />
+                      </button>
                     </div>
                   );
                 },

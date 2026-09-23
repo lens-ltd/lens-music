@@ -204,12 +204,12 @@ const ReleaseWizardStores = ({
     <section className="w-full flex flex-col gap-4">
       <header>
         <h2 className="text-xl font-semibold text-(--ink)">Stores</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-(--slate)">
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-(--muted)">
           Select the stores where this release should be delivered.
         </p>
       </header>
 
-      <menu className="flex w-full items-center justify-between gap-3 border-b border-(--line) pb-4">
+      <menu className="flex w-full items-center justify-between gap-3 pb-4">
         {navButtons}
       </menu>
 
@@ -217,7 +217,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-md border border-(--line)/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+            className="flex cursor-pointer items-center gap-2 rounded-(--radius-card) bg-(--paper) transition-colors hover:bg-(--surface)"
           >
             <UiInput
               type="checkbox"
@@ -238,11 +238,11 @@ const ReleaseWizardStores = ({
             </span>
           </label>
         </menu>
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
         {storesMissingDdex.length > 0 ? (
-          <p className="text-[11px] text-amber-700">
+          <p className="text-[11px] text-(--ink)">
             {storesMissingDdex.length} selected store
             {storesMissingDdex.length > 1 ? "s are" : " is"} missing a DDEX
             Party ID. An admin must configure this under `/stores` before
@@ -251,13 +251,13 @@ const ReleaseWizardStores = ({
         ) : null}
       </section>
 
-      <section className="grid grid-cols-1 gap-3 rounded-xl border border-(--line)/70 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-3 rounded-(--radius-control) bg-(--surface) p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {storesIsFetching || releaseStoresIsFetching ? (
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Loading stores...
           </p>
         ) : stores.length === 0 ? (
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             No stores available.
           </p>
         ) : (
@@ -268,7 +268,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-md border border-(--line)/60 bg-white p-3 shadow-sm transition-colors hover:bg-secondary/5"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-card) bg-(--paper) transition-colors hover:bg-(--surface)"
               >
                 <UiInput
                   type="checkbox"
@@ -285,8 +285,8 @@ const ReleaseWizardStores = ({
                 <span
                   className={`ml-auto rounded-full px-2 py-0.5 text-[10px] ${
                     store.ddexPartyId?.trim()
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-amber-100 text-amber-700"
+                      ? "bg-(--success-soft) text-(--success)"
+                      : "bg-(--surface) text-(--ink)"
                   }`}
                 >
                   {store.ddexPartyId?.trim() ? "DDEX ready" : "Missing DDEX ID"}
@@ -298,7 +298,7 @@ const ReleaseWizardStores = ({
       </section>
 
       {!allSelected && stores.length > 0 && (
-        <p className="text-[11px] text-(--slate)">
+        <p className="text-[11px] text-(--muted)">
           Tip: Use Select all for global distribution, then deselect stores you
           do not want.
         </p>
@@ -310,7 +310,7 @@ const ReleaseWizardStores = ({
 
       <ReleaseWizardDealsSection />
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 border-t border-(--line) bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
         {navButtons}
       </footer>
     </section>

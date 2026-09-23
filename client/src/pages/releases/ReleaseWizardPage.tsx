@@ -186,21 +186,21 @@ const ReleaseWizardPage = () => {
     }
 
     return (
-      <article className="rounded-xl border border-dashed border-(--line) bg-(--paper) p-6 sm:p-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)/70">
+      <article className="rounded-(--radius-card) bg-(--surface) p-6 sm:p-8">
+        <p className="text-xs text-(--muted)">
           Step unavailable
         </p>
         <h2 className="mt-3 text-xl font-semibold text-(--ink)">
           {capitalizeString(stepName)}
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-(--slate)">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-(--muted)">
           This release step is not supported by this version of the workspace.
           Return to the previous step to continue editing safely.
         </p>
         {previousStepName ? (
           <button
             type="button"
-            className="mt-5 text-[12px] text-(--lens-blue) underline-offset-4 hover:underline"
+            className="mt-5 text-[12px] text-(--signal) underline-offset-4 hover:underline"
             onClick={() => activateStep(previousStepName)}
           >
             Return to previous step

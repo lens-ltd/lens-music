@@ -5,7 +5,8 @@ import TextArea from '@/components/inputs/TextArea';
 import { Heading } from '@/components/text/Headings';
 import UserLayout from '@/containers/UserLayout';
 import { useCreateUserInvitations } from '@/hooks/users/userInvitations.hooks';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+
+import { LuSend } from 'react-icons/lu';
 
 const CreateUserInvitationPage = () => {
   const {
@@ -23,8 +24,8 @@ const CreateUserInvitationPage = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
         <header className="w-full flex flex-col gap-1">
-          <Heading>Create User Invitation</Heading>
-          <p className="text-[13px] text-(--slate) font-normal">
+          <Heading>Invite a user</Heading>
+          <p className="text-[13px] text-(--muted) font-normal">
             Send access invitations to teammates one by one or in bulk.
           </p>
         </header>
@@ -35,7 +36,7 @@ const CreateUserInvitationPage = () => {
               Send invitation
             </h2>
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] uppercase tracking-wide text-(--slate)">
+              <label className="text-xs text-(--muted)">
                 Email
               </label>
               <Input
@@ -51,7 +52,7 @@ const CreateUserInvitationPage = () => {
               onClick={() => void submitSingleInvite()}
               disabled={isSubmittingSingle}
               isLoading={isSubmittingSingle}
-              icon={faPaperPlane}
+              icon={LuSend}
             >
               Send invite
             </Button>
@@ -73,7 +74,7 @@ const CreateUserInvitationPage = () => {
               onClick={() => void submitBulkInvite()}
               disabled={isSubmittingBulk}
               isLoading={isSubmittingBulk}
-              icon={faPaperPlane}
+              icon={LuSend}
             >
               Send bulk invites
             </Button>

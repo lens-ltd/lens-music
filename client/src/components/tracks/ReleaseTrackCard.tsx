@@ -1,11 +1,10 @@
 import { Track } from "@/types/models/track.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import {
-  faPenToSquare,
-  faTrashCan,
-} from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CustomTooltip from "../inputs/CustomTooltip";
+
+import { LuSquarePen, LuTrash2 } from 'react-icons/lu';
+import { Icon } from '@/components/ui/icon';
+import { iconButtonClassName } from '@/constants/input.constants';
 
 export interface ReleaseTrackCardProps {
   isLoading?: boolean;
@@ -37,7 +36,7 @@ const ReleaseTrackCard = ({
       <article className="w-full rounded-md bg-white/80 p-3 sm:p-3.5">
         <header className="flex items-start justify-between gap-3 pb-2">
           <section className="space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.14em] text-(--lens-blue) font-normal">
+            <p className="text-xs text-(--muted) font-normal">
               Track
             </p>
             <p
@@ -62,7 +61,7 @@ const ReleaseTrackCard = ({
                 className="rounded-lg bg-(--surface) px-2.5 py-2"
               >
                 <dl>
-                  <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
+                  <dt className="text-xs text-(--muted) font-normal">
                     {label}
                   </dt>
                   <dd
@@ -88,7 +87,7 @@ const ReleaseTrackCard = ({
     <article className="w-full rounded-md shadow-md bg-white/70 p-3 sm:p-3.5">
       <header className="flex items-start justify-between gap-2 pb-2">
         <section className="min-w-0 space-y-1">
-          <p className="text-[10px] uppercase tracking-[0.14em] text-(--lens-blue) font-normal">
+          <p className="text-xs text-(--muted) font-normal">
             {track?.trackNumber}. {track?.title}{" "}
             {track?.titleVersion ? `(${track.titleVersion})` : ""}
           </p>
@@ -100,7 +99,7 @@ const ReleaseTrackCard = ({
               {secondaryLabels.map((label) => (
                 <li
                   key={label}
-                  className="rounded-full border border-(--line) bg-(--surface) px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-(--ink)/70"
+                  className="rounded-full bg-(--surface) px-2 py-0.5 text-xs text-(--muted)"
                 >
                   {label}
                 </li>
@@ -110,21 +109,24 @@ const ReleaseTrackCard = ({
         </section>
 
         <ul className="flex items-center gap-3 list-none flex-wrap gap-1.5 p-0 m-0">
-          <section className="rounded-full border border-(--line) bg-(--surface) px-2.5 py-1">
-            <p className="text-[9px] uppercase tracking-[0.12em] text-(--ink)/70 font-normal">
+          <section className="rounded-full bg-(--surface) px-2.5 py-1">
+            <p className="text-xs text-(--muted) font-normal">
               {capitalizeString(track?.status)}
             </p>
           </section>
           {["DRAFT", 'VALIDATED'].includes(track?.status ?? "") && (
             <CustomTooltip label="Manage">
-              <FontAwesomeIcon
+              <button
+                type="button"
+                aria-label="Edit"
+                className={iconButtonClassName}
                 onClick={(e) => {
                   e.preventDefault();
                   onManage?.();
                 }}
-                className="text-primary text-[12px] cursor-pointer"
-                icon={faPenToSquare}
-              />
+              >
+                <Icon icon={LuSquarePen} className="size-4" aria-hidden="true" />
+              </button>
             </CustomTooltip>
           )}
           {canDelete && (
@@ -136,9 +138,9 @@ const ReleaseTrackCard = ({
                   e.preventDefault();
                   onDelete?.();
                 }}
-                className="cursor-pointer border-0 bg-transparent p-0 text-red-700"
+                className="cursor-pointer border-0 bg-transparent p-0 text-(--danger)"
               >
-                <FontAwesomeIcon className="text-[12px]" icon={faTrashCan} />
+                <LuTrash2 className="text-[12px]" />
               </button>
             </CustomTooltip>
           )}
@@ -156,7 +158,7 @@ const ReleaseTrackCard = ({
               className="rounded-md bg-(--surface) px-2.5 py-1"
             >
               <dl>
-                <dt className="text-[9px] uppercase tracking-[0.12em] text-(--slate) font-normal">
+                <dt className="text-xs text-(--muted) font-normal">
                   {label}
                 </dt>
                 <dd className="mt-0.5 text-[12px] text-(--ink) font-normal">

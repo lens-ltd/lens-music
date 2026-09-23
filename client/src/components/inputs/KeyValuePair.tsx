@@ -6,11 +6,11 @@
 
 import { getCountryName } from '@/constants/countries.constants';
 import { capitalizeString, formatDate } from '@/utils/strings.helper';
-import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { SkeletonLoader } from './Loader';
 import { ReactNode, isValidElement } from 'react';
+
+import { LuCircleCheck, LuX } from 'react-icons/lu';
+import { Icon } from '@/components/ui/icon';
 
 interface KeyValuePairProps {
     keyText: string;
@@ -125,9 +125,9 @@ export const KeyValuePair = ({
                 </span>
                 <span className="font-normal type-body-sm text-(--ink) w-full">
                     {valueText ? 'Yes' : 'No'}{' '}
-                    <FontAwesomeIcon
-                        icon={valueText ? faCircleCheck : faXmark}
-                        className={valueText ? 'text-(--approve)' : 'text-(--danger)'}
+                    <Icon
+                        icon={valueText ? LuCircleCheck : LuX}
+                        className={valueText ? 'text-(--success)' : 'text-(--danger)'}
                     />
                 </span>
             </p>

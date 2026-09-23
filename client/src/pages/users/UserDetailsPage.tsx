@@ -12,23 +12,17 @@ import {
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { User } from "@/types/models/user.types";
 import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/strings.helper";
-import {
-  faEnvelope,
-  faGlobe,
-  faIdBadge,
-  faPhone,
-  faShieldAlt,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { LuGlobe, LuIdCard, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
+import { Icon } from '@/components/ui/icon';
+
 const detailItems = [
-  { key: "name", label: "Full name", icon: faUser },
-  { key: "email", label: "Email address", icon: faEnvelope },
-  { key: "phoneNumber", label: "Phone number", icon: faPhone },
-  { key: "country", label: "Country", icon: faGlobe },
+  { key: "name", label: "Full name", icon: LuUser },
+  { key: "email", label: "Email address", icon: LuMail },
+  { key: "phoneNumber", label: "Phone number", icon: LuPhone },
+  { key: "country", label: "Country", icon: LuGlobe },
 ] as const;
 
 const UserDetailsPage = () => {
@@ -76,7 +70,7 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex min-h-[50vh] w-full items-center justify-center">
-          <Loader className="text-primary" />
+          <Loader className="text-(--signal)" />
         </main>
       </UserLayout>
     );
@@ -89,9 +83,9 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <Heading>User Details</Heading>
+          <Heading>User details</Heading>
           <section className="w-full card-framed p-8 text-center">
-            <p className="text-[13px] text-(--slate)">{message}</p>
+            <p className="text-[13px] text-(--muted)">{message}</p>
           </section>
           <PageFooter back={<BackButton route="/users">Back to users</BackButton>} />
         </main>
@@ -103,9 +97,9 @@ const UserDetailsPage = () => {
     return (
       <UserLayout>
         <main className="flex w-full flex-col gap-4">
-          <Heading>User Details</Heading>
+          <Heading>User details</Heading>
           <section className="w-full card-framed p-8 text-center">
-            <p className="text-[13px] text-(--slate)">
+            <p className="text-[13px] text-(--muted)">
               User not found.
             </p>
           </section>
@@ -120,16 +114,16 @@ const UserDetailsPage = () => {
       <main className="flex w-full flex-col gap-5">
         <nav className="flex w-full items-center justify-between gap-3">
           <div>
-            <Heading>User Details</Heading>
-            <p className="mt-1 text-[13px] font-normal text-(--slate)">
+            <Heading>User details</Heading>
+            <p className="mt-1 text-[13px] font-normal text-(--muted)">
               Review identity, account status, and access context.
             </p>
           </div>
         </nav>
 
         <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
-          <div className="flex flex-col gap-4 border-b border-(--line) pb-5 sm:flex-row sm:items-center">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--lens-blue) text-xl font-semibold text-white">
+          <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-center">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--signal) text-xl font-semibold text-white">
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -144,7 +138,7 @@ const UserDetailsPage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {user.name || "Unnamed user"}
               </h2>
-              <p className="mt-1 truncate text-[13px] text-(--slate)">
+              <p className="mt-1 truncate text-[13px] text-(--muted)">
                 {user.email || "No email provided"}
               </p>
             </div>
@@ -159,10 +153,10 @@ const UserDetailsPage = () => {
                 key={item.key}
                 className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--lens-blue-soft) text-(--lens-blue)">
-                  <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--signal-soft) text-(--signal)">
+                  <Icon icon={item.icon} className="text-[12px]" />
                 </span>
-                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                <p className="text-xs text-(--muted)">
                   {item.label}
                 </p>
                 <p className="min-w-0 truncate text-[13px] text-(--ink)">
@@ -175,17 +169,16 @@ const UserDetailsPage = () => {
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faShieldAlt}
-                  className="text-[12px] text-(--lens-blue)"
-                />
+                <LuShield
+                 
+                  className="text-[12px] text-(--signal)" />
                 <h3 className="text-[13px] font-medium text-(--ink)">
                   Access
                 </h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Role
                   </p>
                   <p className="mt-1 flex items-center gap-2 text-[13px] text-(--ink)">
@@ -193,7 +186,7 @@ const UserDetailsPage = () => {
                     {canAssignRole && (
                       <button
                         type="button"
-                        className="text-[12px] text-(--lens-blue) hover:underline"
+                        className="text-[12px] text-(--signal) hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
                           dispatch(setSelectedUser(user));
@@ -206,7 +199,7 @@ const UserDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Permissions
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -220,17 +213,16 @@ const UserDetailsPage = () => {
 
             <div className="rounded-md bg-(--surface) p-4">
               <div className="mb-3 flex items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faIdBadge}
-                  className="text-[12px] text-(--lens-blue)"
-                />
+                <LuIdCard
+                 
+                  className="text-[12px] text-(--signal)" />
                 <h3 className="text-[13px] font-medium text-(--ink)">
                   Workspace
                 </h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Labels
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -238,7 +230,7 @@ const UserDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Releases
                   </p>
                   <p className="mt-1 text-[13px] text-(--ink)">
@@ -251,7 +243,7 @@ const UserDetailsPage = () => {
 
           <div className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+              <p className="text-xs text-(--muted)">
                 Created
               </p>
               <p className="mt-1 text-[13px] text-(--ink)">
@@ -259,7 +251,7 @@ const UserDetailsPage = () => {
               </p>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+              <p className="text-xs text-(--muted)">
                 Last updated
               </p>
               <p className="mt-1 text-[13px] text-(--ink)">

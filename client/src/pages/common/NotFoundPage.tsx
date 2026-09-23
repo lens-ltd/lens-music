@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import PublicFooter from '@/components/layout/PublicFooter';
 import PublicNavbar from '@/components/layout/PublicNavbar';
 import Button from '@/components/inputs/Button';
-import { SectionLabel } from '@/pages/landing/landingShared';
 import Navbar from '@/containers/Navbar';
 import { useAppSelector } from '@/state/hooks';
 
@@ -14,39 +13,35 @@ export default function NotFoundPage() {
     <main className="min-h-screen bg-(--paper) text-(--ink) overflow-x-hidden">
       {token ? <Navbar /> : <PublicNavbar scrolled variant="landing" />}
 
-      <section className="pb-16 md:pb-20">
-        <article className="mx-auto max-w-4xl px-6 min-h-[calc(100vh-64px)] flex items-center justify-center">
-          <section className="card-framed w-full p-7 md:p-12">
-            <SectionLabel>Error 404</SectionLabel>
-            <h1 className="mt-4 type-display">
-              This page missed the beat.
-            </h1>
-            <p className="mt-5 max-w-[46ch] type-body text-(--slate)">
-              The route you entered does not exist. Return to the homepage or
-              sign in to continue managing releases, artists, and analytics.
-            </p>
+      <section className="app-container flex min-h-[calc(100vh-64px)] flex-col justify-center py-24">
+        <p className="type-meta">Error 404</p>
+        <h1 className="mt-3 type-hero max-w-[16ch]">This page doesn't exist.</h1>
+        <p className="mt-6 max-w-[46ch] type-body text-(--muted)">
+          The link may be broken or the page may have moved. Go back, or start
+          again from the home page.
+        </p>
 
-            <section className="mt-8 flex flex-col w-full sm:flex-row gap-3 sm:items-center">
-              <Button route="#" onClick={(e) => {
-                e.preventDefault();
-                navigate(-1);
-              }}>
-                Back
-              </Button>
-              <Button primary route="/">
-                Explore
-              </Button>
-            </section>
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <Button primary route="/">
+            Go to home
+          </Button>
+          <Button
+            route="#"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(-1);
+            }}
+          >
+            Go back
+          </Button>
+        </div>
 
-            <p className="mt-8 type-meta">
-              Need help? Visit the{' '}
-              <Link to="/#faq" className="link-sweep text-(--lens-blue)">
-                FAQ section
-              </Link>
-              .
-            </p>
-          </section>
-        </article>
+        <p className="mt-10 type-meta">
+          Have a question?{' '}
+          <Link to="/#faq" className="link-sweep text-(--signal)">
+            Read the FAQ
+          </Link>
+        </p>
       </section>
 
       <PublicFooter />

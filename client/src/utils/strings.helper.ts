@@ -129,60 +129,46 @@ export const maskPhoneDigits = (phone: string) => {
   return `${phone?.slice(0, 3)}X XXX ${phone?.slice(-3)}`;
 };
 
-/**
- * GET STATUS BACKGROUND COLOR
- * @param status - The status to get the background color for
- * @returns The background color
- */
-export const getStatusBackgroundColor = (status?: string) => {
-  // Default classes
-  let bgColor =
-    'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
+export type StatusTone = 'success' | 'danger' | 'active' | 'neutral';
 
+/**
+ * Maps a backend status to one of four tones. Green and red are reserved
+ * for outcomes; in-progress states use the brand blue; everything else is neutral.
+ */
+export const getStatusTone = (status?: string): StatusTone => {
   switch (status) {
-    case 'DRAFT':
-    case 'PENDING':
-      bgColor =
-        'bg-yellow-800 text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
-    case 'REVIEW':
-    case 'REQUESTED':
-      bgColor =
-        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
-    case 'VALIDATED':
-      bgColor =
-        'bg-emerald-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
     case 'APPROVED':
     case 'VERIFIED':
+    case 'VALIDATED':
     case 'ACTIVE':
     case 'COMPLETED':
-      bgColor =
-        'bg-green-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
-    case 'DELIVERED':
-      bgColor =
-        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
     case 'LIVE':
-      bgColor =
-        'bg-primary text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
+      return 'success';
+    case 'REVIEW':
+    case 'REQUESTED':
+    case 'DELIVERED':
+      return 'active';
     case 'TAKENDOWN':
     case 'REVOKED':
     case 'FAILED':
-      bgColor =
-        'bg-red-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
-    case 'INACTIVE':
-      bgColor =
-        'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
-      break;
+    case 'REJECTED':
+    case 'DECLINED':
+      return 'danger';
     default:
-      // fallback for unknown statuses
-      bgColor =
-        'bg-gray-700 text-center p-1 px-3 text-white rounded-md text-[11px]';
+      return 'neutral';
   }
-  return bgColor;
 };
+
+const statusToneClassNames: Record<StatusTone, string> = {
+  success: 'bg-(--success-soft) text-(--success)',
+  danger: 'bg-(--danger-soft) text-(--danger)',
+  active: 'bg-(--signal-soft) text-(--signal)',
+  neutral: 'bg-(--surface) text-(--ink)',
+};
+
+export const getStatusToneClassName = (tone: StatusTone) =>
+  `inline-flex h-6 w-fit items-center whitespace-nowrap rounded-(--radius-pill) px-2.5 text-xs font-medium ${statusToneClassNames[tone]}`;
+
+/** Badge classes for a status. Prefer the StatusBadge component in new code. */
+export const getStatusBackgroundColor = (status?: string) =>
+  getStatusToneClassName(getStatusTone(status));

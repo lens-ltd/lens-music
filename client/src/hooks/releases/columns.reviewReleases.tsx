@@ -14,15 +14,10 @@ import {
 } from "@/utils/strings.helper";
 import CustomPopover from "@/components/inputs/CustomPopover";
 import TableActionButton from "@/components/inputs/TableActionButton";
-import {
-  faCircleCheck,
-  faCircleInfo,
-  faCircleXmark,
-  faEllipsisH,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ellipsisHClassName } from "@/constants/input.constants";
 import { PERMISSIONS } from "@/constants/permission.constants";
+
+import { LuCircleCheck, LuCircleX, LuEllipsis, LuInfo } from 'react-icons/lu';
 
 export const useReviewReleaseColumns = () => {
   const dispatch = useAppDispatch();
@@ -82,23 +77,20 @@ export const useReviewReleaseColumns = () => {
           return (
             <CustomPopover
               trigger={
-                <FontAwesomeIcon
-                  icon={faEllipsisH}
-                  className={ellipsisHClassName}
-                />
+                <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
               }
             >
-              <menu className="w-full flex flex-col items-center gap-1">
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
                 <TableActionButton
-                  icon={faCircleInfo}
+                  icon={LuInfo}
                   to={`/releases/${row?.original?.id}/review`}
                 >
                   View release
                 </TableActionButton>
                 {canApprove && (
                   <TableActionButton
-                    icon={faCircleCheck}
-                    iconClassName="text-green-700 text-[12px]"
+                    icon={LuCircleCheck}
+                    iconClassName="text-(--success) text-[12px]"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {
@@ -112,8 +104,8 @@ export const useReviewReleaseColumns = () => {
                 )}
                 {canReject && (
                   <TableActionButton
-                    icon={faCircleXmark}
-                    iconClassName="text-red-700 text-[12px]"
+                    icon={LuCircleX}
+                    iconClassName="text-(--danger) text-[12px]"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {

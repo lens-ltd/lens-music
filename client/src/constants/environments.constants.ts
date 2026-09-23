@@ -4,7 +4,7 @@ export const {
   VITE_APP_SITE_URL:
     SITE_URL = '',
   VITE_APP_OG_IMAGE_URL:
-    DEFAULT_OG_IMAGE_URL = '/logo.png',
+    DEFAULT_OG_IMAGE_URL = '/logo.webp',
   VITE_CLOUDINARY_CLOUD_NAME:
     CLOUDINARY_CLOUD_NAME = '',
 } = import.meta.env;

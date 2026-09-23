@@ -22,16 +22,13 @@ import {
 } from '@/state/features/labelSlice';
 import { AppDispatch, RootState } from '@/state/store';
 import { Label } from '@/types/models/label.types';
-import {
-  faPenToSquare,
-  faPlus,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Row } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorResponse } from 'react-router-dom';
 import { toast } from 'sonner';
+
+import { LuPlus, LuSquarePen } from 'react-icons/lu';
 
 type LabelFormState = {
   name: string;
@@ -176,13 +173,13 @@ const ListLabels = () => {
         return (
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-[11px] text-white transition-all duration-200 hover:scale-[1.01]"
+            className="inline-flex items-center gap-2 rounded-full bg-(--signal) px-3 py-1.5 text-[11px] text-white transition-all duration-200 hover:scale-[1.01]"
             onClick={(e) => {
               e.preventDefault();
               openEditModal(row.original);
             }}
           >
-            <FontAwesomeIcon icon={faPenToSquare} />
+            <LuSquarePen />
             Edit
           </button>
         );
@@ -200,14 +197,14 @@ const ListLabels = () => {
               Imprints attached to your releases.
             </p>
           </div>
-          <Button primary icon={faPlus} onClick={openCreateModal}>
-            Add new label
+          <Button primary icon={LuPlus} onClick={openCreateModal}>
+            Create label
           </Button>
         </nav>
         <section className="w-full flex flex-col gap-2">
           {labelsIsFetching ? (
             <figure className="w-full flex items-center justify-center min-h-[30vh]">
-              <Loader className="text-primary" />
+              <Loader className="text-(--signal)" />
             </figure>
           ) : (
             <Table

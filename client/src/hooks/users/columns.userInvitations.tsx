@@ -1,10 +1,10 @@
 import CustomTooltip from '@/components/inputs/CustomTooltip';
 import { capitalizeString, formatDate, getStatusBackgroundColor } from '@/utils/strings.helper';
 import { UserInvitation } from '@/types/models/invitation.types';
-import { faBan, faCircleCheck, faRotateRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
+
+import { LuBan, LuCircleCheck, LuRotateCw } from 'react-icons/lu';
 
 export const useUserInvitationColumns = ({
   onApprove,
@@ -80,11 +80,11 @@ export const useUserInvitationColumns = ({
                 <CustomTooltip label="Approve request">
                   <button
                     type="button"
-                    className="p-2 rounded-full cursor-pointer bg-green-700 text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                    className="p-2 rounded-full cursor-pointer bg-(--success) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isApproving}
                     onClick={() => onApprove(invitation.id)}
                   >
-                    <FontAwesomeIcon icon={faCircleCheck} className="text-[12px]" />
+                    <LuCircleCheck className="text-[12px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -92,11 +92,11 @@ export const useUserInvitationColumns = ({
                 <CustomTooltip label="Revoke invitation">
                   <button
                     type="button"
-                    className="p-2 rounded-full cursor-pointer bg-red-600 text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                    className="p-2 rounded-full cursor-pointer bg-(--danger) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isRevoking}
                     onClick={() => onDecline(invitation.id)}
                   >
-                    <FontAwesomeIcon icon={faBan} className="text-[12px]" />
+                    <LuBan className="text-[12px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -104,11 +104,11 @@ export const useUserInvitationColumns = ({
                 <CustomTooltip label="Decline request">
                   <button
                     type="button"
-                    className="p-2 rounded-full cursor-pointer bg-red-600 text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                    className="p-2 rounded-full cursor-pointer bg-(--danger) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isRevoking}
                     onClick={() => onRevoke(invitation.id)}
                   >
-                    <FontAwesomeIcon icon={faBan} className="text-[12px]" />
+                    <LuBan className="text-[12px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -116,14 +116,13 @@ export const useUserInvitationColumns = ({
                 <CustomTooltip label="Resend invitation">
                   <button
                     type="button"
-                    className="p-2 rounded-full cursor-pointer bg-(--lens-blue) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                    className="p-2 rounded-full cursor-pointer bg-(--signal) text-white transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
                     disabled={isRetrying}
                     onClick={() => onRetry(invitation.email)}
                   >
-                    <FontAwesomeIcon
-                      icon={faRotateRight}
-                      className="text-[12px]"
-                    />
+                    <LuRotateCw
+                     
+                      className="text-[12px]" />
                   </button>
                 </CustomTooltip>
               )}

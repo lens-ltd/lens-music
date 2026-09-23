@@ -35,73 +35,54 @@
   --font-family-sans: 'DM Sans', system-ui, sans-serif;
   --font-family-serif: 'DM Sans', system-ui, sans-serif;
 
-  --field: #ffffff;
+  /* Palette: black, white and Lens blue. Red and green are reserved for status. */
+  --ink: #000000;
   --paper: #ffffff;
-  --ink: #1c1917;
-  --optical: #1c1917;
-  --signal: #1f628e;
-  --signal-hover: #164869;
-  --instrument: #4f8795;
-  --caution: #a8742a;
-  --slate: #57534e;
-  --muted: #f4f7fa;
-  --surface: #f4f7fa;
-  --surface-hover: #e9f1f7;
-  --surface-sunken: #ffffff;
-  --line: #e7e5e4;
-  --line-strong: #d6d3d1;
-  --menu-border: var(--line-strong);
-  --rule: var(--line);
-  --label-ink: #1c1917;
-  --placeholder: #a8a29e;
-  --muted-weak: var(--slate);
-  --disabled-fg: #a8a29e;
+  --signal: rgb(31, 98, 142);
+  --signal-hover: #174a6b;
+  --signal-soft: #eaf1f6;
+  --surface: #f5f5f5;
+  --surface-hover: #ececec;
+  --muted: #5c5c5c;
+  --placeholder: #8a8a8a;
+  --line: #e5e5e5;
+  --line-hover: #a3a3a3;
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --danger-soft: #fdecea;
+  --success: #2e7d32;
+  --success-soft: #eaf4eb;
+
   --overlay: rgba(0, 0, 0, 0.45);
-  --shadow-menu: 0 12px 32px rgba(0, 0, 0, 0.14);
-  --shadow-modal: 0 12px 34px rgba(0, 0, 0, 0.08);
+  --shadow-menu: 0 8px 28px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.16);
+  --ring-signal: 0 0 0 3px rgba(31, 98, 142, 0.15);
+  --ring-danger: 0 0 0 3px rgba(180, 35, 24, 0.15);
   --radius-control: 6px;
   --radius-card: 8px;
   --radius-pill: 999px;
 
-  --lens-blue: rgb(31, 98, 142);
-  --lens-blue-soft: #e9f1f7;
-  --lens-blue-hover: #164869;
-  --lens-blue-ink: #ffffff;
-  --lens-ink: rgb(16, 14, 9);
-  --lens-sand: rgb(228, 226, 221);
   --nav-open: 240px;
   --nav-collapsed: 72px;
 
   --control-sm: 32px;
-  --control-md: 36px;
-  --control-lg: 40px;
+  --control-md: 40px;
   --ease-flat: cubic-bezier(0, 0, 1, 1);
   --ease-menu: cubic-bezier(0.2, 0.8, 0.4, 1);
   --ease-glide: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-menu: 100ms;
-  --dur-state: 200ms;
+  --dur-state: 150ms;
   --dur-sweep: 500ms;
 
-  --danger: #a54b4b;
-  --danger-strong: #8d3f3f;
-  --danger-text: #974444;
-  --danger-surface: #f9ecec;
-  --danger-line: #e3c2c2;
-  --approve: #3e7c4f;
-  --approve-strong: #356b45;
-  --approve-surface: #edf4ee;
-  --approve-line: #cbe0d0;
-  --on-consequence: #ffffff;
-
-  --chart-1: #1f628e;
-  --chart-2: #4f8795;
-  --chart-3: #57534e;
-  --chart-4: #d6d3d1;
-  --chart-5: #a54b4b;
+  --chart-1: var(--signal);
+  --chart-2: var(--ink);
+  --chart-3: #8a8a8a;
+  --chart-4: #c4c4c4;
+  --chart-5: var(--danger);
 }
 
 :root {
-  --background: var(--field);
+  --background: var(--paper);
   --foreground: var(--ink);
   --card: var(--paper);
   --card-foreground: var(--ink);
@@ -111,31 +92,13 @@
   --primary-foreground: #ffffff;
   --secondary: var(--surface);
   --secondary-foreground: var(--ink);
-  --muted-foreground: var(--slate);
+  --muted-foreground: var(--muted);
   --accent: var(--surface);
   --accent-foreground: var(--ink);
   --destructive: var(--danger);
   --border: var(--line);
-  --input: var(--line-strong);
+  --input: var(--line);
   --ring: var(--signal);
-}
-
-/* Neutral-ink instrument panel for the in-app dashboard empty state.
-   There is no dark theme. */
-.invert-surface {
-  --paper: #1c1917;
-  --ink: #ffffff;
-  --surface: #292524;
-  --surface-hover: #292524;
-  --line: #44403c;
-  --line-strong: #6b6660;
-  --menu-border: var(--line-strong);
-  --rule: var(--line);
-  --muted: #d6d3d1;
-  --placeholder: #a8a29e;
-  --label-ink: #f5f5f4;
-  background-color: #1c1917;
-  color: #ffffff;
 }
 
 @layer base {
@@ -215,6 +178,10 @@
     cursor: not-allowed;
   }
 
+  section[id] {
+    scroll-margin-top: 80px;
+  }
+
   h1,
   h2,
   h3,
@@ -225,14 +192,14 @@
   }
 
   :focus-visible {
-    outline: 3px solid rgba(31, 98, 142, 0.25);
+    outline: 2px solid var(--signal);
     outline-offset: 2px;
   }
 
   ::selection,
   ::-moz-selection {
-    background-color: var(--lens-blue);
-    color: var(--lens-blue-ink);
+    background-color: var(--signal);
+    color: #ffffff;
   }
 
   input::selection,
@@ -241,95 +208,54 @@
   textarea::-moz-selection,
   [contenteditable]::selection,
   [contenteditable]::-moz-selection {
-    background-color: var(--lens-blue);
-    color: var(--lens-blue-ink);
+    background-color: var(--signal);
+    color: #ffffff;
   }
 
   :is(
       .bg-primary,
-      [class~='bg-(--lens-blue)'],
       [class~='bg-(--signal)'],
-      [class~='bg-(--lens-blue-hover)'],
       [class~='bg-(--signal-hover)']
     )::selection,
   :is(
       .bg-primary,
-      [class~='bg-(--lens-blue)'],
       [class~='bg-(--signal)'],
-      [class~='bg-(--lens-blue-hover)'],
       [class~='bg-(--signal-hover)']
     )
     *::selection,
   :is(
       .bg-primary,
-      [class~='bg-(--lens-blue)'],
       [class~='bg-(--signal)'],
-      [class~='bg-(--lens-blue-hover)'],
       [class~='bg-(--signal-hover)']
     )::-moz-selection,
   :is(
       .bg-primary,
-      [class~='bg-(--lens-blue)'],
       [class~='bg-(--signal)'],
-      [class~='bg-(--lens-blue-hover)'],
       [class~='bg-(--signal-hover)']
     )
     *::-moz-selection {
-    background-color: var(--lens-blue-ink);
-    color: var(--lens-blue);
+    background-color: #ffffff;
+    color: var(--signal);
   }
 
   [role='tab'][aria-selected='true'],
-  [role='option'][aria-selected='true'],
-  [role='tab'][data-state='active'],
-  a[aria-current='page'],
-  button[aria-current='page'],
-  [data-selected='true'] {
-    background-color: var(--lens-blue-soft);
+  [role='tab'][data-state='active'] {
+    background-color: var(--signal-soft);
     color: var(--ink);
   }
 }
 
 @layer components {
+  /* Small sentence-case label, e.g. table headers and footer groups. */
   .equipment-label {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    text-transform: uppercase;
+    color: var(--muted);
   }
 
   .panel {
-    border: 1px solid var(--rule);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-card);
     background: var(--paper);
-  }
-
-  .panel-label {
-    display: flex;
-    align-items: center;
-    min-height: 2rem;
-    padding: 0 0.875rem;
-    border-bottom: 1px solid var(--rule);
-    background: #ffffff;
-    color: var(--slate);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    text-transform: uppercase;
-  }
-
-  .rail-node {
-    animation: rail-enter 480ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
-    animation-delay: calc(var(--rail-index) * 90ms);
-  }
-}
-
-@keyframes rail-enter {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -395,19 +321,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-@utility mark-accent {
-  background-color: var(--lens-blue-soft);
-  border-radius: 2px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  padding-inline: 0.12em;
-
-  &::selection {
-    background-color: var(--lens-blue);
-    color: var(--lens-blue-ink);
-  }
-}
-
 @utility field-stack {
   display: flex;
   width: 100%;
@@ -418,8 +331,8 @@
 @utility field-label {
   font-size: 0.8125rem;
   line-height: 1.4;
-  font-weight: 400;
-  color: var(--label-ink);
+  font-weight: 500;
+  color: var(--ink);
 }
 
 @utility field-required {
@@ -428,49 +341,70 @@
 
 @utility field-help {
   margin-top: 0.25rem;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   line-height: 1.5;
-  color: var(--slate);
+  color: var(--muted);
 }
 
+/* The single source of truth for every text field, select and combobox trigger. */
 @utility field-chrome {
   height: var(--control-md);
   min-height: var(--control-md);
   width: 100%;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: var(--radius-control);
   background-color: var(--paper);
   padding-inline: 0.75rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   font-weight: 400;
   color: var(--ink);
   box-shadow: none;
+  transition:
+    border-color var(--dur-state) var(--ease-flat),
+    box-shadow var(--dur-state) var(--ease-flat);
 
   &::placeholder {
     color: var(--placeholder);
   }
 
-  &:focus {
+  &:hover:not(:disabled):not([readonly]):not([data-disabled]) {
+    border-color: var(--line-hover);
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:focus-within,
+  &[data-state='open'] {
     outline: none;
     border-color: var(--signal);
+    box-shadow: var(--ring-signal);
   }
 
   &:disabled,
-  &[readonly] {
+  &[readonly],
+  &[data-disabled] {
     background-color: var(--surface);
-    color: var(--disabled-fg);
-    cursor: default;
+    color: var(--muted);
+    cursor: not-allowed;
   }
 
   &[aria-invalid='true'] {
     border-color: var(--danger);
   }
 
-  &[aria-invalid='true']:focus {
+  &[aria-invalid='true']:focus,
+  &[aria-invalid='true']:focus-within {
     border-color: var(--danger);
-    outline: none;
+    box-shadow: var(--ring-danger);
   }
+}
+
+@utility type-hero {
+  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 @utility type-display {
@@ -522,10 +456,10 @@
 }
 
 @utility type-meta {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   line-height: 1.5;
   font-weight: 400;
-  color: var(--slate);
+  color: var(--muted);
 }
 
 @utility type-price {
@@ -542,18 +476,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-@utility type-eyebrow {
-  font-size: 0.6875rem;
-  line-height: 1.4;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: var(--slate);
-}
-
+/* Cards are separated by fill, never by an outline. */
 @utility card-framed {
-  border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  background-color: var(--paper);
+  background-color: var(--surface);
   color: var(--ink);
 }
 
@@ -564,10 +490,10 @@
 }
 
 @utility card-interactive {
-  transition: border-color var(--dur-state) var(--ease-flat);
+  transition: background-color var(--dur-state) var(--ease-flat);
 
   &:hover {
-    border-color: var(--line-strong);
+    background-color: var(--surface-hover);
   }
 }
 
@@ -577,12 +503,6 @@ details[open] > summary .faq-plus {
 
 .faq-plus {
   transition: transform var(--dur-state) var(--ease-flat);
-}
-
-@media (forced-colors: active) {
-  .mark-accent {
-    background-color: transparent;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

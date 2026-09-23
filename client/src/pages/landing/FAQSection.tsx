@@ -1,41 +1,52 @@
-import FadeSection from './FadeSection';
-import { fadeUp, SectionLabel } from './landingShared';
+import { LuPlus } from 'react-icons/lu';
+import { landingSectionClassName } from './landingShared';
 
 const faqs = [
   [
-    'Is Lens Music free to use?',
-    'Lens does not charge an upfront distribution fee. Lens earns through a 15% revenue share on earnings generated through the platform.',
+    'Does it cost anything to release music?',
+    'No. There is no upload fee and no yearly fee. Lens takes a 15% share of the earnings your releases generate through the platform.',
   ],
-  ['How many stores can I distribute to?', 'Lens supports delivery to 150+ stores and services, including major streaming platforms.'],
-  ['Do I get revenue analytics?', 'Yes. Lens includes revenue reporting and performance views so you can review trends by platform and territory.'],
-  ['Can labels use Lens?', 'Yes. Lens is designed for independent artists and labels, with catalog and release management support.'],
+  [
+    'Which stores will my music reach?',
+    'More than 150 stores and streaming services, including Spotify, Apple Music, YouTube Music, Tidal, Deezer and Audiomack.',
+  ],
+  [
+    'How do I see what I earn?',
+    'Your dashboard shows earnings by store, country and month, with each payout from pending to paid.',
+  ],
+  [
+    'Can a label manage several artists?',
+    'Yes. One account can hold releases for several artists, each with their own catalog and contributors.',
+  ],
+  [
+    'Do I need ISRC or UPC codes before I start?',
+    'No. Codes are handled as part of the release process.',
+  ],
 ] as const;
 
 export default function FAQSection() {
   return (
-    <FadeSection id="faq" labelledBy="faq-heading" className="section-rhythm bg-(--paper)">
-      {({ inView }) => (
-        <article className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
-          <header className="max-w-2xl" style={fadeUp(inView)}>
-            <SectionLabel>FAQ</SectionLabel>
-            <h2 id="faq-heading" className="mt-4 type-h2">
-              Questions artists ask before they switch.
-            </h2>
-          </header>
+    <section id="faq" className={landingSectionClassName} aria-labelledby="faq-heading">
+      <div className="app-container grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+        <h2 id="faq-heading" className="type-h2">
+          Questions
+        </h2>
 
-          <section className="mt-8 space-y-3" aria-label="Frequently asked questions">
-            {faqs.map(([question, answer], index) => (
-              <details key={question} className="card-framed px-4" style={fadeUp(inView, 0.04 * index)}>
-                <summary className="list-none cursor-pointer py-4 flex items-center justify-between gap-4">
-                  <span className="type-body-sm">{question}</span>
-                  <span className="faq-plus text-[18px] leading-none text-(--slate)" aria-hidden="true">+</span>
-                </summary>
-                <p className="pb-4 type-body-sm text-(--slate)">{answer}</p>
-              </details>
-            ))}
-          </section>
-        </article>
-      )}
-    </FadeSection>
+        <div className="divide-y divide-(--line)">
+          {faqs.map(([question, answer]) => (
+            <details key={question} className="group">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
+                <span className="type-body font-medium">{question}</span>
+                <LuPlus
+                  className="size-5 shrink-0 text-(--muted) transition-transform duration-(--dur-state) group-open:rotate-45"
+                  aria-hidden="true"
+                />
+              </summary>
+              <p className="max-w-[60ch] pb-6 type-body text-(--muted)">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

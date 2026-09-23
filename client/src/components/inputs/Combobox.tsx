@@ -5,18 +5,18 @@ import {
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
-import { Search } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { forwardRef, useId, useMemo, useState } from 'react';
 import { SkeletonLoader } from './Loader';
 import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
 import { InputErrorMessage } from '../feedbacks/ErrorLabels';
+
+import { LuCheck, LuChevronsUpDown, LuSearch } from 'react-icons/lu';
 
 type Option = {
     label: string;
@@ -122,14 +122,14 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 aria-describedby={describedBy}
                                 disabled={readOnly}
                                 className={cn(
-                                    'field-chrome flex items-center justify-between font-normal',
+                                    'field-chrome flex items-center justify-between gap-2 text-left',
                                     inputClassName,
                                     className,
                                 )}
                             >
                                 <span
                                     className={cn(
-                                        'flex-1 block w-full text-left truncate max-w-[calc(100%-24px)] type-body-sm',
+                                        'block min-w-0 flex-1 truncate',
                                         value
                                             ? selectedValueClassName
                                             : 'text-(--placeholder)',
@@ -137,13 +137,13 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 >
                                     {value ? selectedLabel : (placeholder || 'Select option...')}
                                 </span>
-                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 text-(--slate) flex-none" />
+                                <LuChevronsUpDown className="size-4 shrink-0 text-(--muted)" aria-hidden="true" />
                             </button>
                         )}
                     </PopoverTrigger>
                     <PopoverContent
                         data-combobox-menu=""
-                        className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0 card-framed shadow-[var(--shadow-menu)]"
+                        className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0"
                         align="start"
                         onOpenAutoFocus={(event) => {
                             // Let the popover FocusScope autofocus proceed
@@ -160,15 +160,15 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 filtering work identically on pages and in
                                 modals. cmdk still owns list rendering,
                                 arrow/enter selection, and the empty state. */}
-                            <div className="flex items-center border-b border-(--line) px-3 z-50000" cmdk-input-wrapper="">
-                                <Search className="mr-2 h-4 w-4 shrink-0 text-(--slate)" />
+                            <div className="flex items-center gap-2 border-b border-(--line) px-3" cmdk-input-wrapper="">
+                                <LuSearch className="size-4 shrink-0 text-(--muted)" aria-hidden="true" />
                                 <input
                                     value={search}
                                     onChange={(event) => setSearch(event.target.value)}
-                                    placeholder="Search option..."
+                                    placeholder="Search options"
                                     aria-label="Search options"
                                     className={cn(
-                                        'flex h-(--control-sm) z-50000 w-full bg-transparent type-body-sm outline-none placeholder:text-(--placeholder) disabled:cursor-not-allowed disabled:opacity-50 z-50',
+                                        'flex h-(--control-md) w-full bg-transparent text-sm outline-none placeholder:text-(--placeholder) disabled:cursor-not-allowed disabled:opacity-50',
                                         inputClassName,
                                     )}
                                 />
@@ -176,11 +176,11 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                             <CommandList className="w-full">
                                 <CommandEmpty
                                     className={cn(
-                                        'w-full text-center type-body-sm text-(--placeholder) py-3',
+                                        'w-full py-4 text-center text-sm text-(--muted)',
                                         optionsClassName,
                                     )}
                                 >
-                                    No option found.
+                                    No matches. Try a different search.
                                 </CommandEmpty>
                                 <CommandGroup className="w-full">
                                     {visibleOptions.map((option) => (
@@ -188,23 +188,23 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                             key={option.value || option.label}
                                             defaultValue={defaultValue}
                                             disabled={option?.disabled}
-                                            className="flex items-center gap-2 w-full cursor-pointer overflow-hidden type-body-sm"
+                                            className="overflow-hidden"
                                             value={option.label}
                                             keywords={[option.value]}
                                             onSelect={() => selectOption(option.value)}
                                         >
                                             <p
                                                 className={cn(
-                                                    'truncate max-w-[calc(100%-24px)] type-body-sm',
-                                                    option?.disabled && 'text-(--disabled-fg) cursor-not-allowed',
+                                                    'min-w-0 flex-1 truncate',
+                                                    option?.disabled && 'text-(--placeholder) cursor-not-allowed',
                                                     optionsClassName,
                                                 )}
                                             >
                                                 {option.label}
                                             </p>
-                                            <CheckIcon
+                                            <LuCheck
                                                 className={cn(
-                                                    'ml-auto h-4 w-4 flex-none text-(--signal)',
+                                                    'size-4 flex-none text-(--signal)',
                                                     value === option.value ? 'opacity-100' : 'opacity-0'
                                                 )}
                                             />

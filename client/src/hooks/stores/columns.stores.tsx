@@ -7,10 +7,10 @@ import {
   formatDate,
   getStatusBackgroundColor,
 } from "@/utils/strings.helper";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+
+import { LuEllipsis, LuInfo } from 'react-icons/lu';
 
 export const useStoreColumns = () => {
   const storeColumns = useMemo<ColumnDef<Store>[]>(
@@ -24,7 +24,7 @@ export const useStoreColumns = () => {
         header: "Slug",
         accessorKey: "slug",
         cell: ({ row }) => (
-          <span className="text-[11px] text-(--ink)/70">
+          <span className="text-[11px] text-(--muted)">
             {row.original.slug || "—"}
           </span>
         ),
@@ -79,15 +79,12 @@ export const useStoreColumns = () => {
         cell: ({ row }) => (
           <CustomPopover
             trigger={
-              <FontAwesomeIcon
-                icon={faEllipsisH}
-                className={ellipsisHClassName}
-              />
+              <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
             }
           >
-            <menu className="w-full flex flex-col items-center gap-1">
+            <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
               <TableActionButton
-                icon={faCircleInfo}
+                icon={LuInfo}
                 to={`/stores/${row.original.id}`}
               >
                 View details

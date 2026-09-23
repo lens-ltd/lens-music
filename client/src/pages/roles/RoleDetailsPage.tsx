@@ -24,7 +24,7 @@ const RoleDetailsPage = () => {
     return (
       <UserLayout>
         <main className="w-full flex items-center justify-center min-h-[50vh]">
-          <Loader className="text-primary" />
+          <Loader className="text-(--signal)" />
         </main>
       </UserLayout>
     );
@@ -34,9 +34,9 @@ const RoleDetailsPage = () => {
     return (
       <UserLayout>
         <main className="w-full flex flex-col gap-4">
-          <Heading>Role Details</Heading>
+          <Heading>Role details</Heading>
           <div className="w-full card-framed p-8 text-center">
-            <p className="text-(--slate)">Role not found</p>
+            <p className="text-(--muted)">Role not found</p>
           </div>
           <PageFooter back={<BackButton route="/roles">Back to roles</BackButton>} />
         </main>
@@ -48,8 +48,8 @@ const RoleDetailsPage = () => {
     <UserLayout>
       <main className="w-full flex flex-col gap-4">
         <header className="w-full flex flex-col gap-1">
-          <Heading>Role Details</Heading>
-          <p className="text-[13px] text-(--slate) font-normal">
+          <Heading>Role details</Heading>
+          <p className="text-[13px] text-(--muted) font-normal">
             View role information and associated permissions.
           </p>
         </header>
@@ -61,15 +61,15 @@ const RoleDetailsPage = () => {
                 {role.name}
               </h2>
               {role.description && (
-                <p className="text-[13px] text-(--ink)/70">
+                <p className="text-[13px] text-(--muted)">
                   {role.description}
                 </p>
               )}
             </div>
 
-            <div className="grid gap-3 border-t border-(--line) pt-5">
+            <div className="grid gap-3 pt-5">
               <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                <p className="text-xs text-(--muted)">
                   Role ID
                 </p>
                 <p className="text-[13px] text-(--ink) font-mono">
@@ -78,7 +78,7 @@ const RoleDetailsPage = () => {
               </div>
 
               <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                <p className="text-xs text-(--muted)">
                   Permissions
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -92,14 +92,14 @@ const RoleDetailsPage = () => {
                       </span>
                     ))
                   ) : (
-                    <p className="text-[13px] text-(--slate)">No permissions assigned</p>
+                    <p className="text-[13px] text-(--muted)">No permissions assigned</p>
                   )}
                 </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Created
                   </p>
                   <p className="text-[13px] text-(--ink)">
@@ -108,7 +108,7 @@ const RoleDetailsPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-(--slate)">
+                  <p className="text-xs text-(--muted)">
                     Last updated
                   </p>
                   <p className="text-[13px] text-(--ink)">

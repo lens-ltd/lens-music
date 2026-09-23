@@ -13,7 +13,7 @@ export const MarkdownComponents = {
     const content = String(children ?? '').replace(/\n$/, '');
 
     return match ? (
-      <pre className="overflow-x-auto rounded-md bg-slate-950 p-4 text-xs text-slate-100">
+      <pre className="overflow-x-auto rounded-md bg-(--ink) p-4 text-xs text-white">
         <code className={className} {...props}>
           {content}
         </code>

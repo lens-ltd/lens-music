@@ -1,17 +1,14 @@
-import {
-  faAnglesLeft,
-  faBars,
-  faChevronDown,
-} from '@fortawesome/free-solid-svg-icons';
 import { AnimatePresence, motion, useAnimation } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/state/store';
 import { setSidebarOpen } from '@/state/features/sidebarSlice';
 import { getSidebarNavigationForUser } from '@/constants/sidebar.constants';
 import { cn } from '@/lib/utils';
+
+import { LuChevronDown, LuChevronsLeft, LuMenu } from 'react-icons/lu';
+import { Icon } from '@/components/ui/icon';
 
 const matchesPath = (pathname: string, targetPath: string) =>
   pathname === targetPath || pathname.startsWith(`${targetPath}/`);
@@ -97,18 +94,18 @@ const Sidebar = () => {
 
   const itemClass = (isActive: boolean, extra?: string) =>
     cn(
-      'group relative flex items-center gap-3 overflow-hidden rounded-(--radius-control) type-body-sm transition-colors duration-200',
-      sidebarOpen ? 'px-2.5 py-2.5' : 'justify-center p-2',
+      'group relative flex h-10 items-center gap-3 overflow-hidden rounded-(--radius-control) text-sm transition-colors duration-(--dur-state)',
+      sidebarOpen ? 'px-3' : 'justify-center px-2',
       isActive
-        ? 'bg-(--lens-blue-soft) text-(--ink)'
-        : 'text-(--ink) hover:bg-(--surface)',
+        ? 'bg-(--paper) font-medium text-(--signal)'
+        : 'text-(--ink) hover:bg-(--surface-hover)',
       extra,
     );
 
   return (
     <motion.aside
       className={cn(
-        'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--paper) text-(--ink) transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)] border-r border-(--line)',
+        'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--surface) text-(--ink) transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)]',
         sidebarOpen ? 'w-60' : 'w-18',
       )}
       aria-expanded={sidebarOpen}
@@ -128,20 +125,16 @@ const Sidebar = () => {
             e.preventDefault();
             dispatch(setSidebarOpen(!sidebarOpen));
           }}
-          className="flex h-8 w-8 items-center cursor-pointer justify-center rounded-(--radius-control) text-(--ink) transition-colors duration-200 hover:bg-(--surface)"
+          className="flex size-(--control-sm) cursor-pointer items-center justify-center rounded-(--radius-control) text-(--ink) transition-colors duration-(--dur-state) hover:bg-(--surface-hover)"
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           aria-expanded={sidebarOpen}
         >
-          <FontAwesomeIcon
-            icon={sidebarOpen ? faAnglesLeft : faBars}
-            className="text-[12px] cursor-pointer"
+          <Icon
+            icon={sidebarOpen ? LuChevronsLeft : LuMenu}
+            className="size-4"
           />
         </button>
       </header>
-
-      <div className="mx-3 mb-2">
-        <div className="h-px bg-(--line)" />
-      </div>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2">
         <ul className="flex flex-col gap-1">
@@ -172,27 +165,26 @@ const Sidebar = () => {
                     aria-expanded={sidebarOpen ? isSubcategoriesOpen : false}
                     title={nav.title}
                   >
-                    <FontAwesomeIcon
+                    <Icon
                       icon={nav.icon}
-                      className="text-[15px] flex-shrink-0"
+                      className="size-[18px] shrink-0"
                     />
                     {sidebarOpen && (
                       <motion.span
                         initial={{ opacity: 0 }}
                         animate={textControls}
-                        className="whitespace-nowrap type-body-sm"
+                        className="whitespace-nowrap"
                       >
                         {nav.title}
                       </motion.span>
                     )}
                     {sidebarOpen && (
-                      <FontAwesomeIcon
-                        icon={faChevronDown}
+                      <LuChevronDown
+                        aria-hidden="true"
                         className={cn(
-                          'ml-auto text-[10px] text-(--slate) transition-transform duration-200',
+                          'ml-auto size-4 text-(--muted) transition-transform duration-(--dur-state)',
                           isSubcategoriesOpen && 'rotate-180',
-                        )}
-                      />
+                        )} />
                     )}
                   </button>
                 ) : (
@@ -207,15 +199,15 @@ const Sidebar = () => {
                       }
                     }}
                   >
-                    <FontAwesomeIcon
+                    <Icon
                       icon={nav.icon}
-                      className="text-[15px] flex-shrink-0"
+                      className="size-[18px] shrink-0"
                     />
                     {sidebarOpen && (
                       <motion.span
                         initial={{ opacity: 0 }}
                         animate={textControls}
-                        className="whitespace-nowrap type-body-sm"
+                        className="whitespace-nowrap"
                       >
                         {nav.title}
                       </motion.span>
@@ -242,20 +234,20 @@ const Sidebar = () => {
                               <Link
                                 to={subCategory.path}
                                 className={cn(
-                                  'relative flex items-center gap-2.5 rounded-(--radius-control) px-2.5 py-2 type-body-sm transition-colors duration-200',
+                                  'relative flex h-9 items-center gap-2.5 rounded-(--radius-control) px-3 text-sm transition-colors duration-(--dur-state)',
                                   isSubActive
-                                    ? 'bg-(--lens-blue-soft) text-(--ink)'
-                                    : 'text-(--ink) hover:bg-(--surface)',
+                                    ? 'bg-(--paper) font-medium text-(--signal)'
+                                    : 'text-(--ink) hover:bg-(--surface-hover)',
                                 )}
                                 aria-current={isSubActive ? 'page' : undefined}
                               >
-                                <FontAwesomeIcon
+                                <Icon
                                   icon={subCategory.icon}
-                                  className="text-[12px] flex-shrink-0"
+                                  className="size-4 shrink-0"
                                 />
                                 <motion.span
                                   animate={textControls}
-                                  className="whitespace-nowrap type-body-sm"
+                                  className="whitespace-nowrap"
                                 >
                                   {subCategory.title}
                                 </motion.span>

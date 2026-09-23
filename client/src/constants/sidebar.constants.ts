@@ -1,19 +1,12 @@
-import { faEnvelope, faFileLines } from '@fortawesome/free-regular-svg-icons';
-import {
-  faChartLine,
-  faClipboardCheck,
-  faStore,
-  faUser,
-  faUserGroup,
-  faUserTie,
-  IconDefinition,
-} from '@fortawesome/free-solid-svg-icons';
 import { PERMISSIONS } from './permission.constants';
+
+import { LuBriefcase, LuChartLine, LuClipboardCheck, LuFileText, LuMail, LuStore, LuUser, LuUsers } from 'react-icons/lu';
+import type { IconType } from 'react-icons';
 
 export interface SidebarNavigation {
   title: string;
   path: string;
-  icon: IconDefinition;
+  icon: IconType;
   /** User must have at least one of these permission names (API strings). */
   requiredAnyPermissions?: string[];
   subCategories?: SidebarNavigation[];
@@ -23,28 +16,28 @@ const sidebarNavigationDefinition: SidebarNavigation[] = [
   {
     title: 'Dashboard',
     path: '/dashboard',
-    icon: faChartLine,
+    icon: LuChartLine,
   },
   {
     title: 'Releases',
     path: '/releases',
-    icon: faFileLines,
+    icon: LuFileText,
   },
   {
     title: 'Review',
     path: '/releases/review',
-    icon: faClipboardCheck,
+    icon: LuClipboardCheck,
     subCategories: [
       {
         title: 'Releases',
         path: '/releases/review',
-        icon: faFileLines,
+        icon: LuFileText,
         requiredAnyPermissions: [PERMISSIONS.REVIEW_RELEASE],
       },
       {
         title: 'Contributors',
         path: '/contributors/verification',
-        icon: faUserGroup,
+        icon: LuUsers,
         requiredAnyPermissions: [PERMISSIONS.VERIFY_CONTRIBUTOR],
       },
     ],
@@ -52,29 +45,29 @@ const sidebarNavigationDefinition: SidebarNavigation[] = [
   {
     title: 'Contributors',
     path: '/contributors',
-    icon: faUserGroup,
+    icon: LuUsers,
   },
   {
     title: 'Stores',
     path: '/stores',
-    icon: faStore,
+    icon: LuStore,
     requiredAnyPermissions: [PERMISSIONS.UPDATE_STORE],
   },
   {
     title: 'Users',
     path: '/users',
-    icon: faUser,
+    icon: LuUser,
     subCategories: [
       {
         title: 'Users',
         path: '/users',
-        icon: faUser,
+        icon: LuUser,
         requiredAnyPermissions: [PERMISSIONS.READ_USER],
       },
       {
         title: 'Invitations',
         path: '/users/invitations',
-        icon: faEnvelope,
+        icon: LuMail,
         requiredAnyPermissions: [PERMISSIONS.CREATE_INVITATION, PERMISSIONS.READ_INVITATION],
       },
     ],
@@ -82,7 +75,7 @@ const sidebarNavigationDefinition: SidebarNavigation[] = [
   {
     title: 'Roles',
     path: '/roles',
-    icon: faUserTie,
+    icon: LuBriefcase,
     requiredAnyPermissions: [PERMISSIONS.READ_ROLE],
   },
 ];

@@ -42,7 +42,7 @@ const DeleteContributorMembership = () => {
       isOpen={deleteContributorMembershipModal}
       onClose={closeModal}
       heading={`Delete ${selectedContributorMembership?.memberContributor?.displayName || selectedContributorMembership?.memberContributor?.name}`}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
     >
       <article className="w-full flex flex-col gap-4">
         <p>

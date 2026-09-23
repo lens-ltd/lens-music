@@ -18,8 +18,8 @@ import {
   ReleaseLabelType,
 } from "@/types/models/releaseLabel.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Check } from "lucide-react";
+
+import { LuCheck, LuSearch } from 'react-icons/lu';
 
 const MIN_LABEL_SEARCH_CHARS = 3;
 
@@ -236,12 +236,12 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-xl border border-(--line)/70 bg-white p-4 sm:p-5">
+      <section className="rounded-(--radius-card) bg-(--paper)">
         <header className="mb-4 space-y-1">
           <h3 className="text-sm font-medium text-(--ink)">
             Release labels
           </h3>
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             Optionally assign labels to this release. If no label is set, the
             primary artist will be used as fallback in DDEX submissions.
           </p>
@@ -259,21 +259,21 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                   handleLabelSearchChange(event.target.value)
                 }
                 placeholder="Search labels by name"
-                prefixIcon={faSearch}
+                prefixIcon={LuSearch}
               />
               {labelSearchTerm?.trim()?.length > 0 && (
-                <aside className="mt-2 animate-in fade-in duration-150 rounded-md border border-(--line)/70 bg-white shadow-sm">
+                <aside className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                   {isLabelSearchPending || isSearchingLabels ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--slate)">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
                       <Loader
                         size="small"
-                        className="text-(--slate)"
+                        className="text-(--muted)"
                       />
                       Searching labels...
                     </span>
                   ) : labelSearchTerm?.trim()?.length <
                     MIN_LABEL_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-(--slate)">
+                    <p className="px-3 py-2 text-[12px] text-(--muted)">
                       Type at least {MIN_LABEL_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -292,14 +292,14 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                                 <span className="text-[12px] text-(--ink)">
                                   {label.name}
                                 </span>
-                                <span className="text-[11px] text-(--slate)">
+                                <span className="text-[11px] text-(--muted)">
                                   {[label.email, label.country]
                                     .filter(Boolean)
                                     .join(" · ") || "No extra details"}
                                 </span>
                               </p>
                               {isSelected && (
-                                <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                <LuCheck className="h-3.5 w-3.5 shrink-0 text-(--signal)" />
                               )}
                             </button>
                           </li>
@@ -308,7 +308,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     </ul>
                   ) : (
                     !(isLabelSearchPending || selectedLabelId) && (
-                      <p className="px-3 py-2 text-[12px] text-(--slate)">
+                      <p className="px-3 py-2 text-[12px] text-(--muted)">
                         No labels found.
                       </p>
                     )
@@ -348,11 +348,11 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
           </Button>
         </div>
 
-        <div className="mt-5 border-t border-(--line)/50 pt-4">
+        <div className="mt-5 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--slate)">Loading labels...</p>
+            <p className="text-[12px] text-(--muted)">Loading labels...</p>
           ) : releaseLabels.length === 0 ? (
-            <p className="text-[12px] text-(--slate)">
+            <p className="text-[12px] text-(--muted)">
               No labels assigned yet.
             </p>
           ) : (
@@ -360,19 +360,19 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
               {releaseLabels.map((releaseLabel) => (
                 <li
                   key={releaseLabel.id}
-                  className="flex items-start justify-between gap-3 rounded-md border border-(--line)/40 p-3 text-[12px]"
+                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
                 >
                   <div className="space-y-0.5">
                     <p className="font-medium text-(--ink)">
                       {releaseLabel.label?.name || "Unknown label"}
                     </p>
-                    <p className="text-[11px] text-(--slate)">
+                    <p className="text-[11px] text-(--muted)">
                       {releaseLabel.type}
                       {releaseLabel.ownership
                         ? ` · Ownership: ${releaseLabel.ownership}`
                         : ""}
                     </p>
-                    <p className="text-[11px] text-(--slate)">
+                    <p className="text-[11px] text-(--muted)">
                       DDEX Party ID: {releaseLabel?.label?.ddexPartyId || "—"}
                     </p>
                   </div>
@@ -380,7 +380,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     <button
                       type="button"
                       onClick={() => openEdit(releaseLabel)}
-                      className="text-[11px] text-(--lens-blue) hover:underline"
+                      className="text-[11px] text-(--signal) hover:underline"
                     >
                       Edit
                     </button>

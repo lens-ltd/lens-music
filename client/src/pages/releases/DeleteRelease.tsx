@@ -37,7 +37,7 @@ const DeleteRelease = () => {
     <Modal
       isOpen={deleteReleaseModal}
       onClose={closeModal}
-      headingClassName="text-red-700"
+      headingClassName="text-(--danger)"
       heading={`Delete ${selectedRelease?.title}`}
     >
       <article className="w-full flex flex-col gap-4">

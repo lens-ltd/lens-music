@@ -6,8 +6,9 @@ import { useUserColumns } from "@/hooks/users/columns.users";
 import { useFetchUsers } from "@/hooks/users/users.hooks";
 import AssignUserRole from "@/pages/users/AssignUserRole";
 import { useAppSelector } from "@/state/hooks";
-import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useEffect } from "react";
+
+import { LuMail } from 'react-icons/lu';
 
 const UsersPage = () => {
   // STATE
@@ -45,7 +46,7 @@ const UsersPage = () => {
               Review dashboard users and their account status.
             </p>
           </div>
-          <Button primary icon={faEnvelope} route="/users/invitations/create">
+          <Button primary icon={LuMail} route="/users/invitations/create">
             Invite user
           </Button>
         </nav>

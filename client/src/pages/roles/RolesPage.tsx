@@ -6,8 +6,9 @@ import { useRoleColumns } from "@/hooks/roles/columns.roles";
 import { useFetchRoles } from "@/hooks/roles/roles.hooks";
 import DeleteRole from "@/pages/roles/DeleteRole";
 import { useAppSelector } from "@/state/hooks";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect } from "react";
+
+import { LuPlus } from 'react-icons/lu';
 
 const RolesPage = () => {
   // STATE
@@ -45,7 +46,7 @@ const RolesPage = () => {
               Manage user roles and their associated permissions.
             </p>
           </div>
-          <Button icon={faPlus} primary route="/roles/create">
+          <Button icon={LuPlus} primary route="/roles/create">
             Create role
           </Button>
         </nav>

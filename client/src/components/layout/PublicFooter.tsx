@@ -1,88 +1,87 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import LensLogo from '/logo.png';
+import LensLogo from '/logo-mark.png';
+
+const linkClassName = 'link-sweep text-sm text-(--muted) hover:text-(--ink)';
+
+const productLinks = [
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'FAQ', href: '/#faq' },
+];
+
+const accountLinks = [
+  { label: 'Create free account', to: '/auth/signup' },
+  { label: 'Sign in', to: '/auth/login' },
+];
+
+const legalLinks = [
+  { label: 'Privacy policy', to: '/privacy-policy' },
+  { label: 'Terms of service', to: '/terms-of-service' },
+  { label: 'Artist agreement', to: '/artist-agreement' },
+];
 
 const PublicFooter: FC = () => (
-  <footer
-    id="contact"
-    className="bg-white border-t border-(--line)"
-    role="contentinfo"
-  >
-    <section className="app-container pt-16 pb-8">
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-10 pb-12 border-b border-(--line)">
-        <section className="col-span-2 md:col-span-1">
-          <Link
-            to="/"
-            aria-label="Lens Music home"
-            className="flex items-center gap-2.5 mb-4 rounded w-fit"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            <img src={LensLogo} alt="Lens Logo" className="w-10 h-10" />
-          </Link>
-          <p className="type-meta max-w-[200px]">
-            Distribution and analytics for independent artists and labels, built in Rwanda.
-          </p>
-        </section>
-
-        <nav aria-label="Product links">
-          <p className="equipment-label mb-4">Product</p>
-          <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-            {[
-              { label: 'How it works', href: '#how-it-works' },
-              { label: 'Features', href: '#features' },
-              { label: 'Pricing', href: '#pricing' },
-              { label: 'Dashboard', href: '#analytics' },
-            ].map(({ label, href }) => (
-              <li key={label}>
-                <a href={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav aria-label="Company links">
-          <p className="equipment-label mb-4">Company</p>
-          <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-            {[
-              { label: 'About', href: '/#about' },
-              { label: 'Contact', href: '/#contact' },
-              { label: 'FAQ', href: '/#faq' },
-            ].map(({ label, href }) => (
-              <li key={label}>
-                <a href={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav aria-label="Legal links">
-          <p className="equipment-label mb-4">Legal</p>
-          <ul className="flex flex-col gap-2.5 list-none p-0 m-0" role="list">
-            {[
-              { label: 'Privacy Policy', href: '/privacy-policy' },
-              { label: 'Terms of Service', href: '/terms-of-service' },
-              { label: 'Artist Agreement', href: '/artist-agreement' },
-            ].map(({ label, href }) => (
-              <li key={label}>
-                <Link to={href} className="link-sweep type-body-sm text-(--slate) hover:text-(--ink)">
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </section>
-
-      <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-7">
-        <p className="type-meta">
-          Distribution is free. Lens charges a 15% revenue share on earnings generated through the platform.
+  <footer id="contact" className="bg-(--paper)" role="contentinfo">
+    <div className="app-container grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
+      <div className="col-span-2 md:col-span-1">
+        <Link
+          to="/"
+          aria-label="Lens Music home"
+          className="block w-fit rounded-(--radius-control)"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <img src={LensLogo} alt="Lens Music" className="h-7 w-auto" />
+        </Link>
+        <p className="mt-4 max-w-[28ch] type-meta">
+          Distribution and earnings reporting for independent artists and
+          labels, built in Rwanda.
         </p>
-      </section>
-    </section>
+      </div>
+
+      <nav aria-label="Product">
+        <p className="equipment-label">Product</p>
+        <ul className="mt-4 flex list-none flex-col gap-3 p-0" role="list">
+          {productLinks.map(({ label, href }) => (
+            <li key={label}>
+              <a href={href} className={linkClassName}>
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-label="Account">
+        <p className="equipment-label">Account</p>
+        <ul className="mt-4 flex list-none flex-col gap-3 p-0" role="list">
+          {accountLinks.map(({ label, to }) => (
+            <li key={label}>
+              <Link to={to} className={linkClassName}>
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-label="Legal">
+        <p className="equipment-label">Legal</p>
+        <ul className="mt-4 flex list-none flex-col gap-3 p-0" role="list">
+          {legalLinks.map(({ label, to }) => (
+            <li key={label}>
+              <Link to={to} className={linkClassName}>
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <div className="app-container pb-10">
+      <p className="type-meta">© {new Date().getFullYear()} Lens Music</p>
+    </div>
   </footer>
 );
 

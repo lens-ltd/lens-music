@@ -32,7 +32,7 @@ const DeleteContributor = () => {
     }, [isSuccess, data, reset, closeModal]);
 
     return (
-        <Modal isOpen={deleteContributorModal} onClose={closeModal} headingClassName="text-red-700" heading={`Delete ${selectedContributor?.displayName || selectedContributor?.name}`}>
+        <Modal isOpen={deleteContributorModal} onClose={closeModal} headingClassName="text-(--danger)" heading={`Delete ${selectedContributor?.displayName || selectedContributor?.name}`}>
             <article className="w-full flex flex-col gap-4">
                 <p>Are you sure you want to delete {selectedContributor?.displayName || selectedContributor?.name}? This action cannot be undone.</p>
                 <Button danger className="self-end" onClick={(e) => {

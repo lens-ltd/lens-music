@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronDown,
-  faCog,
-  faSignOutAlt,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
 import { clearSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import LensLogo from '/logo.png';
+import LensLogo from '/logo-mark.png';
+
+import { LuChevronDown, LuLogOut, LuSettings, LuUser } from 'react-icons/lu';
 
 export interface NavbarProps {
   className?: string;
@@ -50,7 +45,7 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-(--line) bg-(--paper)`}
+      className="fixed top-0 left-0 right-0 z-50 w-full bg-(--paper)"
       style={{ height: '64px' }}
     >
       <nav
@@ -60,7 +55,7 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
         aria-label="Main navigation"
       >
         <Link to="/dashboard" className="rounded-(--radius-control)">
-          <img src={LensLogo} alt="Lens Logo" className="h-10 w-10 rounded-(--radius-control) object-contain" />
+          <img src={LensLogo} alt="Lens Music" className="h-7 w-auto" />
         </Link>
 
         <section className="flex items-center gap-3 sm:gap-4">
@@ -81,7 +76,7 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
                     alt=""
                   />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center bg-(--lens-blue-soft) type-label text-(--lens-blue)">
+                  <span className="flex h-full w-full items-center justify-center bg-(--signal-soft) type-label text-(--signal)">
                     {user?.name?.charAt(0) || 'U'}
                   </span>
                 )}
@@ -96,10 +91,9 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
                 </span>
               </span>
 
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`mr-1 hidden text-[10px] text-(--slate) transition-transform duration-200 md:inline ${dropdownOpen ? 'rotate-180' : ''
-                  }`}
+              <LuChevronDown
+                aria-hidden="true"
+                className={`mr-1 hidden size-4 text-(--muted) transition-transform duration-(--dur-state) md:inline ${dropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
             <DropdownMenu isOpen={dropdownOpen} />
@@ -120,7 +114,7 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
     <ul
       id="user-menu"
       role="menu"
-      className={`absolute right-0 mt-2 w-[250px] rounded-(--radius-control) border border-(--menu-border) bg-(--paper) p-1 shadow-[var(--shadow-menu)] transition-[opacity,transform] duration-100 z-10 ${isOpen
+      className={`absolute right-0 z-10 mt-2 w-60 rounded-(--radius-control) bg-(--paper) p-1 shadow-(--shadow-menu) transition-[opacity,transform] duration-(--dur-menu) ${isOpen
         ? 'translate-y-0 opacity-100 pointer-events-auto'
         : 'translate-y-[-4px] opacity-0 pointer-events-none'
         }`}
@@ -129,9 +123,9 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <Link
           to="/profile"
           role="menuitem"
-          className="block rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="flex h-9 items-center gap-2 rounded-(--radius-control) px-2 text-sm text-(--ink) transition-colors hover:bg-(--surface)"
         >
-          <FontAwesomeIcon icon={faUser} className="mr-2" />
+          <LuUser className="size-4 text-(--muted)" aria-hidden="true" />
           Profile
         </Link>
       </li>
@@ -139,9 +133,9 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <Link
           to="/settings"
           role="menuitem"
-          className="block rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="flex h-9 items-center gap-2 rounded-(--radius-control) px-2 text-sm text-(--ink) transition-colors hover:bg-(--surface)"
         >
-          <FontAwesomeIcon icon={faCog} className="mr-2" />
+          <LuSettings className="size-4 text-(--muted)" aria-hidden="true" />
           Settings
         </Link>
       </li>
@@ -149,14 +143,14 @@ export const DropdownMenu = ({ isOpen }: { isOpen: boolean }) => {
         <button
           type="button"
           role="menuitem"
-          className="block w-full text-left rounded px-3 py-2 type-body-sm text-(--ink) transition-colors hover:bg-(--surface)"
+          className="flex h-9 w-full items-center gap-2 rounded-(--radius-control) px-2 text-left text-sm text-(--ink) transition-colors hover:bg-(--surface)"
           onClick={() => {
             dispatch(clearSession());
             navigate('/');
           }}
         >
-          <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-          Logout
+          <LuLogOut className="size-4 text-(--muted)" aria-hidden="true" />
+          Sign out
         </button>
       </li>
     </ul>

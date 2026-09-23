@@ -26,7 +26,7 @@ const LyricsGuidelines = () => {
         rehypePlugins={[rehypeRaw]}
         components={{
           h2: ({ children }) => (
-            <h2 className="mb-2 mt-5 border-b border-(--line)/70 pb-1 text-sm font-semibold text-(--ink) first:mt-0">
+            <h2 className="mb-2 mt-5 pb-1 text-sm font-semibold text-(--ink) first:mt-0">
               {children}
             </h2>
           ),
@@ -36,7 +36,7 @@ const LyricsGuidelines = () => {
             </h3>
           ),
           p: ({ children }) => (
-            <p className="mb-2 text-[12px] leading-relaxed text-(--slate)">
+            <p className="mb-2 text-[12px] leading-relaxed text-(--muted)">
               {children}
             </p>
           ),
@@ -46,7 +46,7 @@ const LyricsGuidelines = () => {
             </ul>
           ),
           li: ({ children }) => (
-            <li className="text-[12px] leading-relaxed text-(--slate)">
+            <li className="text-[12px] leading-relaxed text-(--muted)">
               {children}
             </li>
           ),

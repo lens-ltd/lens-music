@@ -43,7 +43,7 @@ const RejectContributor = () => {
       }`}
     >
       <article className="w-full flex flex-col gap-4">
-        <p className="text-sm text-(--ink)/70">
+        <p className="text-sm text-(--muted)">
           This marks the contributor as not verified. You can optionally include
           a note explaining why.
         </p>
@@ -56,7 +56,7 @@ const RejectContributor = () => {
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="Reason for rejecting verification"
-            className="w-full rounded-md border border-secondary/30 bg-white p-3 text-sm outline-none focus:border-primary"
+            className="field-chrome h-auto min-h-[7.5rem] py-2"
           />
         </label>
         <Button

@@ -10,9 +10,10 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useFetchReleases } from '@/hooks/releases/release.hooks';
 import DeleteRelease from './DeleteRelease';
+
+import { LuPlus } from 'react-icons/lu';
 
 const ReleasesPage = () => {
   // STATE VARIABLES
@@ -70,13 +71,13 @@ const ReleasesPage = () => {
               e.preventDefault();
               dispatch(setCreateReleaseModal(true));
             }}
-            icon={faPlus}
+            icon={LuPlus}
           >
-            Add new release
+            Create release
           </Button>
         </nav>
         {hasFilters ? (
-          <aside className="flex flex-col gap-3 rounded-md border border-(--line) bg-(--surface) px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <aside className="flex flex-col gap-3 rounded-md bg-(--surface) px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="type-meta">
               Showing a filtered catalog
               {filters.status ? ` · ${filters.status.toLowerCase()}` : ''}

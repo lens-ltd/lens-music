@@ -5,15 +5,10 @@ import { setDeleteRoleModal, setSelectedRole } from "@/state/features/roleSlice"
 import { useAppDispatch } from "@/state/hooks";
 import { Role } from "@/types/models/role.types";
 import { formatDate } from "@/utils/strings.helper";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import {
-  faCircleInfo,
-  faTrash,
-  faEllipsisH,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+
+import { LuEllipsis, LuInfo, LuSquarePen, LuTrash2 } from 'react-icons/lu';
 
 export const useRoleColumns = () => {
   const dispatch = useAppDispatch();
@@ -62,28 +57,25 @@ export const useRoleColumns = () => {
           return (
             <CustomPopover
               trigger={
-                <FontAwesomeIcon
-                  icon={faEllipsisH}
-                  className={ellipsisHClassName}
-                />
+                <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
               }
             >
-              <menu className="w-full flex flex-col items-center gap-1">
+              <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
                 <TableActionButton
-                  icon={faCircleInfo}
+                  icon={LuInfo}
                   to={`/roles/${row?.original?.id}`}
                 >
                   View details
                 </TableActionButton>
                 <TableActionButton
-                  icon={faPenToSquare}
+                  icon={LuSquarePen}
                   to={`/roles/${row?.original?.id}/edit`}
                 >
                   Edit role
                 </TableActionButton>
                 <TableActionButton
-                  icon={faTrash}
-                  iconClassName="text-red-700 text-[12px]"
+                  icon={LuTrash2}
+                  iconClassName="text-(--danger) text-[12px]"
                   onClick={(e) => {
                     e.preventDefault();
                     if (row?.original?.id) {

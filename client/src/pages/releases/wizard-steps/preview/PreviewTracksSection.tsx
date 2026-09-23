@@ -6,12 +6,12 @@ import {
   capitalizeString,
   getStatusBackgroundColor,
 } from "@/utils/strings.helper";
-import { faCircleInfo, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import CustomPopover from "@/components/inputs/CustomPopover";
 import { ellipsisHClassName } from "@/constants/input.constants";
 import TableActionButton from "@/components/inputs/TableActionButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Table from "@/components/table/Table";
+
+import { LuEllipsis, LuInfo } from 'react-icons/lu';
 
 interface PreviewTracksSectionProps {
   tracks: Track[];
@@ -37,7 +37,7 @@ const PreviewTracksSection = ({
       accessorKey: "trackNumber",
       header: "#",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {row.original.trackNumber}
         </span>
       ),
@@ -49,7 +49,7 @@ const PreviewTracksSection = ({
         <span className="text-[12px] font-normal">
           {row.original.title}
           {row.original.titleVersion && (
-            <span className="ml-1 text-(--slate)">
+            <span className="ml-1 text-(--muted)">
               ({row.original.titleVersion})
             </span>
           )}
@@ -60,7 +60,7 @@ const PreviewTracksSection = ({
       accessorKey: "isrc",
       header: "ISRC",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {row.original.isrc || "—"}
         </span>
       ),
@@ -69,7 +69,7 @@ const PreviewTracksSection = ({
       accessorKey: "durationMs",
       header: "Duration",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {formatDurationMs(row.original.durationMs)}
         </span>
       ),
@@ -78,7 +78,7 @@ const PreviewTracksSection = ({
       accessorKey: "soundRecordingType",
       header: "Sound Recording",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {row.original.soundRecordingType
             ? capitalizeString(
                 row.original.soundRecordingType.replace(/_/g, " ").toLowerCase(),
@@ -91,7 +91,7 @@ const PreviewTracksSection = ({
       accessorKey: "previewDurationMs",
       header: "Preview",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--slate)">
+        <span className="text-[12px] text-(--muted)">
           {row.original.previewDurationMs
             ? formatDurationMs(row.original.previewDurationMs)
             : "—"}
@@ -114,15 +114,12 @@ const PreviewTracksSection = ({
         return (
           <CustomPopover
             trigger={
-              <FontAwesomeIcon
-                icon={faEllipsisH}
-                className={ellipsisHClassName}
-              />
+              <button type="button" className={ellipsisHClassName} aria-label="More actions"><LuEllipsis className="size-4" aria-hidden="true" /></button>
             }
           >
-            <menu className="w-full flex flex-col items-center gap-1">
+            <menu className="m-0 flex w-full flex-col gap-0.5 p-0">
               <TableActionButton
-                icon={faCircleInfo}
+                icon={LuInfo}
                 to={`/releases/${releaseId}/tracks/${row?.original?.id}`}
               >
                 View details
@@ -155,7 +152,7 @@ const PreviewTracksSection = ({
             containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             No tracks added yet.
           </p>
         )}

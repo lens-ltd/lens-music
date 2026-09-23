@@ -15,14 +15,14 @@ const TrackEditorHeader = ({
   <>
     <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <section className="space-y-1">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-(--lens-blue)">
+        <p className="text-xs text-(--muted)">
           Track editor
         </p>
         <h1 className="text-lg font-normal text-(--ink)">
           {track?.title || "Manage track"}
         </h1>
         {release?.title && (
-          <p className="text-[12px] text-(--slate)">
+          <p className="text-[12px] text-(--muted)">
             {release.title}
           </p>
         )}

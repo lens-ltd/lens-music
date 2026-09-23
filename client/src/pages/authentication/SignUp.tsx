@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
-import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { toast } from 'sonner';
 import Input from '@/components/inputs/Input';
 import Button from '@/components/inputs/Button';
@@ -11,6 +10,8 @@ import { useRegisterMutation } from '@/state/api/apiMutationSlice';
 import { setSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { validateInputs } from '@/utils/validations.helper';
+
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 const SignUp = () => {
   const { token: authToken, user: authUser } = useAppSelector((state) => state.auth);
@@ -64,19 +65,15 @@ const SignUp = () => {
   };
 
   return (
-    <main className="min-h-screen bg-(--field) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
+    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
       <PublicNavbar scrolled variant="auth" />
 
       <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[520px] rounded-lg border border-(--line) bg-(--paper) p-6 shadow-[var(--shadow-modal)] sm:p-7">
-          <p className="type-eyebrow">
-            Get started
-          </p>
-          <h1
-            className="mt-3 text-[1.65rem] font-medium text-(--ink)">
+        <article className="w-full max-w-[520px]">
+          <h1 className="type-page-title text-2xl">
             Create your Lens Music account
           </h1>
-          <p className="mt-2 text-[13px] leading-5 text-(--slate)">
+          <p className="mt-2 text-[13px] leading-5 text-(--muted)">
             Set up your account to distribute releases, manage contributors, and track your catalog.
           </p>
 
@@ -123,7 +120,7 @@ const SignUp = () => {
                   required
                   placeholder="Create a password"
                   type={showPassword ? 'text' : 'password'}
-                  suffixIcon={showPassword ? faEyeSlash : faEye}
+                  suffixIcon={showPassword ? LuEyeOff : LuEye}
                   suffixIconHandler={(event) => {
                     event.preventDefault();
                     setShowPassword(!showPassword);
@@ -148,7 +145,7 @@ const SignUp = () => {
                   required
                   placeholder="Re-enter your password"
                   type={showPassword ? 'text' : 'password'}
-                  suffixIcon={showPassword ? faEyeSlash : faEye}
+                  suffixIcon={showPassword ? LuEyeOff : LuEye}
                   suffixIconHandler={(event) => {
                     event.preventDefault();
                     setShowPassword(!showPassword);
@@ -165,7 +162,7 @@ const SignUp = () => {
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-[11px] text-(--slate) font-normal">
+            <p className="text-[11px] text-(--muted) font-normal">
               Already have an account?
             </p>
             <Link

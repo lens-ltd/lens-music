@@ -1,7 +1,8 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
-import { Loader2 } from 'lucide-react';
+
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const spinnerVariants = cva('flex-col items-center justify-center', {
   variants: {
@@ -43,7 +44,7 @@ const Loader = ({
 }: SpinnerContentProps) => {
   return (
     <span className={spinnerVariants({ show })}>
-      <Loader2 className={cn(loaderVariants({ size }), className)} />
+      <LuLoaderCircle className={cn(loaderVariants({ size }), className)} />
       {children}
     </span>
   );
