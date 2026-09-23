@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import { useInView } from 'framer-motion';
 import { LuCheck } from 'react-icons/lu';
 import DashboardChart from '@/components/graphs/DashboardChart';
 import { landingSectionClassName, reveal, sampleChartData } from './landingShared';
@@ -11,6 +13,10 @@ const included = [
 ];
 
 export default function WhatYouGetSection() {
+  // Mount the chart on arrival so its line draws while someone is looking.
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartInView = useInView(chartRef, { once: true, margin: '0px 0px -20% 0px' });
+
   return (
     <section
       id="what-you-get"
@@ -51,8 +57,10 @@ export default function WhatYouGetSection() {
             </span>
           </div>
 
-          <div className="-mx-2 mt-6">
-            <DashboardChart data={sampleChartData} dataKey="month" height={180} showGrid />
+          <div ref={chartRef} className="-mx-2 mt-6 min-h-[180px]">
+            {chartInView && (
+              <DashboardChart data={sampleChartData} dataKey="month" height={180} showGrid />
+            )}
           </div>
 
           <dl className="mt-6 grid grid-cols-2 gap-4">

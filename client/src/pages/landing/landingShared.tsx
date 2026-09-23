@@ -45,3 +45,7 @@ export const reveal = (index = 0) => ({
   'data-reveal': '',
   style: { '--reveal-i': index } as CSSProperties,
 });
+
+export const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
