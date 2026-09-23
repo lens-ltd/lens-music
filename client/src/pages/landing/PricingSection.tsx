@@ -9,8 +9,8 @@ const formatUsd = (value: number) =>
   value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: value < 100 ? 2 : 0,
-    maximumFractionDigits: value < 100 ? 2 : 0,
+    minimumFractionDigits: value < 10 ? 2 : 0,
+    maximumFractionDigits: value < 10 ? 2 : 0,
   });
 
 /** A dollar amount that eases to its new value when the slider moves. */

@@ -50,7 +50,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-(--paper) text-(--ink) overflow-x-hidden">
+    <main className="min-h-screen bg-(--paper) text-(--ink) overflow-x-clip">
       <PublicNavbar scrolled={scrolled} variant="landing" />
       <HeroSection />
       <HowItWorksSection />

@@ -49,7 +49,6 @@ function useDeliverySequence(count: number) {
 
   return {
     reduced,
-    liveCount: Math.max(liveCount, 0),
     started: liveCount >= 0,
     done: liveCount >= count,
     replay: () => setLiveCount(-1),
