@@ -1,4 +1,5 @@
 import Button from '@/components/inputs/Button';
+import { getApiErrorMessage } from '@/utils/errors.helper';
 import Combobox from '@/components/inputs/Combobox';
 import Input from '@/components/inputs/Input';
 import {
@@ -172,10 +173,7 @@ const ReleaseWizardDealsSection = () => {
       toast.success('Deal added.');
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not create deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not create deal.'));
     }
   }, [
     commercialModelType,
@@ -198,10 +196,7 @@ const ReleaseWizardDealsSection = () => {
       toast.success('Deal removed.');
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not delete deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not delete deal.'));
     }
   };
 
@@ -257,10 +252,7 @@ const ReleaseWizardDealsSection = () => {
       closeEditDeal();
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not update deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not update deal.'));
     }
   };
 

@@ -2,10 +2,8 @@ import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { useUpdateReleaseTerritories } from "@/hooks/releases/release.hooks";
 import { useAppSelector } from "@/state/hooks";
 import type { CheckedState } from "@radix-ui/react-checkbox";
@@ -19,33 +17,17 @@ import { LuSearch } from 'react-icons/lu';
 
 const ALL_COUNTRY_CODES = COUNTRIES_LIST.map((country) => country.code);
 
-const getErrorMessage = (error: unknown) => {
-  if (typeof error !== "object" || !error) return "Failed to update territories";
-
-  const errorWithData = error as {
-    data?: { message?: string } | string;
-    error?: string;
-  };
-
-  if (typeof errorWithData.data === "string") return errorWithData.data;
-  if (typeof errorWithData.data?.message === "string") {
-    return errorWithData.data.message;
-  }
-  if (typeof errorWithData.error === "string") return errorWithData.error;
-
-  return "Failed to update territories";
-};
-
 const ReleaseWizardRegions = ({
   currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
-    useCreateReleaseNavigationFlow();
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
   const {
     updateReleaseTerritories,
     isLoading: isSavingTerritories,
@@ -98,12 +80,7 @@ const ReleaseWizardRegions = ({
   };
 
   const handleGoBack = () => {
-    if (!release?.id || !previousStepName) return;
-
-    createReleaseNavigationFlow({
-      releaseId: release.id,
-      staticReleaseNavigationStepName: previousStepName,
-    });
+    void goBack();
   };
 
   const handleSaveAndContinue = async () => {
@@ -114,42 +91,32 @@ const ReleaseWizardRegions = ({
 
     setTerritoriesError(undefined);
     resetUpdateReleaseTerritories();
+    const releaseId = release.id;
 
-    try {
-      const response = await updateReleaseTerritories({
-        id: release.id,
-        territories: selectedTerritories,
-      }).unwrap();
-
-      toast.success(response?.message || "Territories updated successfully");
-
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+    // Save errors show inline next to the buttons; navigation errors are
+    // toasted by `goNext`.
+    await goNext(async () => {
+      try {
+        const response = await updateReleaseTerritories({
+          id: releaseId,
+          territories: selectedTerritories,
+        }).unwrap();
+        toast.success(response?.message || "Territories updated successfully");
+        return true;
+      } catch (error) {
+        setTerritoriesError(
+          getApiErrorMessage(error, "Failed to update territories"),
+        );
+        return false;
       }
-      if (nextStepName) {
-        await createReleaseNavigationFlow({
-          releaseId: release.id,
-          staticReleaseNavigationStepName: nextStepName,
-        });
-      }
-    } catch (error) {
-      setTerritoriesError(getErrorMessage(error));
-    }
+    });
   };
 
   const navButtons = (
     <>
       <BackButton
         onClick={handleGoBack}
-        disabled={
-          !previousStepName ||
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        disabled={!previousStepName || isNavigating}
       >
         Back
       </BackButton>
@@ -158,16 +125,7 @@ const ReleaseWizardRegions = ({
         type="button"
         primary
         onClick={handleSaveAndContinue}
-        disabled={
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
-        isLoading={
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        isLoading={isNavigating || isSavingTerritories}
       >
         Save & continue
       </Button>

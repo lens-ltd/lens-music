@@ -74,10 +74,25 @@ Tokens live in `client/src/index.css`.
 | Milestone | Goal | Task IDs |
 |---|---|---|
 | **M0 Safe foundation** | Nothing in production can corrupt data or be abused. | OPS-1…4, SEC-1…6, LIFE-1…4, ADMIN-1, UI-1, MONEY-12 |
-| **M1 Trustworthy releases** | An artist can create a correct release without help. | WIZ-1…22, MEDIA-1…5, ID-1…3, CAT-1, CAT-2, CAT-5, ACCT-1…3, DDEX-1…3, ADMIN-2 |
+| **M1 Trustworthy releases** | An artist can create a correct release without help. | WIZ-1…28, MEDIA-1…5, ID-1…3, CAT-1, CAT-2, CAT-5, ACCT-1…3, DDEX-1…3, ADMIN-2 |
 | **M2 Delivery** | Approved releases reach stores through the aggregator, and their status is tracked. | OPS-5…7, DLV-1…7, DDEX-4…5, LIFE-5…8, ADMIN-3, SEC-7…11 |
 | **M3 Money** | Earnings are imported, split, reported and paid out. | MONEY-1…11, ACCT-4…6 |
 | **M4 Growth and polish** | Retention and self-serve features. | GROW-1…8, UI-2…6, CAT-3/4/6/7, ADMIN-4…6, OPS-8…9, SEC-12, MEDIA-6 |
+
+### Current phase: M1a, wizard stability and UI (from 2026-09-23)
+Goal: an artist can move through all 6 steps without losing their input, never sees another release's data, gets a clear message whenever something fails, and sees one layout with one primary button per step. Client-only work comes first; tasks that need new server work wait.
+
+| PR | Tasks | Summary |
+|---|---|---|
+| 1 Safety net ✅ | UI-1, WIZ-5, WIZ-23, WIZ-24, WIZ-25 | Error boundary, reset state on `:id` change, `useWizardStepNavigation` hook, shared error helper, `Button` disables while loading. Tests for `navigations.helper` and the hook. |
+| 2 Data integrity | WIZ-26, WIZ-27, WIZ-28, WIZ-16, WIZ-18 (auto-deal only) | Refetches never wipe edits; error vs empty states; full lists; no server writes before Save; remove the auto-created worldwide deal. |
+| 3 Layout shell | WIZ-1, WIZ-2, WIZ-3 (structural) | Drop the wrapper card, `SectionCard` per section, shared `WizardStepFooter` and `WizardStepHeader`, one primary per step, flat tiles, errors in `--danger`. |
+| 4 Stepper and autosave | WIZ-4, WIZ-6, WIZ-7, WIZ-22 (nav) | One accessible stepper with locked later steps and a mobile bar; Overview autosave, unsaved-changes guard; "Needs review" on later steps. |
+| 5 Search and credits | WIZ-12, WIZ-13 | `Combobox` for label and contributor search; grouped roles, drag order, per-row delete. |
+| 6 Step content | WIZ-9, WIZ-15, WIZ-17 (client parts) | Overview wording and fields; explicit worldwide choice and continents; grouped stores with logos, DDEX badge admin-only. |
+| 7 Preview | WIZ-19, WIZ-20 (client part), WIZ-22, UI-2 (wizard-steps) | `KeyValueList` summary with Edit links, danger banner, single "Submit for review", no `text-[Npx]` left in the wizard. |
+
+Deferred from M1a (blocked): WIZ-8 (MEDIA-4), WIZ-11 bulk upload/QC (MEDIA-3, ID-2), WIZ-14 (MONEY-5), WIZ-18 server-generated deals, WIZ-20 structured `{step, field}` errors (API), WIZ-21 (LIFE-7), LIFE-4 (LIFE-2, CAT-5).
 
 ---
 
@@ -321,9 +336,9 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
 ### Structure and surfaces
 **WIZ-1 · P0 · Remove the card inside a card**
 - Acceptance:
-  - Drop `rounded-xl bg-white p-6` (`ReleaseWizardPage.tsx:220`).
+  - Drop the `rounded-(--radius-card) bg-(--paper) p-6` wrapper (`ReleaseWizardPage.tsx:220`); it holds the `card-framed` sidebar and every step's cards.
   - Every step section is a `SectionCard` on the canvas.
-  - Remove `bg-white` headers from steps (UploadTracks `:137,:152`, ManageContributions `:290`).
+  - Replace the 4 heading styles (`RelaxedHeading`, `h2 text-xl`, serif `text-[18px]`, `Heading h3`) with one `WizardStepHeader`.
 - Status: open.
 
 **WIZ-2 · P0 · One step footer**
@@ -335,11 +350,12 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
 
 **WIZ-3 · P0 · Remove shadows and fix contrast**
 - Acceptance:
-  - Track card: `shadow-md bg-white/70` → a flat `--surface` tile, and the title in `type-card-title` `--ink` (`ReleaseTrackCard.tsx:87,90`).
-  - Remove the region tile `shadow-sm` (`Regions:235`) and the contributor row `shadow-xs` (`ManageContributions:422`).
+  - Track card: `bg-(--paper)` on the white shell → a flat `--surface` tile, and the title in `type-card-title` `--ink` (`ReleaseTrackCard.tsx:87,90`).
+  - `bg-white/20` in `ReleaseProgressNavigation.tsx:120`.
   - Store tiles: white tiles with a border, not `--surface` on `--surface` (`Stores:254,271,289`).
-  - Errors in `--danger` (`Overview:819`, `Regions:265`, `PreviewValidationBanner`).
-  - Replace `text-[13px]` with `type-*` (about 80 places).
+  - Errors in `--danger` (`Overview:819`, `Regions:265`, `Stores:308`, `PreviewValidationBanner:30-31`).
+  - Replace `text-[Npx]` with `type-*` (77 places in the wizard as of 2026-09-23).
+  - (The region tile and contributor row shadows are already gone.)
 - Status: open.
 
 **WIZ-4 · P1 · Step navigation**
@@ -351,7 +367,7 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
 
 **WIZ-5 · P1 · Reset state between releases**
 - Acceptance: dispatch `resetNavigationState` and clear `state.release` when the `:id` changes, so the previous release never flashes up.
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 1, 2026-09-23). The wizard is keyed by `:id`, resets navigation, release and tracks on mount, and renders no step until `release.id` matches the route.
 
 **WIZ-6 · P1 · Autosave and unsaved-changes guard**
 - Acceptance:
@@ -482,7 +498,57 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
   - Full keyboard pass of all steps.
 - Status: open.
 
-Findings: _(add here)_
+### Stability
+**WIZ-23 · P0 · Navigation never fails silently**
+- Acceptance:
+  - One `useWizardStepNavigation(currentStepName)` hook (`client/src/hooks/releases/navigation.hooks.ts`) with `goNext(saveFn?)`, `goBack()`, `goTo(step)` and `isNavigating`. Each is awaited and shows a `toast.error` on failure; the next step is not created if the save fails.
+  - It replaces the 5 copies of complete-then-create (Overview `:211`, UploadTracks `:263`, Contributions `:515`, Regions `:126`, Stores `:139`), every Back handler and `activateStep` (`ReleaseWizardPage.tsx:116`).
+  - `completeReleaseNavigationFlow` throws when no flow matches, instead of returning `undefined` (`navigation.hooks.ts:127`).
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 1, 2026-09-23). `hooks/releases/wizardStepNavigation.hooks.ts`, used by every step and the page.
+
+**WIZ-24 · P0 · Shared error-message helper**
+- Acceptance: `getApiErrorMessage(error, fallback)` in `client/src/utils/` replaces `getMutationErrorMessage` (Overview `:64`), `getErrorMessage` (Regions `:22`) and about 15 inline `(error as {data?:{message}})` casts.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 1, 2026-09-23). Wizard steps and sections done; `pages/releases/SubmitRelease.tsx` and other pages still have their own casts.
+
+**WIZ-25 · P0 · No double submit**
+- Acceptance:
+  - `Button` sets `disabled` while `isLoading` (`client/src/components/inputs/Button.tsx:59,97`).
+  - A save's loading state covers its whole chain (Overview Save covers the genre upserts).
+  - Back is disabled while a save runs (Stores `:169`).
+  - Buttons with no `disabled` today: Preview Validate/Submit `:234`, Add deal, Deals Save, Add label, Labels Save, Add related, Related Save.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 1, 2026-09-23). `Button` is disabled while loading; `goNext` covers save + complete + create and ignores repeat clicks; Back is disabled while navigating.
+
+**WIZ-26 · P0 · Refetch never wipes edits**
+- Acceptance:
+  - Overview: `useForm({ defaultValues })`, and `reset()` only when `release.id` changes or after a successful save (replaces `Overview:234-292`; a cover-art `setRelease` no longer clears the form).
+  - Regions (`:66-74`) and Stores (`:61-68`) set up their selection once per release id and track `isDirty`.
+  - `ReleaseTerritoryDetailsSection.tsx:71-87`: saved overrides win over the blank entries, so they show and no duplicate POST is sent.
+- Status: open.
+
+**WIZ-27 · P0 · Error states differ from empty states**
+- Acceptance:
+  - If `getRelease` fails, the wizard shows an error card with Retry, not "Step unavailable" (`ReleaseWizardPage.tsx:188-210`).
+  - Tracks, contributors, stores, deals and labels show an error state from `isError`, and the empty state only when not fetching.
+- Status: open.
+
+**WIZ-28 · P0 · Full lists**
+- Acceptance:
+  - `fetchTracks` always passes `size: 100` (UploadTracks `:124,:305`), so `allTracksValidated` covers every track.
+  - Related releases uses server search instead of loading `size: 100` (`RelatedReleasesSection.tsx:67`).
+- Status: open.
+
+Findings (audit, 2026-09-23; paths under `client/src/`):
+- `resetNavigationState` (`state/features/navigationSlice.ts:37`) is never dispatched and `state.release` is never cleared, so switching releases renders the old release's step and a save can target the old id. `tracksList` in `trackSlice` is also global. → WIZ-5.
+- `ReleaseTerritoryDetailsSection.tsx:51-69` deletes an override as soon as a country is unticked, and re-runs on every keystroke because `detailForms` is in its dependencies. → WIZ-16.
+- `ReleaseWizardDealsSection.tsx:112-149` creates a worldwide deal on every mount with no deals and swallows errors (`:137`). → WIZ-18.
+- Regions select-all ignores the search filter and renders about 249 override cards (`Regions:209-218`). → WIZ-15, WIZ-16.
+- Contributions: no `isFetching` check (empty state flashes, `:416,:472`); one global delete spinner for every row (`:452`); uncontrolled Order input goes stale (`:438`); search debounce 2000ms (`:138`). → WIZ-13.
+- The footer (Back + Save and continue) is copied in 6 steps; `components/layout/PageFooter.tsx` is unused by the wizard. → WIZ-2.
+- Contributions (`:87-149`) and Labels (`:84-130`) share hand-built search dropdowns with the same debounce and request-id guard. → WIZ-12.
+- Preview fetches release stores twice (`ReleaseWizardPreview.tsx:99`, `PreviewStoresSection.tsx:16`). → WIZ-19.
+- `ReleaseNavigationPanel.tsx:166-170`: clipboard write not caught, `setTimeout` not cleared; the "•" separator shows without a catalog number (`:156`). Skeleton missing a `key` (`ReleaseProgressNavigation.tsx:99`). → WIZ-22.
+- No `useDebounce` hook exists (only `components/table/DebouncedInput.tsx`), and there's no error boundary anywhere. → WIZ-6, UI-1.
+- Client tests: only `components/modals/ComboboxModal.spec.tsx`. `utils/navigations.helper.ts` is pure and untested.
 
 ## Workstream DDEX: message generation
 
@@ -684,7 +750,7 @@ Findings: _(add here)_
 
 **UI-1 · P0 · Error boundary**
 - Acceptance: a boundary at the root and one per route, with a friendly fallback and Sentry reporting.
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 1, 2026-09-23). `RouteErrorBoundary` at the root and around every `withSeo` route; clears on navigation. Sentry reporting waits for OPS-6.
 
 **UI-2 · P1 · Typography cleanup**
 - Acceptance: replace the 240 `text-[13px]` and other `text-[Npx]` values with `type-*`. Work one directory per PR, starting with profile, contributors, and releases/wizard-steps.
@@ -735,3 +801,4 @@ Findings: _(add here)_
 | 2026-09-23 | Delivery through an aggregator (not yet chosen), behind `DeliveryAdapter`, targeting ERN 4.3. | user |
 | 2026-09-23 | Payout provider undecided; `PayoutProvider` abstraction with a manual provider first. | user |
 | 2026-09-23 | No fixed launch date; work in milestone order M0 to M4. | user |
+| 2026-09-23 | Next phase is M1a: wizard stability and UI (WIZ-23…28 first, then the client-only WIZ tasks, plus UI-1), in 7 PRs. | user |

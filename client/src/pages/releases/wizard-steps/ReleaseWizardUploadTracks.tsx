@@ -1,10 +1,8 @@
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { setCreateReleaseTrackModal } from "@/state/features/trackSlice";
 import CreateReleaseTrack from "../../tracks/CreateReleaseTrack";
@@ -62,10 +60,11 @@ const ReleaseWizardUploadTracks = ({
   // NAVIGATION
   const navigate = useNavigate();
 
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
-    useCreateReleaseNavigationFlow();
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
   // FETCH TRACKS
   const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
@@ -125,10 +124,7 @@ const ReleaseWizardUploadTracks = ({
       toast.success("Track order updated.");
     } catch (error) {
       setOrderedTracks(previousOrder);
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to update track order.";
-      toast.error(errorMessage);
+      toast.error(getApiErrorMessage(error, "Unable to update track order."));
     }
   };
 
@@ -235,41 +231,22 @@ const ReleaseWizardUploadTracks = ({
 
       <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
+          disabled={isNavigating}
           onClick={(e) => {
             e.preventDefault();
-            previousStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release?.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
+            void goBack();
           }}
         >
           Back
         </BackButton>
         <Button
           primary
-          isLoading={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-          }
-          disabled={
-            !allTracksValidated ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          onClick={async (e) => {
+          isLoading={isNavigating}
+          disabled={!allTracksValidated}
+          onClick={(e) => {
             e.preventDefault();
-            if (!nextStepName || !release?.id) return;
-            if (currentStepName) {
-              await completeReleaseNavigationFlow({
-                staticReleaseNavigationStepName: currentStepName,
-                isCompleted: true,
-              });
-            }
-            await createReleaseNavigationFlow({
-              releaseId: release.id,
-              staticReleaseNavigationStepName: nextStepName,
-            });
+            if (!nextStepName) return;
+            void goNext();
           }}
         >
           Save and continue
@@ -304,15 +281,7 @@ const ReleaseWizardUploadTracks = ({
                 setTrackToDelete(undefined);
                 await fetchTracks({ releaseId: release.id });
               } catch (error) {
-                const apiError = error as {
-                  data?: { message?: string | string[] };
-                };
-                const message = apiError.data?.message;
-                toast.error(
-                  Array.isArray(message)
-                    ? message.join(", ")
-                    : message || "Unable to delete track",
-                );
+                toast.error(getApiErrorMessage(error, "Unable to delete track"));
               }
             }}
           >

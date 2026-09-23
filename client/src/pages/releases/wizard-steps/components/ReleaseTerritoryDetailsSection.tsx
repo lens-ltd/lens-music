@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
@@ -152,10 +153,7 @@ const ReleaseTerritoryDetailsSection = ({
         }));
       }
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        `Unable to save territory detail for ${territory}.`;
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, `Unable to save territory detail for ${territory}.`));
     }
   };
 

@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { useFetchStores } from "@/hooks/stores/store.hooks";
 import {
   useAssignReleaseStores,
@@ -27,14 +25,11 @@ const ReleaseWizardStores = ({
   const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
   const [storesError, setStoresError] = useState<string | undefined>(undefined);
 
-  const {
-    createReleaseNavigationFlow,
-    isLoading: createNavigationFlowIsLoading,
-  } = useCreateReleaseNavigationFlow();
-  const {
-    completeReleaseNavigationFlow,
-    isLoading: completeNavigationFlowIsLoading,
-  } = useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
   const {
     fetchStores,
     data: storesResponse,
@@ -130,45 +125,32 @@ const ReleaseWizardStores = ({
       return;
     }
 
-    try {
-      await assignReleaseStores({
-        id: release.id,
-        storeIds: selectedStoreIds,
-      }).unwrap();
+    const releaseId = release.id;
 
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+    await goNext(async () => {
+      try {
+        await assignReleaseStores({
+          id: releaseId,
+          storeIds: selectedStoreIds,
+        }).unwrap();
+        return true;
+      } catch (error) {
+        toast.error(
+          getApiErrorMessage(error, "Failed to assign stores to this release."),
+        );
+        return false;
       }
-      await createReleaseNavigationFlow({
-        releaseId: release.id,
-        staticReleaseNavigationStepName: nextStepName,
-      });
-    } catch (error) {
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Failed to assign stores to this release.";
-      toast.error(errorMessage);
-    }
+    });
   };
 
   const handleGoBack = () => {
-    if (previousStepName && release?.id) {
-      createReleaseNavigationFlow({
-        releaseId: release.id,
-        staticReleaseNavigationStepName: previousStepName,
-      });
-    }
+    void goBack();
   };
 
   const navButtons = (
     <>
       <BackButton
-        disabled={
-          createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-        }
+        disabled={isNavigating}
         onClick={(event) => {
           event.preventDefault();
           handleGoBack();
@@ -179,17 +161,8 @@ const ReleaseWizardStores = ({
       <Button
         type="button"
         primary
-        isLoading={
-          isAssigning ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
-        disabled={
-          selectedStoreIds.length === 0 ||
-          isAssigning ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        isLoading={isNavigating || isAssigning}
+        disabled={selectedStoreIds.length === 0}
         onClick={(event) => {
           event.preventDefault();
           void saveAndContinue();

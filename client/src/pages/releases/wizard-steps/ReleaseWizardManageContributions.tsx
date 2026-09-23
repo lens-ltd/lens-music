@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
@@ -10,10 +11,7 @@ import {
   useDeleteReleaseContributor,
   useUpdateReleaseContributor,
 } from "@/hooks/releases/release-contributor.hooks";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 import { Contributor } from "@/types/models/contributor.types";
@@ -41,14 +39,11 @@ const ReleaseWizardManageContributions = ({
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const {
-    createReleaseNavigationFlow,
-    isLoading: createNavigationFlowIsLoading,
-  } = useCreateReleaseNavigationFlow();
-  const {
-    completeReleaseNavigationFlow,
-    isLoading: completeNavigationFlowIsLoading,
-  } = useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
   const { fetchReleaseContributors, data: releaseContributorsData } =
     useFetchReleaseContributors();
@@ -125,10 +120,7 @@ const ReleaseWizardManageContributions = ({
             return;
           }
 
-          const errorMessage =
-            (error as { data?: { message?: string } })?.data?.message ||
-            "Unable to search contributors.";
-          toast.error(errorMessage);
+          toast.error(getApiErrorMessage(error, "Unable to search contributors."));
         } finally {
           if (latestSearchRequestRef.current === requestId) {
             setIsContributorSearchPending(false);
@@ -202,10 +194,7 @@ const ReleaseWizardManageContributions = ({
         setContributorSearchResults([]);
         fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to add contributor.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Failed to add contributor."));
       }
     },
     [
@@ -226,10 +215,7 @@ const ReleaseWizardManageContributions = ({
         toast.success("Contributor removed successfully.");
         fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to remove contributor.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Failed to remove contributor."));
       }
     },
     [release?.id, deleteReleaseContributor, fetchReleaseContributors],
@@ -258,10 +244,7 @@ const ReleaseWizardManageContributions = ({
         }).unwrap();
         await fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Unable to update order.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Unable to update order."));
       }
     },
     [
@@ -487,41 +470,22 @@ const ReleaseWizardManageContributions = ({
 
       <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
+          disabled={isNavigating}
           onClick={(e) => {
             e.preventDefault();
-            previousStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
+            void goBack();
           }}
         >
           Back
         </BackButton>
         <Button
           primary
-          isLoading={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-          }
-          disabled={
-            !hasPrimaryArtist ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          onClick={async (e) => {
+          isLoading={isNavigating}
+          disabled={!hasPrimaryArtist}
+          onClick={(e) => {
             e.preventDefault();
-            if (!nextStepName || !release?.id) return;
-            if (currentStepName) {
-              await completeReleaseNavigationFlow({
-                staticReleaseNavigationStepName: currentStepName,
-                isCompleted: true,
-              });
-            }
-            await createReleaseNavigationFlow({
-              releaseId: release.id,
-              staticReleaseNavigationStepName: nextStepName,
-            });
+            if (!nextStepName) return;
+            void goNext();
           }}
         >
           Save and continue

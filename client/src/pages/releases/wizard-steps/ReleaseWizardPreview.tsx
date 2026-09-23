@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import store from "store";
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useCompleteReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { useGetRelease, useValidateRelease } from "@/hooks/releases/release.hooks";
 import { useFetchReleaseContributors } from "@/hooks/releases/release-contributor.hooks";
 import { useFetchReleaseStores } from "@/hooks/releases/release-store.hooks";
@@ -36,8 +38,10 @@ const ReleaseWizardPreview = ({
 }: ReleaseWizardStepProps) => {
   const dispatch = useAppDispatch();
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow, isLoading: isNavigating } =
-    useCreateReleaseNavigationFlow();
+  const { goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    previousStepName,
+  });
   const { validateRelease, isLoading: isValidating } = useValidateRelease();
   const { getRelease } = useGetRelease();
   const { fetchReleaseContributors, data: releaseContributorsData, isFetching: areContributorsFetching } =
@@ -75,10 +79,7 @@ const ReleaseWizardPreview = ({
         }
       }
     } catch (error) {
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Release validation failed.";
-      toast.error(errorMessage);
+      toast.error(getApiErrorMessage(error, "Release validation failed."));
     }
   }, [release?.id, validateRelease, dispatch, currentStepName, completeReleaseNavigationFlow]);
 
@@ -211,12 +212,7 @@ const ReleaseWizardPreview = ({
           disabled={isNavigating}
           onClick={(event) => {
             event.preventDefault();
-            if (previousStepName && release.id) {
-              createReleaseNavigationFlow({
-                releaseId: release.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
-            }
+            void goBack();
           }}
         >
           Back

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import Combobox from "@/components/inputs/Combobox";
@@ -180,10 +181,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       setLabelSearchResults([]);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to add label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to add label."));
     }
   };
 
@@ -211,10 +209,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       setEditingLabel(null);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to update release label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to update release label."));
     }
   };
 
@@ -227,10 +222,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       toast.success("Release label removed.");
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to remove release label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to remove release label."));
     }
   };
 

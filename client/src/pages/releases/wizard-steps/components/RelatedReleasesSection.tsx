@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import Combobox from "@/components/inputs/Combobox";
@@ -101,10 +102,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
       setCreateForm(EMPTY_FORM);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to add related release.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to add related release."));
     }
   };
 
@@ -134,10 +132,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
       setEditingRelatedRelease(null);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to update related release.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to update related release."));
     }
   };
 
@@ -150,10 +145,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
       toast.success("Related release removed.");
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to remove related release.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to remove related release."));
     }
   };
 

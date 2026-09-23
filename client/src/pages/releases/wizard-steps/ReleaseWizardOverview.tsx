@@ -3,7 +3,8 @@ import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
-import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Heading } from "@/components/text/Headings";
 import Input from "@/components/inputs/Input";
@@ -61,22 +62,6 @@ interface ReleaseOverviewFormValues {
   marketingComment?: string;
 }
 
-const getMutationErrorMessage = (error: unknown) => {
-  if (typeof error !== "object" || !error) return "Failed to upload cover art";
-
-  const errorWithData = error as {
-    data?: { message?: string } | string;
-    error?: string;
-  };
-
-  if (typeof errorWithData.data === "string") return errorWithData.data;
-  if (typeof errorWithData.data?.message === "string")
-    return errorWithData.data.message;
-  if (typeof errorWithData.error === "string") return errorWithData.error;
-
-  return "Failed to upload cover art";
-};
-
 const normalizeOptionalString = (value?: string) => {
   const normalizedValue = value?.trim();
   return normalizedValue ? normalizedValue : undefined;
@@ -100,12 +85,12 @@ const ReleaseWizardOverview = ({
   // NAVIGATION
   const navigate = useNavigate();
 
-  // CREATE NAVIGATION FLOW
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } = useCreateReleaseNavigationFlow();
-
-  // COMPLETE NAVIGATION FLOW
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  // STEP NAVIGATION
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
   // UPLOAD COVER ART
   const {
@@ -185,45 +170,41 @@ const ReleaseWizardOverview = ({
       marketingComment: normalizeOptionalString(data.marketingComment),
     };
 
-    try {
-      await upsertReleaseGenre({
-        id: release.id,
-        genreId: data.primaryGenreId,
-        type: ReleaseGenreType.PRIMARY,
-      }).unwrap();
+    const releaseId = release.id;
 
-      if (data.secondaryGenreId?.trim()) {
+    // Save errors show inline under the form, so the save reports them itself
+    // and returns false; navigation errors are toasted by `goNext`.
+    await goNext(async () => {
+      try {
         await upsertReleaseGenre({
-          id: release.id,
-          genreId: data.secondaryGenreId,
-          type: ReleaseGenreType.SECONDARY,
+          id: releaseId,
+          genreId: data.primaryGenreId,
+          type: ReleaseGenreType.PRIMARY,
         }).unwrap();
-      }
 
-      const response = await updateReleaseOverview({
-        id: release.id,
-        body: payload,
-      }).unwrap();
-      toast.success(
-        response?.message || "Release overview updated successfully",
-      );
+        if (data.secondaryGenreId?.trim()) {
+          await upsertReleaseGenre({
+            id: releaseId,
+            genreId: data.secondaryGenreId,
+            type: ReleaseGenreType.SECONDARY,
+          }).unwrap();
+        }
 
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+        const response = await updateReleaseOverview({
+          id: releaseId,
+          body: payload,
+        }).unwrap();
+        toast.success(
+          response?.message || "Release overview updated successfully",
+        );
+        return true;
+      } catch (error) {
+        setOverviewError(
+          getApiErrorMessage(error, "Failed to update release overview"),
+        );
+        return false;
       }
-
-      if (nextStepName) {
-        await createReleaseNavigationFlow({
-          releaseId: release.id,
-          staticReleaseNavigationStepName: nextStepName,
-        });
-      }
-    } catch (error) {
-      setOverviewError(getMutationErrorMessage(error));
-    }
+    });
   };
 
   // SET DEFAULT VALUES
@@ -334,7 +315,7 @@ const ReleaseWizardOverview = ({
       );
       closeCoverArtModal();
     } catch (error) {
-      setCoverArtError(getMutationErrorMessage(error));
+      setCoverArtError(getApiErrorMessage(error, "Failed to upload cover art"));
     }
   };
 
@@ -748,13 +729,11 @@ const ReleaseWizardOverview = ({
         )}
         <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
           <BackButton
+            disabled={isNavigating}
             onClick={(e) => {
               e.preventDefault();
               if (previousStepName) {
-                createReleaseNavigationFlow({
-                  releaseId: release?.id,
-                  staticReleaseNavigationStepName: previousStepName,
-                });
+                void goBack();
               } else {
                 navigate("/releases");
               }
@@ -765,8 +744,7 @@ const ReleaseWizardOverview = ({
           <Button
             primary
             submit
-            isLoading={isUpdatingReleaseOverview || createNavigationFlowIsLoading || completeNavigationFlowIsLoading}
-            disabled={isUpdatingReleaseOverview}
+            isLoading={isNavigating || isUpdatingReleaseOverview}
           >
             Save and continue
           </Button>
