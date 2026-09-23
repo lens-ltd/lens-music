@@ -19,7 +19,7 @@ export class Person extends AbstractEntity {
     @IsOptional()
     @IsString({ message: 'Phone number must be a string' })
     @Column({ name: 'phone_number', type: 'varchar', length: 255, nullable: true })
-    phoneNumber?: string;
+    phoneNumber?: string | null;
 
     // COUNTRY
     @IsOptional()

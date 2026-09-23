@@ -57,4 +57,31 @@ describe('Auth (e2e)', () => {
     expect(res.status).toBeGreaterThanOrEqual(400);
     expect(res.status).toBeLessThan(500);
   });
+
+  it('rejects a phone number that cannot be dialed', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send({
+        email: 'bad-phone@example.com',
+        password: 'Str0ng!Passw0rd',
+        name: 'Bad phone',
+        phoneNumber: '0788',
+      });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('stores a phone number in E.164', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send({
+        email: 'phone@example.com',
+        password: 'Str0ng!Passw0rd',
+        name: 'Phone owner',
+        phoneNumber: '+250 788 123 456',
+      })
+      .expect(200);
+
+    expect(res.body.data.user.phoneNumber).toBe('+250788123456');
+  });
 });

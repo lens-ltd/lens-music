@@ -695,6 +695,13 @@ Findings (M1a PR 2, 2026-09-23; paths under `client/src/`):
 
 **ACCT-6 · P1 · Account deletion and data export (privacy).** Status: open.
 
+Findings (phone numbers, 2026-09-23; done on branch `m0/ops-3-test-harness`):
+- Every phone input now uses `client/src/components/inputs/PhoneField.tsx` (react-phone-number-input, RW default) with `phoneRules`, and every request DTO uses `@PhoneNumberField()` (`api/src/helpers/phone.helper.ts`). Numbers are stored in E.164; run `npm run phones:backfill -- --apply` (api) once per environment to convert older rows.
+- Phones aren't unique: `api/src/entities/user.entity.ts:9` `@Unique(['email','phoneNumber'])` is a composite constraint on the pair. Contributors and invitations have no phone uniqueness.
+- `completeInvitation` (`api/src/modules/auth/auth.service.ts`) ignores the phone number given in the invitation request.
+- Contributors can't clear optional fields (phone, email, country…): `buildContributorPayload` (`client/src/pages/contributors/contributorForm.ts`) sends a blank as `undefined`, so the API skips it. The API already accepts `null` for phone.
+- `COUNTRIES_LIST` (client `constants/countries.constants.ts`, api `constants/location.constant.ts`) has wrong dial codes (`'+ 345'`, KZ `+77`). The phone field doesn't use it.
+
 ## Workstream CAT: catalog modules (client and api)
 
 **CAT-1 · P0 · Lyrics list**
@@ -810,3 +817,4 @@ Findings (M1a PR 2, 2026-09-23; paths under `client/src/`):
 | 2026-09-23 | Payout provider undecided; `PayoutProvider` abstraction with a manual provider first. | user |
 | 2026-09-23 | No fixed launch date; work in milestone order M0 to M4. | user |
 | 2026-09-23 | Next phase is M1a: wizard stability and UI (WIZ-23…28 first, then the client-only WIZ tasks, plus UI-1), in 7 PRs. | user |
+| 2026-09-23 | Phone numbers: Rwanda is the default country, numbers are stored in E.164 (existing rows backfilled), and both client and API require a number that is valid for its country. The component follows the realwear `phone-field.tsx`. | user |

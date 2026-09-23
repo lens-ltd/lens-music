@@ -27,6 +27,8 @@ import { Contributor } from "@/types/models/contributor.types";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 
 import { LuSave } from 'react-icons/lu';
+import PhoneField from "@/components/inputs/PhoneField";
+import { phoneRules } from "@/utils/phone.helper";
 
 const UpdateContributorPage = () => {
   // STATE
@@ -214,13 +216,9 @@ const UpdateContributorPage = () => {
               <Controller
                 name="phoneNumber"
                 control={control}
+                rules={phoneRules}
                 render={({ field }) => (
-                  <Input
-                    label="Phone number"
-                    placeholder="Enter a phone number"
-                    {...field}
-                    errorMessage={errors?.phoneNumber?.message}
-                  />
+                  <PhoneField label="Phone number" {...field} errorMessage={errors.phoneNumber?.message} />
                 )}
               />
               <Controller

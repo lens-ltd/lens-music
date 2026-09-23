@@ -112,7 +112,7 @@ export class AuthService {
     }: {
       email: string;
       name: string;
-      phoneNumber?: string;
+      phoneNumber?: string | null;
       password: string;
       generalRole: Role;
     },
@@ -270,7 +270,7 @@ export class AuthService {
   }: {
     email: string;
     name: string;
-    phoneNumber?: string;
+    phoneNumber?: string | null;
     password: string;
   }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     this.validatePassword(password);
@@ -336,7 +336,7 @@ export class AuthService {
   }: {
     name: string;
     email: string;
-    phoneNumber?: string;
+    phoneNumber?: string | null;
   }): Promise<void> {
     const normalizedEmail = this.normalizeEmail(email);
     const normalizedName = name.trim();
@@ -501,7 +501,7 @@ export class AuthService {
   }: {
     token: string;
     name: string;
-    phoneNumber?: string;
+    phoneNumber?: string | null;
     password: string;
   }): Promise<{ user: AuthResponseUser; accessToken: string }> {
     this.validatePassword(password);
@@ -598,7 +598,8 @@ export class AuthService {
       user.name = normalizedName;
     }
     if (dto.phoneNumber !== undefined) {
-      user.phoneNumber = this.normalizeOptionalString(dto.phoneNumber) ?? undefined;
+      // `null` clears the number; TypeORM skips `undefined` columns on save.
+      user.phoneNumber = this.normalizeOptionalString(dto.phoneNumber);
     }
     if (dto.country !== undefined) {
       user.country = this.normalizeOptionalString(dto.country) ?? undefined;

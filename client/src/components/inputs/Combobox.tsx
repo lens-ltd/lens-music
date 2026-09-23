@@ -11,7 +11,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { forwardRef, useId, useMemo, useState } from 'react';
+import { forwardRef, type ReactNode, useId, useMemo, useState } from 'react';
 import { SkeletonLoader } from './Loader';
 import { FieldError, FieldErrorsImpl, FieldValues, Merge } from 'react-hook-form';
 import { InputErrorMessage } from '../feedbacks/ErrorLabels';
@@ -22,6 +22,8 @@ type Option = {
     label: string;
     value: string;
     disabled?: boolean;
+    /** Secondary text shown muted after the label and matched by search (for example a calling code). */
+    hint?: string;
 };
 
 interface ComboboxProps {
@@ -42,6 +44,15 @@ interface ComboboxProps {
     errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
     /** When set, the parent searches (for example on the server) and `options` are shown unfiltered. */
     onSearchChange?: (search: string) => void;
+    disabled?: boolean;
+    /** Accessible name for the trigger when there is no visible label. */
+    ariaLabel?: string;
+    /** What the closed trigger shows for the selected value, instead of its label. */
+    triggerLabel?: ReactNode;
+    /** Menu classes; replaces the default of matching the trigger's width. */
+    contentClassName?: string;
+    searchPlaceholder?: string;
+    emptyText?: string;
 }
 
 const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
@@ -63,6 +74,12 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
             readOnly,
             errorMessage,
             onSearchChange,
+            disabled,
+            ariaLabel,
+            triggerLabel,
+            contentClassName,
+            searchPlaceholder = 'Search options',
+            emptyText = 'No matches. Try a different search.',
         },
         ref
     ) => {
@@ -77,8 +94,10 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
         const visibleOptions = useMemo(() => {
             const query = search.trim().toLowerCase();
             if (!query || onSearchChange) return options;
-            return options.filter((option) =>
-                option.label.toLowerCase().includes(query)
+            return options.filter(
+                (option) =>
+                    option.label.toLowerCase().includes(query) ||
+                    Boolean(option.hint?.toLowerCase().includes(query))
             );
         }, [options, search, onSearchChange]);
 
@@ -114,7 +133,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                 ) : null}
                 <Popover
                     open={open}
-                    onOpenChange={readOnly ? undefined : handleOpenChange}
+                    onOpenChange={readOnly || disabled ? undefined : handleOpenChange}
                     modal
                 >
                     <PopoverTrigger asChild className={cn('w-full', className)}>
@@ -128,7 +147,8 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 aria-required={required || undefined}
                                 aria-invalid={errorMessage ? true : undefined}
                                 aria-describedby={describedBy}
-                                disabled={readOnly}
+                                aria-label={ariaLabel}
+                                disabled={readOnly || disabled}
                                 className={cn(
                                     'field-chrome flex items-center justify-between gap-2 text-left',
                                     inputClassName,
@@ -143,7 +163,9 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                             : 'text-(--placeholder)',
                                     )}
                                 >
-                                    {value ? selectedLabel : (placeholder || 'Select option...')}
+                                    {value
+                                        ? (triggerLabel ?? selectedLabel)
+                                        : (placeholder || 'Select option...')}
                                 </span>
                                 <LuChevronsUpDown className="size-4 shrink-0 text-(--muted)" aria-hidden="true" />
                             </button>
@@ -151,7 +173,11 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                     </PopoverTrigger>
                     <PopoverContent
                         data-combobox-menu=""
-                        className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) p-0"
+                        className={cn(
+                            'p-0',
+                            contentClassName ||
+                                'w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width)',
+                        )}
                         align="start"
                         onOpenAutoFocus={(event) => {
                             // Let the popover FocusScope autofocus proceed
@@ -173,8 +199,8 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 <input
                                     value={search}
                                     onChange={(event) => updateSearch(event.target.value)}
-                                    placeholder="Search options"
-                                    aria-label="Search options"
+                                    placeholder={searchPlaceholder}
+                                    aria-label={searchPlaceholder}
                                     className={cn(
                                         'flex h-(--control-md) w-full bg-transparent text-sm outline-none placeholder:text-(--placeholder) disabled:cursor-not-allowed disabled:opacity-50',
                                         inputClassName,
@@ -188,7 +214,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                         optionsClassName,
                                     )}
                                 >
-                                    No matches. Try a different search.
+                                    {emptyText}
                                 </CommandEmpty>
                                 <CommandGroup className="w-full">
                                     {visibleOptions.map((option) => (
@@ -210,6 +236,11 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                             >
                                                 {option.label}
                                             </p>
+                                            {option.hint ? (
+                                                <span className="shrink-0 type-meta text-(--muted)">
+                                                    {option.hint}
+                                                </span>
+                                            ) : null}
                                             <LuCheck
                                                 className={cn(
                                                     'size-4 flex-none text-(--signal)',

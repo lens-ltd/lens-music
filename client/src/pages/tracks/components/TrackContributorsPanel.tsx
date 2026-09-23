@@ -17,6 +17,7 @@ import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 import ExternalLink from '@/components/ui/ExternalLink';
+import { formatPhone } from "@/utils/phone.helper";
 type TrackContributorsPanelProps = {
   contributorSearchTerm: string;
   contributorSearchResults: Contributor[];
@@ -132,7 +133,7 @@ const TrackContributorsPanel = ({
                                 <span className="text-xs text-(--muted)">
                                   {[
                                     contributor?.email,
-                                    contributor?.phoneNumber,
+                                    formatPhone(contributor?.phoneNumber),
                                     contributor?.country,
                                   ]
                                     .filter(Boolean)

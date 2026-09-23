@@ -14,6 +14,8 @@ import { setSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 import { LuEye, LuEyeOff } from 'react-icons/lu';
+import PhoneField from "@/components/inputs/PhoneField";
+import { phoneRules } from "@/utils/phone.helper";
 
 const CompleteInvitation = () => {
   const { token } = useParams();
@@ -108,8 +110,9 @@ const CompleteInvitation = () => {
                 <Controller
                   control={control}
                   name="phoneNumber"
+                  rules={phoneRules}
                   render={({ field }) => (
-                    <Input label="Phone number" placeholder="Optional" {...field} errorMessage={errors.phoneNumber?.message} />
+                    <PhoneField label="Phone number" placeholder="Optional" {...field} errorMessage={errors.phoneNumber?.message} />
                   )}
                 />
 

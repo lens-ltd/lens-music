@@ -19,6 +19,7 @@ import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { LuGlobe, LuMail, LuPhone, LuUser } from 'react-icons/lu';
+import { formatPhone } from "@/utils/phone.helper";
 
 const detailItems = [
   { key: "name", label: "Full name", icon: LuUser },
@@ -159,7 +160,11 @@ const UserDetailsPage = () => {
                 keyText={item.key}
                 label={item.label}
                 icon={item.icon}
-                valueText={user[item.key]}
+                valueText={
+                  item.key === "phoneNumber"
+                    ? formatPhone(user.phoneNumber)
+                    : user[item.key]
+                }
               />
             ))}
           </KeyValueList>

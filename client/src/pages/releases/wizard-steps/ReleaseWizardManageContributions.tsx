@@ -34,6 +34,7 @@ import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 import ExternalLink from '@/components/ui/ExternalLink';
+import { formatPhone } from "@/utils/phone.helper";
 const ReleaseWizardManageContributions = ({
   currentStepName,
   nextStepName,
@@ -350,7 +351,7 @@ const ReleaseWizardManageContributions = ({
                                   <span className="text-xs text-(--muted)">
                                     {[
                                       contributor?.email,
-                                      contributor?.phoneNumber,
+                                      formatPhone(contributor?.phoneNumber),
                                       contributor?.country,
                                     ]
                                       .filter(Boolean)

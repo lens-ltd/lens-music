@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { PhoneNumberField } from '../../../helpers/phone.helper';
 
 export class RegisterDto {
   @IsString()
@@ -14,7 +15,6 @@ export class RegisterDto {
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   password: string;
 
-  @IsOptional()
-  @IsString()
-  phoneNumber?: string;
+  @PhoneNumberField()
+  phoneNumber?: string | null;
 }

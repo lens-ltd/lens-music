@@ -26,6 +26,7 @@ import DeleteContributorMembership from "./DeleteContributorMembership";
 
 import { LuCheck, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
+import { formatPhone } from "@/utils/phone.helper";
 
 const getContributorLabel = (contributor: Contributor) =>
   contributor.displayName ||
@@ -319,7 +320,7 @@ const ContributorMembershipsPage = () => {
                                       <span className="text-xs text-(--muted)">
                                         {[
                                           member.email,
-                                          member.phoneNumber,
+                                          formatPhone(member.phoneNumber),
                                           member.country,
                                         ]
                                           .filter(Boolean)

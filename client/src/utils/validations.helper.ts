@@ -14,14 +14,6 @@ export const validateInputs = (value: string, type: string) => {
       return false;
     }
 
-    if (
-      type === 'tel' &&
-      value?.trim() !== '' &&
-      !/^07[2389][0-9]{7}$/.test(value)
-    ) {
-      return false;
-    }
-
     if (type === 'text' && !/^\s*[\s\S]+?\s*$/.test(value)) {
       return false;
     }

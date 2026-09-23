@@ -39,6 +39,7 @@ import UnassignContributorManager from "./UnassignContributorManager";
 import { useRequestContributorVerificationMutation } from "@/state/api/apiMutationSlice";
 
 import { LuBadgeCheck, LuPlus, LuSquarePen, LuTrash2 } from 'react-icons/lu';
+import { formatPhone } from "@/utils/phone.helper";
 
 const statusBadgeClassNames: Record<string, string> = {
   ACTIVE: "bg-(--success-soft) text-(--success)",
@@ -218,7 +219,7 @@ const ContributorDetailsPage = () => {
       },
       {
         keyText: "Phone number",
-        valueText: contributorDetails?.phoneNumber,
+        valueText: formatPhone(contributorDetails?.phoneNumber),
       },
       {
         keyText: "Country",
@@ -413,7 +414,7 @@ const ContributorDetailsPage = () => {
                       )}
                       {contributorDetails?.phoneNumber && (
                         <span className="text-(--signal) text-[13px]">
-                          {contributorDetails?.phoneNumber}
+                          {formatPhone(contributorDetails?.phoneNumber)}
                         </span>
                       )}
                       {!contributorDetails?.email &&

@@ -11,12 +11,15 @@ import { toast } from "sonner";
 import { LuCalendar, LuGlobe, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
 
 import StatusBadge from '@/components/feedbacks/StatusBadge';
+import PhoneField from '@/components/inputs/PhoneField';
 import { capitalizeString } from '@/utils/strings.helper';
+import { PHONE_INVALID_MESSAGE, formatPhone, isPhoneValid } from '@/utils/phone.helper';
 const UserProfilePage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [isEditing, setIsEditing] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -28,6 +31,11 @@ const UserProfilePage = () => {
   const emailChanged = formData.email.trim().toLowerCase() !== user?.email?.toLowerCase();
 
   const handleSave = async () => {
+    if (!isPhoneValid(formData.phoneNumber)) {
+      setPhoneError(PHONE_INVALID_MESSAGE);
+      return;
+    }
+
     if (emailChanged && !formData.currentPassword) {
       toast.error("Enter your current password to change your email.");
       return;
@@ -61,6 +69,7 @@ const UserProfilePage = () => {
       country: user?.country || "",
       currentPassword: "",
     });
+    setPhoneError(undefined);
     setIsEditing(false);
   };
 
@@ -163,13 +172,18 @@ const UserProfilePage = () => {
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-(--muted)">
+                  <label htmlFor="profile-phone-number" className="text-xs text-(--muted)">
                     Phone number
                   </label>
-                  <Input
+                  {/* An empty value is sent as "", which the API stores as no number. */}
+                  <PhoneField
+                    name="profile-phone-number"
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    placeholder="+1 234 567 890"
+                    onChange={(phoneNumber) => {
+                      setPhoneError(undefined);
+                      setFormData((current) => ({ ...current, phoneNumber }));
+                    }}
+                    errorMessage={phoneError}
                   />
                 </div>
 
@@ -232,7 +246,7 @@ const UserProfilePage = () => {
                       Phone number
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
-                      {user?.phoneNumber || '—'}
+                      {formatPhone(user?.phoneNumber) || '—'}
                     </p>
                   </div>
                 </div>
