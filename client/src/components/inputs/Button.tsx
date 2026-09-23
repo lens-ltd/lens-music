@@ -18,7 +18,7 @@ interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement | HTMLAnchor
   submit?: boolean;
   danger?: boolean;
   icon?: IconType;
-  size?: 'md' | 'sm';
+  size?: 'lg' | 'md' | 'sm';
   isLoading?: boolean;
   children?: ReactNode;
 }

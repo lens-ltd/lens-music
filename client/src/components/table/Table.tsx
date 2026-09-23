@@ -138,10 +138,10 @@ export default function Table<TData, TValue>({
     <>
       <section
         data-slot="table-frame"
-        className={`overflow-hidden rounded-(--radius-card) rounded-t-sm border border-gray-100 bg-(--paper) ${containerClassName}`}
+        className={`overflow-hidden rounded-(--radius-card) border border-(--line) bg-(--paper) ${containerClassName}`}
       >
         <DataTable className={tableClassName}>
-          <TableHeader className="px-0 bg-black/10">
+          <TableHeader className="px-0 bg-(--surface)">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="py-8">
                 {headerGroup.headers.map((header) => {

@@ -1,4 +1,7 @@
-@import '@fontsource/dm-sans';
+/* 400 body, 500 headings and labels, 600 emphasis. Without 500/600 the browser fakes bold. */
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/600.css';
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
@@ -79,6 +82,8 @@
 
   --control-sm: 32px;
   --control-md: 40px;
+  /* Marketing pages only: hero and closing calls to action. */
+  --control-lg: 48px;
   --ease-flat: cubic-bezier(0, 0, 1, 1);
   --ease-menu: cubic-bezier(0.2, 0.8, 0.4, 1);
   --ease-glide: cubic-bezier(0.22, 1, 0.36, 1);
@@ -459,6 +464,19 @@
   font-size: 1rem;
   line-height: 1.4;
   font-weight: 500;
+}
+
+/* Landing copy: marketing text reads at 16-18px, the app stays at 14px. */
+@utility type-lead {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+@utility type-body-lg {
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 @utility type-body {

@@ -23,8 +23,8 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-(--paper) transition-shadow duration-(--dur-state) ${
-        scrolled && variant === "landing" ? "shadow-[0_4px_20px_rgba(0,0,0,0.06)]" : ""
+      className={`fixed top-0 left-0 right-0 z-50 border-b bg-(--paper) transition-colors duration-(--dur-state) ${
+        scrolled || variant === "auth" ? "border-(--line)" : "border-transparent"
       }`}
       style={{ height: "64px" }}
     >
@@ -92,7 +92,16 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
               </li>
             </ul>
 
-            <details className="md:hidden relative" id="mobile-nav">
+            <details
+              className="md:hidden relative"
+              id="mobile-nav"
+              onClick={(event) => {
+                // Close the menu once a link inside it is chosen.
+                if ((event.target as HTMLElement).closest("a")) {
+                  event.currentTarget.open = false;
+                }
+              }}
+            >
               <summary
                 className="grid size-(--control-md) cursor-pointer list-none place-items-center rounded-(--radius-control) hover:bg-(--surface) [&::-webkit-details-marker]:hidden"
                 aria-label="Open navigation menu"

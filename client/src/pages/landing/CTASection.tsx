@@ -23,14 +23,15 @@ export default function CTASection() {
           <h2 id="cta-heading" className="type-h2 max-w-[18ch]">
             Release your next track for free.
           </h2>
-          <p className="mt-3 type-body text-white">
+          <p className="mt-3 type-body-lg text-white">
             Create an account and start your first release.
           </p>
         </div>
         <Button
           route="/auth/signup"
           primary
-          className="h-12 bg-white px-6 text-base text-(--signal) hover:bg-white/90"
+          size="lg"
+          className="bg-white text-(--signal) hover:bg-white/90"
         >
           Create free account
         </Button>

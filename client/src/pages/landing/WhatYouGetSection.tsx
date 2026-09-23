@@ -22,14 +22,14 @@ export default function WhatYouGetSection() {
           <h2 id="what-you-get-heading" className="type-h2 max-w-[18ch]" {...reveal(0)}>
             Know where every payment comes from.
           </h2>
-          <p className="mt-4 max-w-[46ch] type-body text-(--muted)" {...reveal(1)}>
+          <p className="mt-4 max-w-[46ch] type-body-lg text-(--muted)">
             Store reports arrive in different formats and currencies. Lens turns
             them into one statement you can read in a minute.
           </p>
 
           <ul className="mt-10 flex list-none flex-col gap-4 p-0" role="list">
-            {included.map((item, index) => (
-              <li key={item} className="flex items-start gap-3 type-body" {...reveal(index + 2)}>
+            {included.map((item) => (
+              <li key={item} className="flex items-start gap-3 type-body-lg">
                 <LuCheck className="mt-0.5 size-5 shrink-0 text-(--signal)" aria-hidden="true" />
                 <span>{item}</span>
               </li>
@@ -39,12 +39,11 @@ export default function WhatYouGetSection() {
 
         <figure
           className="rounded-(--radius-card) bg-(--paper) p-6 sm:p-8"
-          {...reveal(2)}
           aria-label="Example payout statement"
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="type-meta">February statement</p>
+              <p className="type-meta">Example statement, February</p>
               <p className="mt-2 type-price tabular">$2,055</p>
             </div>
             <span className="inline-flex h-6 items-center rounded-(--radius-pill) bg-(--success-soft) px-2.5 text-xs font-medium text-(--success)">

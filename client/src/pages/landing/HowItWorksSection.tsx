@@ -29,23 +29,22 @@ export default function HowItWorksSection() {
           alt=""
           loading="lazy"
           className="aspect-[4/5] w-full rounded-(--radius-card) object-cover object-[70%_center] max-lg:aspect-[16/9]"
-          {...reveal(0)}
         />
 
         <div>
-          <h2 id="how-it-works-heading" className="type-h2 max-w-[20ch]" {...reveal(1)}>
+          <h2 id="how-it-works-heading" className="type-h2 max-w-[20ch]" {...reveal(0)}>
             From upload to payout in three steps.
           </h2>
 
           <ol className="mt-12 flex list-none flex-col gap-10 p-0" role="list">
             {steps.map(({ title, text }, index) => (
-              <li key={title} className="grid grid-cols-[48px_1fr] gap-4" {...reveal(index + 2)}>
+              <li key={title} className="grid grid-cols-[48px_1fr] gap-4">
                 <span className="text-4xl font-medium leading-none text-(--signal) tabular">
                   {index + 1}
                 </span>
                 <div>
                   <h3 className="type-h3">{title}</h3>
-                  <p className="mt-2 max-w-[40ch] type-body text-(--muted)">{text}</p>
+                  <p className="mt-2 max-w-[40ch] type-body-lg text-(--muted)">{text}</p>
                 </div>
               </li>
             ))}

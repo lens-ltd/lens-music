@@ -217,7 +217,7 @@ const ReleaseWizardPage = () => {
 
   return (
     <UserLayout variant="canvas">
-      <div className="flex w-full flex-col gap-5 rounded-xl bg-white">
+      <div className="flex w-full flex-col gap-5 rounded-xl bg-white p-6">
         <ReleaseProgressNavigation
           staticSteps={staticSteps}
           releaseNavigationFlows={releaseNavigationFlows}

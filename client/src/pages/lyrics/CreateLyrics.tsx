@@ -141,7 +141,7 @@ const CreateLyrics = () => {
   };
 
   return (
-    <UserLayout>
+    <UserLayout variant="card">
       <main className="flex w-full flex-col gap-5">
         <header className="rounded-md">
           <div className="flex flex-wrap items-start justify-between gap-3">

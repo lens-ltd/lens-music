@@ -11,12 +11,12 @@ export default function PricingSection() {
         <h2 id="pricing-heading" className="type-h2" {...reveal(0)}>
           Free to release. You keep 85%.
         </h2>
-        <p className="mt-4 max-w-[52ch] type-body text-(--muted)" {...reveal(1)}>
+        <p className="mt-4 max-w-[52ch] type-body-lg text-(--muted)">
           No upload fee and no yearly fee. Lens takes a 15% share of what your
           music earns through the platform, and nothing before that.
         </p>
 
-        <figure className="mt-14" aria-label="What happens to $100 of earnings" {...reveal(2)}>
+        <figure className="mt-14" aria-label="What happens to $100 of earnings">
           <p className="type-meta">When a release earns $100</p>
           <div
             className="mt-4 flex h-16 overflow-hidden rounded-(--radius-card)"

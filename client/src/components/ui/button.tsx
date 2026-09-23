@@ -24,6 +24,7 @@ const buttonVariants = cva(
         link: "h-auto! min-h-0! bg-transparent px-0! text-(--signal) link-sweep",
       },
       size: {
+        lg: "h-(--control-lg) min-h-(--control-lg) px-6 text-base",
         md: "h-(--control-md) min-h-(--control-md) px-4",
         sm: "h-(--control-sm) min-h-(--control-sm) px-3 text-[13px]",
         icon: "size-(--control-md)",

@@ -33,16 +33,16 @@ export default function FAQSection() {
         </h2>
 
         <div className="divide-y divide-(--line-soft)">
-          {faqs.map(([question, answer], index) => (
-            <details key={question} className="group" {...reveal(index + 1)}>
+          {faqs.map(([question, answer]) => (
+            <details key={question} className="group">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
-                <span className="type-body font-medium">{question}</span>
+                <span className="type-body-lg font-medium">{question}</span>
                 <LuPlus
                   className="size-5 shrink-0 text-(--muted) transition-transform duration-(--dur-state) group-open:rotate-45"
                   aria-hidden="true"
                 />
               </summary>
-              <p className="max-w-[60ch] pb-6 type-body text-(--muted)">{answer}</p>
+              <p className="max-w-[60ch] pb-6 type-body-lg text-(--muted)">{answer}</p>
             </details>
           ))}
         </div>

@@ -28,7 +28,7 @@ const TrackDetailsPage = () => {
   }, [getTrack, getRelease, id, trackId]);
 
   return (
-    <UserLayout>
+    <UserLayout variant="card">
       <main className="flex w-full flex-col gap-4">
         <motion.header
           className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"

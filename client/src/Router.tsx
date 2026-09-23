@@ -49,7 +49,7 @@ const routeSeo = {
   landing: {
     title: "Music Distribution for Independent Artists",
     description:
-      "Lens Music helps artists distribute releases, manage contributors, and track performance with one modern workspace.",
+      "Release your music on Spotify, Apple Music and 150+ stores for free. Lens keeps 15% of earnings, and only once your music earns.",
   },
   login: {
     title: "Sign In",

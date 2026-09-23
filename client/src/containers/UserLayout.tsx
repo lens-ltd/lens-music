@@ -7,7 +7,7 @@ interface UserLayoutProps {
   variant?: 'card' | 'canvas';
 }
 
-const UserLayout = ({ children }: UserLayoutProps) => {
+const UserLayout = ({ children, variant = 'canvas' }: UserLayoutProps) => {
   const { isOpen } = useAppSelector((state) => state.sidebar);
 
   return (
@@ -16,10 +16,15 @@ const UserLayout = ({ children }: UserLayoutProps) => {
       <Sidebar />
       <main
         className={`mt-16 min-h-[calc(100vh-64px)] overflow-x-hidden transition-[margin] duration-200 ease-[cubic-bezier(0,0,1,1)] ${
-          isOpen ? 'ml-18 sm:ml-60' : 'ml-18'
+          isOpen ? 'ml-(--nav-collapsed) sm:ml-(--nav-open)' : 'ml-(--nav-collapsed)'
         }`}
       >
-        <article className="mx-auto max-w-[1280px] p-6 bg-white m-4 w-[95%] rounded-md">
+        {/* Pages sit on the gray canvas; their SectionCards supply the white frames. */}
+        <article
+          className={`mx-auto max-w-[1280px] p-4 sm:p-6 ${
+            variant === 'card' ? 'm-4 rounded-(--radius-card) bg-(--paper)' : ''
+          }`}
+        >
           {children}
         </article>
       </main>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
 import { stores, reveal } from './landingShared';
 
@@ -8,14 +7,14 @@ type DeliveryState = 'queued' | 'sending' | 'live';
 const deliveryStores = stores.slice(0, 5);
 
 /**
- * Featured release: "The Greatest" by Skid
- * (https://open.spotify.com/album/5YiyXQl0htFHCDNL0EAuLw), cover served from Spotify's CDN.
+ * Featured release: "The Greatest" by Skid, a Lens artist
+ * (https://open.spotify.com/album/5YiyXQl0htFHCDNL0EAuLw). Cover is self-hosted.
  */
 const featuredRelease = {
   title: 'The Greatest',
   artist: 'Skid',
   details: 'Album, 15 tracks',
-  coverUrl: 'https://i.scdn.co/image/ab67616d0000b2736404d1710379d774a388264e',
+  coverUrl: '/images/releases/skid-the-greatest.jpg',
 };
 const STEP_MS = 520;
 
@@ -65,22 +64,16 @@ export default function HeroSection() {
           <h1 id="hero-heading" className="type-hero max-w-[14ch] text-(--ink)" {...reveal(0)}>
             Your music on Spotify, Apple Music and 150+ stores.
           </h1>
-          <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-(--muted)" {...reveal(1)}>
+          <p className="mt-6 max-w-[46ch] type-lead text-(--muted)" {...reveal(1)}>
             Distribution is free. Lens keeps 15% of what your music earns, and
             only once it earns. You keep the rest and see exactly where it came
             from.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4" {...reveal(2)}>
-            <Button route="/auth/signup" primary className="h-12 px-6 text-base">
+          <div className="mt-10" {...reveal(2)}>
+            <Button route="/auth/signup" primary size="lg">
               Create free account
             </Button>
-            <Link
-              to="/auth/login"
-              className="link-sweep text-sm font-medium text-(--ink)"
-            >
-              Sign in
-            </Link>
           </div>
         </header>
 
@@ -132,7 +125,7 @@ export default function HeroSection() {
           </ul>
 
           <figcaption className="mt-4 px-1 type-meta">
-            And 145+ more stores in the same delivery.
+            Released through Lens, with 145+ more stores in the same delivery.
           </figcaption>
         </figure>
       </div>
@@ -140,8 +133,8 @@ export default function HeroSection() {
       <div className="app-container mt-16 md:mt-24">
         <h2 className="sr-only">Stores Lens delivers to</h2>
         <ul className="flex list-none flex-wrap items-center gap-x-10 gap-y-6 p-0" role="list">
-          {stores.map(({ name, icon: StoreMark }, index) => (
-            <li key={name} className="flex items-center gap-2 text-(--ink)" {...reveal(index)}>
+          {stores.map(({ name, icon: StoreMark }) => (
+            <li key={name} className="flex items-center gap-2 text-(--ink)">
               <StoreMark className="size-5" aria-hidden="true" />
               <span className="text-sm font-medium">{name}</span>
             </li>
