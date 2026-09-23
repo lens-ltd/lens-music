@@ -39,22 +39,24 @@ const CountryCallingCodeSelect = ({
       : [],
   );
 
+  // `field-stack` and `field-chrome` both fill their container, so the width
+  // comes from this wrapper rather than from classes on the combobox itself.
   return (
-    <Combobox
-      value={value ?? ''}
-      onChange={(next) => onChange((next as Country) || undefined)}
-      options={countries}
-      disabled={disabled}
-      readOnly={readOnly}
-      ariaLabel="Country calling code"
-      placeholder="Country"
-      searchPlaceholder="Search countries"
-      emptyText="No matching country"
-      triggerLabel={value ? `${value} +${getCountryCallingCode(value)}` : undefined}
-      labelClassName="shrink-0"
-      className="w-auto min-w-28"
-      contentClassName="w-72 max-w-[calc(100vw-3rem)]"
-    />
+    <div className="w-36 shrink-0">
+      <Combobox
+        value={value ?? ''}
+        onChange={(next) => onChange((next as Country) || undefined)}
+        options={countries}
+        disabled={disabled}
+        readOnly={readOnly}
+        ariaLabel="Country calling code"
+        placeholder="Country"
+        searchPlaceholder="Search countries"
+        emptyText="No matching country"
+        triggerLabel={value ? `${value} +${getCountryCallingCode(value)}` : undefined}
+        contentClassName="w-72 max-w-[calc(100vw-3rem)]"
+      />
+    </div>
   );
 };
 
