@@ -172,8 +172,8 @@ const ReleaseWizardPreview = ({
       </header>
 
       {release.status === ReleaseStatus.DRAFT && release.reviewNotes && (
-        <aside className="rounded-md bg-(--surface) p-4">
-          <p className="text-[13px] font-medium text-(--ink)">
+        <aside className="rounded-(--radius-control) border border-(--line-soft) p-4">
+          <p className="text-[13px] font-normal text-(--ink)">
             Changes requested by the review team
           </p>
           <p className="mt-1 text-[13px] text-(--ink) whitespace-pre-line">
@@ -206,7 +206,7 @@ const ReleaseWizardPreview = ({
       />
 
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
           disabled={isNavigating}
           onClick={(event) => {

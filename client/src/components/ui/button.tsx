@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
  * - link: inline navigation
  */
 const buttonVariants = cva(
-  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-(--radius-control) text-sm font-medium whitespace-nowrap transition-colors duration-(--dur-state) disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-(--radius-control) text-sm font-normal whitespace-nowrap transition-colors duration-(--dur-state) disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {

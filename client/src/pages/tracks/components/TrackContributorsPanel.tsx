@@ -188,7 +188,7 @@ const TrackContributorsPanel = ({
           trackContributors?.map((trackContributor) => (
             <li
               key={trackContributor?.id}
-              className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
+              className="flex items-start justify-between gap-3 rounded-(--radius-control) border border-(--line-soft) p-3"
             >
               <section className="flex flex-col gap-0.5">
                 <p className="text-[13px] font-normal text-(--ink)">

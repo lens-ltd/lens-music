@@ -285,7 +285,7 @@ const ReleaseWizardManageContributions = ({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
@@ -417,7 +417,7 @@ const ReleaseWizardManageContributions = ({
             releaseContributors?.map((releaseContributor) => (
               <li
                 key={releaseContributor?.id}
-                className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
+                className="flex items-start justify-between gap-3 rounded-(--radius-control) border border-(--line-soft) p-3"
               >
                 <section className="flex flex-col gap-0.5">
                   <p className="text-[13px] font-normal text-(--ink)">
@@ -485,7 +485,7 @@ const ReleaseWizardManageContributions = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
           onClick={(e) => {
             e.preventDefault();

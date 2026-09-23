@@ -6,7 +6,7 @@ import Button from '../inputs/Button';
 import { LuChevronLeft } from 'react-icons/lu';
 
 const backClass =
-  'inline-flex h-(--control-md) cursor-pointer items-center gap-1.5 rounded-(--radius-control) border border-(--line-field) bg-(--paper) px-3.5 text-sm font-medium text-(--ink) transition-colors hover:border-(--line-hover) hover:bg-(--surface)';
+  'inline-flex h-(--control-md) cursor-pointer items-center gap-1.5 rounded-(--radius-control) border border-(--line-field) bg-(--paper) px-3.5 text-sm font-normal text-(--ink) transition-colors hover:border-(--line-hover) hover:bg-(--surface)';
 
 /**
  * Breadcrumb-style back control. Rendered as a quiet inline control with

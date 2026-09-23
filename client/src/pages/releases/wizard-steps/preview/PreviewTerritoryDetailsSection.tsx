@@ -43,7 +43,7 @@ const PreviewTerritoryDetailsSection = ({ releaseId }: { releaseId: string }) =>
                   key={detail.id}
                   className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
                 >
-                  <p className="font-medium text-(--ink)">
+                  <p className="font-normal text-(--ink)">
                     {countryName}
                   </p>
                   <p className="text-xs text-(--muted)">

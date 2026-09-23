@@ -121,7 +121,7 @@ const ReleaseNavigationPanel = ({
                     <span className="min-w-0 flex-1">
                       <span
                         className={`block truncate text-sm ${
-                          isActive ? "font-medium text-(--signal)" : "text-(--ink)"
+                          isActive ? "font-normal text-(--signal)" : "text-(--ink)"
                         }`}
                       >
                         {capitalizeString(step?.stepName)}

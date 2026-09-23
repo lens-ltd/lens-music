@@ -365,7 +365,7 @@ const ReleaseWizardOverview = ({
                 </figure>
                 <menu className="flex items-center justify-between gap-3">
                   <menu className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-(--ink)">
+                    <p className="text-sm font-normal text-(--ink)">
                       Current cover art
                     </p>
                     <p className="text-[13px] text-(--muted) font-normal">
@@ -388,7 +388,7 @@ const ReleaseWizardOverview = ({
             ) : (
               <section className="flex flex-col gap-4 rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5">
                 <menu className="flex flex-col gap-1">
-                  <p className="text-sm font-medium text-(--ink)">
+                  <p className="text-sm font-normal text-(--ink)">
                     No cover art uploaded
                   </p>
                   <p className="text-[13px] text-(--muted) font-normal">
@@ -746,7 +746,7 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
           <BackButton
             onClick={(e) => {
               e.preventDefault();

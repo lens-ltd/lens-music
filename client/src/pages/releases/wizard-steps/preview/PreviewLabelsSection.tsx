@@ -35,7 +35,7 @@ const PreviewLabelsSection = ({ releaseId }: { releaseId: string }) => {
                 key={releaseLabel.id}
                 className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
-                <p className="font-medium text-(--ink)">
+                <p className="font-normal text-(--ink)">
                   {releaseLabel.label?.name || "Unknown label"}
                 </p>
                 <p className="text-xs text-(--muted)">

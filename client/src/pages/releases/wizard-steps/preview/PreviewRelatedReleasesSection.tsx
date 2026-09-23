@@ -37,7 +37,7 @@ const PreviewRelatedReleasesSection = ({ releaseId }: { releaseId: string }) => 
                 key={row.id}
                 className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
-                <p className="font-medium text-(--ink)">
+                <p className="font-normal text-(--ink)">
                   {row.relatedRelease?.title || row.externalId || "External release"}
                 </p>
                 <p className="text-xs text-(--muted)">

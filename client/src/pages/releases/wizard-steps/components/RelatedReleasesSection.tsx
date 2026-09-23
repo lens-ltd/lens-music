@@ -161,7 +161,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
     <>
       <section className="card-framed p-5">
         <header className="mb-4 space-y-1">
-          <h3 className="text-sm font-medium text-(--ink)">
+          <h3 className="text-sm text-(--ink)">
             Related releases
           </h3>
           <p className="text-[13px] text-(--muted)">
@@ -235,7 +235,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                   className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
                 >
                   <div className="space-y-0.5">
-                    <p className="font-medium text-(--ink)">
+                    <p className="font-normal text-(--ink)">
                       {row.relatedRelease?.title ||
                         row.externalId ||
                         "External release"}

@@ -395,7 +395,7 @@ const ContributorMembershipsPage = () => {
                       className="flex items-center justify-between gap-3 rounded-md bg-(--surface) p-3"
                     >
                       <div className="flex flex-col gap-0.5">
-                        <p className="text-[13px] font-medium text-(--ink)">
+                        <p className="text-[13px] font-normal text-(--ink)">
                           {member?.displayName ||
                             member?.name ||
                             "Unknown contributor"}

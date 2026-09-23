@@ -87,13 +87,13 @@ const UserProfilePage = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-(--signal) text-white text-2xl font-semibold">
+                <div className="flex h-full w-full items-center justify-center bg-(--signal) text-white text-2xl font-medium">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <h2 className="text-[20px] font-semibold text-(--ink)">
+              <h2 className="text-[20px] text-(--ink)">
                 {user?.name || 'User'}
               </h2>
               <p className="text-[13px] text-(--muted) mt-1">
@@ -116,7 +116,7 @@ const UserProfilePage = () => {
 
           {/* Profile Information */}
           <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
-            <h3 className="text-[14px] font-medium text-(--ink) mb-2">
+            <h3 className="text-[14px] text-(--ink) mb-2">
               Account information
             </h3>
 
@@ -289,7 +289,7 @@ const UserProfilePage = () => {
           {/* Permissions Section */}
           {user?.permissions && user.permissions.length > 0 && (
             <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
-              <h3 className="text-[14px] font-medium text-(--ink) mb-2">
+              <h3 className="text-[14px] text-(--ink) mb-2">
                 Your Permissions
               </h3>
               <div className="flex flex-wrap gap-2">

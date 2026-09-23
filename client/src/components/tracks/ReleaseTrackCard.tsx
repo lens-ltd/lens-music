@@ -33,7 +33,7 @@ const ReleaseTrackCard = ({
 }: ReleaseTrackCardProps) => {
   if (isLoading) {
     return (
-      <article className="w-full rounded-md bg-white/80 p-3 sm:p-3.5">
+      <article className="w-full rounded-(--radius-control) bg-(--paper) p-3 sm:p-3.5">
         <header className="flex items-start justify-between gap-3 pb-2">
           <section className="space-y-1">
             <p className="text-xs text-(--muted) font-normal">
@@ -84,7 +84,7 @@ const ReleaseTrackCard = ({
   ].filter(Boolean) as string[];
 
   return (
-    <article className="w-full rounded-md shadow-md bg-white/70 p-3 sm:p-3.5">
+    <article className="w-full rounded-(--radius-control) bg-(--paper) p-3 sm:p-3.5">
       <header className="flex items-start justify-between gap-2 pb-2">
         <section className="min-w-0 space-y-1">
           <p className="text-xs text-(--muted) font-normal">
@@ -153,10 +153,7 @@ const ReleaseTrackCard = ({
           aria-label="Track metadata"
         >
           {["Disc", "Track", "Duration", "Advisory"].map((label) => (
-            <li
-              key={label}
-              className="rounded-md bg-(--surface) px-2.5 py-1"
-            >
+            <li key={label}>
               <dl>
                 <dt className="text-xs text-(--muted) font-normal">
                   {label}

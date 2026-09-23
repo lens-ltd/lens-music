@@ -100,7 +100,7 @@ export const KeyValuePair = ({
                 </span>
             )}
             <dt className="type-meta">{label ?? capitalizeString(keyText)}</dt>
-            <dd className="min-w-0 break-words text-[13px] font-medium text-(--ink)">
+            <dd className="min-w-0 break-words text-[13px] font-normal text-(--ink)">
                 {isLoading ? <SkeletonLoader /> : value}
             </dd>
         </div>

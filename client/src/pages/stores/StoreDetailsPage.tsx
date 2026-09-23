@@ -156,7 +156,7 @@ const StoreDetailsPage = () => {
         <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
           <div className="flex flex-col gap-3 pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <h2 className="text-[20px] font-semibold text-(--ink)">
+              <h2 className="text-[20px] text-(--ink)">
                 {store?.name || "Store"}
               </h2>
               <p className="mt-1 font-mono text-[13px] text-(--muted)">

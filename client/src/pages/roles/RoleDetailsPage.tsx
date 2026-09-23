@@ -57,7 +57,7 @@ const RoleDetailsPage = () => {
         </header>
 
         <section className="flex w-full flex-col gap-1 card-framed p-5 sm:p-6">
-          <h2 className="text-[18px] font-semibold text-(--ink)">{capitalizeString(role.name)}</h2>
+          <h2 className="text-[18px] text-(--ink)">{capitalizeString(role.name)}</h2>
           {role.description && (
             <p className="text-[13px] text-(--muted)">{role.description}</p>
           )}

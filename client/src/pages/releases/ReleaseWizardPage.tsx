@@ -190,7 +190,7 @@ const ReleaseWizardPage = () => {
         <p className="text-xs text-(--muted)">
           Step unavailable
         </p>
-        <h2 className="mt-3 text-xl font-semibold text-(--ink)">
+        <h2 className="mt-3 text-xl text-(--ink)">
           {capitalizeString(stepName)}
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-(--muted)">
@@ -217,7 +217,7 @@ const ReleaseWizardPage = () => {
 
   return (
     <UserLayout variant="canvas">
-      <div className="flex w-full flex-col gap-5 rounded-xl bg-white p-6">
+      <div className="flex w-full flex-col gap-5 rounded-(--radius-card) bg-(--paper) p-6">
         <ReleaseProgressNavigation
           staticSteps={staticSteps}
           releaseNavigationFlows={releaseNavigationFlows}

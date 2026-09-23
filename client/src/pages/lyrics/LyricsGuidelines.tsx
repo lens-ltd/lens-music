@@ -26,12 +26,12 @@ const LyricsGuidelines = () => {
         rehypePlugins={[rehypeRaw]}
         components={{
           h2: ({ children }) => (
-            <h2 className="mb-2 mt-5 pb-1 text-sm font-semibold text-(--ink) first:mt-0">
+            <h2 className="mb-2 mt-5 pb-1 text-sm text-(--ink) first:mt-0">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="mb-1 mt-4 text-[13px] font-semibold text-(--ink)">
+            <h3 className="mb-1 mt-4 text-[13px] text-(--ink)">
               {children}
             </h3>
           ),

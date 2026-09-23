@@ -203,7 +203,7 @@ const ReleaseWizardStores = ({
   return (
     <section className="w-full flex flex-col gap-4">
       <header>
-        <h2 className="text-xl font-semibold text-(--ink)">Stores</h2>
+        <h2 className="text-xl text-(--ink)">Stores</h2>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-(--muted)">
           Select the stores where this release should be delivered.
         </p>
@@ -310,7 +310,7 @@ const ReleaseWizardStores = ({
 
       <ReleaseWizardDealsSection />
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         {navButtons}
       </footer>
     </section>

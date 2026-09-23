@@ -267,7 +267,7 @@ const ReleaseWizardDealsSection = () => {
   return (
     <section className="mt-8 card-framed p-5">
       <header className="mb-4 space-y-1">
-        <h3 className="text-sm font-medium text-(--ink)">
+        <h3 className="text-sm text-(--ink)">
           Commercial deals (DDEX)
         </h3>
         <p className="text-[13px] text-(--muted)">
@@ -339,7 +339,7 @@ const ReleaseWizardDealsSection = () => {
       </div>
 
       <div className="mt-6 pt-4">
-        <h4 className="text-[13px] font-medium text-(--ink)">
+        <h4 className="text-[13px] text-(--ink)">
           Active deals
         </h4>
         {isFetching ? (
@@ -358,7 +358,7 @@ const ReleaseWizardDealsSection = () => {
                 className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
                 <div className="space-y-0.5">
-                  <p className="font-medium text-(--ink)">
+                  <p className="font-normal text-(--ink)">
                     {deal.commercialModelType} · {deal.useType}
                   </p>
                   <p className="text-xs text-(--muted)">

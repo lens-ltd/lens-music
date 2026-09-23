@@ -177,7 +177,7 @@ const ReleaseWizardRegions = ({
   return (
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-(--ink)">Delivery regions</h2>
+        <h2 className="text-xl text-(--ink)">Delivery regions</h2>
         <p className="text-sm leading-6 text-(--muted)">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
@@ -232,7 +232,7 @@ const ReleaseWizardRegions = ({
             <label
               key={country.code}
               htmlFor={`country-${country.code}`}
-              className={`flex items-center gap-2 rounded-md shadow-sm p-3 cursor-pointer transition-colors hover:bg-(--surface)`}
+              className={`flex items-center gap-2 rounded-(--radius-control) border border-(--line-soft) p-3 cursor-pointer transition-colors hover:bg-(--surface)`}
             >
               <UiInput
                 type="checkbox"
@@ -254,7 +254,7 @@ const ReleaseWizardRegions = ({
         selectedTerritories={selectedTerritories}
       />
 
-      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-(--paper)/95 py-4">
         <p className="text-xs text-(--muted)">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"

@@ -397,7 +397,7 @@ const ContributorDetailsPage = () => {
                   <p className="text-xs text-(--muted)">
                     Contributor overview
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold text-(--ink)">
+                  <h2 className="mt-2 text-lg text-(--ink)">
                     {isFetching
                       ? "Loading contributor..."
                       : contributorDetails?.displayName ||
@@ -529,7 +529,7 @@ const ContributorDetailsPage = () => {
                         className="flex flex-col gap-2 rounded-md bg-(--surface) p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-(--ink)">
+                          <p className="text-[13px] font-normal text-(--ink)">
                             {manager.user?.name || "User"}
                           </p>
                           <p className="truncate text-[13px] text-(--muted)">

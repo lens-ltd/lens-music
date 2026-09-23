@@ -125,7 +125,7 @@ const UserDetailsPage = () => {
 
         <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--signal) text-xl font-semibold text-white">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--signal) text-xl font-medium text-white">
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -137,7 +137,7 @@ const UserDetailsPage = () => {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="text-[20px] font-semibold text-(--ink)">
+              <h2 className="text-[20px] text-(--ink)">
                 {user.name || "Unnamed user"}
               </h2>
               <p className="mt-1 truncate text-[13px] text-(--muted)">

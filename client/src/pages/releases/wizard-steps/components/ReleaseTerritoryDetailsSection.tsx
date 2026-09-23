@@ -166,7 +166,7 @@ const ReleaseTerritoryDetailsSection = ({
   return (
     <section className="card-framed p-5">
       <header className="mb-4 space-y-1">
-        <h3 className="text-sm font-medium text-(--ink)">
+        <h3 className="text-sm text-(--ink)">
           Territory-specific metadata
         </h3>
         <p className="text-[13px] text-(--muted)">
@@ -188,7 +188,7 @@ const ReleaseTerritoryDetailsSection = ({
               className="rounded-(--radius-control) bg-(--surface) p-4"
             >
               <header className="mb-3">
-                <p className="text-sm font-medium text-(--ink)">
+                <p className="text-sm font-normal text-(--ink)">
                   {countryName}
                 </p>
                 <p className="text-xs text-(--muted)">

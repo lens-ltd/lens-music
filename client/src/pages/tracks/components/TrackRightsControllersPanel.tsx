@@ -214,7 +214,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                 className="flex items-start justify-between gap-2 rounded-(--radius-control) bg-(--surface) p-2 text-[13px]"
               >
                 <div>
-                  <p className="font-medium text-(--ink)">
+                  <p className="font-normal text-(--ink)">
                     {row.controllerName}
                   </p>
                   <p className="text-xs text-(--muted)">

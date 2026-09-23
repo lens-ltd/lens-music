@@ -85,7 +85,7 @@ const CompleteInvitation = () => {
           {validationState.isLoading ? (
             <div className="mt-8 flex justify-center"><Loader /></div>
           ) : invitationUnavailable ? (
-            <div className="mt-8 rounded-xl bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
+            <div className="mt-8 rounded-(--radius-card) bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
               This invitation is invalid or has expired. Please ask your admin to send a new invite.
             </div>
           ) : (
