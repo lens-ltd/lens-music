@@ -42,7 +42,7 @@ const CountryCallingCodeSelect = ({
   // `field-stack` and `field-chrome` both fill their container, so the width
   // comes from this wrapper rather than from classes on the combobox itself.
   return (
-    <div className="w-36 shrink-0">
+    <div className="w-20 sm:w-24 md:w-28 shrink-0">
       <Combobox
         value={value ?? ''}
         onChange={(next) => onChange((next as Country) || undefined)}
