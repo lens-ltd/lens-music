@@ -19,6 +19,8 @@ import {
   RelatedReleaseRelationType,
 } from "@/types/models/relatedRelease.types";
 import { capitalizeString } from "@/utils/strings.helper";
+import { useDebouncedValue } from "@/hooks/common/debounce.hooks";
+import WizardQueryError from "./WizardQueryError";
 
 const relationTypeOptions = Object.values(RelatedReleaseRelationType).map(
   (value) => ({
@@ -27,6 +29,8 @@ const relationTypeOptions = Object.values(RelatedReleaseRelationType).map(
   }),
 );
 
+const RELEASE_SEARCH_SIZE = 20;
+
 const EMPTY_FORM: RelatedReleasePayload = {
   relatedReleaseId: undefined,
   relationType: RelatedReleaseRelationType.IS_EQUIVALENT_TO,
@@ -34,7 +38,8 @@ const EMPTY_FORM: RelatedReleasePayload = {
 };
 
 const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
-  const { fetchRelatedReleases, data, isFetching } = useFetchRelatedReleases();
+  const { fetchRelatedReleases, data, isFetching, isError, error } =
+    useFetchRelatedReleases();
   const { createRelatedRelease, isLoading: isCreating } =
     useCreateRelatedRelease();
   const { updateRelatedRelease, isLoading: isUpdating } =
@@ -43,6 +48,8 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
     useDeleteRelatedRelease();
   const [fetchReleases, { data: releasesResponse }] =
     useLazyFetchReleasesQuery();
+  const [releaseSearch, setReleaseSearch] = useState("");
+  const debouncedReleaseSearch = useDebouncedValue(releaseSearch.trim());
 
   const [createForm, setCreateForm] =
     useState<RelatedReleasePayload>(EMPTY_FORM);
@@ -50,23 +57,56 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
     useState<RelatedRelease | null>(null);
   const [editForm, setEditForm] = useState<RelatedReleasePayload>(EMPTY_FORM);
 
-  const relatedReleases: RelatedRelease[] = data?.data ?? [];
-  const releaseOptions = useMemo(
-    () =>
-      ((releasesResponse?.data?.rows as Release[] | undefined) ?? [])
-        .filter((release) => release.id !== releaseId)
-        .map((release) => ({
-          label: release.title,
-          value: release.id,
-        })),
-    [releaseId, releasesResponse?.data?.rows],
+  const relatedReleases: RelatedRelease[] = useMemo(
+    () => data?.data ?? [],
+    [data?.data],
   );
+
+  // Titles of every release seen so far, so a selected release keeps its
+  // label when the search results no longer include it.
+  const knownReleaseTitles = useMemo(() => {
+    const titles = new Map<string, string>();
+    relatedReleases.forEach((row) => {
+      if (row.relatedRelease) {
+        titles.set(row.relatedRelease.id, row.relatedRelease.title);
+      }
+    });
+    ((releasesResponse?.data?.rows as Release[] | undefined) ?? []).forEach(
+      (release) => titles.set(release.id, release.title),
+    );
+    return titles;
+  }, [relatedReleases, releasesResponse?.data?.rows]);
+
+  const getReleaseOptions = (selectedId?: string) => {
+    const options: { label: string; value: string }[] = (
+      (releasesResponse?.data?.rows as Release[] | undefined) ?? []
+    )
+      .filter((release) => release.id !== releaseId)
+      .map((release) => ({ label: release.title, value: release.id }));
+    const selectedTitle = selectedId && knownReleaseTitles.get(selectedId);
+    if (
+      selectedId &&
+      selectedTitle &&
+      !options.some((option) => option.value === selectedId)
+    ) {
+      options.unshift({ label: selectedTitle, value: selectedId });
+    }
+    return options;
+  };
 
   useEffect(() => {
     if (!releaseId) return;
     fetchRelatedReleases({ releaseId });
-    fetchReleases({ page: 0, size: 100 });
-  }, [fetchRelatedReleases, fetchReleases, releaseId]);
+  }, [fetchRelatedReleases, releaseId]);
+
+  // The server searches by title or UPC; the picker shows the first matches.
+  useEffect(() => {
+    fetchReleases({
+      page: 0,
+      size: RELEASE_SEARCH_SIZE,
+      searchKey: debouncedReleaseSearch || undefined,
+    });
+  }, [fetchReleases, debouncedReleaseSearch]);
 
   const refresh = async () => {
     await fetchRelatedReleases({ releaseId });
@@ -165,7 +205,8 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
         <div className="grid gap-3 sm:grid-cols-3">
           <Combobox
             label="Release"
-            options={releaseOptions}
+            options={getReleaseOptions(createForm.relatedReleaseId)}
+            onSearchChange={setReleaseSearch}
             value={createForm.relatedReleaseId || ""}
             onChange={(value) =>
               setCreateForm((current) => ({
@@ -215,6 +256,12 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
             <p className="text-[13px] text-(--muted)">
               Loading related releases...
             </p>
+          ) : isError ? (
+            <WizardQueryError
+              title="We couldn't load the related releases."
+              error={error}
+              onRetry={() => void refresh()}
+            />
           ) : relatedReleases.length === 0 ? (
             <p className="text-[13px] text-(--muted)">
               No related releases linked yet.
@@ -269,7 +316,8 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
         <section className="flex flex-col gap-4 p-1">
           <Combobox
             label="Release"
-            options={releaseOptions}
+            options={getReleaseOptions(editForm.relatedReleaseId)}
+            onSearchChange={setReleaseSearch}
             value={editForm.relatedReleaseId || ""}
             onChange={(value) =>
               setEditForm((current) => ({

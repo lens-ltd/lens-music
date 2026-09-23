@@ -6,10 +6,10 @@ import {
 import { useLazyFetchReleaseDealsQuery } from '@/state/api/apiQuerySlice';
 
 export const useFetchReleaseDeals = () => {
-  const [fetchReleaseDeals, { data, isFetching, isSuccess }] =
+  const [fetchReleaseDeals, { data, isFetching, isSuccess, isError, error }] =
     useLazyFetchReleaseDealsQuery();
 
-  return { fetchReleaseDeals, data, isFetching, isSuccess };
+  return { fetchReleaseDeals, data, isFetching, isSuccess, isError, error };
 };
 
 export const useCreateReleaseDeal = () => {

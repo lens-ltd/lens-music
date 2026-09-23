@@ -20,6 +20,7 @@ export class ReleaseQueryService {
     status,
     digitalReleaseDateFrom,
     digitalReleaseDateTo,
+    searchKey,
   }: {
     createdById?: UUID;
     size?: number;
@@ -27,6 +28,7 @@ export class ReleaseQueryService {
     status?: ReleaseStatus;
     digitalReleaseDateFrom?: string;
     digitalReleaseDateTo?: string;
+    searchKey?: string;
   }): Promise<Pagination> {
     const { take, skip } = getPagination({ size, page });
     const query = this.releaseRepository
@@ -52,6 +54,13 @@ export class ReleaseQueryService {
     if (digitalReleaseDateTo) {
       query.andWhere('release.digitalReleaseDate <= :digitalReleaseDateTo', {
         digitalReleaseDateTo,
+      });
+    }
+    const search = searchKey?.trim();
+    if (search) {
+      const pattern = `%${search.replace(/[\\%_]/g, '\\$&')}%`;
+      query.andWhere('(release.title ILIKE :search OR release.upc ILIKE :search)', {
+        search: pattern,
       });
     }
 

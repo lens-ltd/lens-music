@@ -11,7 +11,7 @@ import {
   useFetchTracks,
   useReorderTracks,
 } from "@/hooks/tracks/track.hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReleaseTrackCard from "@/components/tracks/ReleaseTrackCard";
 import SortableTrackItem from "@/components/tracks/SortableTrackItem";
 import { RelaxedHeading } from "@/components/text/Headings";
@@ -37,6 +37,11 @@ import {
 } from "@dnd-kit/sortable";
 
 import { LuSquarePlus } from 'react-icons/lu';
+import WizardQueryError from "./components/WizardQueryError";
+
+// Every fetch loads the whole list, so the "all tracks validated" check covers
+// every track and not only the first page.
+const WIZARD_TRACKS_PAGE_SIZE = 100;
 
 const sortTracksForDisplay = (tracks: Track[]) =>
   [...tracks].sort(
@@ -67,7 +72,12 @@ const ReleaseWizardUploadTracks = ({
   });
 
   // FETCH TRACKS
-  const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
+  const {
+    fetchTracks,
+    isFetching: tracksIsFetching,
+    isError: tracksIsError,
+    error: tracksError,
+  } = useFetchTracks();
   const { deleteTrack, isLoading: deleteTrackIsLoading } = useDeleteTrack();
   const { reorderTracks, isLoading: isReorderingTracks } = useReorderTracks();
 
@@ -83,11 +93,15 @@ const ReleaseWizardUploadTracks = ({
     }),
   );
 
-  useEffect(() => {
+  const refetchTracks = useCallback(async () => {
     if (release?.id) {
-      fetchTracks({ releaseId: release?.id, size: 100 });
+      await fetchTracks({ releaseId: release.id, size: WIZARD_TRACKS_PAGE_SIZE });
     }
   }, [release?.id, fetchTracks]);
+
+  useEffect(() => {
+    void refetchTracks();
+  }, [refetchTracks]);
 
   // Keep the local ordered list in sync with the fetched tracks.
   useEffect(() => {
@@ -120,7 +134,7 @@ const ReleaseWizardUploadTracks = ({
         releaseId: release.id,
         trackIds: nextOrder.map((track) => track.id),
       }).unwrap();
-      await fetchTracks({ releaseId: release.id });
+      await refetchTracks();
       toast.success("Track order updated.");
     } catch (error) {
       setOrderedTracks(previousOrder);
@@ -198,6 +212,12 @@ const ReleaseWizardUploadTracks = ({
               </DndContext>
             </>
           )
+        ) : tracksIsError ? (
+          <WizardQueryError
+            title="We couldn't load the tracks."
+            error={tracksError}
+            onRetry={() => void refetchTracks()}
+          />
         ) : (
           <section className="rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5 text-center">
             <p className="text-[13px] text-(--muted) font-normal">
@@ -218,7 +238,7 @@ const ReleaseWizardUploadTracks = ({
         )}
       </article>
 
-      {!allTracksValidated ? (
+      {!allTracksValidated && !tracksIsFetching && !tracksIsError ? (
         <p
           className="rounded-md bg-(--surface) px-4 py-3 text-xs leading-5 text-(--muted)"
           role="status"
@@ -279,7 +299,7 @@ const ReleaseWizardUploadTracks = ({
                 }).unwrap();
                 toast.success(response?.message || "Track deleted successfully");
                 setTrackToDelete(undefined);
-                await fetchTracks({ releaseId: release.id });
+                await refetchTracks();
               } catch (error) {
                 toast.error(getApiErrorMessage(error, "Unable to delete track"));
               }

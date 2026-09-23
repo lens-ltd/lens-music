@@ -28,6 +28,7 @@ import { capitalizeString } from "@/utils/strings.helper";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
+import WizardQueryError from "./components/WizardQueryError";
 
 import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
@@ -45,8 +46,13 @@ const ReleaseWizardManageContributions = ({
     previousStepName,
   });
 
-  const { fetchReleaseContributors, data: releaseContributorsData } =
-    useFetchReleaseContributors();
+  const {
+    fetchReleaseContributors,
+    data: releaseContributorsData,
+    isFetching: releaseContributorsIsFetching,
+    isError: releaseContributorsIsError,
+    error: releaseContributorsError,
+  } = useFetchReleaseContributors();
   const {
     createBulkReleaseContributors,
     isLoading: isCreatingContributor,
@@ -451,6 +457,22 @@ const ReleaseWizardManageContributions = ({
                 )}
               </li>
             ))
+          ) : releaseContributorsIsFetching ? (
+            <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
+              Loading contributors…
+            </li>
+          ) : releaseContributorsIsError ? (
+            <li>
+              <WizardQueryError
+                title="We couldn't load the contributors."
+                error={releaseContributorsError}
+                onRetry={() => {
+                  if (release?.id) {
+                    fetchReleaseContributors({ releaseId: release.id });
+                  }
+                }}
+              />
+            </li>
           ) : (
             <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
               No contributors added yet.
@@ -459,7 +481,9 @@ const ReleaseWizardManageContributions = ({
         </ul>
       </article>
 
-      {!hasPrimaryArtist ? (
+      {!hasPrimaryArtist &&
+      !releaseContributorsIsFetching &&
+      !releaseContributorsIsError ? (
         <p
           className="rounded-md bg-(--surface) px-4 py-3 text-xs leading-5 text-(--muted)"
           role="status"

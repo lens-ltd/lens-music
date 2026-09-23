@@ -7,11 +7,13 @@ import { getApiErrorMessage } from "@/utils/errors.helper";
 import { useUpdateReleaseTerritories } from "@/hooks/releases/release.hooks";
 import { useAppSelector } from "@/state/hooks";
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { Input as UiInput } from "@/components/ui/input";
 import ReleaseTerritoryDetailsSection from "./components/ReleaseTerritoryDetailsSection";
+import { useReleaseSelection } from "@/hooks/releases/releaseSelection.hooks";
+import { useReleaseTerritoryOverrides } from "@/hooks/releases/territoryOverrides.hooks";
 
 import { LuSearch } from 'react-icons/lu';
 
@@ -33,7 +35,6 @@ const ReleaseWizardRegions = ({
     isLoading: isSavingTerritories,
     reset: resetUpdateReleaseTerritories,
   } = useUpdateReleaseTerritories();
-  const [selectedTerritories, setSelectedTerritories] = useState<string[]>([]);
   const [territoriesError, setTerritoriesError] = useState<string | undefined>(undefined);
   const [countrySearchQuery, setCountrySearchQuery] = useState("");
 
@@ -45,15 +46,25 @@ const ReleaseWizardRegions = ({
     );
   }, [countrySearchQuery]);
 
-  useEffect(() => {
-    const currentTerritories = release?.territories || [];
-    const normalizedTerritories = currentTerritories
-      .map((territory) => territory.toUpperCase())
-      .filter((territory) => ALL_COUNTRY_CODES.includes(territory));
-
-    setSelectedTerritories(normalizedTerritories);
-    setTerritoriesError(undefined);
-  }, [release?.territories]);
+  const savedTerritories = useMemo(
+    () =>
+      (release?.territories || [])
+        .map((territory) => territory.toUpperCase())
+        .filter((territory) => ALL_COUNTRY_CODES.includes(territory)),
+    [release?.territories],
+  );
+  const {
+    selected: selectedTerritories,
+    setSelected: setSelectedTerritories,
+    markSaved,
+  } = useReleaseSelection({
+    releaseId: release?.id,
+    saved: savedTerritories,
+  });
+  const territoryOverrides = useReleaseTerritoryOverrides({
+    releaseId: release?.id,
+    selectedTerritories,
+  });
 
   const selectedTerritoriesSet = useMemo(
     () => new Set(selectedTerritories),
@@ -101,6 +112,9 @@ const ReleaseWizardRegions = ({
           id: releaseId,
           territories: selectedTerritories,
         }).unwrap();
+        markSaved(selectedTerritories);
+        // Overrides for unticked countries are only deleted now, on Save.
+        await territoryOverrides.removePendingOverrides();
         toast.success(response?.message || "Territories updated successfully");
         return true;
       } catch (error) {
@@ -208,8 +222,8 @@ const ReleaseWizardRegions = ({
       </section>
 
       <ReleaseTerritoryDetailsSection
-        releaseId={release?.id}
         selectedTerritories={selectedTerritories}
+        overrides={territoryOverrides}
       />
 
       <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-(--paper)/95 py-4">

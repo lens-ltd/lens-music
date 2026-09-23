@@ -85,7 +85,7 @@ Goal: an artist can move through all 6 steps without losing their input, never s
 | PR | Tasks | Summary |
 |---|---|---|
 | 1 Safety net ✅ | UI-1, WIZ-5, WIZ-23, WIZ-24, WIZ-25 | Error boundary, reset state on `:id` change, `useWizardStepNavigation` hook, shared error helper, `Button` disables while loading. Tests for `navigations.helper` and the hook. |
-| 2 Data integrity | WIZ-26, WIZ-27, WIZ-28, WIZ-16, WIZ-18 (auto-deal only) | Refetches never wipe edits; error vs empty states; full lists; no server writes before Save; remove the auto-created worldwide deal. |
+| 2 Data integrity ✅ | WIZ-26, WIZ-27, WIZ-28, WIZ-16, WIZ-18 (auto-deal only) | Refetches never wipe edits; error vs empty states; full lists; no server writes before Save; remove the auto-created worldwide deal. |
 | 3 Layout shell | WIZ-1, WIZ-2, WIZ-3 (structural) | Drop the wrapper card, `SectionCard` per section, shared `WizardStepFooter` and `WizardStepHeader`, one primary per step, flat tiles, errors in `--danger`. |
 | 4 Stepper and autosave | WIZ-4, WIZ-6, WIZ-7, WIZ-22 (nav) | One accessible stepper with locked later steps and a mobile bar; Overview autosave, unsaved-changes guard; "Needs review" on later steps. |
 | 5 Search and credits | WIZ-12, WIZ-13 | `Combobox` for label and contributor search; grouped roles, drag order, per-row delete. |
@@ -448,7 +448,7 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
 - Acceptance:
   - Unticking a country doesn't delete its overrides until Save (`ReleaseTerritoryDetailsSection.tsx:51-69`).
   - The overrides section lists only countries that have an override, plus "Add override for a country". It never shows 249 cards.
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 2, 2026-09-23). `hooks/releases/territoryOverrides.hooks.ts`: an unticked country, a removed override or a cleared one is listed as "will be removed when you save" and deleted by Regions' Save. Field edits still save on blur. Override picker uses `Combobox`.
 
 **WIZ-17 · P0 · Stores: artist-friendly**
 - Acceptance:
@@ -463,7 +463,7 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
   - Artists never see the DDEX Deals form. Deals are generated on the server from Regions, Stores, the release date and a price tier ("Standard", "Budget", "Premium") (`ReleaseWizardDealsSection.tsx`).
   - Admins get an "Advanced deals" panel on the review page.
   - Remove the silent auto-created worldwide deal (`:112-149`).
-- Status: open.
+- Status: in progress. The auto-created deal is gone (M1a PR 2, 2026-09-23). Server-generated deals and the admin panel wait for the API.
 
 **WIZ-19 · P0 · Preview: a real summary**
 - Acceptance:
@@ -523,19 +523,19 @@ Files: `client/src/pages/releases/ReleaseWizardPage.tsx`, `wizard-steps/**`, `cl
   - Overview: `useForm({ defaultValues })`, and `reset()` only when `release.id` changes or after a successful save (replaces `Overview:234-292`; a cover-art `setRelease` no longer clears the form).
   - Regions (`:66-74`) and Stores (`:61-68`) set up their selection once per release id and track `isDirty`.
   - `ReleaseTerritoryDetailsSection.tsx:71-87`: saved overrides win over the blank entries, so they show and no duplicate POST is sent.
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 2, 2026-09-23). `useReleaseOverviewForm` (resets only on a new id; the step resets after a save), `useReleaseSelection` (Regions, Stores; exposes `isDirty` for WIZ-6), `mergeTerritoryDetailForms` in `utils/territoryDetails.helper.ts`. A second blur waits for a pending create instead of posting again.
 
 **WIZ-27 · P0 · Error states differ from empty states**
 - Acceptance:
   - If `getRelease` fails, the wizard shows an error card with Retry, not "Step unavailable" (`ReleaseWizardPage.tsx:188-210`).
   - Tracks, contributors, stores, deals and labels show an error state from `isError`, and the empty state only when not fetching.
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 2, 2026-09-23). Shared `wizard-steps/components/WizardQueryError.tsx` with Retry; also used by related releases and territory overrides.
 
 **WIZ-28 · P0 · Full lists**
 - Acceptance:
   - `fetchTracks` always passes `size: 100` (UploadTracks `:124,:305`), so `allTracksValidated` covers every track.
   - Related releases uses server search instead of loading `size: 100` (`RelatedReleasesSection.tsx:67`).
-- Status: open.
+- Status: done (branch `m0/ops-3-test-harness`, M1a PR 2, 2026-09-23). Needed a small API change: `GET /releases` takes `searchKey` (title or UPC, `ILIKE`). The picker loads 20 matches through `Combobox`'s new `onSearchChange`, debounced by `hooks/common/debounce.hooks.ts`.
 
 Findings (audit, 2026-09-23; paths under `client/src/`):
 - `resetNavigationState` (`state/features/navigationSlice.ts:37`) is never dispatched and `state.release` is never cleared, so switching releases renders the old release's step and a save can target the old id. `tracksList` in `trackSlice` is also global. → WIZ-5.
@@ -549,6 +549,14 @@ Findings (audit, 2026-09-23; paths under `client/src/`):
 - `ReleaseNavigationPanel.tsx:166-170`: clipboard write not caught, `setTimeout` not cleared; the "•" separator shows without a catalog number (`:156`). Skeleton missing a `key` (`ReleaseProgressNavigation.tsx:99`). → WIZ-22.
 - No `useDebounce` hook exists (only `components/table/DebouncedInput.tsx`), and there's no error boundary anywhere. → WIZ-6, UI-1.
 - Client tests: only `components/modals/ComboboxModal.spec.tsx`. `utils/navigations.helper.ts` is pure and untested.
+
+Findings (M1a PR 2, 2026-09-23; paths under `client/src/`):
+- With the auto-created deal gone, a release with no deals fails validation until the artist adds one in the DDEX Deals form. Server-generated deals (WIZ-18) should come soon after M1a.
+- Territory override edits still save on blur; only removals wait for Save. WIZ-6 (autosave and the unsaved-changes guard) should settle one model for the whole step. `useReleaseSelection().isDirty` is ready for that guard.
+- Vitest runs without `globals`, so Testing Library doesn't clean up between tests; component specs call `afterEach(cleanup)` themselves. Add the cleanup to `test-setup.ts` (OPS-3).
+- `allTracksValidated` covers up to 100 tracks; `useFetchTracks` exposes `totalCount` but nothing checks it against the list (`ReleaseWizardUploadTracks.tsx`).
+- The Stores step and its Deals section fetch the store list separately (`ReleaseWizardStores.tsx`, `ReleaseWizardDealsSection.tsx`). → WIZ-17.
+- `Combobox` now has `onSearchChange` for server-side search, and `useDebouncedValue` exists. Label and contributor search can move onto them. → WIZ-12.
 
 ## Workstream DDEX: message generation
 

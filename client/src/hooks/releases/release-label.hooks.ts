@@ -6,10 +6,10 @@ import {
 import { useLazyFetchReleaseLabelsQuery } from "@/state/api/apiQuerySlice";
 
 export const useFetchReleaseLabels = () => {
-  const [fetchReleaseLabels, { data, isFetching, isSuccess }] =
+  const [fetchReleaseLabels, { data, isFetching, isSuccess, isError, error }] =
     useLazyFetchReleaseLabelsQuery();
 
-  return { fetchReleaseLabels, data, isFetching, isSuccess };
+  return { fetchReleaseLabels, data, isFetching, isSuccess, isError, error };
 };
 
 export const useCreateReleaseLabel = () => {

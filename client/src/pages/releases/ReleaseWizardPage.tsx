@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import UserLayout from "@/containers/UserLayout";
+import Button from "@/components/inputs/Button";
+import SectionCard from "@/components/layout/SectionCard";
 import ReleaseNavigationPanel from "@/containers/releases/ReleaseNavigationPanel";
 import ReleaseProgressNavigation from "@/containers/releases/ReleaseProgressNavigation";
 import {
@@ -26,6 +28,8 @@ import ReleaseWizardRegions from "./wizard-steps/ReleaseWizardRegions";
 import ReleaseWizardStores from "./wizard-steps/ReleaseWizardStores";
 import ReleaseWizardPreview from "./wizard-steps/ReleaseWizardPreview";
 
+import { LuRotateCw } from "react-icons/lu";
+
 export interface ReleaseWizardStepProps {
   currentStepName?: string;
   nextStepName?: string;
@@ -39,7 +43,12 @@ const ReleaseWizard = ({ id }: { id: UUID }) => {
     useAppSelector((state) => state.navigation);
   const { release } = useAppSelector((state) => state.release);
 
-  const { getRelease, isFetching: releaseIsFetching } = useGetRelease();
+  const {
+    getRelease,
+    isFetching: releaseIsFetching,
+    isError: releaseIsError,
+    error: releaseError,
+  } = useGetRelease();
   const {
     fetchReleaseNavigationFlows,
     isFetching: releaseNavigationFlowsIsFetching,
@@ -80,6 +89,11 @@ const ReleaseWizard = ({ id }: { id: UUID }) => {
     !activeReleaseNavigationFlow ||
     createReleaseNavigationFlowIsLoading ||
     stepIsSwitching;
+
+  // The release never loaded: show the failure with a retry instead of an
+  // endless skeleton. A failed background refetch keeps the loaded step.
+  const releaseLoadFailed =
+    releaseIsError && !releaseIsFetching && !isCurrentRelease;
 
   // Guards the one-time bootstrap of the initial OVERVIEW navigation flow so a
   // slow/duplicate render can't create it twice.
@@ -238,6 +252,37 @@ const ReleaseWizard = ({ id }: { id: UUID }) => {
     releaseIsFetching,
     staticSteps,
   ]);
+
+  if (releaseLoadFailed) {
+    return (
+      <UserLayout variant="canvas">
+        <SectionCard
+          title="We couldn't load this release"
+          description={getApiErrorMessage(
+            releaseError,
+            "Something went wrong. Please try again.",
+          )}
+          action={
+            <Button
+              primary
+              icon={LuRotateCw}
+              onClick={(event) => {
+                event.preventDefault();
+                getRelease({ id });
+              }}
+            >
+              Retry
+            </Button>
+          }
+        >
+          <p className="type-body text-(--danger)" role="alert">
+            The release didn't load, so the wizard can't open yet. Try again,
+            or go back to your releases and open it from there.
+          </p>
+        </SectionCard>
+      </UserLayout>
+    );
+  }
 
   return (
     <UserLayout variant="canvas">

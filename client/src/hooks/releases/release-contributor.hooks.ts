@@ -8,10 +8,10 @@ import {
 
 // FETCH RELEASE CONTRIBUTORS
 export const useFetchReleaseContributors = () => {
-  const [fetchReleaseContributors, { isFetching, data, isSuccess }] =
+  const [fetchReleaseContributors, { isFetching, data, isSuccess, isError, error }] =
     useLazyFetchReleaseContributorsQuery();
 
-  return { fetchReleaseContributors, isFetching, data, isSuccess };
+  return { fetchReleaseContributors, isFetching, data, isSuccess, isError, error };
 };
 
 export const useCreateBulkReleaseContributors = () => {

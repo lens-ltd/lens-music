@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
 import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { getApiErrorMessage } from "@/utils/errors.helper";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler } from "react-hook-form";
 import { Heading } from "@/components/text/Headings";
 import Input from "@/components/inputs/Input";
 import { useEffect, useMemo, useState } from "react";
@@ -25,6 +25,10 @@ import { toast } from "sonner";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
+import {
+  ReleaseOverviewFormValues,
+  useReleaseOverviewForm,
+} from "@/hooks/releases/releaseOverviewForm.hooks";
 import { Genre } from "@/types/models/genre.types";
 import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 import ReleaseLabelsSection from "./components/ReleaseLabelsSection";
@@ -33,34 +37,6 @@ import moment from "moment";
 
 import { LuSquarePen, LuTrash2 } from 'react-icons/lu';
 import { iconButtonClassName } from '@/constants/input.constants';
-
-interface ReleaseOverviewFormValues {
-  type: ReleaseType;
-  title: string;
-  titleVersion?: string;
-  version?: string;
-  productionYear: string;
-  originalReleaseDate: string | Date;
-  digitalReleaseDate: string | Date;
-  preorderDate?: string | Date;
-  cLine: {
-    year: string;
-    owner: string;
-  };
-  pLine: {
-    year: string;
-    owner: string;
-  };
-  parentalAdvisory: ReleaseParentalAdvisory;
-  primaryLanguage: string;
-  primaryGenreId: string;
-  secondaryGenreId?: string;
-  metadataLanguage?: string;
-  grid?: string;
-  description?: string;
-  keywords?: string;
-  marketingComment?: string;
-}
 
 const normalizeOptionalString = (value?: string) => {
   const normalizedValue = value?.trim();
@@ -114,8 +90,8 @@ const ReleaseWizardOverview = ({
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
-  } = useForm<ReleaseOverviewFormValues>();
+    reset,
+  } = useReleaseOverviewForm(release);
 
   // HANDLE SUBMISSION
   const onSubmit: SubmitHandler<ReleaseOverviewFormValues> = async (data) => {
@@ -194,6 +170,9 @@ const ReleaseWizardOverview = ({
           id: releaseId,
           body: payload,
         }).unwrap();
+        // The saved values become the new baseline; a failed move to the next
+        // step then leaves them in place.
+        reset(data);
         toast.success(
           response?.message || "Release overview updated successfully",
         );
@@ -207,70 +186,10 @@ const ReleaseWizardOverview = ({
     });
   };
 
-  // SET DEFAULT VALUES
+  // FETCH GENRES
   useEffect(() => {
     fetchGenres({});
   }, [fetchGenres]);
-
-  useEffect(() => {
-    if (release) {
-      // Sensible defaults so the wizard is effortless — only applied when the
-      // release field is unset, never overwriting real data.
-      const currentYear = String(moment().year());
-
-      setValue("type", release.type || ReleaseType.ALBUM);
-      setValue("title", release.title || "");
-      setValue("titleVersion", release.titleVersion || "");
-      setValue("version", release.version || "");
-      setValue(
-        "productionYear",
-        release.productionYear ? String(release.productionYear) : currentYear,
-      );
-      setValue(
-        "originalReleaseDate",
-        release.originalReleaseDate || moment().format("YYYY-MM-DD"),
-      );
-      setValue(
-        "digitalReleaseDate",
-        release.digitalReleaseDate ||
-          moment().add(14, "days").format("YYYY-MM-DD"),
-      );
-      setValue("preorderDate", release.preorderDate || "");
-      setValue(
-        "cLine.year",
-        release.cLine?.year ? String(release.cLine.year) : currentYear,
-      );
-      setValue("cLine.owner", release.cLine?.owner || "");
-      setValue(
-        "pLine.year",
-        release.pLine?.year ? String(release.pLine.year) : currentYear,
-      );
-      setValue("pLine.owner", release.pLine?.owner || "");
-      setValue(
-        "parentalAdvisory",
-        release.parentalAdvisory || ReleaseParentalAdvisory.NOT_EXPLICIT,
-      );
-      setValue("primaryLanguage", release.primaryLanguage || "en");
-      setValue(
-        "primaryGenreId",
-        release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)
-          ?.genreId || "",
-      );
-      setValue(
-        "secondaryGenreId",
-        release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)
-          ?.genreId || "",
-      );
-      setValue("metadataLanguage", release.metadataLanguage || "en");
-      setValue("grid", release.grid || "");
-      setValue("description", release.description || "");
-      setValue(
-        "keywords",
-        release.keywords?.length ? release.keywords.join(", ") : "",
-      );
-      setValue("marketingComment", release.marketingComment || "");
-    }
-  }, [release, setValue]);
 
   const genreOptions = (genresResponse?.data ?? []).map((genre: Genre) => ({
     label: genre.name,

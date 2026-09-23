@@ -40,6 +40,8 @@ interface ComboboxProps {
     isLoading?: boolean;
     readOnly?: boolean;
     errorMessage?: string | FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>> | undefined;
+    /** When set, the parent searches (for example on the server) and `options` are shown unfiltered. */
+    onSearchChange?: (search: string) => void;
 }
 
 const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
@@ -60,6 +62,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
             isLoading,
             readOnly,
             errorMessage,
+            onSearchChange,
         },
         ref
     ) => {
@@ -73,23 +76,28 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
 
         const visibleOptions = useMemo(() => {
             const query = search.trim().toLowerCase();
-            if (!query) return options;
+            if (!query || onSearchChange) return options;
             return options.filter((option) =>
                 option.label.toLowerCase().includes(query)
             );
-        }, [options, search]);
+        }, [options, search, onSearchChange]);
+
+        const updateSearch = (nextSearch: string) => {
+            setSearch(nextSearch);
+            onSearchChange?.(nextSearch);
+        };
 
         const handleOpenChange = (nextOpen: boolean) => {
             setOpen(nextOpen);
             // Reset the query whenever the menu closes so the next open
             // starts from the full list.
-            if (!nextOpen) setSearch('');
+            if (!nextOpen) updateSearch('');
         };
 
         const selectOption = (selectedValue: string) => {
             onChange?.(selectedValue);
             setOpen(false);
-            setSearch('');
+            updateSearch('');
         };
 
         return (
@@ -164,7 +172,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
                                 <LuSearch className="size-4 shrink-0 text-(--muted)" aria-hidden="true" />
                                 <input
                                     value={search}
-                                    onChange={(event) => setSearch(event.target.value)}
+                                    onChange={(event) => updateSearch(event.target.value)}
                                     placeholder="Search options"
                                     aria-label="Search options"
                                     className={cn(

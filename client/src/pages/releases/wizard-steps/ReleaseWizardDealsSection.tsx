@@ -10,6 +10,7 @@ import {
 } from '@/hooks/releases/release-deals.hooks';
 import { useFetchStores } from '@/hooks/stores/store.hooks';
 import Modal from '@/components/modals/Modal';
+import WizardQueryError from './components/WizardQueryError';
 import { useAppSelector } from '@/state/hooks';
 import {
   CommercialModelType,
@@ -18,7 +19,7 @@ import {
   DealUseType,
 } from '@/types/models/deal.types';
 import { capitalizeString } from '@/utils/strings.helper';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 const commercialModelOptions = Object.values(CommercialModelType).map((v) => ({
@@ -44,7 +45,7 @@ const parseTerritories = (raw: string) =>
 
 const ReleaseWizardDealsSection = () => {
   const { release } = useAppSelector((state) => state.release);
-  const { fetchReleaseDeals, data, isFetching, isSuccess } =
+  const { fetchReleaseDeals, data, isFetching, isSuccess, isError, error } =
     useFetchReleaseDeals();
   const { fetchStores, data: storesResponse } = useFetchStores();
   const { createReleaseDeal, isLoading: isCreating } = useCreateReleaseDeal();
@@ -105,49 +106,6 @@ const ReleaseWizardDealsSection = () => {
     ],
     [stores],
   );
-
-  // A release needs at least one active deal to validate. When the user reaches
-  // this step with none, silently create a default worldwide global deal (no
-  // storeId → covers every store). Guarded to run once; if deals already exist
-  // it does nothing (so it never regresses a configured release).
-  const hasAutoCreatedDealRef = useRef(false);
-  useEffect(() => {
-    if (hasAutoCreatedDealRef.current) return;
-    const releaseId = release?.id;
-    if (!releaseId || !isSuccess) return;
-
-    hasAutoCreatedDealRef.current = true;
-    if (deals.length > 0) return;
-
-    const startDate =
-      release?.digitalReleaseDate?.slice(0, 10) ||
-      new Date().toISOString().slice(0, 10);
-
-    void (async () => {
-      try {
-        await createReleaseDeal({
-          releaseId,
-          body: {
-            commercialModelType: CommercialModelType.SUBSCRIPTION,
-            useType: DealUseType.ON_DEMAND_STREAM,
-            territories: [],
-            startDate,
-          },
-        }).unwrap();
-        await fetchReleaseDeals({ releaseId });
-      } catch {
-        // Best-effort: a deal may already exist or overlap; the user can still
-        // add one manually below.
-      }
-    })();
-  }, [
-    release?.id,
-    release?.digitalReleaseDate,
-    isSuccess,
-    deals.length,
-    createReleaseDeal,
-    fetchReleaseDeals,
-  ]);
 
   const handleCreate = useCallback(async () => {
     if (!release?.id) return;
@@ -338,6 +296,15 @@ const ReleaseWizardDealsSection = () => {
           <p className="mt-2 text-[13px] text-(--muted)">
             Loading…
           </p>
+        ) : isError ? (
+          <WizardQueryError
+            className="mt-2"
+            title="We couldn't load the deals."
+            error={error}
+            onRetry={() => {
+              if (release?.id) fetchReleaseDeals({ releaseId: release.id });
+            }}
+          />
         ) : deals.length === 0 ? (
           <p className="mt-2 text-[13px] text-(--muted)">
             No deals yet. Add one above.

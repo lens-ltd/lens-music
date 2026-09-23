@@ -31,7 +31,7 @@ export const useFetchTracks = () => {
     setTotalPages,
   } = usePagination();
 
-  const [fetchTracks, { isFetching, data, isSuccess }] =
+  const [fetchTracks, { isFetching, data, isSuccess, isError, error }] =
     useLazyFetchTracksQuery();
 
   useEffect(() => {
@@ -45,6 +45,8 @@ export const useFetchTracks = () => {
   return {
     fetchTracks,
     isFetching,
+    isError,
+    error,
     page,
     size,
     totalCount,

@@ -19,6 +19,7 @@ import {
   ReleaseLabelType,
 } from "@/types/models/releaseLabel.types";
 import { capitalizeString } from "@/utils/strings.helper";
+import WizardQueryError from "./WizardQueryError";
 
 import { LuCheck, LuSearch } from 'react-icons/lu';
 
@@ -36,7 +37,8 @@ type LabelFormState = {
 };
 
 const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
-  const { fetchReleaseLabels, data, isFetching } = useFetchReleaseLabels();
+  const { fetchReleaseLabels, data, isFetching, isError, error } =
+    useFetchReleaseLabels();
   const { createReleaseLabel, isLoading: isCreating } = useCreateReleaseLabel();
   const { updateReleaseLabel, isLoading: isUpdating } = useUpdateReleaseLabel();
   const { deleteReleaseLabel, isLoading: isDeleting } = useDeleteReleaseLabel();
@@ -343,6 +345,12 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
         <div className="mt-5 pt-4">
           {isFetching ? (
             <p className="text-[13px] text-(--muted)">Loading labels...</p>
+          ) : isError ? (
+            <WizardQueryError
+              title="We couldn't load the labels."
+              error={error}
+              onRetry={() => fetchReleaseLabels({ releaseId })}
+            />
           ) : releaseLabels.length === 0 ? (
             <p className="text-[13px] text-(--muted)">
               No labels assigned yet.
