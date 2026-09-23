@@ -80,9 +80,7 @@ const PreviewTracksSection = ({
       cell: ({ row }) => (
         <span className="text-[13px] text-(--muted)">
           {row.original.soundRecordingType
-            ? capitalizeString(
-                row.original.soundRecordingType.replace(/_/g, " ").toLowerCase(),
-              )
+            ? capitalizeString(row.original.soundRecordingType)
             : "—"}
         </span>
       ),

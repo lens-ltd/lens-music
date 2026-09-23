@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ReleaseService } from './releases.service';
 import { Release } from '../../entities/release.entity';
 import { TrackStatus } from '../../entities/track.entity';
@@ -205,7 +205,41 @@ describe('ReleaseService validation', () => {
   });
 });
 
+/** A release waiting for review, with the notification email stubbed out. */
+const setupInReview = () => {
+  const release = buildValidRelease();
+  release.status = ReleaseStatus.REVIEW;
+  const ctx = setup(release);
+  const notify = jest
+    .spyOn(ctx.service as never as { notifyReleaseReviewOutcome: () => Promise<void> }, 'notifyReleaseReviewOutcome')
+    .mockResolvedValue(undefined);
+  return { ...ctx, release, notify };
+};
+
 describe('ReleaseService review transitions', () => {
+  it('moves a valid release to VALIDATED on validate', async () => {
+    const { service, releaseRepository } = setup(buildValidRelease());
+
+    const result = await service.validateRelease(RELEASE_ID, USER);
+
+    expect(result.valid).toBe(true);
+    expect(releaseRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ status: ReleaseStatus.VALIDATED }),
+    );
+  });
+
+  it('keeps the status when submit finds errors', async () => {
+    const release = buildValidRelease();
+    release.title = '';
+    const { service, releaseRepository } = setup(release);
+
+    const result = await service.submitRelease(RELEASE_ID, USER);
+
+    expect(result.valid).toBe(false);
+    expect(releaseRepository.save).not.toHaveBeenCalled();
+    expect(release.status).toBe(ReleaseStatus.DRAFT);
+  });
+
   it('moves a valid release to REVIEW on submit', async () => {
     const { service, releaseRepository } = setup(buildValidRelease());
 
@@ -229,4 +263,66 @@ describe('ReleaseService review transitions', () => {
       );
     },
   );
+
+  it('approves a release in REVIEW and notifies the artist', async () => {
+    const { service, release, notify } = setupInReview();
+    release.reviewNotes = 'Fix the cover';
+
+    const saved = await service.approveRelease(RELEASE_ID, USER);
+
+    expect(saved.status).toBe(ReleaseStatus.APPROVED);
+    expect(saved.reviewedById).toBe(USER.id);
+    expect(saved.reviewedAt).toBeInstanceOf(Date);
+    expect(saved.reviewNotes).toBeUndefined();
+    expect(notify).toHaveBeenCalledWith(saved, 'APPROVED');
+  });
+
+  it('rejects a release in REVIEW back to DRAFT with notes', async () => {
+    const { service, notify } = setupInReview();
+
+    const saved = await service.rejectRelease(RELEASE_ID, { reviewNotes: 'Cover is blurry' }, USER);
+
+    expect(saved.status).toBe(ReleaseStatus.DRAFT);
+    expect(saved.reviewNotes).toBe('Cover is blurry');
+    expect(saved.reviewedById).toBe(USER.id);
+    expect(notify).toHaveBeenCalledWith(saved, 'REJECTED');
+  });
+
+  it.each([ReleaseStatus.DRAFT, ReleaseStatus.APPROVED, ReleaseStatus.LIVE])(
+    'refuses to reject a release in %s',
+    async (status) => {
+      const release = buildValidRelease();
+      release.status = status;
+      const { service } = setup(release);
+
+      await expect(
+        service.rejectRelease(RELEASE_ID, { reviewNotes: 'No' }, USER),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    },
+  );
+
+  it('returns 404 when approving or rejecting a missing release', async () => {
+    const { service, releaseRepository } = setup(buildValidRelease());
+    releaseRepository.findOne.mockResolvedValue(null);
+
+    await expect(service.approveRelease(RELEASE_ID, USER)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(
+      service.rejectRelease(RELEASE_ID, { reviewNotes: 'No' }, USER),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('demotes a VALIDATED release to DRAFT when it is edited', async () => {
+    const release = buildValidRelease();
+    release.status = ReleaseStatus.VALIDATED;
+    const { service, releaseRepository } = setup(release);
+
+    await service.updateTerritories(RELEASE_ID, { territories: ['RW'] } as never, USER);
+
+    expect(releaseRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ status: ReleaseStatus.DRAFT, territories: ['RW'] }),
+    );
+  });
+
+  it.todo('only accepts submit from DRAFT or VALIDATED (LIFE-1)');
+  it.todo('blocks a reviewer from approving their own release (LIFE-1)');
 });

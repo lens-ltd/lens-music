@@ -22,17 +22,17 @@ import { toast } from 'sonner';
 
 const commercialModelOptions = Object.values(CommercialModelType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const useTypeOptions = Object.values(DealUseType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const priceTypeOptions = Object.values(DealPriceType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const parseTerritories = (raw: string) =>

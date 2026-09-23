@@ -24,6 +24,7 @@ import { RelatedReleasesModule } from './modules/related-releases/related-releas
 import { DdexModule } from './modules/ddex/ddex.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { CatalogAccessModule } from './modules/catalog-access/catalog-access.module';
+import { resolveDbSsl } from './helpers/database.helper';
 
 @Module({
   imports: [
@@ -44,11 +45,7 @@ import { CatalogAccessModule } from './modules/catalog-access/catalog-access.mod
       autoLoadEntities: true,
       entities: [`${__dirname}/**/entities/*.{ts,js}`],
       migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
-      ssl: ['localhost', '127.0.0.1', '/var/run/postgresql'].includes(
-        process.env.DB_HOST || ''
-      )
-        ? false
-        : { rejectUnauthorized: false },
+      ssl: resolveDbSsl(),
     }),
     AuthModule,
     CatalogAccessModule,

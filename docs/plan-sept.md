@@ -104,7 +104,9 @@ Tokens live in `client/src/index.css`.
   - api: Jest with an e2e Postgres (testcontainers or a docker-compose service).
   - client: add a `"test": "vitest run"` script and fix the 2 failing `ComboboxModal.spec.tsx` tests.
 - Acceptance: `npm test` passes in both packages. Release validation and the status transitions have unit tests.
-- Deps: none. Status: in progress (Claude, 2026-09-23), branch `m0/ops-3-test-harness`. Unit tests pass; e2e not yet run (no Docker locally).
+- Deps: none. Status: done (branch `m0/ops-3-test-harness`, 2026-09-23).
+  - api: 35 unit tests + 2 `it.todo` for LIFE-1; 6 e2e tests (including register → login → `GET /api/releases`) pass against local Postgres.
+  - e2e uses testcontainers when Docker is available, or `E2E_DB_HOST=…` to create and drop a throwaway DB on any server. For OPS-4, use a GitHub `services: postgres` container with `E2E_DB_HOST`.
 
 **OPS-4 · P0 · CI**
 - Files: `.github/workflows/ci.yml`
@@ -145,6 +147,8 @@ Tokens live in `client/src/index.css`.
 
 Findings:
 - `client`: dialog, popover, select and tooltip each had their own copy of `@radix-ui/react-dismissable-layer`, so pressing Escape in a Combobox inside a Modal went to the dialog instead of the dropdown. Fixed in OPS-3 by upgrading all `@radix-ui/*` packages together. Keep them on matching versions.
+- `api`: the app now honors `DB_SSL=true|false` (`api/src/helpers/database.helper.ts`). When it's unset, it keeps the old host-based rule. `.env.example` used to ship `DB_SSL=false`, which the app ignored. Check that no deployed env sets `DB_SSL=false` for a remote DB.
+- `api`: the Joi `validateEmail` (`api/src/helpers/validations.helper.ts`) rejects reserved TLDs such as `.test`. Tests use `example.com`.
 
 ## Workstream SEC: security
 

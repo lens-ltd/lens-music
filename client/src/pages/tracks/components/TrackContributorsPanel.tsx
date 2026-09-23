@@ -10,7 +10,8 @@ import {
   getContributorSearchName,
 } from "@/utils/contributorCredit.helper";
 import { FormEvent } from "react";
-import { MIN_CONTRIBUTOR_SEARCH_CHARS, toTitleCase } from "./trackForm.helpers";
+import { MIN_CONTRIBUTOR_SEARCH_CHARS } from "./trackForm.helpers";
+import { capitalizeString } from "@/utils/strings.helper";
 
 import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
@@ -197,7 +198,7 @@ const TrackContributorsPanel = ({
                   )}
                 </p>
                 <p className="text-xs text-(--muted)">
-                  {toTitleCase(trackContributor?.role)}
+                  {capitalizeString(trackContributor?.role)}
                 </p>
                 {onUpdateSequence ? (
                   <label className="mt-1 flex items-center gap-2 text-xs text-(--muted)">

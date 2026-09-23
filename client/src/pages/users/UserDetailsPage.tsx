@@ -183,7 +183,7 @@ const UserDetailsPage = () => {
           }
         >
           <KeyValueList>
-            <KeyValuePair keyText="role" label="Role" valueText={user.roleName} emptyText="No role assigned" />
+            <KeyValuePair keyText="role" label="Role" valueText={capitalizeString(user.roleName)} emptyText="No role assigned" />
             <KeyValuePair
               keyText="permissions"
               label="Permissions"

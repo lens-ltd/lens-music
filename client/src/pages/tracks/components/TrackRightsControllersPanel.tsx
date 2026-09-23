@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 
 const rightTypeOptions = Object.values(TrackRightType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const parseTerritories = (raw: string) =>

@@ -4,7 +4,7 @@ import { ellipsisHClassName } from "@/constants/input.constants";
 import { setDeleteRoleModal, setSelectedRole } from "@/state/features/roleSlice";
 import { useAppDispatch } from "@/state/hooks";
 import { Role } from "@/types/models/role.types";
-import { formatDate } from "@/utils/strings.helper";
+import { capitalizeString, formatDate } from "@/utils/strings.helper";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
@@ -18,7 +18,7 @@ export const useRoleColumns = () => {
       {
         header: "Name",
         accessorKey: "name",
-        cell: ({ row }) => row.original.name || "—",
+        cell: ({ row }) => capitalizeString(row.original.name) || "—",
       },
       {
         header: "Description",

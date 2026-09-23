@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { LuCalendar, LuGlobe, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
 
 import StatusBadge from '@/components/feedbacks/StatusBadge';
+import { capitalizeString } from '@/utils/strings.helper';
 const UserProfilePage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -101,7 +102,7 @@ const UserProfilePage = () => {
               <div className="flex items-center gap-2 mt-2">
                 <span className="inline-flex h-6 items-center gap-1.5 rounded-(--radius-pill) bg-(--paper) px-2.5 text-xs text-(--ink)">
                   <LuShield className="size-3.5" aria-hidden="true" />
-                  {user?.roleName || 'No role assigned'}
+                  {capitalizeString(user?.roleName) || 'No role assigned'}
                 </span>
                 <StatusBadge status={user?.status || 'ACTIVE'} />
               </div>
@@ -276,7 +277,7 @@ const UserProfilePage = () => {
                         Gender
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">
-                        {user.gender}
+                        {capitalizeString(user.gender)}
                       </p>
                     </div>
                   </div>
@@ -297,7 +298,7 @@ const UserProfilePage = () => {
                     key={permission}
                     className="inline-flex items-center px-2 py-1 rounded-md bg-(--signal-soft) text-xs text-(--signal)"
                   >
-                    {permission.replace(/_/g, ' ').toLowerCase()}
+                    {capitalizeString(permission)}
                   </span>
                 ))}
               </div>

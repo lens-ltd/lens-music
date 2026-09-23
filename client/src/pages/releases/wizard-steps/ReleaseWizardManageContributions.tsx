@@ -25,10 +25,8 @@ import {
   getContributorCreditName,
   getContributorSearchName,
 } from "@/utils/contributorCredit.helper";
-import {
-  MIN_CONTRIBUTOR_SEARCH_CHARS,
-  toTitleCase,
-} from "@/pages/tracks/components/trackForm.helpers";
+import { MIN_CONTRIBUTOR_SEARCH_CHARS } from "@/pages/tracks/components/trackForm.helpers";
+import { capitalizeString } from "@/utils/strings.helper";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
@@ -429,7 +427,7 @@ const ReleaseWizardManageContributions = ({
                     )}
                   </p>
                   <p className="text-xs text-(--muted)">
-                    {toTitleCase(releaseContributor?.role)}
+                    {capitalizeString(releaseContributor?.role)}
                   </p>
                   <label className="mt-1 flex items-center gap-2 text-xs text-(--muted)">
                     <span className="shrink-0 text-xs">Order</span>

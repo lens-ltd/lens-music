@@ -2,7 +2,6 @@ import Input from "@/components/inputs/Input";
 import DashboardSection from "@/pages/dashboard/components/DashboardSection";
 import { Track } from "@/types/models/track.types";
 import { capitalizeString } from "@/utils/strings.helper";
-import { toTitleCase } from "./trackForm.helpers";
 
 interface TrackDetailsSummaryProps {
   track?: Track;
@@ -24,7 +23,7 @@ const TrackDetailsSummary = ({ track }: TrackDetailsSummaryProps) => {
         <Input label="Musical Key" value={track.musicalKey || "—"} readOnly />
         <Input
           label="Parental Advisory"
-          value={toTitleCase(track.parentalAdvisory || "—")}
+          value={capitalizeString(track.parentalAdvisory) || "—"}
           readOnly
         />
         <Input
@@ -44,11 +43,7 @@ const TrackDetailsSummary = ({ track }: TrackDetailsSummaryProps) => {
         />
         <Input
           label="Sound Recording Type"
-          value={
-            track.soundRecordingType
-              ? toTitleCase(track.soundRecordingType.replace(/_/g, " ").toLowerCase())
-              : "—"
-          }
+          value={capitalizeString(track.soundRecordingType) || "—"}
           readOnly
         />
         <Input
