@@ -306,7 +306,7 @@ const ActionQueue = ({ items }: { items: DashboardActionItem[] }) => (
         </p>
       </div>
     ) : (
-      <ul className="divide-y divide-(--line)">
+      <ul className="divide-y divide-(--line-soft)">
         {items.map((item) => (
           <li key={item.id}>
             <Link
@@ -353,7 +353,7 @@ const RecentReleases = ({ releases }: { releases: DashboardRelease[] }) => (
     }
   >
     {releases.length ? (
-      <ul className="divide-y divide-(--line)">
+      <ul className="divide-y divide-(--line-soft)">
         {releases.map((release) => (
           <RecentReleaseRow key={release.id} release={release} />
         ))}

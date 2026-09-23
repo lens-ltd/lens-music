@@ -55,7 +55,7 @@ const Navbar = ({ className, public: isPublic }: NavbarProps) => {
         aria-label="Main navigation"
       >
         <Link to="/dashboard" className="rounded-(--radius-control)">
-          <img src={LensLogo} alt="Lens Music" className="h-7 w-auto" />
+          <img src={LensLogo} alt="Lens Music" className="h-5 w-auto" />
         </Link>
 
         <section className="flex items-center gap-3 sm:gap-4">

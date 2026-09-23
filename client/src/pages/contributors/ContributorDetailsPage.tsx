@@ -41,11 +41,11 @@ import { useRequestContributorVerificationMutation } from "@/state/api/apiMutati
 import { LuBadgeCheck, LuPlus, LuSquarePen, LuTrash2 } from 'react-icons/lu';
 
 const statusBadgeClassNames: Record<string, string> = {
-  ACTIVE: "bg-(--success-soft) text-(--success) ring-1 ring-inset ring-(--success-soft)",
-  INACTIVE: "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)",
-  VERIFIED: "bg-(--signal-soft) text-(--signal) ring-1 ring-inset ring-primary/20",
-  PENDING: "bg-(--surface) text-(--ink) ring-1 ring-inset ring-(--line)",
-  NOT_VERIFIED: "bg-(--danger-soft) text-(--danger) ring-1 ring-inset ring-(--danger-soft)",
+  ACTIVE: "bg-(--success-soft) text-(--success)",
+  INACTIVE: "bg-(--surface) text-(--muted)",
+  VERIFIED: "bg-(--signal-soft) text-(--signal)",
+  PENDING: "bg-(--surface) text-(--ink)",
+  NOT_VERIFIED: "bg-(--danger-soft) text-(--danger)",
 };
 
 type FieldConfig = {
@@ -56,12 +56,12 @@ type FieldConfig = {
 
 const getBadgeClassName = (status?: string) => {
   if (!status) {
-    return "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)";
+    return "bg-(--surface) text-(--muted)";
   }
 
   return (
     statusBadgeClassNames[status] ||
-    "bg-(--surface) text-(--muted) ring-1 ring-inset ring-(--line)"
+    "bg-(--surface) text-(--muted)"
   );
 };
 

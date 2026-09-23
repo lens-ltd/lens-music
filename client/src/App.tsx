@@ -1,5 +1,6 @@
 import { Toaster } from "sonner";
 import Router from "./Router";
+import RouteEffects from "./components/layout/RouteEffects";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           },
         }}
       />
+      <RouteEffects />
       <Router />
     </>
   );

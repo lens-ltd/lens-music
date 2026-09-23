@@ -21,9 +21,9 @@ export default function ArtistAgreement() {
     >
       <PublicNavbar scrolled={scrolled} variant="landing" />
       
-      <article className="max-w-4xl mx-auto px-6 py-24">
+      <article className="max-w-4xl mx-auto min-h-svh px-6 py-24">
         {/* Header */}
-        <header className="mb-12">
+        <header className="mb-12" data-reveal>
           <Link
             to="/"
             className="mb-6 inline-flex items-center gap-2 type-body-sm text-(--signal) link-sweep"

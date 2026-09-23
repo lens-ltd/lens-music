@@ -1,5 +1,5 @@
 import { LuPlus } from 'react-icons/lu';
-import { landingSectionClassName } from './landingShared';
+import { landingSectionClassName, reveal } from './landingShared';
 
 const faqs = [
   [
@@ -28,13 +28,13 @@ export default function FAQSection() {
   return (
     <section id="faq" className={`${landingSectionClassName} bg-(--canvas)`} aria-labelledby="faq-heading">
       <div className="app-container grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
-        <h2 id="faq-heading" className="type-h2">
+        <h2 id="faq-heading" className="type-h2" {...reveal(0)}>
           Questions
         </h2>
 
-        <div className="divide-y divide-(--line)">
-          {faqs.map(([question, answer]) => (
-            <details key={question} className="group">
+        <div className="divide-y divide-(--line-soft)">
+          {faqs.map(([question, answer], index) => (
+            <details key={question} className="group" {...reveal(index + 1)}>
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
                 <span className="type-body font-medium">{question}</span>
                 <LuPlus

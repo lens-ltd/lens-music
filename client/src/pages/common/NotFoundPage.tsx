@@ -13,7 +13,7 @@ export default function NotFoundPage() {
     <main className="min-h-screen bg-(--paper) text-(--ink) overflow-x-hidden">
       {token ? <Navbar /> : <PublicNavbar scrolled variant="landing" />}
 
-      <section className="app-container flex min-h-[calc(100vh-64px)] flex-col justify-center py-24">
+      <section className="app-container flex min-h-svh flex-col justify-center pt-[calc(64px+3rem)] pb-16" data-reveal>
         <p className="type-meta">Error 404</p>
         <h1 className="mt-3 type-hero max-w-[16ch]">This page doesn't exist.</h1>
         <p className="mt-6 max-w-[46ch] type-body text-(--muted)">

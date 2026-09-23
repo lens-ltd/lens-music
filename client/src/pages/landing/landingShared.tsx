@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { IconType } from 'react-icons';
 import {
   SiApplemusic,
@@ -35,3 +36,12 @@ export const stores: Store[] = [
 
 /** Vertical rhythm shared by every landing section. */
 export const landingSectionClassName = 'py-20 md:py-28';
+
+/**
+ * Spread onto a wrapper to fade it up on scroll (see RouteEffects).
+ * `index` staggers siblings by 90ms each. Keep it off elements with their own transitions.
+ */
+export const reveal = (index = 0) => ({
+  'data-reveal': '',
+  style: { '--reveal-i': index } as CSSProperties,
+});

@@ -30,7 +30,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("divide-y divide-(--line)", className)}
+    className={cn("divide-y divide-(--line-soft)", className)}
     {...props}
   />
 ))
@@ -73,7 +73,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 whitespace-nowrap border-b border-(--line) px-4 text-left text-[13px] font-medium text-(--ink) align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 whitespace-nowrap px-4 text-left text-[13px] font-medium text-(--ink) align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className
     )}
     {...props}

@@ -1,4 +1,5 @@
 import { Controller, FieldValues, useForm } from 'react-hook-form';
+import AuthLayout from '@/components/layout/AuthLayout';
 import { validateInputs } from '../../utils/validations.helper';
 import Input from '../../components/inputs/Input';
 import Button from '../../components/inputs/Button';
@@ -9,8 +10,6 @@ import { AppDispatch } from '../../state/store';
 import { useDispatch } from 'react-redux';
 import { setSession } from '../../state/features/authSlice';
 import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
-import PublicNavbar from '../../components/layout/PublicNavbar';
-import PublicFooter from '../../components/layout/PublicFooter';
 import { useAppSelector } from '@/state/hooks';
 
 import { LuEye, LuEyeOff } from 'react-icons/lu';
@@ -53,13 +52,7 @@ const Login = () => {
   }
 
   return (
-    <main
-      className="min-h-screen bg-(--paper) flex flex-col"
-    >
-      <PublicNavbar scrolled variant="auth" />
-
-      <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[400px]">
+    <AuthLayout widthClassName="max-w-[440px]">
           <h1 className="type-page-title text-2xl">
             Sign in to Lens Music
           </h1>
@@ -141,11 +134,7 @@ const Login = () => {
               Create account
             </Link>
           </div>
-        </article>
-      </section>
-
-      <PublicFooter />
-    </main>
+    </AuthLayout>
   );
 };
 

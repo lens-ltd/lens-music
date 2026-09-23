@@ -1,11 +1,10 @@
 import { useState } from 'react';
+import AuthLayout from '@/components/layout/AuthLayout';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorResponse, Link, Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Input from '@/components/inputs/Input';
 import Button from '@/components/inputs/Button';
-import PublicNavbar from '@/components/layout/PublicNavbar';
-import PublicFooter from '@/components/layout/PublicFooter';
 import { useRegisterMutation } from '@/state/api/apiMutationSlice';
 import { setSession } from '@/state/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -65,11 +64,7 @@ const SignUp = () => {
   };
 
   return (
-    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
-      <PublicNavbar scrolled variant="auth" />
-
-      <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[520px]">
+    <AuthLayout widthClassName="max-w-[560px]">
           <h1 className="type-page-title text-2xl">
             Create your Lens Music account
           </h1>
@@ -172,11 +167,7 @@ const SignUp = () => {
               Sign in
             </Link>
           </div>
-        </article>
-      </section>
-
-      <PublicFooter />
-    </main>
+    </AuthLayout>
   );
 };
 

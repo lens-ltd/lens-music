@@ -1,4 +1,5 @@
 import Button from '@/components/inputs/Button';
+import { reveal } from './landingShared';
 
 export default function CTASection() {
   return (
@@ -14,7 +15,10 @@ export default function CTASection() {
         className="absolute inset-0 -z-20 size-full object-cover"
       />
       <div className="absolute inset-0 -z-10 bg-(--signal)/65" aria-hidden="true" />
-      <div className="app-container flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+      <div
+        className="app-container flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between"
+        {...reveal(0)}
+      >
         <div>
           <h2 id="cta-heading" className="type-h2 max-w-[18ch]">
             Release your next track for free.

@@ -23,7 +23,7 @@ const legalLinks = [
 
 const PublicFooter: FC = () => (
   <footer id="contact" className="bg-(--paper)" role="contentinfo">
-    <div className="app-container grid grid-cols-2 gap-10 py-16 md:grid-cols-4">
+    <div className="app-container grid grid-cols-2 gap-10 py-16 md:grid-cols-4" data-reveal>
       <div className="col-span-2 md:col-span-1">
         <Link
           to="/"
@@ -31,7 +31,7 @@ const PublicFooter: FC = () => (
           className="block w-fit rounded-(--radius-control)"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <img src={LensLogo} alt="Lens Music" className="h-7 w-auto" />
+          <img src={LensLogo} alt="Lens Music" className="h-5 w-auto" />
         </Link>
         <p className="mt-4 max-w-[28ch] type-meta">
           Distribution and earnings reporting for independent artists and

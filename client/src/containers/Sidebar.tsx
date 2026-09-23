@@ -110,7 +110,7 @@ const Sidebar = () => {
     <motion.aside
       className={cn(
         'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--signal) text-white transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)]',
-        sidebarOpen ? 'w-60' : 'w-18',
+        sidebarOpen ? 'w-64' : 'w-18',
       )}
       aria-expanded={sidebarOpen}
       aria-label="Application"

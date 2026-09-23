@@ -133,7 +133,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-t border-(--line)">
+                <tr key={row.label} className="border-t border-(--line-soft)">
                   <th scope="row" className="py-1.5 font-normal">
                     {row.label}
                   </th>

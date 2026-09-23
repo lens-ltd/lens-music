@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@/components/inputs/Button';
-import { stores } from './landingShared';
+import { stores, reveal } from './landingShared';
 
 type DeliveryState = 'queued' | 'sending' | 'live';
 
@@ -62,16 +62,16 @@ export default function HeroSection() {
     >
       <div className="app-container grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-20">
         <header>
-          <h1 id="hero-heading" className="type-hero max-w-[14ch] text-(--ink)">
+          <h1 id="hero-heading" className="type-hero max-w-[14ch] text-(--ink)" {...reveal(0)}>
             Your music on Spotify, Apple Music and 150+ stores.
           </h1>
-          <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-(--muted)">
+          <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-(--muted)" {...reveal(1)}>
             Distribution is free. Lens keeps 15% of what your music earns, and
             only once it earns. You keep the rest and see exactly where it came
             from.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4" {...reveal(2)}>
             <Button route="/auth/signup" primary className="h-12 px-6 text-base">
               Create free account
             </Button>
@@ -85,7 +85,8 @@ export default function HeroSection() {
         </header>
 
         <figure
-          className="rounded-(--radius-card) border border-(--line) bg-(--canvas) p-5 sm:p-6"
+          className="rounded-(--radius-card) bg-(--canvas) p-5 sm:p-6"
+          {...reveal(3)}
           aria-label={`${featuredRelease.title} by ${featuredRelease.artist}, being delivered to stores`}
         >
           <div className="flex items-center gap-4">
@@ -109,7 +110,7 @@ export default function HeroSection() {
               return (
                 <li
                   key={name}
-                  className="flex h-11 items-center gap-3 rounded-(--radius-control) border border-(--line) bg-(--paper) px-3"
+                  className="flex h-11 items-center gap-3 rounded-(--radius-control) bg-(--paper) px-3"
                 >
                   <StoreMark className="size-[18px] shrink-0 text-(--ink)" aria-hidden="true" />
                   <span className="flex-1 text-sm text-(--ink)">{name}</span>
@@ -139,8 +140,8 @@ export default function HeroSection() {
       <div className="app-container mt-16 md:mt-24">
         <h2 className="sr-only">Stores Lens delivers to</h2>
         <ul className="flex list-none flex-wrap items-center gap-x-10 gap-y-6 p-0" role="list">
-          {stores.map(({ name, icon: StoreMark }) => (
-            <li key={name} className="flex items-center gap-2 text-(--ink)">
+          {stores.map(({ name, icon: StoreMark }, index) => (
+            <li key={name} className="flex items-center gap-2 text-(--ink)" {...reveal(index)}>
               <StoreMark className="size-5" aria-hidden="true" />
               <span className="text-sm font-medium">{name}</span>
             </li>

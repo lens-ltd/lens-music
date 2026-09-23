@@ -52,6 +52,8 @@
   --placeholder: #6b7075;
   /* Card and table borders. */
   --line: #d9dde1;
+  /* Hairlines between rows inside a card or table: separate, don't box. */
+  --line-soft: #e9ecef;
   /* Form field borders, strong enough to read as a control. */
   --line-field: #b9bfc5;
   --line-hover: #7d848b;
@@ -62,6 +64,8 @@
   --success-soft: #eaf4eb;
 
   --overlay: rgba(0, 0, 0, 0.45);
+  /* Raised white surfaces on the canvas that stand alone, e.g. the auth card. */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px rgba(0, 0, 0, 0.07);
   --shadow-menu: 0 8px 28px rgba(0, 0, 0, 0.12);
   --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.16);
   --ring-signal: 0 0 0 3px rgba(31, 98, 142, 0.15);
@@ -246,6 +250,36 @@
   .panel {
     border-radius: var(--radius-card);
     background: var(--paper);
+  }
+
+  /* A table inside a card is already framed by it: drop the second box. */
+  .card-framed [data-slot='table-frame'] {
+    border-color: transparent;
+  }
+
+  /* Accordions open smoothly where the browser can animate to `auto`. */
+  @supports (interpolate-size: allow-keywords) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+
+    details::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 300ms var(--ease-glide),
+        content-visibility 300ms allow-discrete;
+    }
+
+    details[open]::details-content {
+      block-size: auto;
+    }
+  }
+
+  /* Auth card: the intro (title + lead) is split from the form by a rule. */
+  .auth-card > h1 + p {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
   }
 }
 
@@ -496,7 +530,31 @@ details[open] > summary .faq-plus {
   transition: transform var(--dur-state) var(--ease-flat);
 }
 
+/*
+  Scroll reveal for public pages. RouteEffects adds `.is-revealed` as each
+  `[data-reveal]` enters the viewport; `--reveal-i` staggers siblings.
+  Only put it on wrappers that have no transition of their own.
+*/
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 700ms var(--ease-glide),
+    translate 700ms var(--ease-glide);
+  transition-delay: calc(var(--reveal-i, 0) * 90ms);
+}
+
+.reveal-ready [data-reveal].is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal] {
+    opacity: 1;
+    translate: none;
+  }
+
   *,
   *::before,
   *::after {

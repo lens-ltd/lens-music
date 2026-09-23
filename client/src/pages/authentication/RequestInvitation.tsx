@@ -1,11 +1,10 @@
 import { useEffect } from "react";
+import AuthLayout from '@/components/layout/AuthLayout';
 import { Controller, useForm } from "react-hook-form";
 import { ErrorResponse, Link, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 import Input from "@/components/inputs/Input";
 import Button from "@/components/inputs/Button";
-import PublicNavbar from "@/components/layout/PublicNavbar";
-import PublicFooter from "@/components/layout/PublicFooter";
 import { useRequestInvitationMutation } from "@/state/api/apiMutationSlice";
 import { useAppSelector } from "@/state/hooks";
 import { validateInputs } from "@/utils/validations.helper";
@@ -69,13 +68,7 @@ const RequestInvitation = () => {
   };
 
   return (
-    <main
-      className="min-h-screen bg-(--paper) flex flex-col"
-    >
-      <PublicNavbar scrolled variant="auth" />
-
-      <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[400px]">
+    <AuthLayout widthClassName="max-w-[440px]">
           <h1 className="type-page-title text-2xl">
             Request an invitation
           </h1>
@@ -154,11 +147,7 @@ const RequestInvitation = () => {
               Sign in
             </Link>
           </p>
-        </article>
-      </section>
-
-      <PublicFooter />
-    </main>
+    </AuthLayout>
   );
 };
 

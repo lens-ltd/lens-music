@@ -41,7 +41,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
           <img
             src={LensLogo}
             alt="Lens Music"
-            className="h-7 w-auto"
+            className="h-5 w-auto"
           />
         </Link>
 
@@ -99,7 +99,7 @@ const PublicNavbar: FC<PublicNavbarProps> = ({
               >
                 <LuMenu className="size-5" aria-hidden="true" />
               </summary>
-              <div className="absolute top-full right-0 mt-2 w-64 rounded-(--radius-control) bg-(--paper) p-2 shadow-(--shadow-menu)">
+              <div className="absolute top-full right-0 mt-2 w-64 rounded-(--radius-control) bg-(--paper) p-2 shadow-(--shadow-menu) animate-in fade-in-0 slide-in-from-top-1 duration-150">
                 <ul
                   className="flex flex-col gap-1 list-none m-0 p-0"
                   role="list"

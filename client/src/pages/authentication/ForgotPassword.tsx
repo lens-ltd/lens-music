@@ -1,11 +1,10 @@
 import { Controller, useForm } from 'react-hook-form';
+import AuthLayout from '@/components/layout/AuthLayout';
 import { useEffect } from 'react';
 import { ErrorResponse, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import Input from '@/components/inputs/Input';
 import Button from '@/components/inputs/Button';
-import PublicNavbar from '@/components/layout/PublicNavbar';
-import PublicFooter from '@/components/layout/PublicFooter';
 import { validateInputs } from '@/utils/validations.helper';
 import { useRequestPasswordResetMutation } from '@/state/api/apiMutationSlice';
 
@@ -34,11 +33,7 @@ const ForgotPassword = () => {
   }, [requestState.data?.message, requestState.error, requestState.isError, requestState.isSuccess, reset]);
 
   return (
-    <main className="min-h-screen bg-(--paper) flex flex-col" style={{ fontFamily: 'var(--font-sans)' }}>
-      <PublicNavbar scrolled variant="auth" />
-
-      <section className="flex-1 flex items-center justify-center px-6 py-12 pt-[calc(64px+2.5rem)]">
-        <article className="w-full max-w-[400px]">
+    <AuthLayout widthClassName="max-w-[440px]">
           <h1 className="type-page-title text-2xl" >
             Reset your password
           </h1>
@@ -73,11 +68,7 @@ const ForgotPassword = () => {
               Return to sign in
             </Link>
           </p>
-        </article>
-      </section>
-
-      <PublicFooter />
-    </main>
+    </AuthLayout>
   );
 };
 

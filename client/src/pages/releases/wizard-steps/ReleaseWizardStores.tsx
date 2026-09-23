@@ -217,7 +217,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) border border-(--line) bg-(--paper) p-3 transition-colors hover:bg-(--surface)"
+            className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) bg-(--surface) p-3 transition-colors hover:bg-(--surface-hover) has-checked:bg-(--signal-soft)"
           >
             <UiInput
               type="checkbox"
@@ -268,7 +268,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) border border-(--line) bg-(--paper) p-3 transition-colors hover:bg-(--surface)"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) bg-(--surface) p-3 transition-colors hover:bg-(--surface-hover) has-checked:bg-(--signal-soft)"
               >
                 <UiInput
                   type="checkbox"
