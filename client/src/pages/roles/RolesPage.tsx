@@ -62,7 +62,6 @@ const RolesPage = () => {
           setPage={setPage}
           setSize={setSize}
           noDataMessage="No roles found."
-          containerClassName="border-0 rounded-none"
         />
         <DeleteRole onDeleted={refreshRoles} />
       </main>

@@ -37,7 +37,7 @@ const PreviewTracksSection = ({
       accessorKey: "trackNumber",
       header: "#",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {row.original.trackNumber}
         </span>
       ),
@@ -46,7 +46,7 @@ const PreviewTracksSection = ({
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <span className="text-[12px] font-normal">
+        <span className="text-[13px] font-normal">
           {row.original.title}
           {row.original.titleVersion && (
             <span className="ml-1 text-(--muted)">
@@ -60,7 +60,7 @@ const PreviewTracksSection = ({
       accessorKey: "isrc",
       header: "ISRC",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {row.original.isrc || "—"}
         </span>
       ),
@@ -69,7 +69,7 @@ const PreviewTracksSection = ({
       accessorKey: "durationMs",
       header: "Duration",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {formatDurationMs(row.original.durationMs)}
         </span>
       ),
@@ -78,7 +78,7 @@ const PreviewTracksSection = ({
       accessorKey: "soundRecordingType",
       header: "Sound Recording",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {row.original.soundRecordingType
             ? capitalizeString(
                 row.original.soundRecordingType.replace(/_/g, " ").toLowerCase(),
@@ -91,7 +91,7 @@ const PreviewTracksSection = ({
       accessorKey: "previewDurationMs",
       header: "Preview",
       cell: ({ row }) => (
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {row.original.previewDurationMs
             ? formatDurationMs(row.original.previewDurationMs)
             : "—"}
@@ -149,10 +149,9 @@ const PreviewTracksSection = ({
             data={sortedTracks}
             showPagination={false}
             size={sortedTracks?.length}
-            containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No tracks added yet.
           </p>
         )}

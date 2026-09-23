@@ -13,6 +13,12 @@ import { Icon } from '@/components/ui/icon';
 const matchesPath = (pathname: string, targetPath: string) =>
   pathname === targetPath || pathname.startsWith(`${targetPath}/`);
 
+/** Nav rows sit on the solid brand-blue sidebar: white text, translucent white fills. */
+const navStateClass = (isActive: boolean) =>
+  isActive
+    ? 'bg-white/15 font-medium text-white'
+    : 'text-white/85 hover:bg-white/10 hover:text-white';
+
 const Sidebar = () => {
   const { pathname } = useLocation();
   const dispatch: AppDispatch = useDispatch();
@@ -94,18 +100,16 @@ const Sidebar = () => {
 
   const itemClass = (isActive: boolean, extra?: string) =>
     cn(
-      'group relative flex h-10 items-center gap-3 overflow-hidden rounded-(--radius-control) text-sm transition-colors duration-(--dur-state)',
+      'group relative flex h-10 items-center gap-3 overflow-hidden rounded-(--radius-control) text-sm transition-colors duration-(--dur-state) focus-visible:outline-white',
       sidebarOpen ? 'px-3' : 'justify-center px-2',
-      isActive
-        ? 'bg-(--paper) font-medium text-(--signal)'
-        : 'text-(--ink) hover:bg-(--surface-hover)',
+      navStateClass(isActive),
       extra,
     );
 
   return (
     <motion.aside
       className={cn(
-        'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--surface) text-(--ink) transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)]',
+        'fixed left-0 top-16 z-40 h-[calc(100vh-64px)] flex flex-col bg-(--signal) text-white transition-[width] duration-200 ease-[cubic-bezier(0,0,1,1)]',
         sidebarOpen ? 'w-60' : 'w-18',
       )}
       aria-expanded={sidebarOpen}
@@ -125,7 +129,7 @@ const Sidebar = () => {
             e.preventDefault();
             dispatch(setSidebarOpen(!sidebarOpen));
           }}
-          className="flex size-(--control-sm) cursor-pointer items-center justify-center rounded-(--radius-control) text-(--ink) transition-colors duration-(--dur-state) hover:bg-(--surface-hover)"
+          className="flex size-(--control-sm) cursor-pointer items-center justify-center rounded-(--radius-control) text-white transition-colors duration-(--dur-state) hover:bg-white/10 focus-visible:outline-white"
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           aria-expanded={sidebarOpen}
         >
@@ -136,7 +140,7 @@ const Sidebar = () => {
         </button>
       </header>
 
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4 [scrollbar-color:rgba(255,255,255,0.3)_transparent] [scrollbar-width:thin]">
         <ul className="flex flex-col gap-1">
           {sidebarNavItems.map((nav) => {
             const selected = pathname === nav.path;
@@ -182,7 +186,7 @@ const Sidebar = () => {
                       <LuChevronDown
                         aria-hidden="true"
                         className={cn(
-                          'ml-auto size-4 text-(--muted) transition-transform duration-(--dur-state)',
+                          'ml-auto size-4 text-white/70 transition-transform duration-(--dur-state)',
                           isSubcategoriesOpen && 'rotate-180',
                         )} />
                     )}
@@ -224,7 +228,7 @@ const Sidebar = () => {
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="my-1 overflow-hidden"
                     >
-                      <ul className="ml-[14px] flex flex-col gap-0.5 py-1 pl-2 pr-1">
+                      <ul className="ml-[14px] flex flex-col gap-0.5 border-l border-white/15 py-1 pl-2 pr-1">
                         {nav.subCategories?.map((subCategory) => {
                           const isSubActive =
                             activeSubcategoryPath === subCategory.path;
@@ -234,10 +238,8 @@ const Sidebar = () => {
                               <Link
                                 to={subCategory.path}
                                 className={cn(
-                                  'relative flex h-9 items-center gap-2.5 rounded-(--radius-control) px-3 text-sm transition-colors duration-(--dur-state)',
-                                  isSubActive
-                                    ? 'bg-(--paper) font-medium text-(--signal)'
-                                    : 'text-(--ink) hover:bg-(--surface-hover)',
+                                  'relative flex h-9 items-center gap-2.5 rounded-(--radius-control) px-3 text-sm transition-colors duration-(--dur-state) focus-visible:outline-white',
+                                  navStateClass(isSubActive),
                                 )}
                                 aria-current={isSubActive ? 'page' : undefined}
                               >

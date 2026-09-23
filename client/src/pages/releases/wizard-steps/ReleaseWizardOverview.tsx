@@ -348,12 +348,12 @@ const ReleaseWizardOverview = ({
         <menu className="w-full flex flex-col gap-3">
           <Heading type="h3">Cover art</Heading>
           {!release?.coverArtUrl ? (
-            <p className="rounded-md bg-(--surface) px-4 py-3 text-[11px] leading-5 text-(--muted)">
+            <p className="rounded-md bg-(--surface) px-4 py-3 text-xs leading-5 text-(--muted)">
               Cover art is required before final validation. You can save the
               overview now and add it before submitting.
             </p>
           ) : null}
-          <article className="w-full rounded-(--radius-card) bg-(--paper)">
+          <article className="w-full card-framed p-5">
             {release?.coverArtUrl ? (
               <section className="flex flex-col gap-4">
                 <figure className="mx-auto w-1/2 max-w-[20vw] overflow-hidden rounded-(--radius-control) bg-(--surface)">
@@ -368,7 +368,7 @@ const ReleaseWizardOverview = ({
                     <p className="text-sm font-medium text-(--ink)">
                       Current cover art
                     </p>
-                    <p className="text-[12px] text-(--muted) font-normal">
+                    <p className="text-[13px] text-(--muted) font-normal">
                       This image will represent the release in the overview.
                     </p>
                   </menu>
@@ -391,7 +391,7 @@ const ReleaseWizardOverview = ({
                   <p className="text-sm font-medium text-(--ink)">
                     No cover art uploaded
                   </p>
-                  <p className="text-[12px] text-(--muted) font-normal">
+                  <p className="text-[13px] text-(--muted) font-normal">
                     Upload a release cover image to make it visible at the top
                     of this overview.
                   </p>
@@ -780,7 +780,7 @@ const ReleaseWizardOverview = ({
         className="min-w-[min(92vw,32rem)]"
       >
         <section className="flex w-full flex-col gap-4">
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Choose an image file and save it to update the release cover art.
           </p>
 
@@ -798,7 +798,7 @@ const ReleaseWizardOverview = ({
 
           {selectedFileName && (
             <menu className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) px-3 py-2">
-              <p className="truncate text-[12px] text-(--ink)">
+              <p className="truncate text-[13px] text-(--ink)">
                 {selectedFileName}
               </p>
               <button
@@ -816,7 +816,7 @@ const ReleaseWizardOverview = ({
           )}
 
           {coverArtError && (
-            <p className="text-[12px] text-(--ink)">{coverArtError}</p>
+            <p className="text-[13px] text-(--ink)">{coverArtError}</p>
           )}
 
           <menu className="flex items-center justify-between gap-3">

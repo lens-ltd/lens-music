@@ -27,13 +27,13 @@ const PreviewStoresSection = ({ releaseId }: PreviewStoresSectionProps) => {
     >
       <DashboardSection title="Stores" label="Distribution">
         {isFetching ? (
-          <p className="text-[12px] text-(--muted)">Loading stores...</p>
+          <p className="text-[13px] text-(--muted)">Loading stores...</p>
         ) : releaseStores.length > 0 ? (
           <ul className="flex flex-wrap gap-1.5">
             {releaseStores.map((releaseStore) => (
               <li
                 key={releaseStore.id}
-                className="rounded-full bg-(--surface) px-2.5 py-0.5 text-[11px] text-(--muted)"
+                className="rounded-full bg-(--surface) px-2.5 py-0.5 text-xs text-(--muted)"
               >
                 {releaseStore.store?.name || 'Unknown store'} ·{' '}
                 {releaseStore.store?.ddexPartyId?.trim() ? 'DDEX ready' : 'Missing DDEX ID'}
@@ -41,7 +41,7 @@ const PreviewStoresSection = ({ releaseId }: PreviewStoresSectionProps) => {
             ))}
           </ul>
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No stores selected yet.
           </p>
         )}

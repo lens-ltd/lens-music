@@ -1,12 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LuMusic } from 'react-icons/lu';
 import Button from '@/components/inputs/Button';
 import { stores } from './landingShared';
 
 type DeliveryState = 'queued' | 'sending' | 'live';
 
 const deliveryStores = stores.slice(0, 5);
+
+/**
+ * Featured release: "The Greatest" by Skid
+ * (https://open.spotify.com/album/5YiyXQl0htFHCDNL0EAuLw), cover served from Spotify's CDN.
+ */
+const featuredRelease = {
+  title: 'The Greatest',
+  artist: 'Skid',
+  details: 'Album, 15 tracks',
+  coverUrl: 'https://i.scdn.co/image/ab67616d0000b2736404d1710379d774a388264e',
+};
 const STEP_MS = 520;
 
 const prefersReducedMotion = () =>
@@ -75,19 +85,21 @@ export default function HeroSection() {
         </header>
 
         <figure
-          className="rounded-(--radius-card) bg-(--surface) p-6 sm:p-8"
-          aria-label="Example: a single being delivered to stores"
+          className="rounded-(--radius-card) border border-(--line) bg-(--canvas) p-5 sm:p-6"
+          aria-label={`${featuredRelease.title} by ${featuredRelease.artist}, being delivered to stores`}
         >
           <div className="flex items-center gap-4">
-            <span
-              className="grid size-16 shrink-0 place-items-center rounded-(--radius-control) bg-(--signal) text-white"
-              aria-hidden="true"
-            >
-              <LuMusic className="size-6" />
-            </span>
+            <img
+              src={featuredRelease.coverUrl}
+              alt={`${featuredRelease.title} album cover`}
+              width={96}
+              height={96}
+              className="size-24 shrink-0 rounded-(--radius-control) object-cover"
+            />
             <div className="min-w-0">
-              <p className="type-card-title truncate">Night Drive</p>
-              <p className="type-meta">Single</p>
+              <p className="type-card-title truncate">{featuredRelease.title}</p>
+              <p className="text-sm text-(--ink)">{featuredRelease.artist}</p>
+              <p className="mt-1 type-meta">{featuredRelease.details}</p>
             </div>
           </div>
 
@@ -97,7 +109,7 @@ export default function HeroSection() {
               return (
                 <li
                   key={name}
-                  className="flex h-11 items-center gap-3 rounded-(--radius-control) bg-(--paper) px-3"
+                  className="flex h-11 items-center gap-3 rounded-(--radius-control) border border-(--line) bg-(--paper) px-3"
                 >
                   <StoreMark className="size-[18px] shrink-0 text-(--ink)" aria-hidden="true" />
                   <span className="flex-1 text-sm text-(--ink)">{name}</span>

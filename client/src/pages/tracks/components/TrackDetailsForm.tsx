@@ -28,18 +28,18 @@ const TrackDetailsForm = ({
   stateLabel,
   onPersistField,
 }: TrackDetailsFormProps) => (
-  <section className="rounded-(--radius-card) bg-(--paper)">
+  <section className="card-framed p-5">
     <header className="flex items-center justify-between gap-3">
       <section>
         <h2 className="text-sm font-normal text-(--ink)">
           Track details
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           Saved field by field when you leave an input.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-(--signal)">{stateLabel}</p>
+        <p className="text-xs text-(--signal)">{stateLabel}</p>
       )}
     </header>
 
@@ -149,7 +149,7 @@ const TrackDetailsForm = ({
         control={control}
         render={({ field }) => (
           <label className="flex w-full flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
+            <span className="pl-0.5 text-[13px] leading-none text-(--ink)">
               Parental advisory
             </span>
             <Combobox

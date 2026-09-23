@@ -48,7 +48,7 @@ const RejectContributor = () => {
           a note explaining why.
         </p>
         <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-medium text-(--ink)">
+          <span className="text-[13px] font-medium text-(--ink)">
             Note (optional)
           </span>
           <textarea

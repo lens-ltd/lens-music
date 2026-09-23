@@ -23,19 +23,19 @@ const TrackCopyrightLinesForm = ({
   stateLabel,
   onPersistField,
 }: TrackCopyrightLinesFormProps) => (
-  <section className="rounded-(--radius-card) bg-(--paper)">
+  <section className="card-framed p-5">
     <header className="flex items-center justify-between gap-3">
       <section>
         <h2 className="text-sm font-normal text-(--ink)">
           Copyright lines and flags
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           C-line and P-line are required before validation. Use “Rights controllers”
           below for DDEX making-available rights.
         </p>
       </section>
       {stateLabel && (
-        <p className="text-[11px] text-(--signal)">{stateLabel}</p>
+        <p className="text-xs text-(--signal)">{stateLabel}</p>
       )}
     </header>
 
@@ -103,7 +103,7 @@ const TrackCopyrightLinesForm = ({
     </form>
 
     <fieldset className="mt-4 border-0 p-0">
-      <legend className="text-[12px] text-(--muted)">
+      <legend className="text-[13px] text-(--muted)">
         Flags
       </legend>
       <ul className="mt-2 flex list-none flex-wrap gap-4 p-0">
@@ -112,7 +112,7 @@ const TrackCopyrightLinesForm = ({
             name="isBonusTrack"
             control={control}
             render={({ field }) => (
-              <label className="inline-flex items-center gap-2 text-[12px]">
+              <label className="inline-flex items-center gap-2 text-[13px]">
                 <input
                   type="checkbox"
                   checked={Boolean(field.value)}
@@ -133,7 +133,7 @@ const TrackCopyrightLinesForm = ({
             name="isHiddenTrack"
             control={control}
             render={({ field }) => (
-              <label className="inline-flex items-center gap-2 text-[12px]">
+              <label className="inline-flex items-center gap-2 text-[13px]">
                 <input
                   type="checkbox"
                   checked={Boolean(field.value)}

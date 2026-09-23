@@ -41,14 +41,14 @@ export const useContributorColumns = () => {
         header: "Name",
         accessorKey: "name",
         cell: ({ row }) => (
-          <p className="font-normal text-[12px] flex items-center gap-1">
+          <p className="font-normal text-[13px] flex items-center gap-1">
             {row?.original?.displayName || row?.original?.name}{" "}
             {row?.original?.verificationStatus ===
               ContributorVerificationStatus.VERIFIED && (
               <CustomTooltip label="Verified">
                 <LuCircleCheck
                  
-                  className="text-(--signal) cursor-pointer text-[12px]" />
+                  className="text-(--signal) cursor-pointer text-[13px]" />
               </CustomTooltip>
             )}
           </p>
@@ -156,7 +156,7 @@ export const useContributorColumns = () => {
                   ] as string[]).includes(row?.original?.verificationStatus) && (
                     <TableActionButton
                       icon={LuCircleX}
-                      iconClassName="text-(--danger) text-[12px]"
+                      iconClassName="text-(--danger) text-[13px]"
                       onClick={(e) => {
                         e.preventDefault();
                         if (row?.original?.id) {

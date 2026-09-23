@@ -33,14 +33,14 @@ const TrackLyricsSummary = ({ track }: TrackLyricsSummaryProps) => {
               key={lyric.id}
               className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3"
             >
-              <p className="text-[12px] text-(--ink)">
+              <p className="text-[13px] text-(--ink)">
                 {formatLyricsLabel(lyric)}
               </p>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           No lyrics records.
         </p>
       )}

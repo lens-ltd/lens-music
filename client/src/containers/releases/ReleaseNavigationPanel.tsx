@@ -65,7 +65,7 @@ const ReleaseNavigationPanel = ({
         }`}
       >
         {hasStepSidebar && (
-          <aside className="self-start rounded-(--radius-card) bg-(--surface) lg:sticky lg:top-20">
+          <aside className="self-start card-framed lg:sticky lg:top-20">
             <header className="px-5 py-4">
               <p className="text-xs text-(--muted)">
                 Current Section
@@ -145,7 +145,7 @@ const ReleaseNavigationPanel = ({
                   ) || "Release setup"}
                 </p>
                 <ul className="flex items-center gap-2 mt-1">
-                  <p className="text-[12px] text-(--muted)">
+                  <p className="text-[13px] text-(--muted)">
                     {isLoading ? (
                       <SkeletonLoader type="text" width="16rem" height="1rem" />
                     ) : (
@@ -153,9 +153,9 @@ const ReleaseNavigationPanel = ({
                       "Fill out each section to prepare this release."
                     )}
                   </p>{" "}
-                  <span className="text-[12px] text-(--muted)">•</span>{" "}
+                  <span className="text-[13px] text-(--muted)">•</span>{" "}
                   {release?.catalogNumber && (
-                    <p className="text-[12px] text-(--muted)">
+                    <p className="text-[13px] text-(--muted)">
                       {release?.catalogNumber}{" "}
                       <button
                         type="button"

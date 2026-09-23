@@ -27,13 +27,13 @@ const PreviewTerritoriesSection = ({
       <DashboardSection title="Territories" label="Distribution">
         {territories.length > 0 ? (
           <section>
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               {isWorldwide ? (
-                <span className="rounded-full bg-(--success-soft) px-2.5 py-0.5 text-[11px] font-normal text-(--success)">
+                <span className="rounded-full bg-(--success-soft) px-2.5 py-0.5 text-xs font-normal text-(--success)">
                   Worldwide
                 </span>
               ) : (
-                <span className="text-[12px] text-(--muted)">
+                <span className="text-[13px] text-(--muted)">
                   {territories.length} territor{territories.length === 1 ? "y" : "ies"} selected
                 </span>
               )}
@@ -43,7 +43,7 @@ const PreviewTerritoriesSection = ({
                 {territories.map((code) => (
                   <li
                     key={code}
-                    className="rounded-full bg-(--surface) px-2.5 py-0.5 text-[11px] text-(--muted)"
+                    className="rounded-full bg-(--surface) px-2.5 py-0.5 text-xs text-(--muted)"
                   >
                     {getCountryName(code)}
                   </li>
@@ -52,7 +52,7 @@ const PreviewTerritoriesSection = ({
             )}
           </section>
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No territories selected.
           </p>
         )}

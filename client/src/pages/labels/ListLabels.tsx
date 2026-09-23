@@ -173,7 +173,7 @@ const ListLabels = () => {
         return (
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full bg-(--signal) px-3 py-1.5 text-[11px] text-white transition-all duration-200 hover:scale-[1.01]"
+            className="inline-flex items-center gap-2 rounded-full bg-(--signal) px-3 py-1.5 text-xs text-white transition-all duration-200 hover:scale-[1.01]"
             onClick={(e) => {
               e.preventDefault();
               openEditModal(row.original);

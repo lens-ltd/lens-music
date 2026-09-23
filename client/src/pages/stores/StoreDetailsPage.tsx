@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
-import { KeyValuePair } from "@/components/inputs/KeyValuePair";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
 import Loader from "@/components/inputs/Loader";
 import { BackButton, PageFooter } from "@/components/layout/PageFooter";
 import { Heading } from "@/components/text/Headings";
@@ -159,7 +159,7 @@ const StoreDetailsPage = () => {
               <h2 className="text-[20px] font-semibold text-(--ink)">
                 {store?.name || "Store"}
               </h2>
-              <p className="mt-1 font-mono text-[12px] text-(--muted)">
+              <p className="mt-1 font-mono text-[13px] text-(--muted)">
                 {store?.slug || "—"}
               </p>
             </div>
@@ -172,46 +172,33 @@ const StoreDetailsPage = () => {
             <Heading type="h3" className="!text-[15px]">
               Overview
             </Heading>
-            <p className="mt-1 text-[12px] text-(--muted)">
+            <p className="mt-1 text-[13px] text-(--muted)">
               Identity fields are managed by seeds and are read-only here.
             </p>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <KeyValuePair
-                keyText="Name"
-                valueText={store?.name || "—"}
-                className="h-full rounded-(--radius-control) bg-(--surface) p-3"
-              />
-              <KeyValuePair
-                keyText="Slug"
-                valueText={store?.slug || "—"}
-                className="h-full rounded-(--radius-control) bg-(--surface) p-3"
-              />
-              <KeyValuePair
-                keyText="Sort order"
-                valueText={String(store?.sortOrder ?? "—")}
-                className="h-full rounded-(--radius-control) bg-(--surface) p-3"
-              />
+            <KeyValueList className="mt-4">
+              <KeyValuePair keyText="Name" valueText={store?.name} />
+              <KeyValuePair keyText="Slug" valueText={store?.slug} />
+              <KeyValuePair keyText="Sort order" valueText={store?.sortOrder} />
               <KeyValuePair
                 keyText="Last updated"
                 valueText={
                   store?.updatedAt
                     ? formatDate(store.updatedAt, "DD/MM/YYYY HH:mm")
-                    : "—"
+                    : undefined
                 }
-                className="h-full rounded-(--radius-control) bg-(--surface) p-3"
               />
-            </div>
+            </KeyValueList>
           </div>
 
           <div>
             <Heading type="h3" className="!text-[15px]">
               Delivery
             </Heading>
-            <p className="mt-1 text-[12px] text-(--muted)">
+            <p className="mt-1 text-[13px] text-(--muted)">
               Used during release validation and distribution routing.
             </p>
 
-            <div className="mt-4 flex flex-col gap-4 rounded-(--radius-card) bg-(--paper)">
+            <div className="mt-4 flex flex-col gap-4">
               <Input
                 label="DDEX Party ID"
                 value={formState.ddexPartyId || ""}

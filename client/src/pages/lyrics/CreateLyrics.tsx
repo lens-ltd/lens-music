@@ -150,7 +150,7 @@ const CreateLyrics = () => {
               <Heading type="h3" className="!text-(--ink)">
                 Create lyrics record
               </Heading>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[13px] text-(--muted)">
                 Create a track-linked lyrics record before syncing it against
                 the uploaded primary audio.
               </p>
@@ -177,7 +177,7 @@ const CreateLyrics = () => {
               <Heading type="h3" className="!text-(--ink)">
                 Record details
               </Heading>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[13px] text-(--muted)">
                 {trackResponse?.data?.title
                   ? `Creating lyrics for ${trackResponse.data.title}.`
                   : "Associate the lyrics with a track and add the base text."}
@@ -229,7 +229,7 @@ const CreateLyrics = () => {
 
             <div className="mt-4">
               <div className="mb-2 flex items-center justify-between">
-                <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
+                <span className="pl-0.5 text-[13px] leading-none text-(--ink)">
                   Lyrics
                 </span>
                 <Button
@@ -273,7 +273,7 @@ const CreateLyrics = () => {
             </div>
 
             {validateErrors.length > 0 && (
-              <ul className="mt-4 flex flex-col gap-2 rounded-md bg-(--danger-soft) p-4 text-[12px] text-(--danger)">
+              <ul className="mt-4 flex flex-col gap-2 rounded-md bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
                 {validateErrors.map((error, index) => (
                   <li key={`${error}-${index}`}>{error}</li>
                 ))}

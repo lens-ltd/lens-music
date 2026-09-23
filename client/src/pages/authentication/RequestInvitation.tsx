@@ -139,7 +139,7 @@ const RequestInvitation = () => {
               primary
               submit
               isLoading={requestState.isLoading}
-              className="w-full py-3 text-[12px] tracking-[0.04em] shadow-none mt-1 font-normal"
+              className="w-full py-3 text-[13px] tracking-[0.04em] shadow-none mt-1 font-normal"
             >
               Submit request
             </Button>

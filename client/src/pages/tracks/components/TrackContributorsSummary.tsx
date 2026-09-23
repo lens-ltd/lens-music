@@ -18,7 +18,7 @@ const columns: ColumnDef<TrackContributor, string>[] = [
     cell: ({ row }) => {
       const contributor = row.original.contributor;
       return (
-        <span className="text-[12px]">
+        <span className="text-[13px]">
           {getContributorCreditName(contributor, row.original.role)}
         </span>
       );
@@ -28,7 +28,7 @@ const columns: ColumnDef<TrackContributor, string>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => (
-      <span className="rounded-full bg-(--surface) px-2 py-0.5 text-[11px]">
+      <span className="rounded-full bg-(--surface) px-2 py-0.5 text-xs">
         {capitalizeString(row.original.role)}
       </span>
     ),
@@ -57,10 +57,9 @@ const TrackContributorsSummary = ({
           data={contributors}
           showPagination={false}
           isLoading={isFetching}
-          containerClassName="border-0"
         />
       ) : (
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           No contributors added.
         </p>
       )}

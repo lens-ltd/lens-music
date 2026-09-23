@@ -57,7 +57,7 @@ const ForgotPassword = () => {
               render={({ field }) => (
                 <div className="flex flex-col gap-1.5">
                   <Input label="Email" required placeholder="you@example.com" {...field} />
-                  {errors.email && <p className="text-(--danger) text-[12px] font-normal">{String(errors.email.message)}</p>}
+                  {errors.email && <p className="text-(--danger) text-[13px] font-normal">{String(errors.email.message)}</p>}
                 </div>
               )}
             />
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-[12px] text-(--muted) font-normal">
+          <p className="mt-5 text-center text-[13px] text-(--muted) font-normal">
             Remembered your password?{' '}
             <Link to="/auth/login" className="link-sweep type-body-sm text-(--signal)">
               Return to sign in

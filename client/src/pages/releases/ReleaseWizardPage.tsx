@@ -186,7 +186,7 @@ const ReleaseWizardPage = () => {
     }
 
     return (
-      <article className="rounded-(--radius-card) bg-(--surface) p-6 sm:p-8">
+      <article className="card-framed p-6 sm:p-8">
         <p className="text-xs text-(--muted)">
           Step unavailable
         </p>
@@ -200,7 +200,7 @@ const ReleaseWizardPage = () => {
         {previousStepName ? (
           <button
             type="button"
-            className="mt-5 text-[12px] text-(--signal) underline-offset-4 hover:underline"
+            className="mt-5 text-[13px] text-(--signal) underline-offset-4 hover:underline"
             onClick={() => activateStep(previousStepName)}
           >
             Return to previous step

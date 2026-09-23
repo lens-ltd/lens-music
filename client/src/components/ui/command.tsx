@@ -5,7 +5,7 @@ import { type DialogProps } from "@radix-ui/react-dialog"
 import { Command as CommandPrimitive } from "cmdk"
 
 import { cn } from "@/lib/utils"
-import { menuItemClassName } from "@/constants/input.constants"
+import { commandItemClassName } from "@/constants/input.constants"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 import { LuSearch } from 'react-icons/lu';
@@ -117,7 +117,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      menuItemClassName,
+      commandItemClassName,
       "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       className
     )}

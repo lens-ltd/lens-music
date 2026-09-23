@@ -1,6 +1,7 @@
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import { KeyValuePair } from "@/components/inputs/KeyValuePair";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
+import SectionCard from "@/components/layout/SectionCard";
 import TableActionButton from "@/components/inputs/TableActionButton";
 import { Heading } from "@/components/text/Headings";
 import { getCountryName } from "@/constants/countries.constants";
@@ -49,6 +50,7 @@ const statusBadgeClassNames: Record<string, string> = {
 
 type FieldConfig = {
   keyText: string;
+  label?: string;
   valueText?: string;
 };
 
@@ -204,55 +206,56 @@ const ContributorDetailsPage = () => {
     () => [
       {
         keyText: "Display name",
-        valueText: contributorDetails?.displayName || "Not provided",
+        valueText: contributorDetails?.displayName,
       },
       {
         keyText: "Full name",
-        valueText: contributorDetails?.name || "Not provided",
+        valueText: contributorDetails?.name,
       },
       {
         keyText: "Email",
-        valueText: contributorDetails?.email || "Not provided",
+        valueText: contributorDetails?.email,
       },
       {
         keyText: "Phone number",
-        valueText: contributorDetails?.phoneNumber || "Not provided",
+        valueText: contributorDetails?.phoneNumber,
       },
       {
         keyText: "Country",
         valueText: contributorDetails?.country
           ? getCountryName(contributorDetails.country)
-          : "Not provided",
+          : undefined,
       },
       {
         keyText: "Gender",
         valueText: contributorDetails?.gender
           ? capitalizeString(getGenderLabel(contributorDetails?.gender))
-          : "Not provided",
+          : undefined,
       },
       {
         keyText: "dateOfBirth",
+        label: "Date of birth",
         valueText: contributorDetails?.dateOfBirth
           ? `${contributorDetails.dateOfBirth}`
-          : "Not provided",
+          : undefined,
       },
       {
         keyText: "Status",
         valueText: contributorDetails?.status
           ? capitalizeString(contributorDetails.status)
-          : "Not provided",
+          : undefined,
       },
       {
         keyText: "Verification status",
         valueText: contributorDetails?.verificationStatus
           ? capitalizeString(contributorDetails.verificationStatus)
-          : "Not provided",
+          : undefined,
       },
       {
         keyText: "Type",
         valueText: contributorDetails?.type
           ? capitalizeString(contributorDetails.type)
-          : "Not provided",
+          : undefined,
       },
     ],
     [contributorDetails],
@@ -289,16 +292,9 @@ const ContributorDetailsPage = () => {
     const hasValues = fields.some((field) => field.valueText);
 
     return (
-      <section className="rounded-(--radius-card) bg-(--paper)">
-        <header className="flex flex-col gap-1">
-          <Heading type="h3" className="!text-(--ink)">
-            {title}
-          </Heading>
-          <p className="text-[12px] text-(--muted)">{description}</p>
-        </header>
-
+      <SectionCard title={title} description={description}>
         {isFetching ? (
-          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+          <KeyValueList>
             {fields.map((field) => (
               <KeyValuePair
                 key={field.keyText}
@@ -306,9 +302,9 @@ const ContributorDetailsPage = () => {
                 isLoading
               />
             ))}
-          </div>
+          </KeyValueList>
         ) : hasValues ? (
-          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+          <KeyValueList>
             {fields
               .filter((field) => field.valueText)
               .map((field) => (
@@ -316,16 +312,15 @@ const ContributorDetailsPage = () => {
                   key={field.keyText}
                   keyText={field.keyText}
                   valueText={field.valueText}
-                  className="h-full rounded-(--radius-control) bg-(--surface) p-3"
                 />
               ))}
-          </div>
+          </KeyValueList>
         ) : (
-          <p className="mt-4 rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
+          <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[13px] text-(--muted)">
             {emptyState}
           </p>
         )}
-      </section>
+      </SectionCard>
     );
   };
 
@@ -339,7 +334,7 @@ const ContributorDetailsPage = () => {
                 contributorDetails?.name ||
                 "Contributor details"}
             </Heading>
-            <p className="mt-2 text-[12px] text-(--muted)">
+            <p className="mt-2 text-[13px] text-(--muted)">
               Review the contributor record, supported profile links, and
               current verification metadata.
             </p>
@@ -376,11 +371,11 @@ const ContributorDetailsPage = () => {
         </header>
 
         {isNotFound ? (
-          <section className="rounded-(--radius-card) bg-(--surface) p-8 text-center">
+          <section className="card-framed p-8 text-center">
             <Heading type="h3" className="!text-(--ink)">
               Contributor not found
             </Heading>
-            <p className="mt-2 text-[12px] text-(--muted)">
+            <p className="mt-2 text-[13px] text-(--muted)">
               The contributor record could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
@@ -396,7 +391,7 @@ const ContributorDetailsPage = () => {
           </section>
         ) : (
           <>
-            <section className="rounded-(--radius-card) bg-(--paper)">
+            <section className="card-framed p-5">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-(--muted)">
@@ -410,20 +405,20 @@ const ContributorDetailsPage = () => {
                         "Contributor details"}
                   </h2>
                   {!isFetching && (
-                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--muted)">
+                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-(--muted)">
                       {contributorDetails?.email && (
-                        <span className="text-(--signal) text-[12px]">
+                        <span className="text-(--signal) text-[13px]">
                           {contributorDetails?.email}
                         </span>
                       )}
                       {contributorDetails?.phoneNumber && (
-                        <span className="text-(--signal) text-[12px]">
+                        <span className="text-(--signal) text-[13px]">
                           {contributorDetails?.phoneNumber}
                         </span>
                       )}
                       {!contributorDetails?.email &&
                         !contributorDetails?.phoneNumber && (
-                          <span className="text-[12px] text-(--muted)">
+                          <span className="text-[13px] text-(--muted)">
                             No direct contact details available.
                           </span>
                         )}
@@ -441,7 +436,7 @@ const ContributorDetailsPage = () => {
                     <>
                       {contributorDetails?.verificationStatus && (
                         <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-normal ${getBadgeClassName(
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-normal ${getBadgeClassName(
                             contributorDetails.verificationStatus,
                           )}`}
                         >
@@ -456,28 +451,22 @@ const ContributorDetailsPage = () => {
               </div>
             </section>
 
-            <section className="rounded-(--radius-card) bg-(--paper)">
-              <header className="flex flex-col gap-1">
-                <Heading type="h3" className="!text-(--ink)">
-                  Personal information
-                </Heading>
-                <p className="text-[12px] text-(--muted)">
-                  Supported contributor identity, contact, and lifecycle fields.
-                </p>
-              </header>
-
-              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            <SectionCard
+              title="Personal information"
+              description="Supported contributor identity, contact, and lifecycle fields."
+            >
+              <KeyValueList>
                 {personalInformation.map((field) => (
                   <KeyValuePair
                     key={field.keyText}
                     keyText={field.keyText}
+                    label={field.label}
                     valueText={field.valueText}
                     isLoading={isFetching}
-                    className="h-full rounded-(--radius-control) bg-(--surface) p-3"
                   />
                 ))}
-              </div>
-            </section>
+              </KeyValueList>
+            </SectionCard>
 
             {renderProfileSection(
               "Social media",
@@ -498,35 +487,21 @@ const ContributorDetailsPage = () => {
                 contributorDetails.type as ContributorType,
               ) &&
               canManage && (
-                <section className="rounded-(--radius-card) bg-(--paper)">
-                  <header className="flex flex-col gap-1">
-                    <Heading type="h3" className="!text-(--ink)">
-                      Members
-                    </Heading>
-                    <p className="text-[12px] text-(--muted)">
-                      This contributor is a group. You can manage its members.
-                    </p>
-                  </header>
-                  <div className="mt-4">
-                    <Button primary route={`/contributors/${id}/memberships`}>
-                      Manage members
-                    </Button>
-                  </div>
-                </section>
+                <SectionCard
+                  title="Members"
+                  description="This contributor is a group. You can manage its members."
+                >
+                  <Button primary route={`/contributors/${id}/memberships`}>
+                    Manage members
+                  </Button>
+                </SectionCard>
               )}
 
             {canAssignManagers && (
-              <section className="rounded-(--radius-card) bg-(--paper)">
-                <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex flex-col gap-1">
-                    <Heading type="h3" className="!text-(--ink)">
-                      Managers
-                    </Heading>
-                    <p className="text-[12px] text-(--muted)">
-                      Users assigned to manage this contributor. Assignment is
-                      admin-only; managers also need contributor permissions.
-                    </p>
-                  </div>
+              <SectionCard
+                title="Managers"
+                description="Users assigned to manage this contributor. Assignment is admin-only; managers also need contributor permissions."
+                action={
                   <Button
                     primary
                     icon={LuPlus}
@@ -537,12 +512,13 @@ const ContributorDetailsPage = () => {
                   >
                     Assign manager
                   </Button>
-                </header>
-                <div className="mt-4 flex flex-col gap-2">
+                }
+                bodyClassName="flex flex-col gap-2"
+              >
                   {managersIsFetching ? (
-                    <p className="text-[12px] text-(--muted)">Loading managers…</p>
+                    <p className="text-[13px] text-(--muted)">Loading managers…</p>
                   ) : managersList.length === 0 ? (
-                    <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
+                    <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[13px] text-(--muted)">
                       No managers assigned yet. The creator is auto-assigned on
                       create; assign additional users as needed.
                     </p>
@@ -556,10 +532,10 @@ const ContributorDetailsPage = () => {
                           <p className="text-[13px] font-medium text-(--ink)">
                             {manager.user?.name || "User"}
                           </p>
-                          <p className="truncate text-[12px] text-(--muted)">
+                          <p className="truncate text-[13px] text-(--muted)">
                             {manager.user?.email || manager.userId}
                           </p>
-                          <p className="mt-1 text-[11px] text-(--muted)">
+                          <p className="mt-1 text-xs text-(--muted)">
                             Assigned{" "}
                             {manager.createdAt
                               ? formatDate(manager.createdAt, "DD/MM/YYYY HH:mm")
@@ -580,16 +556,11 @@ const ContributorDetailsPage = () => {
                       </div>
                     ))
                   )}
-                </div>
-              </section>
+              </SectionCard>
             )}
 
             {membershipsIsSuccess && contributorMembershipsList.length > 0 && (
-              <section className="rounded-(--radius-card) bg-(--paper)">
-                <header className="flex flex-col gap-1">
-                  <Heading type="h3" className="!text-(--ink)">
-                    This contributor is a member of the following groups:
-                  </Heading>
+              <SectionCard title="Group memberships" description="Groups this contributor is a member of.">
                   <Table
                     data={contributorMembershipsList}
                     columns={memberContributorMembershipsColumns}
@@ -601,8 +572,7 @@ const ContributorDetailsPage = () => {
                     setPage={setMembershipsPage}
                     setSize={setMembershipsSize}
                   />
-                </header>
-              </section>
+              </SectionCard>
             )}
           </>
         )}

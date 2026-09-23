@@ -18,17 +18,17 @@ const SyncLyricsAudioPanel = ({
   totalLines,
 }: SyncLyricsAudioPanelProps) => {
   return (
-    <section className="rounded-(--radius-card) bg-(--paper)">
+    <section className="card-framed p-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-normal text-(--ink)">
             Audio reference
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Primary uploaded audio · {primaryAudio.fileType}
           </p>
         </div>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           Use the native audio controls to play and pause the track.
         </p>
       </header>

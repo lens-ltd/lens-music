@@ -26,13 +26,13 @@ const SyncLyricsLinesPanel = ({
   onResetPlayhead,
 }: SyncLyricsLinesPanelProps) => {
   return (
-    <section className="rounded-(--radius-card) bg-(--paper)">
+    <section className="card-framed p-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-normal text-(--ink)">
             Lyrics lines
           </h2>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Use ↑ and ↓ to move between lines, then press Space while the audio
             is playing to capture a timestamp.
           </p>
@@ -81,7 +81,7 @@ const SyncLyricsLinesPanel = ({
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="min-w-16 text-right text-[11px] text-(--signal)">
+                  <span className="min-w-16 text-right text-xs text-(--signal)">
                     {typeof line.time === "number"
                       ? `${line.time.toFixed(2)}s`
                       : "Not synced"}
@@ -92,7 +92,7 @@ const SyncLyricsLinesPanel = ({
                       onSetCurrentLineIndex(line.index);
                       onSync(line.index);
                     }}
-                    className="!text-[11px]"
+                    className="!text-xs"
                     disabled={!isPlaying}
                   >
                     Sync now
@@ -102,7 +102,7 @@ const SyncLyricsLinesPanel = ({
                       event.preventDefault();
                       onResetLine(line.index);
                     }}
-                    className="!text-[11px]"
+                    className="!text-xs"
                   >
                     Clear
                   </Button>

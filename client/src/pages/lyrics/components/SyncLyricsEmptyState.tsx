@@ -17,9 +17,9 @@ const SyncLyricsEmptyState = ({
   actionRoute,
 }: SyncLyricsEmptyStateProps) => {
   return (
-    <section className="rounded-(--radius-card) bg-(--surface) p-8 text-center">
+    <section className="card-framed p-8 text-center">
       <Heading className="!text-(--ink)">{title}</Heading>
-      <p className="mt-3 text-[12px] text-(--muted)">
+      <p className="mt-3 text-[13px] text-(--muted)">
         {description}
       </p>
       <div className="mt-4 flex justify-center">

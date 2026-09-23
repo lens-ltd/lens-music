@@ -482,12 +482,12 @@ const ManageReleaseTrack = () => {
             isUpdatingSequence={isUpdatingContributorSequence}
           />
 
-          <section className="rounded-(--radius-card) bg-(--paper)">
+          <section className="card-framed p-5">
             <header className="space-y-1">
               <h2 className="text-sm font-normal text-(--ink)">
                 Lyrics
               </h2>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[13px] text-(--muted)">
                 Lyrics records linked to this track. Open sync to edit timing,
                 or remove a record here.
               </p>
@@ -499,7 +499,7 @@ const ManageReleaseTrack = () => {
                     key={lyric.id}
                     className="flex items-center justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3"
                   >
-                    <p className="text-[12px] text-(--ink)">
+                    <p className="text-[13px] text-(--ink)">
                       {formatTrackLyricsLabel(lyric)}
                     </p>
                     <div className="flex shrink-0 items-center gap-2">
@@ -533,7 +533,7 @@ const ManageReleaseTrack = () => {
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-[12px] text-(--muted)">
+              <p className="mt-3 text-[13px] text-(--muted)">
                 No lyrics records yet. Use Sync lyrics (with audio uploaded) or
                 create lyrics from the Lyrics section.
               </p>
@@ -541,7 +541,7 @@ const ManageReleaseTrack = () => {
           </section>
 
           {isUpdatingTrack && (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               Saving track updates...
             </p>
           )}
@@ -566,7 +566,7 @@ const ManageReleaseTrack = () => {
               <ul className="mt-2 list-disc space-y-1 pl-4">
                 {validationResult.errors.map((error) => (
                   <li
-                    className="text-[12px] text-(--muted)"
+                    className="text-[13px] text-(--muted)"
                     key={error}
                   >
                     {error}

@@ -28,7 +28,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
         <span
-          className={`text-[12px] ${isPrimaryArtist ? "font-medium text-(--ink)" : "text-(--ink)"}`}
+          className={`text-[13px] ${isPrimaryArtist ? "font-medium text-(--ink)" : "text-(--ink)"}`}
         >
           {getContributorCreditName(contributor, row.original.role)}
         </span>
@@ -42,7 +42,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       const isPrimaryArtist = row.original.role === ContributorRole.PRIMARY_ARTIST;
       return (
         <span
-          className={`rounded-md px-2 py-0.5 text-[11px] ${
+          className={`rounded-md px-2 py-0.5 text-xs ${
             isPrimaryArtist
               ? "bg-(--signal-soft) font-medium text-(--signal)"
               : "bg-(--surface) text-(--ink)"
@@ -59,7 +59,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
     cell: ({ row }) => {
       const createdBy = row.original.createdBy;
       return (
-        <span className="text-[12px]">{createdBy?.name || "—"}</span>
+        <span className="text-[13px]">{createdBy?.name || "—"}</span>
       );
     },
   },
@@ -69,7 +69,7 @@ const columns: ColumnDef<ReleaseContributor, string>[] = [
       cell: ({ row }) => {
         const updatedAt = row?.original?.updatedAt;
         return (
-          <span className="text-[12px]">{formatDate(updatedAt, "DD/MM/YYYY HH:mm")}</span>
+          <span className="text-[13px]">{formatDate(updatedAt, "DD/MM/YYYY HH:mm")}</span>
         );
       },
     },
@@ -120,10 +120,9 @@ const PreviewContributorsSection = ({
             isLoading={contributorsAreLoading}
             data={contributors}
             showPagination={false}
-            containerClassName="border-0"
           />
         ) : (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No contributors added yet.
           </p>
         )}

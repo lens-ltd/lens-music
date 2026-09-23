@@ -128,14 +128,14 @@ const CreateContributorPage = () => {
 
         <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
           <section
-            className="w-full flex flex-col gap-4"
+            className="card-framed flex w-full flex-col gap-4 p-5 sm:p-6"
             aria-labelledby="contributor-personal-heading"
           >
             <header className="flex flex-col gap-1">
               <Heading type="h3" id="contributor-personal-heading">
                 Personal information
               </Heading>
-              <p className="text-[12px] font-normal text-(--muted)">
+              <p className="text-[13px] font-normal text-(--muted)">
                 Capture the supported contributor details and optional profile
                 references.
               </p>
@@ -309,14 +309,14 @@ const CreateContributorPage = () => {
           </section>
 
           <section
-            className="w-full flex flex-col gap-4"
+            className="card-framed flex w-full flex-col gap-4 p-5 sm:p-6"
             aria-labelledby="contributor-group-heading"
           >
             <header className="flex flex-col gap-1">
               <Heading type="h3" id="contributor-group-heading">
                 Group membership
               </Heading>
-              <p className="text-[12px] font-normal text-(--muted)">
+              <p className="text-[13px] font-normal text-(--muted)">
                 Optionally associate this contributor with a parent group.
               </p>
             </header>
@@ -353,14 +353,14 @@ const CreateContributorPage = () => {
           </section>
 
           <section
-            className="w-full flex flex-col gap-4"
+            className="card-framed flex w-full flex-col gap-4 p-5 sm:p-6"
             aria-labelledby="contributor-social-heading"
           >
             <header className="flex flex-col gap-1">
               <Heading type="h3" id="contributor-social-heading">
                 Social media
               </Heading>
-              <p className="text-[12px] font-normal text-(--muted)">
+              <p className="text-[13px] font-normal text-(--muted)">
                 Supported links are stored as contributor profile links.
               </p>
             </header>
@@ -384,14 +384,14 @@ const CreateContributorPage = () => {
           </section>
 
           <section
-            className="w-full flex flex-col gap-4"
+            className="card-framed flex w-full flex-col gap-4 p-5 sm:p-6"
             aria-labelledby="contributor-stores-heading"
           >
             <header className="flex flex-col gap-1">
               <Heading type="h3" id="contributor-stores-heading">
                 Store IDs
               </Heading>
-              <p className="text-[12px] font-normal text-(--muted)">
+              <p className="text-[13px] font-normal text-(--muted)">
                 Enter supported store identifiers or profile URLs. Unsupported
                 services from the reference screen are intentionally excluded.
               </p>

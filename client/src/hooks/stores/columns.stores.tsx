@@ -24,7 +24,7 @@ export const useStoreColumns = () => {
         header: "Slug",
         accessorKey: "slug",
         cell: ({ row }) => (
-          <span className="text-[11px] text-(--muted)">
+          <span className="text-xs text-(--muted)">
             {row.original.slug || "—"}
           </span>
         ),

@@ -1,4 +1,5 @@
 import Input from "@/components/inputs/Input";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
 import { capitalizeString } from "@/utils/strings.helper";
 import { ChangeEvent } from "react";
 import { Track } from "@/types/models/track.types";
@@ -41,12 +42,12 @@ const TrackAudioPanel = ({
     track?.audioFiles?.[0];
 
   return (
-    <section className="rounded-(--radius-card) bg-(--paper)">
+    <section className="card-framed p-5">
       <header className="space-y-1">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-normal text-(--ink)">Audio</h2>
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               Uploading a new file makes it the primary audio.
             </p>
           </div>
@@ -61,24 +62,18 @@ const TrackAudioPanel = ({
         </div>
       </header>
 
-      <dl className="mt-3 grid gap-2 rounded-md bg-(--surface) p-3">
-        <div className="flex items-center justify-between gap-3">
-          <dt className="text-xs text-(--muted)">
-            Duration
-          </dt>
-          <dd className="text-[12px] text-(--ink)">
-            {formatDuration(track?.durationMs)}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt className="text-xs text-(--muted)">
-            Status
-          </dt>
-          <dd className="text-[12px] text-(--ink)">
-            {capitalizeString(track?.status)}
-          </dd>
-        </div>
-      </dl>
+      <KeyValueList className="mt-3 md:grid-cols-1">
+        <KeyValuePair
+          keyText="duration"
+          label="Duration"
+          valueText={track?.durationMs ? formatDuration(track.durationMs) : undefined}
+        />
+        <KeyValuePair
+          keyText="status"
+          label="Status"
+          valueText={capitalizeString(track?.status)}
+        />
+      </KeyValueList>
 
       <fieldset className="mt-4 border-none p-0">
         <Input
@@ -96,7 +91,7 @@ const TrackAudioPanel = ({
           fileName={uploadFileName}
         />
         {isDeletingAudio && (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[13px] text-(--muted)">
             Updating audio...
           </p>
         )}
@@ -111,17 +106,17 @@ const TrackAudioPanel = ({
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
-                  <p className="text-[12px] font-normal text-(--ink)">
+                  <p className="text-[13px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-xs text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-(--signal)">
+                    <p className="text-xs text-(--signal)">
                       Primary audio
                     </p>
                   )}
@@ -144,7 +139,7 @@ const TrackAudioPanel = ({
             </li>
           ))
         ) : (
-          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px] text-(--muted)">
+          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
             No audio uploaded yet.
           </li>
         )}

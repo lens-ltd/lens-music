@@ -90,7 +90,7 @@ export const useReviewReleaseColumns = () => {
                 {canApprove && (
                   <TableActionButton
                     icon={LuCircleCheck}
-                    iconClassName="text-(--success) text-[12px]"
+                    iconClassName="text-(--success) text-[13px]"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {
@@ -105,7 +105,7 @@ export const useReviewReleaseColumns = () => {
                 {canReject && (
                   <TableActionButton
                     icon={LuCircleX}
-                    iconClassName="text-(--danger) text-[12px]"
+                    iconClassName="text-(--danger) text-[13px]"
                     onClick={(e) => {
                       e.preventDefault();
                       if (row?.original?.id) {

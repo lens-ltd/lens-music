@@ -18,7 +18,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: "bg-(--signal) text-white hover:bg-(--signal-hover)",
-        secondary: "bg-(--surface) text-(--ink) hover:bg-(--surface-hover)",
+        secondary: "border border-(--line-field) bg-(--paper) text-(--ink) hover:border-(--line-hover) hover:bg-(--surface)",
         ghost: "bg-transparent text-(--ink) hover:bg-(--surface)",
         destructive: "bg-(--danger) text-white hover:bg-(--danger-hover)",
         link: "h-auto! min-h-0! bg-transparent px-0! text-(--signal) link-sweep",

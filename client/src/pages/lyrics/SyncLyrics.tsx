@@ -45,14 +45,14 @@ const SyncLyrics = () => {
   return (
     <UserLayout>
       <main className="flex w-full flex-col gap-4">
-        <header className="rounded-(--radius-card) bg-(--paper)">
+        <header className="card-framed p-5">
           <nav className="flex flex-wrap items-start justify-between gap-4">
             <menu className="space-y-1">
               <RelaxedHeading>Lyrics sync</RelaxedHeading>
               <Heading className="!text-(--ink)">
                 {page.track?.title || "Track lyrics sync"}
               </Heading>
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[13px] text-(--muted)">
                 Sync lyrics against the uploaded primary audio and overwrite the
                 selected lyrics record when you save.
               </p>

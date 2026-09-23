@@ -159,12 +159,12 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-(--radius-card) bg-(--paper)">
+      <section className="card-framed p-5">
         <header className="mb-4 space-y-1">
           <h3 className="text-sm font-medium text-(--ink)">
             Related releases
           </h3>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Capture remasters, equivalent releases, and replacement
             relationships directly in the release workflow.
           </p>
@@ -220,11 +220,11 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="mt-5 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               Loading related releases...
             </p>
           ) : relatedReleases.length === 0 ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               No related releases linked yet.
             </p>
           ) : (
@@ -232,7 +232,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
               {relatedReleases.map((row) => (
                 <li
                   key={row.id}
-                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
+                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
                 >
                   <div className="space-y-0.5">
                     <p className="font-medium text-(--ink)">
@@ -240,7 +240,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                         row.externalId ||
                         "External release"}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-xs text-(--muted)">
                       {row.relationType}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                     <button
                       type="button"
                       onClick={() => openEdit(row)}
-                      className="text-[11px] text-(--signal) hover:underline"
+                      className="text-xs text-(--signal) hover:underline"
                     >
                       Edit
                     </button>
@@ -256,7 +256,7 @@ const RelatedReleasesSection = ({ releaseId }: { releaseId: string }) => {
                       type="button"
                       onClick={() => void handleDelete(row.id)}
                       disabled={isDeleting}
-                      className="text-[11px] text-(--ink) hover:underline"
+                      className="text-xs text-(--ink) hover:underline"
                     >
                       Remove
                     </button>

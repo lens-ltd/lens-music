@@ -43,7 +43,7 @@ const DashboardCard = ({
         >
           <Icon
             icon={change >= 0 ? LuTrendingUp : LuTrendingDown}
-            className="text-[10px]"
+            className="text-xs"
           />
           {change >= 0 ? '+' : ''}
           {change}% vs last month

@@ -53,7 +53,6 @@ const StoresPage = () => {
           totalCount={stores.length}
           totalPages={1}
           noDataMessage="No stores found."
-          containerClassName="border-0 rounded-none"
         />
       </main>
     </UserLayout>

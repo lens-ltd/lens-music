@@ -20,7 +20,7 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("text-(--muted) [&_tr]:hover:bg-transparent", className)} {...props} />
+  <thead ref={ref} className={cn("bg-(--surface) text-(--ink) [&_tr]:hover:bg-(--surface)", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -58,7 +58,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "transition-colors duration-(--dur-state) hover:bg-(--surface) data-[state=selected]:bg-(--signal-soft)",
+      "transition-colors duration-(--dur-state) hover:bg-(--canvas) data-[state=selected]:bg-(--signal-soft)",
       className
     )}
     {...props}
@@ -73,7 +73,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 whitespace-nowrap border-b border-(--line) px-4 text-left text-xs font-medium text-(--muted) align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 whitespace-nowrap border-b border-(--line) px-4 text-left text-[13px] font-medium text-(--ink) align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className
     )}
     {...props}

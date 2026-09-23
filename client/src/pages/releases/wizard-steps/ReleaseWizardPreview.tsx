@@ -148,7 +148,7 @@ const ReleaseWizardPreview = ({
   if (!release) {
     return (
       <section className="flex items-center justify-center p-8">
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           Loading release data...
         </p>
       </section>
@@ -166,17 +166,17 @@ const ReleaseWizardPreview = ({
         >
           Review &amp; Submit
         </h2>
-        <p className="mt-1 text-[12px] font-normal text-(--muted)">
+        <p className="mt-1 text-[13px] font-normal text-(--muted)">
           Review all release information before submitting for distribution.
         </p>
       </header>
 
       {release.status === ReleaseStatus.DRAFT && release.reviewNotes && (
         <aside className="rounded-md bg-(--surface) p-4">
-          <p className="text-[12px] font-medium text-(--ink)">
+          <p className="text-[13px] font-medium text-(--ink)">
             Changes requested by the review team
           </p>
-          <p className="mt-1 text-[12px] text-(--ink) whitespace-pre-line">
+          <p className="mt-1 text-[13px] text-(--ink) whitespace-pre-line">
             {release.reviewNotes}
           </p>
         </aside>

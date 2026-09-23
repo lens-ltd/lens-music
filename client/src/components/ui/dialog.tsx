@@ -2,6 +2,7 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 
 import { cn } from "@/lib/utils"
+import { DialogContainerContext } from "./dialog-context"
 
 import { LuX } from 'react-icons/lu';
 
@@ -40,11 +41,25 @@ const isPortaledFloatingLayer = (target: EventTarget | null) => {
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, onPointerDownOutside, onFocusOutside, onInteractOutside, ...props }, ref) => (
+>(({ className, children, onPointerDownOutside, onFocusOutside, onInteractOutside, ...props }, ref) => {
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null)
+  const setRefs = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      setContainer(node)
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
+
+  return (
   <DialogPortal>
     <DialogOverlay />
+    {/* Centered with flexbox, not a transform: a transformed ancestor would
+        clip the fixed-position menus that portal into the dialog. */}
+    <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
     <DialogPrimitive.Content
-      ref={ref}
+      ref={setRefs}
       onPointerDownOutside={(event) => {
         // Combobox, date picker, and select menus portal to document.body, so
         // they read as "outside" the dialog. Interacting with them must not
@@ -67,19 +82,23 @@ const DialogContent = React.forwardRef<
         onInteractOutside?.(event);
       }}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-5 rounded-(--radius-card) bg-(--paper) p-6 text-(--ink) shadow-(--shadow-modal) duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        "pointer-events-auto relative grid w-full max-w-lg gap-5 rounded-(--radius-card) bg-(--paper) p-6 text-(--ink) shadow-(--shadow-modal) duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         className
       )}
       {...props}
     >
-      {children}
+      <DialogContainerContext.Provider value={container}>
+        {children}
+      </DialogContainerContext.Provider>
       <DialogPrimitive.Close className="absolute right-4 top-4 grid size-(--control-sm) cursor-pointer place-items-center rounded-(--radius-control) text-(--muted) transition-colors hover:bg-(--surface) hover:text-(--ink) disabled:pointer-events-none">
         <LuX className="size-4" aria-hidden="true" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
+    </div>
   </DialogPortal>
-))
+  )
+})
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({

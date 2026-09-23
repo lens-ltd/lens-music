@@ -236,12 +236,12 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
   return (
     <>
-      <section className="rounded-(--radius-card) bg-(--paper)">
+      <section className="card-framed p-5">
         <header className="mb-4 space-y-1">
           <h3 className="text-sm font-medium text-(--ink)">
             Release labels
           </h3>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Optionally assign labels to this release. If no label is set, the
             primary artist will be used as fallback in DDEX submissions.
           </p>
@@ -249,7 +249,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="flex flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
+            <span className="pl-0.5 text-[13px] leading-none text-(--ink)">
               Label
             </span>
             <search className="relative">
@@ -264,7 +264,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
               {labelSearchTerm?.trim()?.length > 0 && (
                 <aside className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                   {isLabelSearchPending || isSearchingLabels ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[13px] text-(--muted)">
                       <Loader
                         size="small"
                         className="text-(--muted)"
@@ -273,7 +273,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     </span>
                   ) : labelSearchTerm?.trim()?.length <
                     MIN_LABEL_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-(--muted)">
+                    <p className="px-3 py-2 text-[13px] text-(--muted)">
                       Type at least {MIN_LABEL_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -289,10 +289,10 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                               className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-(--surface)"
                             >
                               <p className="flex flex-col items-start">
-                                <span className="text-[12px] text-(--ink)">
+                                <span className="text-[13px] text-(--ink)">
                                   {label.name}
                                 </span>
-                                <span className="text-[11px] text-(--muted)">
+                                <span className="text-xs text-(--muted)">
                                   {[label.email, label.country]
                                     .filter(Boolean)
                                     .join(" · ") || "No extra details"}
@@ -308,7 +308,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     </ul>
                   ) : (
                     !(isLabelSearchPending || selectedLabelId) && (
-                      <p className="px-3 py-2 text-[12px] text-(--muted)">
+                      <p className="px-3 py-2 text-[13px] text-(--muted)">
                         No labels found.
                       </p>
                     )
@@ -350,9 +350,9 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
 
         <div className="mt-5 pt-4">
           {isFetching ? (
-            <p className="text-[12px] text-(--muted)">Loading labels...</p>
+            <p className="text-[13px] text-(--muted)">Loading labels...</p>
           ) : releaseLabels.length === 0 ? (
-            <p className="text-[12px] text-(--muted)">
+            <p className="text-[13px] text-(--muted)">
               No labels assigned yet.
             </p>
           ) : (
@@ -360,19 +360,19 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
               {releaseLabels.map((releaseLabel) => (
                 <li
                   key={releaseLabel.id}
-                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
+                  className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
                 >
                   <div className="space-y-0.5">
                     <p className="font-medium text-(--ink)">
                       {releaseLabel.label?.name || "Unknown label"}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-xs text-(--muted)">
                       {releaseLabel.type}
                       {releaseLabel.ownership
                         ? ` · Ownership: ${releaseLabel.ownership}`
                         : ""}
                     </p>
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-xs text-(--muted)">
                       DDEX Party ID: {releaseLabel?.label?.ddexPartyId || "—"}
                     </p>
                   </div>
@@ -380,7 +380,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                     <button
                       type="button"
                       onClick={() => openEdit(releaseLabel)}
-                      className="text-[11px] text-(--signal) hover:underline"
+                      className="text-xs text-(--signal) hover:underline"
                     >
                       Edit
                     </button>
@@ -388,7 +388,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                       type="button"
                       onClick={() => void handleDelete(releaseLabel.id)}
                       disabled={isDeleting}
-                      className="text-[11px] text-(--ink) hover:underline"
+                      className="text-xs text-(--ink) hover:underline"
                     >
                       Remove
                     </button>

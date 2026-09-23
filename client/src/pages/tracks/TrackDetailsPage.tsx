@@ -47,7 +47,7 @@ const TrackDetailsPage = () => {
               {track?.title || "Loading..."}
             </h1>
             {release?.title && (
-              <p className="text-[12px] text-(--muted)">
+              <p className="text-[13px] text-(--muted)">
                 {release.title}
               </p>
             )}

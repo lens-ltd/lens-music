@@ -53,7 +53,7 @@ export function DataTablePagination<TData>({
   }, [totalCount]);
 
   return (
-    <footer className="flex flex-col gap-3 px-4 py-3 text-[13px] text-(--muted) sm:flex-row sm:items-center sm:justify-between">
+    <footer className="flex flex-col gap-3 border-t border-(--line) px-4 py-3 text-[13px] text-(--muted) sm:flex-row sm:items-center sm:justify-between">
       <span>
         {totalCount > 0 ? (
           <>{formatNumbers(totalCount)} {totalCount === 1 ? 'record' : 'records'}</>

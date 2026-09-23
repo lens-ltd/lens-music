@@ -62,7 +62,6 @@ const UsersPage = () => {
           setPage={setPage}
           setSize={setSize}
           noDataMessage="No users found."
-          containerClassName="border-0 rounded-none"
         />
       </main>
       <AssignUserRole />

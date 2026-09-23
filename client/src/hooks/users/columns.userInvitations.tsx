@@ -84,7 +84,7 @@ export const useUserInvitationColumns = ({
                     disabled={isApproving}
                     onClick={() => onApprove(invitation.id)}
                   >
-                    <LuCircleCheck className="text-[12px]" />
+                    <LuCircleCheck className="text-[13px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -96,7 +96,7 @@ export const useUserInvitationColumns = ({
                     disabled={isRevoking}
                     onClick={() => onDecline(invitation.id)}
                   >
-                    <LuBan className="text-[12px]" />
+                    <LuBan className="text-[13px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -108,7 +108,7 @@ export const useUserInvitationColumns = ({
                     disabled={isRevoking}
                     onClick={() => onRevoke(invitation.id)}
                   >
-                    <LuBan className="text-[12px]" />
+                    <LuBan className="text-[13px]" />
                   </button>
                 </CustomTooltip>
               )}
@@ -122,7 +122,7 @@ export const useUserInvitationColumns = ({
                   >
                     <LuRotateCw
                      
-                      className="text-[12px]" />
+                      className="text-[13px]" />
                   </button>
                 </CustomTooltip>
               )}

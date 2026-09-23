@@ -59,7 +59,7 @@ const RejectRelease = () => {
           changes. Your feedback is required and will be emailed to them.
         </p>
         <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-medium text-(--ink)">
+          <span className="text-[13px] font-medium text-(--ink)">
             Feedback <span className="text-(--danger)">*</span>
           </span>
           <textarea

@@ -26,7 +26,7 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className={landingSectionClassName} aria-labelledby="faq-heading">
+    <section id="faq" className={`${landingSectionClassName} bg-(--canvas)`} aria-labelledby="faq-heading">
       <div className="app-container grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
         <h2 id="faq-heading" className="type-h2">
           Questions

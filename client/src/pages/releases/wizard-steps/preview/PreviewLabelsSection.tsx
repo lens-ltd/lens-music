@@ -23,9 +23,9 @@ const PreviewLabelsSection = ({ releaseId }: { releaseId: string }) => {
     >
       <DashboardSection title="Labels" label="Distribution">
         {isFetching ? (
-          <p className="text-[12px] text-(--muted)">Loading labels...</p>
+          <p className="text-[13px] text-(--muted)">Loading labels...</p>
         ) : releaseLabels.length === 0 ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No labels assigned yet.
           </p>
         ) : (
@@ -33,18 +33,18 @@ const PreviewLabelsSection = ({ releaseId }: { releaseId: string }) => {
             {releaseLabels.map((releaseLabel) => (
               <li
                 key={releaseLabel.id}
-                className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
+                className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
                 <p className="font-medium text-(--ink)">
                   {releaseLabel.label?.name || "Unknown label"}
                 </p>
-                <p className="text-[11px] text-(--muted)">
+                <p className="text-xs text-(--muted)">
                   {releaseLabel.type}
                   {releaseLabel.ownership
                     ? ` · Ownership: ${releaseLabel.ownership}`
                     : ""}
                 </p>
-                <p className="text-[11px] text-(--muted)">
+                <p className="text-xs text-(--muted)">
                   DDEX Party ID: {releaseLabel.label?.ddexPartyId || "Missing"}
                 </p>
               </li>

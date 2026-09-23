@@ -171,8 +171,8 @@ const TotalsStrip = ({ totals }: { totals: DashboardSummary['totals'] }) => {
             </strong>
           </>
         );
-        const className = `min-h-[112px] rounded-(--radius-card) bg-(--surface) p-5 ${
-          metric.route ? 'transition-colors hover:bg-(--surface-hover)' : ''
+        const className = `min-h-[112px] card-framed p-5 ${
+          metric.route ? 'transition-colors hover:border-(--line-hover)' : ''
         }`;
         return metric.route ? (
           <Link key={metric.label} to={metric.route} className={className}>
@@ -206,11 +206,11 @@ const ReleasePipeline = ({
             return (
               <li
                 key={item.status}
-                className="rounded-(--radius-card) bg-(--surface)"
+                className="card-framed"
               >
                 <Link
                   to={`/releases?status=${item.status}`}
-                  className="group flex min-h-[98px] flex-row items-center justify-between gap-3 rounded-(--radius-card) p-4 transition-colors hover:bg-(--surface-hover) lg:flex-col lg:items-start"
+                  className="group flex min-h-[98px] flex-row items-center justify-between gap-3 rounded-(--radius-card) p-4 transition-colors hover:bg-(--signal-soft) lg:flex-col lg:items-start"
                 >
                   <span className="type-meta">
                     {meta.label}
@@ -242,7 +242,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
       variant="open"
     >
       {deliveryHealth.total === 0 ? (
-        <div className="rounded-(--radius-card) bg-(--surface) px-5 py-8 text-center">
+        <div className="card-framed px-5 py-8 text-center">
           <LuSend className="mx-auto size-5 text-(--muted)" aria-hidden="true" />
           <p className="mt-3 type-label text-(--ink)">
             No store deliveries yet
@@ -253,7 +253,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
         </div>
       ) : (
         <div className="grid items-center gap-7 sm:grid-cols-[150px_1fr]">
-          <div className="card-quiet mx-auto flex h-[142px] w-[142px] flex-col items-center justify-center">
+          <div className="card-framed mx-auto flex h-[142px] w-[142px] flex-col items-center justify-center">
             <strong className="type-metric tabular">
               {deliveryHealth.deliveredRate}%
             </strong>
@@ -267,7 +267,7 @@ const DeliveryHealth = ({ summary }: { summary: DashboardSummary }) => {
               return (
                 <li
                   key={item.status}
-                  className="rounded-(--radius-control) bg-(--surface) px-3 py-2"
+                  className="card-framed px-4 py-3"
                 >
                   <strong
                     className="block type-card-title text-(--ink)"
@@ -438,7 +438,7 @@ const onboardingSteps = [
 
 const DashboardEmptyState = ({ onCreateRelease }: { onCreateRelease: () => void }) => (
   <section
-    className="grid gap-12 rounded-(--radius-card) bg-(--surface) p-7 sm:p-10 lg:grid-cols-[1fr_1fr] lg:p-14"
+    className="grid gap-12 card-framed p-7 sm:p-10 lg:grid-cols-[1fr_1fr] lg:p-14"
     aria-labelledby="empty-dashboard-title"
   >
     <div>

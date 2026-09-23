@@ -11,7 +11,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
   const { isOpen } = useAppSelector((state) => state.sidebar);
 
   return (
-    <section className="min-h-screen w-full overflow-x-hidden bg-(--paper) text-(--ink)">
+    <section className="min-h-screen w-full overflow-x-hidden bg-(--canvas) text-(--ink)">
       <Navbar />
       <Sidebar />
       <main
@@ -19,7 +19,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
           isOpen ? 'ml-18 sm:ml-60' : 'ml-18'
         }`}
       >
-        <article className="mx-auto w-full max-w-[1280px] px-5 py-6 sm:px-8 lg:px-10">
+        <article className="mx-auto max-w-[1280px] p-6 bg-white m-4 w-[95%] rounded-md">
           {children}
         </article>
       </main>

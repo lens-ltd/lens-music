@@ -31,12 +31,12 @@ const LyricsGuidelines = () => {
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="mb-1 mt-4 text-[12px] font-semibold text-(--ink)">
+            <h3 className="mb-1 mt-4 text-[13px] font-semibold text-(--ink)">
               {children}
             </h3>
           ),
           p: ({ children }) => (
-            <p className="mb-2 text-[12px] leading-relaxed text-(--muted)">
+            <p className="mb-2 text-[13px] leading-relaxed text-(--muted)">
               {children}
             </p>
           ),
@@ -46,7 +46,7 @@ const LyricsGuidelines = () => {
             </ul>
           ),
           li: ({ children }) => (
-            <li className="text-[12px] leading-relaxed text-(--muted)">
+            <li className="text-[13px] leading-relaxed text-(--muted)">
               {children}
             </li>
           ),

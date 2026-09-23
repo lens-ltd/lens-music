@@ -265,12 +265,12 @@ const ReleaseWizardDealsSection = () => {
   };
 
   return (
-    <section className="mt-8 rounded-(--radius-card) bg-(--paper)">
+    <section className="mt-8 card-framed p-5">
       <header className="mb-4 space-y-1">
         <h3 className="text-sm font-medium text-(--ink)">
           Commercial deals (DDEX)
         </h3>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           At least one active deal is required before validation. Use a global
           deal (all stores) or add a deal per DSP. Leave territories empty for
           worldwide, or enter ISO 3166-1 alpha-2 codes comma-separated.
@@ -339,15 +339,15 @@ const ReleaseWizardDealsSection = () => {
       </div>
 
       <div className="mt-6 pt-4">
-        <h4 className="text-[12px] font-medium text-(--ink)">
+        <h4 className="text-[13px] font-medium text-(--ink)">
           Active deals
         </h4>
         {isFetching ? (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[13px] text-(--muted)">
             Loading…
           </p>
         ) : deals.length === 0 ? (
-          <p className="mt-2 text-[12px] text-(--muted)">
+          <p className="mt-2 text-[13px] text-(--muted)">
             No deals yet. Add one above.
           </p>
         ) : (
@@ -355,19 +355,19 @@ const ReleaseWizardDealsSection = () => {
             {deals.map((deal) => (
               <li
                 key={deal.id}
-                className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[12px]"
+                className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
                 <div className="space-y-0.5">
                   <p className="font-medium text-(--ink)">
                     {deal.commercialModelType} · {deal.useType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-xs text-(--muted)">
                     {deal.territories.length > 0 ? deal.territories.join(', ') : 'Worldwide'}
                     {deal.store?.name
                       ? ` · Store: ${deal.store.name}`
                       : ' · All stores'}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-xs text-(--muted)">
                     {deal.startDate}
                     {deal.isActive === false ? ' · inactive' : ''}
                   </p>
@@ -376,7 +376,7 @@ const ReleaseWizardDealsSection = () => {
                   <button
                     type="button"
                     onClick={() => openEditDeal(deal)}
-                    className="text-[11px] text-(--signal) hover:underline"
+                    className="text-xs text-(--signal) hover:underline"
                   >
                     Edit
                   </button>
@@ -384,7 +384,7 @@ const ReleaseWizardDealsSection = () => {
                     type="button"
                     onClick={() => void handleDelete(deal.id)}
                     disabled={isDeleting}
-                    className="text-[11px] text-(--ink) hover:underline"
+                    className="text-xs text-(--ink) hover:underline"
                   >
                     Remove
                   </button>

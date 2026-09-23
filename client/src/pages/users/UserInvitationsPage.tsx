@@ -135,7 +135,6 @@ const UserInvitationsPage = () => {
             setSize={setSize}
             isLoading={isFetching}
             noDataMessage="No invitations match this filter."
-            containerClassName="border-0 rounded-none"
           />
         </section>
         <RevokeUserInvitation

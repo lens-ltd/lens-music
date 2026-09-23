@@ -165,7 +165,7 @@ const ResetPassword = () => {
             </form>
           )}
 
-          <p className="mt-5 text-center text-[12px] text-(--muted) font-normal">
+          <p className="mt-5 text-center text-[13px] text-(--muted) font-normal">
             <Link
               to="/auth/login"
               className="link-sweep type-body-sm text-(--signal)"

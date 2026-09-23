@@ -14,7 +14,7 @@ export default function WhatYouGetSection() {
   return (
     <section
       id="what-you-get"
-      className={`${landingSectionClassName} bg-(--surface)`}
+      className={`${landingSectionClassName} bg-(--canvas)`}
       aria-labelledby="what-you-get-heading"
     >
       <div className="app-container grid items-center gap-14 lg:grid-cols-2 lg:gap-20">

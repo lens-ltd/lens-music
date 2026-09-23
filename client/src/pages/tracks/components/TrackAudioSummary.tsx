@@ -23,17 +23,17 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
             >
               <header className="flex items-start justify-between gap-3">
                 <section className="space-y-1">
-                  <p className="text-[12px] font-normal text-(--ink)">
+                  <p className="text-[13px] font-normal text-(--ink)">
                     {audioFile.fileType}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-xs text-(--muted)">
                     {formatDuration(audioFile.durationMs)} ·{" "}
                     {audioFile.fileSizeBytes
                       ? `${Math.round(audioFile.fileSizeBytes / 1024 / 1024)} MB`
                       : "Size unavailable"}
                   </p>
                   {audioFile.isPrimary && (
-                    <p className="text-[11px] text-(--signal)">
+                    <p className="text-xs text-(--signal)">
                       Primary audio
                     </p>
                   )}
@@ -48,7 +48,7 @@ const TrackAudioSummary = ({ track }: TrackAudioSummaryProps) => {
           ))}
         </ul>
       ) : (
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           No audio files uploaded.
         </p>
       )}

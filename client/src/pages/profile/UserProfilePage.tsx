@@ -155,7 +155,7 @@ const UserProfilePage = () => {
                       placeholder="Confirm your current password"
                       type="password"
                     />
-                    <p className="text-[11px] text-(--muted)">
+                    <p className="text-xs text-(--muted)">
                       Required because you are changing your login email.
                     </p>
                   </div>
@@ -196,7 +196,7 @@ const UserProfilePage = () => {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <LuUser className="text-[12px] text-(--muted)" />
+                    <LuUser className="text-[13px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-(--muted)">
@@ -210,7 +210,7 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <LuMail className="text-[12px] text-(--muted)" />
+                    <LuMail className="text-[13px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-(--muted)">
@@ -224,7 +224,7 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <LuPhone className="text-[12px] text-(--muted)" />
+                    <LuPhone className="text-[13px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-(--muted)">
@@ -238,7 +238,7 @@ const UserProfilePage = () => {
 
                 <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                    <LuGlobe className="text-[12px] text-(--muted)" />
+                    <LuGlobe className="text-[13px] text-(--muted)" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-(--muted)">
@@ -253,7 +253,7 @@ const UserProfilePage = () => {
                 {user?.dateOfBirth && (
                   <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                      <LuCalendar className="text-[12px] text-(--muted)" />
+                      <LuCalendar className="text-[13px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-(--muted)">
@@ -269,7 +269,7 @@ const UserProfilePage = () => {
                 {user?.gender && (
                   <div className="flex items-start gap-3 rounded-md bg-(--surface) p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-md bg-(--paper)">
-                      <LuUser className="text-[12px] text-(--muted)" />
+                      <LuUser className="text-[13px] text-(--muted)" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-(--muted)">
@@ -295,7 +295,7 @@ const UserProfilePage = () => {
                 {user?.permissions?.map((permission: string) => (
                   <span
                     key={permission}
-                    className="inline-flex items-center px-2 py-1 rounded-md bg-(--signal-soft) text-[11px] text-(--signal)"
+                    className="inline-flex items-center px-2 py-1 rounded-md bg-(--signal-soft) text-xs text-(--signal)"
                   >
                     {permission.replace(/_/g, ' ').toLowerCase()}
                   </span>

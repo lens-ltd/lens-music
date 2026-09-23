@@ -160,12 +160,12 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
   }
 
   return (
-    <section className="rounded-(--radius-card) bg-(--paper)">
+    <section className="card-framed p-5">
       <header className="space-y-1">
         <h2 className="text-sm font-normal text-(--ink)">
           DDEX rights controllers
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           Each track needs at least one row with &quot;Making available&quot;
           before release validation. Use the label or licensor name as
           controller when unsure.
@@ -201,9 +201,9 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
 
       <div className="mt-4 pt-3">
         {isFetching ? (
-          <p className="text-[12px] text-(--muted)">Loading…</p>
+          <p className="text-[13px] text-(--muted)">Loading…</p>
         ) : rows.length === 0 ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No rights controllers yet.
           </p>
         ) : (
@@ -211,13 +211,13 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="flex items-start justify-between gap-2 rounded-(--radius-control) bg-(--surface) p-2 text-[12px]"
+                className="flex items-start justify-between gap-2 rounded-(--radius-control) bg-(--surface) p-2 text-[13px]"
               >
                 <div>
                   <p className="font-medium text-(--ink)">
                     {row.controllerName}
                   </p>
-                  <p className="text-[11px] text-(--muted)">
+                  <p className="text-xs text-(--muted)">
                     {row.rightType} · {row.territories.join(', ')}
                   </p>
                 </div>
@@ -225,7 +225,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                   <button
                     type="button"
                     onClick={() => openEdit(row)}
-                    className="text-[11px] text-(--signal) hover:underline"
+                    className="text-xs text-(--signal) hover:underline"
                   >
                     Edit
                   </button>
@@ -233,7 +233,7 @@ const TrackRightsControllersPanel = ({ trackId }: TrackRightsControllersPanelPro
                     type="button"
                     disabled={isDeleting}
                     onClick={() => void handleDelete(row.id)}
-                    className="text-[11px] text-(--danger) hover:underline"
+                    className="text-xs text-(--danger) hover:underline"
                   >
                     Remove
                   </button>

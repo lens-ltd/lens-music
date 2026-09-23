@@ -1,5 +1,7 @@
 import Button from "@/components/inputs/Button";
 import { BackButton, PageFooter } from "@/components/layout/PageFooter";
+import SectionCard from "@/components/layout/SectionCard";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useFetchRoleById } from "@/hooks/roles/roles.hooks";
@@ -54,71 +56,55 @@ const RoleDetailsPage = () => {
           </p>
         </header>
 
-        <section className="w-full">
-          <div className="flex w-full flex-col gap-6 card-framed p-5 sm:p-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-[18px] font-semibold text-(--ink)">
-                {role.name}
-              </h2>
-              {role.description && (
-                <p className="text-[13px] text-(--muted)">
-                  {role.description}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-3 pt-5">
-              <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                <p className="text-xs text-(--muted)">
-                  Role ID
-                </p>
-                <p className="text-[13px] text-(--ink) font-mono">
-                  {role.id}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                <p className="text-xs text-(--muted)">
-                  Permissions
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {role.permissions && role.permissions.length > 0 ? (
-                    role.permissions.map((permission) => (
-                      <span
-                        key={permission.id}
-                        className="inline-flex items-center px-2 py-1 rounded-md bg-(--paper) text-[12px] text-(--ink)"
-                      >
-                        {permission.permission?.name}
-                      </span>
-                    ))
-                  ) : (
-                    <p className="text-[13px] text-(--muted)">No permissions assigned</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                  <p className="text-xs text-(--muted)">
-                    Created
-                  </p>
-                  <p className="text-[13px] text-(--ink)">
-                    {role.createdAt ? formatDate(role.createdAt, "DD/MM/YYYY HH:mm") : "—"}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-1 rounded-md bg-(--surface) p-4">
-                  <p className="text-xs text-(--muted)">
-                    Last updated
-                  </p>
-                  <p className="text-[13px] text-(--ink)">
-                    {role.updatedAt ? formatDate(role.updatedAt, "DD/MM/YYYY HH:mm") : "—"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <section className="flex w-full flex-col gap-1 card-framed p-5 sm:p-6">
+          <h2 className="text-[18px] font-semibold text-(--ink)">{role.name}</h2>
+          {role.description && (
+            <p className="text-[13px] text-(--muted)">{role.description}</p>
+          )}
         </section>
+
+        <SectionCard title="Details">
+          <KeyValueList>
+            <KeyValuePair
+              keyText="roleId"
+              label="Role ID"
+              valueText={<span className="font-mono font-normal">{role.id}</span>}
+              className="md:col-span-2"
+            />
+            <KeyValuePair
+              keyText="created"
+              label="Created"
+              valueText={role.createdAt ? formatDate(role.createdAt, "DD/MM/YYYY HH:mm") : undefined}
+            />
+            <KeyValuePair
+              keyText="lastUpdated"
+              label="Last updated"
+              valueText={role.updatedAt ? formatDate(role.updatedAt, "DD/MM/YYYY HH:mm") : undefined}
+            />
+          </KeyValueList>
+        </SectionCard>
+
+        <SectionCard
+          title="Permissions"
+          description={`${role.permissions?.length || 0} granted to users with this role.`}
+        >
+          {role.permissions && role.permissions.length > 0 ? (
+            <ul className="flex flex-wrap gap-2">
+              {role.permissions.map((permission) => (
+                <li
+                  key={permission.id}
+                  className="inline-flex items-center rounded-(--radius-control) bg-(--surface) px-2 py-1 text-[13px] text-(--ink)"
+                >
+                  {permission.permission?.name}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[13px] text-(--muted)">
+              No permissions assigned.
+            </p>
+          )}
+        </SectionCard>
 
         <PageFooter
           back={<BackButton route="/roles">Back to roles</BackButton>}

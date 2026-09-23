@@ -41,12 +41,20 @@
   --signal: rgb(31, 98, 142);
   --signal-hover: #174a6b;
   --signal-soft: #eaf1f6;
-  --surface: #f5f5f5;
-  --surface-hover: #ececec;
-  --muted: #5c5c5c;
-  --placeholder: #8a8a8a;
-  --line: #e5e5e5;
-  --line-hover: #a3a3a3;
+  /* App background behind white cards. */
+  --canvas: #f4f5f6;
+  /* Fills nested inside cards: tiles, notes, hover rows, header rows. */
+  --surface: #eceef0;
+  --surface-hover: #e2e5e8;
+  /* Secondary text: 9:1 on white, 7.8:1 on --surface. */
+  --muted: #444a50;
+  /* Placeholder text: 5:1 on white. */
+  --placeholder: #6b7075;
+  /* Card and table borders. */
+  --line: #d9dde1;
+  /* Form field borders, strong enough to read as a control. */
+  --line-field: #b9bfc5;
+  --line-hover: #7d848b;
   --danger: #b42318;
   --danger-hover: #912018;
   --danger-soft: #fdecea;
@@ -59,7 +67,7 @@
   --ring-signal: 0 0 0 3px rgba(31, 98, 142, 0.15);
   --ring-danger: 0 0 0 3px rgba(180, 35, 24, 0.15);
   --radius-control: 6px;
-  --radius-card: 8px;
+  --radius-card: 6px;
   --radius-pill: 999px;
 
   --nav-open: 240px;
@@ -97,7 +105,7 @@
   --accent-foreground: var(--ink);
   --destructive: var(--danger);
   --border: var(--line);
-  --input: var(--line);
+  --input: var(--line-field);
   --ring: var(--signal);
 }
 
@@ -115,7 +123,7 @@
     min-height: 100%;
     font-family: var(--font-family-sans);
     font-size: 16px;
-    background: var(--field);
+    background: var(--canvas);
     scroll-behavior: smooth;
   }
 
@@ -196,18 +204,11 @@
     outline-offset: 2px;
   }
 
-  ::selection,
-  ::-moz-selection {
-    background-color: var(--signal);
-    color: #ffffff;
-  }
-
-  input::selection,
-  input::-moz-selection,
-  textarea::selection,
-  textarea::-moz-selection,
-  [contenteditable]::selection,
-  [contenteditable]::-moz-selection {
+  /*
+    Keep ::selection and ::-moz-selection out of one selector list: browsers
+    drop the whole rule when any selector in it is unknown.
+  */
+  ::selection {
     background-color: var(--signal);
     color: #ffffff;
   }
@@ -222,18 +223,7 @@
       [class~='bg-(--signal)'],
       [class~='bg-(--signal-hover)']
     )
-    *::selection,
-  :is(
-      .bg-primary,
-      [class~='bg-(--signal)'],
-      [class~='bg-(--signal-hover)']
-    )::-moz-selection,
-  :is(
-      .bg-primary,
-      [class~='bg-(--signal)'],
-      [class~='bg-(--signal-hover)']
-    )
-    *::-moz-selection {
+    *::selection {
     background-color: #ffffff;
     color: var(--signal);
   }
@@ -351,7 +341,7 @@
   height: var(--control-md);
   min-height: var(--control-md);
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-field);
   border-radius: var(--radius-control);
   background-color: var(--paper);
   padding-inline: 0.75rem;
@@ -476,10 +466,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Cards are separated by fill, never by an outline. */
+/* Top-level container on the canvas: white with a hairline frame. */
 @utility card-framed {
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  background-color: var(--surface);
+  background-color: var(--paper);
   color: var(--ink);
 }
 

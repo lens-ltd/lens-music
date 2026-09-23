@@ -28,13 +28,13 @@ const TrackUploadProgress = ({
   return (
     <figure className="mt-3 rounded-md bg-(--surface) p-4">
       <figcaption className="flex items-center justify-between gap-3">
-        <p className="text-[12px] text-(--ink) truncate">
+        <p className="text-[13px] text-(--ink) truncate">
           {fileName}
         </p>
-        <output className="text-[12px] font-normal text-(--muted) shrink-0">
+        <output className="text-[13px] font-normal text-(--muted) shrink-0">
           {isComplete ? (
-            <p className="flex text-[12px] font-normal items-center gap-1.5 bg-transparent text-(--success)">
-              <LuCheck className="text-[11px]" />
+            <p className="flex text-[13px] font-normal items-center gap-1.5 bg-transparent text-(--success)">
+              <LuCheck className="text-xs" />
               Uploaded
             </p>
           ) : (
@@ -44,7 +44,7 @@ const TrackUploadProgress = ({
       </figcaption>
 
       {phase === "registering" && !isComplete ? (
-        <p className="mt-2 text-[11px] text-(--muted)">
+        <p className="mt-2 text-xs text-(--muted)">
           Saving file details…
         </p>
       ) : null}

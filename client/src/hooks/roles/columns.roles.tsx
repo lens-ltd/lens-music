@@ -75,7 +75,7 @@ export const useRoleColumns = () => {
                 </TableActionButton>
                 <TableActionButton
                   icon={LuTrash2}
-                  iconClassName="text-(--danger) text-[12px]"
+                  iconClassName="text-(--danger) text-[13px]"
                   onClick={(e) => {
                     e.preventDefault();
                     if (row?.original?.id) {

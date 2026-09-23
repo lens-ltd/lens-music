@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
+import SectionCard from "@/components/layout/SectionCard";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { PERMISSIONS } from "@/constants/permission.constants";
@@ -71,18 +73,18 @@ const ReleaseReviewDetailPage = () => {
           <Heading isLoading={isFetching}>
             {release?.title || "Release review"}
           </Heading>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Everything submitted for this release, along with any prior
             feedback, to help you decide whether to approve it.
           </p>
         </nav>
 
         {isNotFound ? (
-          <section className="rounded-(--radius-card) bg-(--surface) p-8 text-center">
+          <section className="card-framed p-8 text-center">
             <Heading type="h3" className="!text-(--ink)">
               Release not found
             </Heading>
-            <p className="mt-2 text-[12px] text-(--muted)">
+            <p className="mt-2 text-[13px] text-(--muted)">
               This release could not be loaded or does not exist.
             </p>
             <menu className="mt-5 flex justify-center">
@@ -98,39 +100,54 @@ const ReleaseReviewDetailPage = () => {
           </section>
         ) : (
           <>
-            <section className="rounded-(--radius-card) bg-(--paper)">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-(--muted)">
-                  <span>Catalog: {release?.catalogNumber || "—"}</span>
-                  <span>
-                    Submitted by:{" "}
-                    {release?.createdBy?.name || release?.createdBy?.email || "—"}
-                  </span>
-                  <span>
-                    Submitted: {formatDate(release?.updatedAt, "DD/MM/YYYY HH:mm")}
-                  </span>
-                </div>
-                {release?.status && (
+            <SectionCard
+              title="Submission"
+              action={
+                release?.status && (
                   <span className={getStatusBackgroundColor(release.status)}>
                     {capitalizeString(release.status)}
                   </span>
-                )}
-              </div>
-            </section>
+                )
+              }
+            >
+              <KeyValueList className="lg:grid-cols-3">
+                <KeyValuePair
+                  keyText="catalogNumber"
+                  label="Catalog number"
+                  valueText={release?.catalogNumber}
+                />
+                <KeyValuePair
+                  keyText="submittedBy"
+                  label="Submitted by"
+                  valueText={release?.createdBy?.name || release?.createdBy?.email}
+                />
+                <KeyValuePair
+                  keyText="submittedAt"
+                  label="Submitted"
+                  valueText={
+                    release?.updatedAt
+                      ? formatDate(release.updatedAt, "DD/MM/YYYY HH:mm")
+                      : undefined
+                  }
+                />
+              </KeyValueList>
+            </SectionCard>
 
             {release?.reviewNotes && (
-              <aside className="rounded-md bg-(--surface) p-4">
-                <p className="text-[12px] font-medium text-(--ink)">
-                  Feedback from{" "}
-                  {release.reviewedBy?.name || release.reviewedBy?.email || "reviewer"}
-                  {release.reviewedAt
+              <SectionCard
+                title="Reviewer feedback"
+                description={`From ${
+                  release.reviewedBy?.name || release.reviewedBy?.email || "reviewer"
+                }${
+                  release.reviewedAt
                     ? ` · ${formatDate(release.reviewedAt, "DD/MM/YYYY HH:mm")}`
-                    : ""}
-                </p>
-                <p className="mt-1 text-[12px] text-(--ink) whitespace-pre-line">
+                    : ""
+                }`}
+              >
+                <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[13px] text-(--ink) whitespace-pre-line">
                   {release.reviewNotes}
                 </p>
-              </aside>
+              </SectionCard>
             )}
 
             <section className="flex flex-col gap-4">

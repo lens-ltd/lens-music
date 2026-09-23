@@ -221,7 +221,7 @@ const ReleaseWizardRegions = ({
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {filteredCountries.length === 0 ? (
-          <p className="col-span-full text-[12px] text-(--muted)">
+          <p className="col-span-full text-[13px] text-(--muted)">
             No countries match &ldquo;{countrySearchQuery.trim()}&rdquo;.
           </p>
         ) : null}

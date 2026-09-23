@@ -140,7 +140,7 @@ const ReleaseTrackCard = ({
                 }}
                 className="cursor-pointer border-0 bg-transparent p-0 text-(--danger)"
               >
-                <LuTrash2 className="text-[12px]" />
+                <LuTrash2 className="text-[13px]" />
               </button>
             </CustomTooltip>
           )}
@@ -161,7 +161,7 @@ const ReleaseTrackCard = ({
                 <dt className="text-xs text-(--muted) font-normal">
                   {label}
                 </dt>
-                <dd className="mt-0.5 text-[12px] text-(--ink) font-normal">
+                <dd className="mt-0.5 text-[13px] text-(--ink) font-normal">
                   {label === "Disc"
                     ? discNumber
                     : label === "Track"

@@ -247,12 +247,12 @@ const ContributorMembershipsPage = () => {
           <Heading isLoading={isFetchingContributor}>
             {contributorName} — Members
           </Heading>
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Manage the members that belong to this group.
           </p>
         </header>
 
-        <section className="rounded-(--radius-card) bg-(--paper) flex flex-col gap-4">
+        <section className="card-framed p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between gap-3">
             <Heading type="h3">Current members</Heading>
             <Button
@@ -271,7 +271,7 @@ const ContributorMembershipsPage = () => {
             <div className="flex items-end gap-3 rounded-(--radius-control) bg-(--surface) p-4">
               <div className="flex-1">
                 <label className="flex w-full flex-col gap-2">
-                  <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
+                  <span className="pl-0.5 text-[13px] leading-none text-(--ink)">
                     Select contributor
                   </span>
                   <div className="relative">
@@ -286,13 +286,13 @@ const ContributorMembershipsPage = () => {
                     {memberSearchTerm.trim().length > 0 && (
                       <div className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                         {isMemberSearchPending ? (
-                          <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                          <span className="flex items-center gap-2 px-3 py-2 text-[13px] text-(--muted)">
                             <Loader size="small" className="text-(--muted)" />
                             Searching contributors...
                           </span>
                         ) : memberSearchTerm.trim().length <
                           MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                          <p className="px-3 py-2 text-[12px] text-(--muted)">
+                          <p className="px-3 py-2 text-[13px] text-(--muted)">
                             Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS}{" "}
                             characters to search.
                           </p>
@@ -313,10 +313,10 @@ const ContributorMembershipsPage = () => {
                                     }`}
                                   >
                                     <span className="flex flex-col items-start">
-                                      <span className="text-[12px] text-(--ink)">
+                                      <span className="text-[13px] text-(--ink)">
                                         {getContributorLabel(member)}
                                       </span>
-                                      <span className="text-[11px] text-(--muted)">
+                                      <span className="text-xs text-(--muted)">
                                         {[
                                           member.email,
                                           member.phoneNumber,
@@ -336,7 +336,7 @@ const ContributorMembershipsPage = () => {
                           </ul>
                         ) : (
                           !(isMemberSearchPending || selectedMemberId) && (
-                            <p className="px-3 py-2 text-[12px] text-(--muted)">
+                            <p className="px-3 py-2 text-[13px] text-(--muted)">
                               No contributors found.
                             </p>
                           )
@@ -381,7 +381,7 @@ const ContributorMembershipsPage = () => {
               ))}
             </div>
           ) : contributorMembershipsList.length === 0 ? (
-            <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[12px] text-(--muted)">
+            <p className="rounded-(--radius-control) bg-(--surface) px-4 py-3 text-[13px] text-(--muted)">
               No members have been added to this group yet.
             </p>
           ) : (
@@ -401,7 +401,7 @@ const ContributorMembershipsPage = () => {
                             "Unknown contributor"}
                         </p>
                         {member?.email && (
-                          <p className="text-[11px] text-(--muted)">
+                          <p className="text-xs text-(--muted)">
                             {member.email}
                           </p>
                         )}

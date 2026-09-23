@@ -1,4 +1,7 @@
+import Button from "@/components/inputs/Button";
 import { BackButton, PageFooter } from "@/components/layout/PageFooter";
+import SectionCard from "@/components/layout/SectionCard";
+import { KeyValueList, KeyValuePair } from "@/components/inputs/KeyValuePair";
 import Loader from "@/components/inputs/Loader";
 import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
@@ -15,8 +18,7 @@ import { capitalizeString, formatDate, getStatusBackgroundColor } from "@/utils/
 import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { LuGlobe, LuIdCard, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
-import { Icon } from '@/components/ui/icon';
+import { LuGlobe, LuMail, LuPhone, LuUser } from 'react-icons/lu';
 
 const detailItems = [
   { key: "name", label: "Full name", icon: LuUser },
@@ -122,7 +124,7 @@ const UserDetailsPage = () => {
         </nav>
 
         <section className="flex w-full flex-col gap-5 card-framed p-5 sm:p-6">
-          <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-(--signal) text-xl font-semibold text-white">
               {user.avatarUrl ? (
                 <img
@@ -147,119 +149,69 @@ const UserDetailsPage = () => {
             </span>
           </div>
 
-          <div className="grid gap-3 lg:grid-cols-2">
-            {detailItems.map((item) => (
-              <div
-                key={item.key}
-                className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:items-center"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-(--signal-soft) text-(--signal)">
-                  <Icon icon={item.icon} className="text-[12px]" />
-                </span>
-                <p className="text-xs text-(--muted)">
-                  {item.label}
-                </p>
-                <p className="min-w-0 truncate text-[13px] text-(--ink)">
-                  {user[item.key] || "—"}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid gap-3 lg:grid-cols-2">
-            <div className="rounded-md bg-(--surface) p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <LuShield
-                 
-                  className="text-[12px] text-(--signal)" />
-                <h3 className="text-[13px] font-medium text-(--ink)">
-                  Access
-                </h3>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs text-(--muted)">
-                    Role
-                  </p>
-                  <p className="mt-1 flex items-center gap-2 text-[13px] text-(--ink)">
-                    {user.roleName || "No role assigned"}
-                    {canAssignRole && (
-                      <button
-                        type="button"
-                        className="text-[12px] text-(--signal) hover:underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          dispatch(setSelectedUser(user));
-                          dispatch(setAssignUserRoleModal(true));
-                        }}
-                      >
-                        {user.roleName ? "Change role" : "Assign role"}
-                      </button>
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-(--muted)">
-                    Permissions
-                  </p>
-                  <p className="mt-1 text-[13px] text-(--ink)">
-                    {user.permissions?.length
-                      ? `${user.permissions.length} permission${user.permissions.length === 1 ? "" : "s"}`
-                      : "—"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-md bg-(--surface) p-4">
-              <div className="mb-3 flex items-center gap-2">
-                <LuIdCard
-                 
-                  className="text-[12px] text-(--signal)" />
-                <h3 className="text-[13px] font-medium text-(--ink)">
-                  Workspace
-                </h3>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs text-(--muted)">
-                    Labels
-                  </p>
-                  <p className="mt-1 text-[13px] text-(--ink)">
-                    {user.labels?.length || 0}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-(--muted)">
-                    Releases
-                  </p>
-                  <p className="mt-1 text-[13px] text-(--ink)">
-                    {user.releases?.length || 0}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-3 rounded-md bg-(--surface) p-4 sm:grid-cols-2">
-            <div>
-              <p className="text-xs text-(--muted)">
-                Created
-              </p>
-              <p className="mt-1 text-[13px] text-(--ink)">
-                {user.createdAt ? formatDate(user.createdAt, "DD/MM/YYYY HH:mm") : "—"}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-(--muted)">
-                Last updated
-              </p>
-              <p className="mt-1 text-[13px] text-(--ink)">
-                {user.updatedAt ? formatDate(user.updatedAt, "DD/MM/YYYY HH:mm") : "—"}
-              </p>
-            </div>
-          </div>
         </section>
+
+        <SectionCard title="Profile" description="Identity and contact details.">
+          <KeyValueList>
+            {detailItems.map((item) => (
+              <KeyValuePair
+                key={item.key}
+                keyText={item.key}
+                label={item.label}
+                icon={item.icon}
+                valueText={user[item.key]}
+              />
+            ))}
+          </KeyValueList>
+        </SectionCard>
+
+        <SectionCard
+          title="Access"
+          description="Role and permissions granted to this user."
+          action={
+            canAssignRole && (
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(setSelectedUser(user));
+                  dispatch(setAssignUserRoleModal(true));
+                }}
+              >
+                {user.roleName ? "Change role" : "Assign role"}
+              </Button>
+            )
+          }
+        >
+          <KeyValueList>
+            <KeyValuePair keyText="role" label="Role" valueText={user.roleName} emptyText="No role assigned" />
+            <KeyValuePair
+              keyText="permissions"
+              label="Permissions"
+              valueText={
+                user.permissions?.length
+                  ? `${user.permissions.length} permission${user.permissions.length === 1 ? "" : "s"}`
+                  : undefined
+              }
+            />
+          </KeyValueList>
+        </SectionCard>
+
+        <SectionCard title="Workspace" description="Content this user owns and when the account changed.">
+          <KeyValueList>
+            <KeyValuePair keyText="labels" label="Labels" valueText={user.labels?.length || 0} />
+            <KeyValuePair keyText="releases" label="Releases" valueText={user.releases?.length || 0} />
+            <KeyValuePair
+              keyText="created"
+              label="Created"
+              valueText={user.createdAt ? formatDate(user.createdAt, "DD/MM/YYYY HH:mm") : undefined}
+            />
+            <KeyValuePair
+              keyText="lastUpdated"
+              label="Last updated"
+              valueText={user.updatedAt ? formatDate(user.updatedAt, "DD/MM/YYYY HH:mm") : undefined}
+            />
+          </KeyValueList>
+        </SectionCard>
         <PageFooter
           back={
             <BackButton onClick={(e) => {

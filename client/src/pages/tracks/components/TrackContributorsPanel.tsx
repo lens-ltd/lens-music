@@ -61,16 +61,16 @@ const TrackContributorsPanel = ({
     .map((contributor) => contributor.role);
 
   return (
-    <section className="rounded-(--radius-card) bg-(--paper)">
+    <section className="card-framed p-5">
       <header className="space-y-1">
         <h2 className="text-sm font-normal text-(--ink)">
           Contributors
         </h2>
-        <p className="text-[12px] text-(--muted)">
+        <p className="text-[13px] text-(--muted)">
           Select a contributor once, then add every role they have on this
           track.
         </p>
-        <p className="text-[12px] text-(--muted) mt-2">
+        <p className="text-[13px] text-(--muted) mt-2">
           Can't find the contributor you're looking for?{" "}
           <ExternalLink href="/contributors/create?redirect=CLOSE_TAB">
               Create a new contributor
@@ -84,7 +84,7 @@ const TrackContributorsPanel = ({
       >
         <section className="grid w-full gap-4">
           <label className="flex flex-col gap-2">
-            <span className="pl-0.5 text-[12px] leading-none text-(--ink)">
+            <span className="pl-0.5 text-[13px] leading-none text-(--ink)">
               Contributor
             </span>
             <search className="relative">
@@ -99,7 +99,7 @@ const TrackContributorsPanel = ({
               {contributorSearchTerm?.trim()?.length > 0 && (
                 <aside className="mt-2 animate-in fade-in duration-150 rounded-(--radius-control) bg-(--paper) shadow-(--shadow-menu)">
                   {isSearchingContributors ? (
-                    <span className="flex items-center gap-2 px-3 py-2 text-[12px] text-(--muted)">
+                    <span className="flex items-center gap-2 px-3 py-2 text-[13px] text-(--muted)">
                       <Loader
                         size="small"
                         className="text-(--muted)"
@@ -108,7 +108,7 @@ const TrackContributorsPanel = ({
                     </span>
                   ) : contributorSearchTerm?.trim()?.length <
                     MIN_CONTRIBUTOR_SEARCH_CHARS ? (
-                    <p className="px-3 py-2 text-[12px] text-(--muted)">
+                    <p className="px-3 py-2 text-[13px] text-(--muted)">
                       Type at least {MIN_CONTRIBUTOR_SEARCH_CHARS} characters to
                       search.
                     </p>
@@ -125,10 +125,10 @@ const TrackContributorsPanel = ({
                               className={`flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left transition-colors hover:bg-(--surface)`}
                             >
                               <p className="flex flex-col items-start">
-                                <span className="text-[12px] text-(--ink)">
+                                <span className="text-[13px] text-(--ink)">
                                   {getContributorSearchName(contributor)}
                                 </span>
-                                <span className="text-[11px] text-(--muted)">
+                                <span className="text-xs text-(--muted)">
                                   {[
                                     contributor?.email,
                                     contributor?.phoneNumber,
@@ -148,7 +148,7 @@ const TrackContributorsPanel = ({
                     </ul>
                   ) : (
                     !(isSearchingContributors || selectedContributorId) && (
-                      <p className="px-3 py-2 text-[12px] text-(--muted)">
+                      <p className="px-3 py-2 text-[13px] text-(--muted)">
                         No contributors found.
                       </p>
                     )
@@ -190,17 +190,17 @@ const TrackContributorsPanel = ({
               className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
             >
               <section className="flex flex-col gap-0.5">
-                <p className="text-[12px] font-normal text-(--ink)">
+                <p className="text-[13px] font-normal text-(--ink)">
                   {getContributorCreditName(
                     trackContributor?.contributor,
                     trackContributor.role,
                   )}
                 </p>
-                <p className="text-[11px] text-(--muted)">
+                <p className="text-xs text-(--muted)">
                   {toTitleCase(trackContributor?.role)}
                 </p>
                 {onUpdateSequence ? (
-                  <label className="mt-1 flex items-center gap-2 text-[11px] text-(--muted)">
+                  <label className="mt-1 flex items-center gap-2 text-xs text-(--muted)">
                     <span className="shrink-0">Order</span>
                     <input
                       type="number"
@@ -238,7 +238,7 @@ const TrackContributorsPanel = ({
             </li>
           ))
         ) : (
-          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[12px] text-(--muted)">
+          <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
             No contributors added yet.
           </li>
         )}

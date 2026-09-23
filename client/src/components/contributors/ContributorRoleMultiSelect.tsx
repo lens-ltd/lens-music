@@ -68,7 +68,7 @@ const ContributorRoleMultiSelect = ({
           );
         })}
       </div>
-      <p className="mt-2 text-[10px] text-(--muted)">
+      <p className="mt-2 text-xs text-(--muted)">
         {value.length
           ? `${value.length} role${value.length === 1 ? "" : "s"} selected`
           : "Select at least one role"}

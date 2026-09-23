@@ -217,7 +217,7 @@ const ReleaseWizardStores = ({
         <menu className="grid grid-cols-1 gap-3">
           <label
             htmlFor="select-all-stores"
-            className="flex cursor-pointer items-center gap-2 rounded-(--radius-card) bg-(--paper) transition-colors hover:bg-(--surface)"
+            className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) border border-(--line) bg-(--paper) p-3 transition-colors hover:bg-(--surface)"
           >
             <UiInput
               type="checkbox"
@@ -238,11 +238,11 @@ const ReleaseWizardStores = ({
             </span>
           </label>
         </menu>
-        <span className="text-[12px] text-(--muted)">
+        <span className="text-[13px] text-(--muted)">
           {selectedStoreIds.length} of {stores.length} selected
         </span>
         {storesMissingDdex.length > 0 ? (
-          <p className="text-[11px] text-(--ink)">
+          <p className="text-xs text-(--ink)">
             {storesMissingDdex.length} selected store
             {storesMissingDdex.length > 1 ? "s are" : " is"} missing a DDEX
             Party ID. An admin must configure this under `/stores` before
@@ -253,11 +253,11 @@ const ReleaseWizardStores = ({
 
       <section className="grid grid-cols-1 gap-3 rounded-(--radius-control) bg-(--surface) p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {storesIsFetching || releaseStoresIsFetching ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             Loading stores...
           </p>
         ) : stores.length === 0 ? (
-          <p className="text-[12px] text-(--muted)">
+          <p className="text-[13px] text-(--muted)">
             No stores available.
           </p>
         ) : (
@@ -268,7 +268,7 @@ const ReleaseWizardStores = ({
               <label
                 key={store.id}
                 htmlFor={`store-${store.id}`}
-                className="flex cursor-pointer items-center gap-2 rounded-(--radius-card) bg-(--paper) transition-colors hover:bg-(--surface)"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-control) border border-(--line) bg-(--paper) p-3 transition-colors hover:bg-(--surface)"
               >
                 <UiInput
                   type="checkbox"
@@ -283,7 +283,7 @@ const ReleaseWizardStores = ({
                   {store.name}
                 </span>
                 <span
-                  className={`ml-auto rounded-full px-2 py-0.5 text-[10px] ${
+                  className={`ml-auto rounded-full px-2 py-0.5 text-xs ${
                     store.ddexPartyId?.trim()
                       ? "bg-(--success-soft) text-(--success)"
                       : "bg-(--surface) text-(--ink)"
@@ -298,14 +298,14 @@ const ReleaseWizardStores = ({
       </section>
 
       {!allSelected && stores.length > 0 && (
-        <p className="text-[11px] text-(--muted)">
+        <p className="text-xs text-(--muted)">
           Tip: Use Select all for global distribution, then deselect stores you
           do not want.
         </p>
       )}
 
       {storesError ? (
-        <p className="text-[11px] text-(--ink)">{storesError}</p>
+        <p className="text-xs text-(--ink)">{storesError}</p>
       ) : null}
 
       <ReleaseWizardDealsSection />

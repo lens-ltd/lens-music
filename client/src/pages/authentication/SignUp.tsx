@@ -162,12 +162,12 @@ const SignUp = () => {
           </form>
 
           <div className="mt-5 text-center">
-            <p className="text-[11px] text-(--muted) font-normal">
+            <p className="text-xs text-(--muted) font-normal">
               Already have an account?
             </p>
             <Link
               to="/auth/login"
-              className="mt-2 inline-flex text-[12px] text-(--signal) hover:underline font-normal"
+              className="mt-2 inline-flex text-[13px] text-(--signal) hover:underline font-normal"
             >
               Sign in
             </Link>
