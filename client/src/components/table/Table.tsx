@@ -227,7 +227,7 @@ export default function Table<TData, TValue>({
                   colSpan={columns.length}
                   className="px-4 py-10 text-center"
                 >
-                  <p className="text-sm font-medium text-(--ink)">
+                  <p className="text-sm font-normal text-(--ink)">
                     {noDataMessage}
                   </p>
                   <p className="mt-1 text-[13px] text-(--muted)">

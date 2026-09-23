@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import Combobox from "@/components/inputs/Combobox";
@@ -18,6 +19,7 @@ import {
   ReleaseLabelType,
 } from "@/types/models/releaseLabel.types";
 import { capitalizeString } from "@/utils/strings.helper";
+import WizardQueryError from "./WizardQueryError";
 
 import { LuCheck, LuSearch } from 'react-icons/lu';
 
@@ -35,7 +37,8 @@ type LabelFormState = {
 };
 
 const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
-  const { fetchReleaseLabels, data, isFetching } = useFetchReleaseLabels();
+  const { fetchReleaseLabels, data, isFetching, isError, error } =
+    useFetchReleaseLabels();
   const { createReleaseLabel, isLoading: isCreating } = useCreateReleaseLabel();
   const { updateReleaseLabel, isLoading: isUpdating } = useUpdateReleaseLabel();
   const { deleteReleaseLabel, isLoading: isDeleting } = useDeleteReleaseLabel();
@@ -180,10 +183,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       setLabelSearchResults([]);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to add label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to add label."));
     }
   };
 
@@ -211,10 +211,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       setEditingLabel(null);
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to update release label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to update release label."));
     }
   };
 
@@ -227,10 +224,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
       toast.success("Release label removed.");
       await refresh();
     } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to remove release label.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, "Unable to remove release label."));
     }
   };
 
@@ -238,7 +232,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
     <>
       <section className="card-framed p-5">
         <header className="mb-4 space-y-1">
-          <h3 className="text-sm font-medium text-(--ink)">
+          <h3 className="text-sm text-(--ink)">
             Release labels
           </h3>
           <p className="text-[13px] text-(--muted)">
@@ -351,6 +345,12 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
         <div className="mt-5 pt-4">
           {isFetching ? (
             <p className="text-[13px] text-(--muted)">Loading labels...</p>
+          ) : isError ? (
+            <WizardQueryError
+              title="We couldn't load the labels."
+              error={error}
+              onRetry={() => fetchReleaseLabels({ releaseId })}
+            />
           ) : releaseLabels.length === 0 ? (
             <p className="text-[13px] text-(--muted)">
               No labels assigned yet.
@@ -363,7 +363,7 @@ const ReleaseLabelsSection = ({ releaseId }: { releaseId: string }) => {
                   className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
                 >
                   <div className="space-y-0.5">
-                    <p className="font-medium text-(--ink)">
+                    <p className="font-normal text-(--ink)">
                       {releaseLabel.label?.name || "Unknown label"}
                     </p>
                     <p className="text-xs text-(--muted)">

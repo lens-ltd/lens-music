@@ -37,11 +37,12 @@ beforeEach(() => {
   portal.id = 'modal';
   document.body.appendChild(portal);
   if (!window.matchMedia) {
-    window.matchMedia = () => ({
-      matches: false,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-    });
+    window.matchMedia = () =>
+      ({
+        matches: false,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }) as unknown as MediaQueryList;
   }
   if (!window.ResizeObserver) {
     window.ResizeObserver = class {
@@ -93,10 +94,11 @@ describe('Combobox inside Modal', () => {
     await user.click(screen.getByRole('combobox'));
     await screen.findByRole('listbox');
     await user.click(screen.getByPlaceholderText('Search options'));
+    // cmdk highlights the first option on open, so ArrowDown lands on the second.
     await user.keyboard('{ArrowDown}{Enter}');
 
     await waitFor(() => {
-      expect(onChange).toHaveBeenCalledWith('single');
+      expect(onChange).toHaveBeenCalledWith('album');
     });
     expect(screen.getByText('Add new Release')).toBeInTheDocument();
   });

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { resolveDbSsl } from './helpers/database.helper';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,9 +13,5 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   entities: [`${__dirname}/**/entities/*.{ts,js}`],
   migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
-  ssl: ['localhost', '127.0.0.1', '/var/run/postgresql'].includes(
-    process.env.DB_HOST || ''
-  )
-    ? false
-    : { rejectUnauthorized: false },
+  ssl: resolveDbSsl(),
 });

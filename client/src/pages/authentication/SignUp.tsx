@@ -11,6 +11,8 @@ import { useAppDispatch, useAppSelector } from '@/state/hooks';
 import { validateInputs } from '@/utils/validations.helper';
 
 import { LuEye, LuEyeOff } from 'react-icons/lu';
+import PhoneField from "@/components/inputs/PhoneField";
+import { phoneRules } from "@/utils/phone.helper";
 
 const SignUp = () => {
   const { token: authToken, user: authUser } = useAppSelector((state) => state.auth);
@@ -97,8 +99,9 @@ const SignUp = () => {
             <Controller
               control={control}
               name="phoneNumber"
+              rules={phoneRules}
               render={({ field }) => (
-                <Input label="Phone number" placeholder="Optional" {...field} errorMessage={errors.phoneNumber?.message} />
+                <PhoneField label="Phone number" placeholder="Optional" {...field} errorMessage={errors.phoneNumber?.message} />
               )}
             />
 

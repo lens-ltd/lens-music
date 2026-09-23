@@ -11,11 +11,15 @@ import { toast } from "sonner";
 import { LuCalendar, LuGlobe, LuMail, LuPhone, LuShield, LuUser } from 'react-icons/lu';
 
 import StatusBadge from '@/components/feedbacks/StatusBadge';
+import PhoneField from '@/components/inputs/PhoneField';
+import { capitalizeString } from '@/utils/strings.helper';
+import { PHONE_INVALID_MESSAGE, formatPhone, isPhoneValid } from '@/utils/phone.helper';
 const UserProfilePage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [isEditing, setIsEditing] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -27,6 +31,11 @@ const UserProfilePage = () => {
   const emailChanged = formData.email.trim().toLowerCase() !== user?.email?.toLowerCase();
 
   const handleSave = async () => {
+    if (!isPhoneValid(formData.phoneNumber)) {
+      setPhoneError(PHONE_INVALID_MESSAGE);
+      return;
+    }
+
     if (emailChanged && !formData.currentPassword) {
       toast.error("Enter your current password to change your email.");
       return;
@@ -60,6 +69,7 @@ const UserProfilePage = () => {
       country: user?.country || "",
       currentPassword: "",
     });
+    setPhoneError(undefined);
     setIsEditing(false);
   };
 
@@ -86,13 +96,13 @@ const UserProfilePage = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-(--signal) text-white text-2xl font-semibold">
+                <div className="flex h-full w-full items-center justify-center bg-(--signal) text-white text-2xl font-medium">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <h2 className="text-[20px] font-semibold text-(--ink)">
+              <h2 className="text-[20px] text-(--ink)">
                 {user?.name || 'User'}
               </h2>
               <p className="text-[13px] text-(--muted) mt-1">
@@ -101,7 +111,7 @@ const UserProfilePage = () => {
               <div className="flex items-center gap-2 mt-2">
                 <span className="inline-flex h-6 items-center gap-1.5 rounded-(--radius-pill) bg-(--paper) px-2.5 text-xs text-(--ink)">
                   <LuShield className="size-3.5" aria-hidden="true" />
-                  {user?.roleName || 'No role assigned'}
+                  {capitalizeString(user?.roleName) || 'No role assigned'}
                 </span>
                 <StatusBadge status={user?.status || 'ACTIVE'} />
               </div>
@@ -115,7 +125,7 @@ const UserProfilePage = () => {
 
           {/* Profile Information */}
           <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
-            <h3 className="text-[14px] font-medium text-(--ink) mb-2">
+            <h3 className="text-[14px] text-(--ink) mb-2">
               Account information
             </h3>
 
@@ -162,13 +172,18 @@ const UserProfilePage = () => {
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-(--muted)">
+                  <label htmlFor="profile-phone-number" className="text-xs text-(--muted)">
                     Phone number
                   </label>
-                  <Input
+                  {/* An empty value is sent as "", which the API stores as no number. */}
+                  <PhoneField
+                    name="profile-phone-number"
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    placeholder="+1 234 567 890"
+                    onChange={(phoneNumber) => {
+                      setPhoneError(undefined);
+                      setFormData((current) => ({ ...current, phoneNumber }));
+                    }}
+                    errorMessage={phoneError}
                   />
                 </div>
 
@@ -231,7 +246,7 @@ const UserProfilePage = () => {
                       Phone number
                     </p>
                     <p className="text-[13px] text-(--ink) mt-0.5">
-                      {user?.phoneNumber || '—'}
+                      {formatPhone(user?.phoneNumber) || '—'}
                     </p>
                   </div>
                 </div>
@@ -276,7 +291,7 @@ const UserProfilePage = () => {
                         Gender
                       </p>
                       <p className="text-[13px] text-(--ink) mt-0.5">
-                        {user.gender}
+                        {capitalizeString(user.gender)}
                       </p>
                     </div>
                   </div>
@@ -288,7 +303,7 @@ const UserProfilePage = () => {
           {/* Permissions Section */}
           {user?.permissions && user.permissions.length > 0 && (
             <div className="flex w-full flex-col gap-4 card-framed p-5 sm:p-6">
-              <h3 className="text-[14px] font-medium text-(--ink) mb-2">
+              <h3 className="text-[14px] text-(--ink) mb-2">
                 Your Permissions
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -297,7 +312,7 @@ const UserProfilePage = () => {
                     key={permission}
                     className="inline-flex items-center px-2 py-1 rounded-md bg-(--signal-soft) text-xs text-(--signal)"
                   >
-                    {permission.replace(/_/g, ' ').toLowerCase()}
+                    {capitalizeString(permission)}
                   </span>
                 ))}
               </div>

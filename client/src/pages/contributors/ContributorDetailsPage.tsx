@@ -39,6 +39,7 @@ import UnassignContributorManager from "./UnassignContributorManager";
 import { useRequestContributorVerificationMutation } from "@/state/api/apiMutationSlice";
 
 import { LuBadgeCheck, LuPlus, LuSquarePen, LuTrash2 } from 'react-icons/lu';
+import { formatPhone } from "@/utils/phone.helper";
 
 const statusBadgeClassNames: Record<string, string> = {
   ACTIVE: "bg-(--success-soft) text-(--success)",
@@ -218,7 +219,7 @@ const ContributorDetailsPage = () => {
       },
       {
         keyText: "Phone number",
-        valueText: contributorDetails?.phoneNumber,
+        valueText: formatPhone(contributorDetails?.phoneNumber),
       },
       {
         keyText: "Country",
@@ -397,7 +398,7 @@ const ContributorDetailsPage = () => {
                   <p className="text-xs text-(--muted)">
                     Contributor overview
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold text-(--ink)">
+                  <h2 className="mt-2 text-lg text-(--ink)">
                     {isFetching
                       ? "Loading contributor..."
                       : contributorDetails?.displayName ||
@@ -413,7 +414,7 @@ const ContributorDetailsPage = () => {
                       )}
                       {contributorDetails?.phoneNumber && (
                         <span className="text-(--signal) text-[13px]">
-                          {contributorDetails?.phoneNumber}
+                          {formatPhone(contributorDetails?.phoneNumber)}
                         </span>
                       )}
                       {!contributorDetails?.email &&
@@ -529,7 +530,7 @@ const ContributorDetailsPage = () => {
                         className="flex flex-col gap-2 rounded-md bg-(--surface) p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-(--ink)">
+                          <p className="text-[13px] font-normal text-(--ink)">
                             {manager.user?.name || "User"}
                           </p>
                           <p className="truncate text-[13px] text-(--muted)">

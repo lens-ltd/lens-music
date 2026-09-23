@@ -17,6 +17,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { LuEllipsis, LuInfo, LuShield } from 'react-icons/lu';
+import { formatPhone } from "@/utils/phone.helper";
 
 export const useUserColumns = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +39,7 @@ export const useUserColumns = () => {
       {
         header: "Phone Number",
         accessorKey: "phoneNumber",
-        cell: ({ row }) => row.original.phoneNumber || "—",
+        cell: ({ row }) => formatPhone(row.original.phoneNumber) || "—",
       },
       {
         header: "Status",

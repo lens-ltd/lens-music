@@ -48,9 +48,11 @@ const Button: FC<ButtonProps> = ({
         ? 'primary'
         : 'secondary';
 
+  // A loading button can't be pressed again, so a slow request isn't sent twice.
+  const isDisabled = disabled || isLoading;
   const classes = cn(
     buttonVariants({ variant, size }),
-    disabled && 'pointer-events-none opacity-40',
+    isDisabled && 'pointer-events-none opacity-40',
     className,
   );
   const buttonType = submit ? 'submit' : type;
@@ -70,7 +72,7 @@ const Button: FC<ButtonProps> = ({
       <Link
         to={route as string}
         onClick={(e) => {
-          if (disabled) {
+          if (isDisabled) {
             e.preventDefault();
             return;
           }
@@ -79,7 +81,8 @@ const Button: FC<ButtonProps> = ({
           }
         }}
         className={classes}
-        aria-disabled={disabled || undefined}
+        aria-disabled={isDisabled || undefined}
+        aria-busy={isLoading || undefined}
         {...rest}
       >
         {content}
@@ -94,7 +97,8 @@ const Button: FC<ButtonProps> = ({
       size={size}
       onClick={onClick as MouseEventHandler<HTMLButtonElement> | undefined}
       className={className}
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-busy={isLoading || undefined}
       {...rest}
     >
       {content}

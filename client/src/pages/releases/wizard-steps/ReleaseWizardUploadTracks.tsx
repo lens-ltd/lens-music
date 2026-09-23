@@ -1,10 +1,8 @@
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { setCreateReleaseTrackModal } from "@/state/features/trackSlice";
 import CreateReleaseTrack from "../../tracks/CreateReleaseTrack";
@@ -13,7 +11,7 @@ import {
   useFetchTracks,
   useReorderTracks,
 } from "@/hooks/tracks/track.hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReleaseTrackCard from "@/components/tracks/ReleaseTrackCard";
 import SortableTrackItem from "@/components/tracks/SortableTrackItem";
 import { RelaxedHeading } from "@/components/text/Headings";
@@ -39,6 +37,11 @@ import {
 } from "@dnd-kit/sortable";
 
 import { LuSquarePlus } from 'react-icons/lu';
+import WizardQueryError from "./components/WizardQueryError";
+
+// Every fetch loads the whole list, so the "all tracks validated" check covers
+// every track and not only the first page.
+const WIZARD_TRACKS_PAGE_SIZE = 100;
 
 const sortTracksForDisplay = (tracks: Track[]) =>
   [...tracks].sort(
@@ -62,13 +65,19 @@ const ReleaseWizardUploadTracks = ({
   // NAVIGATION
   const navigate = useNavigate();
 
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
-    useCreateReleaseNavigationFlow();
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
   // FETCH TRACKS
-  const { fetchTracks, isFetching: tracksIsFetching } = useFetchTracks();
+  const {
+    fetchTracks,
+    isFetching: tracksIsFetching,
+    isError: tracksIsError,
+    error: tracksError,
+  } = useFetchTracks();
   const { deleteTrack, isLoading: deleteTrackIsLoading } = useDeleteTrack();
   const { reorderTracks, isLoading: isReorderingTracks } = useReorderTracks();
 
@@ -84,11 +93,15 @@ const ReleaseWizardUploadTracks = ({
     }),
   );
 
-  useEffect(() => {
+  const refetchTracks = useCallback(async () => {
     if (release?.id) {
-      fetchTracks({ releaseId: release?.id, size: 100 });
+      await fetchTracks({ releaseId: release.id, size: WIZARD_TRACKS_PAGE_SIZE });
     }
   }, [release?.id, fetchTracks]);
+
+  useEffect(() => {
+    void refetchTracks();
+  }, [refetchTracks]);
 
   // Keep the local ordered list in sync with the fetched tracks.
   useEffect(() => {
@@ -121,20 +134,17 @@ const ReleaseWizardUploadTracks = ({
         releaseId: release.id,
         trackIds: nextOrder.map((track) => track.id),
       }).unwrap();
-      await fetchTracks({ releaseId: release.id });
+      await refetchTracks();
       toast.success("Track order updated.");
     } catch (error) {
       setOrderedTracks(previousOrder);
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Unable to update track order.";
-      toast.error(errorMessage);
+      toast.error(getApiErrorMessage(error, "Unable to update track order."));
     }
   };
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <RelaxedHeading>Tracks List</RelaxedHeading>
         <Button
           primary
@@ -149,7 +159,7 @@ const ReleaseWizardUploadTracks = ({
         </Button>
       </header>
 
-      <article className="rounded-md bg-white py-4">
+      <article className="py-4">
         {orderedTracks?.length || tracksIsFetching ? (
           tracksIsFetching && !orderedTracks.length ? (
             <ul
@@ -202,6 +212,12 @@ const ReleaseWizardUploadTracks = ({
               </DndContext>
             </>
           )
+        ) : tracksIsError ? (
+          <WizardQueryError
+            title="We couldn't load the tracks."
+            error={tracksError}
+            onRetry={() => void refetchTracks()}
+          />
         ) : (
           <section className="rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5 text-center">
             <p className="text-[13px] text-(--muted) font-normal">
@@ -222,7 +238,7 @@ const ReleaseWizardUploadTracks = ({
         )}
       </article>
 
-      {!allTracksValidated ? (
+      {!allTracksValidated && !tracksIsFetching && !tracksIsError ? (
         <p
           className="rounded-md bg-(--surface) px-4 py-3 text-xs leading-5 text-(--muted)"
           role="status"
@@ -233,43 +249,24 @@ const ReleaseWizardUploadTracks = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
+          disabled={isNavigating}
           onClick={(e) => {
             e.preventDefault();
-            previousStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release?.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
+            void goBack();
           }}
         >
           Back
         </BackButton>
         <Button
           primary
-          isLoading={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-          }
-          disabled={
-            !allTracksValidated ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          onClick={async (e) => {
+          isLoading={isNavigating}
+          disabled={!allTracksValidated}
+          onClick={(e) => {
             e.preventDefault();
-            if (!nextStepName || !release?.id) return;
-            if (currentStepName) {
-              await completeReleaseNavigationFlow({
-                staticReleaseNavigationStepName: currentStepName,
-                isCompleted: true,
-              });
-            }
-            await createReleaseNavigationFlow({
-              releaseId: release.id,
-              staticReleaseNavigationStepName: nextStepName,
-            });
+            if (!nextStepName) return;
+            void goNext();
           }}
         >
           Save and continue
@@ -302,17 +299,9 @@ const ReleaseWizardUploadTracks = ({
                 }).unwrap();
                 toast.success(response?.message || "Track deleted successfully");
                 setTrackToDelete(undefined);
-                await fetchTracks({ releaseId: release.id });
+                await refetchTracks();
               } catch (error) {
-                const apiError = error as {
-                  data?: { message?: string | string[] };
-                };
-                const message = apiError.data?.message;
-                toast.error(
-                  Array.isArray(message)
-                    ? message.join(", ")
-                    : message || "Unable to delete track",
-                );
+                toast.error(getApiErrorMessage(error, "Unable to delete track"));
               }
             }}
           >

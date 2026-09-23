@@ -10,12 +10,14 @@ import {
   getContributorSearchName,
 } from "@/utils/contributorCredit.helper";
 import { FormEvent } from "react";
-import { MIN_CONTRIBUTOR_SEARCH_CHARS, toTitleCase } from "./trackForm.helpers";
+import { MIN_CONTRIBUTOR_SEARCH_CHARS } from "./trackForm.helpers";
+import { capitalizeString } from "@/utils/strings.helper";
 
 import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 import ExternalLink from '@/components/ui/ExternalLink';
+import { formatPhone } from "@/utils/phone.helper";
 type TrackContributorsPanelProps = {
   contributorSearchTerm: string;
   contributorSearchResults: Contributor[];
@@ -131,7 +133,7 @@ const TrackContributorsPanel = ({
                                 <span className="text-xs text-(--muted)">
                                   {[
                                     contributor?.email,
-                                    contributor?.phoneNumber,
+                                    formatPhone(contributor?.phoneNumber),
                                     contributor?.country,
                                   ]
                                     .filter(Boolean)
@@ -187,7 +189,7 @@ const TrackContributorsPanel = ({
           trackContributors?.map((trackContributor) => (
             <li
               key={trackContributor?.id}
-              className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
+              className="flex items-start justify-between gap-3 rounded-(--radius-control) border border-(--line-soft) p-3"
             >
               <section className="flex flex-col gap-0.5">
                 <p className="text-[13px] font-normal text-(--ink)">
@@ -197,7 +199,7 @@ const TrackContributorsPanel = ({
                   )}
                 </p>
                 <p className="text-xs text-(--muted)">
-                  {toTitleCase(trackContributor?.role)}
+                  {capitalizeString(trackContributor?.role)}
                 </p>
                 {onUpdateSequence ? (
                   <label className="mt-1 flex items-center gap-2 text-xs text-(--muted)">

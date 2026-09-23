@@ -194,6 +194,7 @@ export class ReleasesController {
       status: query.status,
       digitalReleaseDateFrom: query.digitalReleaseDateFrom,
       digitalReleaseDateTo: query.digitalReleaseDateTo,
+      searchKey: query.searchKey,
     });
     return { message: "Releases fetched successfully", data: releases };
   }

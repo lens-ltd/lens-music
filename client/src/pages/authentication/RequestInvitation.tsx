@@ -8,6 +8,8 @@ import Button from "@/components/inputs/Button";
 import { useRequestInvitationMutation } from "@/state/api/apiMutationSlice";
 import { useAppSelector } from "@/state/hooks";
 import { validateInputs } from "@/utils/validations.helper";
+import PhoneField from "@/components/inputs/PhoneField";
+import { phoneRules } from "@/utils/phone.helper";
 
 type RequestInvitationForm = {
   name: string;
@@ -118,13 +120,9 @@ const RequestInvitation = () => {
             <Controller
               control={control}
               name="phoneNumber"
+              rules={phoneRules}
               render={({ field }) => (
-                <Input
-                  label="Phone number"
-                  placeholder="Optional"
-                  {...field}
-                  errorMessage={errors.phoneNumber?.message}
-                />
+                <PhoneField label="Phone number" placeholder="Optional" {...field} errorMessage={errors.phoneNumber?.message} />
               )}
             />
 
@@ -132,7 +130,7 @@ const RequestInvitation = () => {
               primary
               submit
               isLoading={requestState.isLoading}
-              className="w-full py-3 text-[13px] tracking-[0.04em] shadow-none mt-1 font-normal"
+              className="w-full py-3 text-[13px] shadow-none mt-1"
             >
               Submit request
             </Button>

@@ -47,7 +47,7 @@ const RevokeUserInvitation = ({
       <article className="flex w-full flex-col gap-4">
         <p className="text-[13px] leading-6 text-(--muted)">
           Revoke the pending invitation for{" "}
-          <span className="font-medium text-(--ink)">
+          <span className="font-normal text-(--ink)">
             {selectedUserInvitation?.email || "this user"}
           </span>
           ? They will no longer be able to use this invitation link.

@@ -86,7 +86,7 @@ export const useFetchReleases = () => {
 export const useGetRelease = () => {
     const dispatch = useAppDispatch();
 
-    const [getRelease, { isFetching, data, isSuccess }] = useLazyGetReleaseQuery();
+    const [getRelease, { isFetching, data, isSuccess, isError, error }] = useLazyGetReleaseQuery();
 
     useEffect(() => {
         if (isSuccess && data?.data) {
@@ -94,7 +94,7 @@ export const useGetRelease = () => {
         }
     }, [isSuccess, data, dispatch]);
 
-    return { getRelease, isFetching, data, isSuccess };
+    return { getRelease, isFetching, data, isSuccess, isError, error };
 };
 
 // VALIDATE RELEASE

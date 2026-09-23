@@ -1,23 +1,4 @@
-import { COUNTRIES_LIST } from '@/constants/countries.constants';
 import moment from 'moment';
-
-/**
- * FORMAT PHONE
- * @param phone - The phone number to format
- * @returns The formatted phone number
- */
-export const formatPhone = (phone: string, countryCode: string = 'RW') => {
-  if (!phone || phone === 'null') return '';
-  if (countryCode) {
-    const dialCode = COUNTRIES_LIST.find((country) => country.code === countryCode)?.dial_code;
-    if (dialCode) {
-      return `${dialCode?.replace('+', '')}${phone?.slice(-9)}`;
-    } else {
-      return `250${phone?.slice(-9)}`;
-    }
-  }
-  return `250${phone?.slice(-9)}`;
-};
 
 /**
  * FORMAT DATE
@@ -118,15 +99,6 @@ export const formatCurrency = (
     style: 'currency',
     currency,
   }).format(Number(amount));
-};
-
-/**
- * MASK PHONE DIGITS
- * @param phone - The phone number to mask
- * @returns The masked phone number
- */
-export const maskPhoneDigits = (phone: string) => {
-  return `${phone?.slice(0, 3)}X XXX ${phone?.slice(-3)}`;
 };
 
 export type StatusTone = 'success' | 'danger' | 'active' | 'neutral';

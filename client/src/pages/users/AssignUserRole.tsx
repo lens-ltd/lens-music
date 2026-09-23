@@ -8,6 +8,7 @@ import {
   setSelectedUser,
 } from "@/state/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { capitalizeString } from "@/utils/strings.helper";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -69,7 +70,7 @@ const AssignUserRole = () => {
     () =>
       (rolesList || []).map((role) => ({
         value: role.id,
-        label: role.name,
+        label: capitalizeString(role.name),
       })),
     [rolesList],
   );

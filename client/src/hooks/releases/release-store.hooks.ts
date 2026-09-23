@@ -5,10 +5,10 @@ import {
 import { useLazyFetchReleaseStoresQuery } from '@/state/api/apiQuerySlice';
 
 export const useFetchReleaseStores = () => {
-  const [fetchReleaseStores, { data, isFetching, isSuccess }] =
+  const [fetchReleaseStores, { data, isFetching, isSuccess, isError, error }] =
     useLazyFetchReleaseStoresQuery();
 
-  return { fetchReleaseStores, data, isFetching, isSuccess };
+  return { fetchReleaseStores, data, isFetching, isSuccess, isError, error };
 };
 
 export const useAssignReleaseStores = () => {

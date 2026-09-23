@@ -31,6 +31,9 @@ const releaseSlice = createSlice({
     setRelease: (state, action) => {
       state.release = action.payload;
     },
+    resetRelease: (state) => {
+      state.release = undefined;
+    },
     setSelectedRelease: (state, action) => {
       state.selectedRelease = action.payload;
     },
@@ -55,6 +58,7 @@ const releaseSlice = createSlice({
 export const {
   setReleasesList,
   setRelease,
+  resetRelease,
   setSelectedRelease,
   setCreateReleaseModal,
   setDeleteReleaseModal,

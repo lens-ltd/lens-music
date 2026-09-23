@@ -131,7 +131,7 @@ export class UserService {
   }: {
     email: string;
     name: string;
-    phoneNumber?: string;
+    phoneNumber?: string | null;
     password: string;
   }): Promise<User> {
     const user = this.userRepository.create({

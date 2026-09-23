@@ -1,239 +1,159 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useMemo } from "react";
+import Combobox from "@/components/inputs/Combobox";
 import Input from "@/components/inputs/Input";
+import SectionCard from "@/components/layout/SectionCard";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
+import { iconButtonDangerClassName } from "@/constants/input.constants";
+import { useReleaseTerritoryOverrides } from "@/hooks/releases/territoryOverrides.hooks";
 import {
-  useCreateReleaseTerritoryDetail,
-  useDeleteReleaseTerritoryDetail,
-  useFetchReleaseTerritoryDetails,
-  useUpdateReleaseTerritoryDetail,
-} from "@/hooks/releases/release-territory-detail.hooks";
-import { ReleaseTerritoryDetail } from "@/types/models/releaseTerritoryDetail.types";
+  EMPTY_TERRITORY_DETAIL,
+  isTerritoryInScope,
+} from "@/utils/territoryDetails.helper";
+import WizardQueryError from "./WizardQueryError";
 
-type DetailFormState = {
-  id?: string;
-  title: string;
-  displayArtistName: string;
-  labelName: string;
-};
+import { LuTrash2 } from "react-icons/lu";
 
-const EMPTY_DETAIL: DetailFormState = {
-  title: "",
-  displayArtistName: "",
-  labelName: "",
-};
+const getCountryName = (code: string) =>
+  COUNTRIES_LIST.find((country) => country.code === code)?.name || code;
 
+// Only countries with an override are listed; the artist adds one through the
+// country picker. Removals are listed until the step is saved.
 const ReleaseTerritoryDetailsSection = ({
-  releaseId,
   selectedTerritories,
+  overrides,
 }: {
-  releaseId?: string;
   selectedTerritories: string[];
+  overrides: ReturnType<typeof useReleaseTerritoryOverrides>;
 }) => {
-  const { fetchReleaseTerritoryDetails, data } = useFetchReleaseTerritoryDetails();
-  const { createReleaseTerritoryDetail } = useCreateReleaseTerritoryDetail();
-  const { updateReleaseTerritoryDetail } = useUpdateReleaseTerritoryDetail();
-  const { deleteReleaseTerritoryDetail } = useDeleteReleaseTerritoryDetail();
+  const {
+    forms,
+    overrideTerritories,
+    pendingRemovals,
+    isFetching,
+    isError,
+    error,
+    refetch,
+    addOverride,
+    removeOverride,
+    updateField,
+    persistOverride,
+  } = overrides;
 
-  const [detailForms, setDetailForms] = useState<Record<string, DetailFormState>>({});
-  const previousTerritoriesRef = useRef<string[]>([]);
-
-  const persistedDetails: ReleaseTerritoryDetail[] = useMemo(
-    () => data?.data ?? [],
-    [data?.data],
+  const countryOptions = useMemo(
+    () =>
+      COUNTRIES_LIST.filter(
+        (country) =>
+          isTerritoryInScope(country.code, selectedTerritories) &&
+          !overrideTerritories.includes(country.code),
+      ).map((country) => ({ label: country.name, value: country.code })),
+    [overrideTerritories, selectedTerritories],
   );
 
-  useEffect(() => {
-    if (!releaseId) return;
-    fetchReleaseTerritoryDetails({ releaseId });
-  }, [fetchReleaseTerritoryDetails, releaseId]);
-
-  useEffect(() => {
-    const removedTerritories = previousTerritoriesRef.current.filter(
-      (territory) => !selectedTerritories.includes(territory),
-    );
-
-    removedTerritories.forEach((territory) => {
-      const current = detailForms[territory];
-      if (releaseId && current?.id) {
-        void deleteReleaseTerritoryDetail({
-          releaseId,
-          detailId: current.id,
-        }).unwrap().catch(() => {
-          toast.error(`Unable to remove territory override for ${territory}.`);
-        });
-      }
-    });
-
-    previousTerritoriesRef.current = selectedTerritories;
-  }, [deleteReleaseTerritoryDetail, detailForms, releaseId, selectedTerritories]);
-
-  useEffect(() => {
-    setDetailForms((current) => {
-      const next: Record<string, DetailFormState> = {};
-
-      selectedTerritories.forEach((territory) => {
-        const persisted = persistedDetails.find((item) => item.territory === territory);
-        next[territory] = current[territory] || {
-          id: persisted?.id,
-          title: persisted?.title || "",
-          displayArtistName: persisted?.displayArtistName || "",
-          labelName: persisted?.labelName || "",
-        };
-      });
-
-      return next;
-    });
-  }, [persistedDetails, selectedTerritories]);
-
-  const updateField = (
-    territory: string,
-    field: keyof Omit<DetailFormState, "id">,
-    value: string,
-  ) => {
-    setDetailForms((current) => ({
-      ...current,
-      [territory]: {
-        ...(current[territory] || EMPTY_DETAIL),
-        [field]: value,
-      },
-    }));
-  };
-
-  const persistTerritory = async (territory: string) => {
-    if (!releaseId) return;
-
-    const detail = detailForms[territory];
-    if (!detail) return;
-
-    const payload = {
-      territory,
-      title: detail.title.trim() || undefined,
-      displayArtistName: detail.displayArtistName.trim() || undefined,
-      labelName: detail.labelName.trim() || undefined,
-    };
-
-    const hasContent = Boolean(
-      payload.title || payload.displayArtistName || payload.labelName,
-    );
-
-    try {
-      if (!hasContent) {
-        if (detail.id) {
-          await deleteReleaseTerritoryDetail({
-            releaseId,
-            detailId: detail.id,
-          }).unwrap();
-          setDetailForms((current) => ({
-            ...current,
-            [territory]: EMPTY_DETAIL,
-          }));
-        }
-        return;
-      }
-
-      if (detail.id) {
-        await updateReleaseTerritoryDetail({
-          releaseId,
-          detailId: detail.id,
-          body: payload,
-        }).unwrap();
-      } else {
-        const response = await createReleaseTerritoryDetail({
-          releaseId,
-          body: payload,
-        }).unwrap();
-        setDetailForms((current) => ({
-          ...current,
-          [territory]: {
-            ...(current[territory] || EMPTY_DETAIL),
-            id: response.data?.id,
-          },
-        }));
-      }
-    } catch (error) {
-      const message =
-        (error as { data?: { message?: string } })?.data?.message ||
-        `Unable to save territory detail for ${territory}.`;
-      toast.error(message);
-    }
-  };
-
-  if (!releaseId || selectedTerritories.length === 0) {
-    return null;
-  }
-
   return (
-    <section className="card-framed p-5">
-      <header className="mb-4 space-y-1">
-        <h3 className="text-sm font-medium text-(--ink)">
-          Territory-specific metadata
-        </h3>
-        <p className="text-[13px] text-(--muted)">
-          Add overrides only where title, display artist, or label name must
-          differ by territory. Changes save when a field loses focus.
-        </p>
-      </header>
+    <SectionCard
+      title="Territory-specific metadata"
+      description="Add an override only where the title, display artist or label name must differ in a country. Changes save when a field loses focus."
+    >
+      <div className="flex flex-col gap-4">
+        {isError ? (
+          <WizardQueryError
+            title="We couldn't load your territory overrides."
+            error={error}
+            onRetry={refetch}
+            isRetrying={isFetching}
+          />
+        ) : isFetching && overrideTerritories.length === 0 ? (
+          <p className="type-meta">Loading overrides…</p>
+        ) : overrideTerritories.length === 0 ? (
+          <p className="type-meta">No overrides yet.</p>
+        ) : (
+          <ul className="m-0 grid list-none gap-3 p-0">
+            {overrideTerritories.map((territory) => {
+              const detail = forms[territory] || EMPTY_TERRITORY_DETAIL;
+              const countryName = getCountryName(territory);
 
-      <div className="grid gap-4">
-        {selectedTerritories.map((territory) => {
-          const detail = detailForms[territory] || EMPTY_DETAIL;
-          const countryName =
-            COUNTRIES_LIST.find((country) => country.code === territory)?.name ||
-            territory;
+              return (
+                <li
+                  key={territory}
+                  className="rounded-(--radius-control) bg-(--surface) p-4"
+                >
+                  <header className="mb-3 flex items-start justify-between gap-3">
+                    <div>
+                      <p className="type-body text-(--ink)">{countryName}</p>
+                      <p className="type-meta">{territory}</p>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={`Remove override for ${countryName}`}
+                      className={iconButtonDangerClassName}
+                      onClick={() => removeOverride(territory)}
+                    >
+                      <LuTrash2 className="size-4" aria-hidden="true" />
+                    </button>
+                  </header>
 
-          return (
-            <article
-              key={territory}
-              className="rounded-(--radius-control) bg-(--surface) p-4"
-            >
-              <header className="mb-3">
-                <p className="text-sm font-medium text-(--ink)">
-                  {countryName}
-                </p>
-                <p className="text-xs text-(--muted)">
-                  {territory}
-                </p>
-              </header>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Input
+                      label="Release title override"
+                      value={detail.title}
+                      onChange={(event) =>
+                        updateField(territory, "title", event.target.value)
+                      }
+                      onBlur={() => void persistOverride(territory)}
+                      placeholder="Leave blank to use default"
+                    />
+                    <Input
+                      label="Display artist override"
+                      value={detail.displayArtistName}
+                      onChange={(event) =>
+                        updateField(
+                          territory,
+                          "displayArtistName",
+                          event.target.value,
+                        )
+                      }
+                      onBlur={() => void persistOverride(territory)}
+                      placeholder="Leave blank to use default"
+                    />
+                    <Input
+                      label="Label name override"
+                      value={detail.labelName}
+                      onChange={(event) =>
+                        updateField(territory, "labelName", event.target.value)
+                      }
+                      onBlur={() => void persistOverride(territory)}
+                      placeholder="Leave blank to use default"
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <Input
-                  label="Release title override"
-                  value={detail.title}
-                  onChange={(event) =>
-                    updateField(territory, "title", event.target.value)
-                  }
-                  onBlur={() => void persistTerritory(territory)}
-                  placeholder="Leave blank to use default"
-                />
-                <Input
-                  label="Display artist override"
-                  value={detail.displayArtistName}
-                  onChange={(event) =>
-                    updateField(
-                      territory,
-                      "displayArtistName",
-                      event.target.value,
-                    )
-                  }
-                  onBlur={() => void persistTerritory(territory)}
-                  placeholder="Leave blank to use default"
-                />
-                <Input
-                  label="Label name override"
-                  value={detail.labelName}
-                  onChange={(event) =>
-                    updateField(territory, "labelName", event.target.value)
-                  }
-                  onBlur={() => void persistTerritory(territory)}
-                  placeholder="Leave blank to use default"
-                />
-              </div>
-            </article>
-          );
-        })}
+        {pendingRemovals.length > 0 ? (
+          <p className="type-meta" role="status">
+            {pendingRemovals.length === 1 ? "The override" : "Overrides"} for{" "}
+            {pendingRemovals
+              .map(({ territory }) => getCountryName(territory))
+              .join(", ")}{" "}
+            will be removed when you save.
+          </p>
+        ) : null}
+
+        <div className="sm:max-w-sm">
+          <Combobox
+            label="Add override for a country"
+            placeholder="Choose a country"
+            options={countryOptions}
+            value=""
+            onChange={(code) => {
+              if (code) addOverride(code);
+            }}
+          />
+        </div>
       </div>
-    </section>
+    </SectionCard>
   );
 };
 

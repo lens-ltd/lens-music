@@ -3,8 +3,9 @@ import { BackButton } from "@/components/layout/PageFooter";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/state/hooks";
-import { useCompleteReleaseNavigationFlow, useCreateReleaseNavigationFlow } from "@/hooks/releases/navigation.hooks";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
+import { Controller, SubmitHandler } from "react-hook-form";
 import { Heading } from "@/components/text/Headings";
 import Input from "@/components/inputs/Input";
 import { useEffect, useMemo, useState } from "react";
@@ -24,6 +25,10 @@ import { toast } from "sonner";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import { InputErrorMessage } from "@/components/feedbacks/ErrorLabels";
 import { useFetchGenres, useUpsertReleaseGenre } from "@/hooks/releases/genre.hooks";
+import {
+  ReleaseOverviewFormValues,
+  useReleaseOverviewForm,
+} from "@/hooks/releases/releaseOverviewForm.hooks";
 import { Genre } from "@/types/models/genre.types";
 import { ReleaseGenreType } from "@/types/models/releaseGenre.types";
 import ReleaseLabelsSection from "./components/ReleaseLabelsSection";
@@ -32,50 +37,6 @@ import moment from "moment";
 
 import { LuSquarePen, LuTrash2 } from 'react-icons/lu';
 import { iconButtonClassName } from '@/constants/input.constants';
-
-interface ReleaseOverviewFormValues {
-  type: ReleaseType;
-  title: string;
-  titleVersion?: string;
-  version?: string;
-  productionYear: string;
-  originalReleaseDate: string | Date;
-  digitalReleaseDate: string | Date;
-  preorderDate?: string | Date;
-  cLine: {
-    year: string;
-    owner: string;
-  };
-  pLine: {
-    year: string;
-    owner: string;
-  };
-  parentalAdvisory: ReleaseParentalAdvisory;
-  primaryLanguage: string;
-  primaryGenreId: string;
-  secondaryGenreId?: string;
-  metadataLanguage?: string;
-  grid?: string;
-  description?: string;
-  keywords?: string;
-  marketingComment?: string;
-}
-
-const getMutationErrorMessage = (error: unknown) => {
-  if (typeof error !== "object" || !error) return "Failed to upload cover art";
-
-  const errorWithData = error as {
-    data?: { message?: string } | string;
-    error?: string;
-  };
-
-  if (typeof errorWithData.data === "string") return errorWithData.data;
-  if (typeof errorWithData.data?.message === "string")
-    return errorWithData.data.message;
-  if (typeof errorWithData.error === "string") return errorWithData.error;
-
-  return "Failed to upload cover art";
-};
 
 const normalizeOptionalString = (value?: string) => {
   const normalizedValue = value?.trim();
@@ -100,12 +61,12 @@ const ReleaseWizardOverview = ({
   // NAVIGATION
   const navigate = useNavigate();
 
-  // CREATE NAVIGATION FLOW
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } = useCreateReleaseNavigationFlow();
-
-  // COMPLETE NAVIGATION FLOW
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  // STEP NAVIGATION
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
   // UPLOAD COVER ART
   const {
@@ -129,8 +90,8 @@ const ReleaseWizardOverview = ({
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
-  } = useForm<ReleaseOverviewFormValues>();
+    reset,
+  } = useReleaseOverviewForm(release);
 
   // HANDLE SUBMISSION
   const onSubmit: SubmitHandler<ReleaseOverviewFormValues> = async (data) => {
@@ -185,111 +146,50 @@ const ReleaseWizardOverview = ({
       marketingComment: normalizeOptionalString(data.marketingComment),
     };
 
-    try {
-      await upsertReleaseGenre({
-        id: release.id,
-        genreId: data.primaryGenreId,
-        type: ReleaseGenreType.PRIMARY,
-      }).unwrap();
+    const releaseId = release.id;
 
-      if (data.secondaryGenreId?.trim()) {
+    // Save errors show inline under the form, so the save reports them itself
+    // and returns false; navigation errors are toasted by `goNext`.
+    await goNext(async () => {
+      try {
         await upsertReleaseGenre({
-          id: release.id,
-          genreId: data.secondaryGenreId,
-          type: ReleaseGenreType.SECONDARY,
+          id: releaseId,
+          genreId: data.primaryGenreId,
+          type: ReleaseGenreType.PRIMARY,
         }).unwrap();
-      }
 
-      const response = await updateReleaseOverview({
-        id: release.id,
-        body: payload,
-      }).unwrap();
-      toast.success(
-        response?.message || "Release overview updated successfully",
-      );
+        if (data.secondaryGenreId?.trim()) {
+          await upsertReleaseGenre({
+            id: releaseId,
+            genreId: data.secondaryGenreId,
+            type: ReleaseGenreType.SECONDARY,
+          }).unwrap();
+        }
 
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+        const response = await updateReleaseOverview({
+          id: releaseId,
+          body: payload,
+        }).unwrap();
+        // The saved values become the new baseline; a failed move to the next
+        // step then leaves them in place.
+        reset(data);
+        toast.success(
+          response?.message || "Release overview updated successfully",
+        );
+        return true;
+      } catch (error) {
+        setOverviewError(
+          getApiErrorMessage(error, "Failed to update release overview"),
+        );
+        return false;
       }
-
-      if (nextStepName) {
-        await createReleaseNavigationFlow({
-          releaseId: release.id,
-          staticReleaseNavigationStepName: nextStepName,
-        });
-      }
-    } catch (error) {
-      setOverviewError(getMutationErrorMessage(error));
-    }
+    });
   };
 
-  // SET DEFAULT VALUES
+  // FETCH GENRES
   useEffect(() => {
     fetchGenres({});
   }, [fetchGenres]);
-
-  useEffect(() => {
-    if (release) {
-      // Sensible defaults so the wizard is effortless — only applied when the
-      // release field is unset, never overwriting real data.
-      const currentYear = String(moment().year());
-
-      setValue("type", release.type || ReleaseType.ALBUM);
-      setValue("title", release.title || "");
-      setValue("titleVersion", release.titleVersion || "");
-      setValue("version", release.version || "");
-      setValue(
-        "productionYear",
-        release.productionYear ? String(release.productionYear) : currentYear,
-      );
-      setValue(
-        "originalReleaseDate",
-        release.originalReleaseDate || moment().format("YYYY-MM-DD"),
-      );
-      setValue(
-        "digitalReleaseDate",
-        release.digitalReleaseDate ||
-          moment().add(14, "days").format("YYYY-MM-DD"),
-      );
-      setValue("preorderDate", release.preorderDate || "");
-      setValue(
-        "cLine.year",
-        release.cLine?.year ? String(release.cLine.year) : currentYear,
-      );
-      setValue("cLine.owner", release.cLine?.owner || "");
-      setValue(
-        "pLine.year",
-        release.pLine?.year ? String(release.pLine.year) : currentYear,
-      );
-      setValue("pLine.owner", release.pLine?.owner || "");
-      setValue(
-        "parentalAdvisory",
-        release.parentalAdvisory || ReleaseParentalAdvisory.NOT_EXPLICIT,
-      );
-      setValue("primaryLanguage", release.primaryLanguage || "en");
-      setValue(
-        "primaryGenreId",
-        release.genres?.find((item) => item.type === ReleaseGenreType.PRIMARY)
-          ?.genreId || "",
-      );
-      setValue(
-        "secondaryGenreId",
-        release.genres?.find((item) => item.type === ReleaseGenreType.SECONDARY)
-          ?.genreId || "",
-      );
-      setValue("metadataLanguage", release.metadataLanguage || "en");
-      setValue("grid", release.grid || "");
-      setValue("description", release.description || "");
-      setValue(
-        "keywords",
-        release.keywords?.length ? release.keywords.join(", ") : "",
-      );
-      setValue("marketingComment", release.marketingComment || "");
-    }
-  }, [release, setValue]);
 
   const genreOptions = (genresResponse?.data ?? []).map((genre: Genre) => ({
     label: genre.name,
@@ -334,7 +234,7 @@ const ReleaseWizardOverview = ({
       );
       closeCoverArtModal();
     } catch (error) {
-      setCoverArtError(getMutationErrorMessage(error));
+      setCoverArtError(getApiErrorMessage(error, "Failed to upload cover art"));
     }
   };
 
@@ -365,7 +265,7 @@ const ReleaseWizardOverview = ({
                 </figure>
                 <menu className="flex items-center justify-between gap-3">
                   <menu className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-(--ink)">
+                    <p className="text-sm font-normal text-(--ink)">
                       Current cover art
                     </p>
                     <p className="text-[13px] text-(--muted) font-normal">
@@ -388,7 +288,7 @@ const ReleaseWizardOverview = ({
             ) : (
               <section className="flex flex-col gap-4 rounded-(--radius-card) border border-dashed border-(--line-hover) bg-(--surface) p-5">
                 <menu className="flex flex-col gap-1">
-                  <p className="text-sm font-medium text-(--ink)">
+                  <p className="text-sm font-normal text-(--ink)">
                     No cover art uploaded
                   </p>
                   <p className="text-[13px] text-(--muted) font-normal">
@@ -746,15 +646,13 @@ const ReleaseWizardOverview = ({
         {overviewError && (
           <InputErrorMessage message={overviewError} className="mt-[-4px]" />
         )}
-        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+        <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
           <BackButton
+            disabled={isNavigating}
             onClick={(e) => {
               e.preventDefault();
               if (previousStepName) {
-                createReleaseNavigationFlow({
-                  releaseId: release?.id,
-                  staticReleaseNavigationStepName: previousStepName,
-                });
+                void goBack();
               } else {
                 navigate("/releases");
               }
@@ -765,8 +663,7 @@ const ReleaseWizardOverview = ({
           <Button
             primary
             submit
-            isLoading={isUpdatingReleaseOverview || createNavigationFlowIsLoading || completeNavigationFlowIsLoading}
-            disabled={isUpdatingReleaseOverview}
+            isLoading={isNavigating || isUpdatingReleaseOverview}
           >
             Save and continue
           </Button>

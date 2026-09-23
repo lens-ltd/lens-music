@@ -4,7 +4,9 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsString,
   IsUUID,
+  MaxLength,
   Min,
 } from 'class-validator';
 import { ReleaseStatus } from '../../../constants/release.constants';
@@ -37,4 +39,10 @@ export class ListReleasesQueryDto {
   @IsOptional()
   @IsDateString()
   digitalReleaseDateTo?: string;
+
+  /** Matches the release title or UPC. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  searchKey?: string;
 }

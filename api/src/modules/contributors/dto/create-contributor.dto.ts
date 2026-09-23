@@ -15,6 +15,7 @@ import { Gender } from '../../../constants/person.constants';
 import { UserStatus } from '../../../constants/user.constants';
 import { ContributorProfileLinkItemDto } from './contributor-profile-link.dto';
 import { UUID } from '../../../types/common.types';
+import { PhoneNumberField } from '../../../helpers/phone.helper';
 
 export class CreateContributorDto {
   @IsOptional()
@@ -25,9 +26,8 @@ export class CreateContributorDto {
   @IsEmail({}, { message: 'Invalid email address' })
   email?: string;
 
-  @IsOptional()
-  @IsString()
-  phoneNumber?: string;
+  @PhoneNumberField()
+  phoneNumber?: string | null;
 
   @IsOptional()
   @IsString()

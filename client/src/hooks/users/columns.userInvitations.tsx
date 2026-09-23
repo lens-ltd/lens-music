@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 import { LuBan, LuCircleCheck, LuRotateCw } from 'react-icons/lu';
+import { formatPhone } from '@/utils/phone.helper';
 
 export const useUserInvitationColumns = ({
   onApprove,
@@ -42,7 +43,7 @@ export const useUserInvitationColumns = ({
       {
         header: 'Phone',
         accessorKey: 'phoneNumber',
-        cell: ({ row }) => row.original.phoneNumber || '—',
+        cell: ({ row }) => formatPhone(row.original.phoneNumber) || '—',
       },
       {
         header: 'Status',

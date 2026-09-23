@@ -1,4 +1,5 @@
 import Button from '@/components/inputs/Button';
+import { getApiErrorMessage } from '@/utils/errors.helper';
 import Combobox from '@/components/inputs/Combobox';
 import Input from '@/components/inputs/Input';
 import {
@@ -9,6 +10,7 @@ import {
 } from '@/hooks/releases/release-deals.hooks';
 import { useFetchStores } from '@/hooks/stores/store.hooks';
 import Modal from '@/components/modals/Modal';
+import WizardQueryError from './components/WizardQueryError';
 import { useAppSelector } from '@/state/hooks';
 import {
   CommercialModelType,
@@ -17,22 +19,22 @@ import {
   DealUseType,
 } from '@/types/models/deal.types';
 import { capitalizeString } from '@/utils/strings.helper';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 const commercialModelOptions = Object.values(CommercialModelType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const useTypeOptions = Object.values(DealUseType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const priceTypeOptions = Object.values(DealPriceType).map((v) => ({
   value: v,
-  label: capitalizeString(v.replace(/_/g, ' ').toLowerCase()),
+  label: capitalizeString(v),
 }));
 
 const parseTerritories = (raw: string) =>
@@ -43,7 +45,7 @@ const parseTerritories = (raw: string) =>
 
 const ReleaseWizardDealsSection = () => {
   const { release } = useAppSelector((state) => state.release);
-  const { fetchReleaseDeals, data, isFetching, isSuccess } =
+  const { fetchReleaseDeals, data, isFetching, isSuccess, isError, error } =
     useFetchReleaseDeals();
   const { fetchStores, data: storesResponse } = useFetchStores();
   const { createReleaseDeal, isLoading: isCreating } = useCreateReleaseDeal();
@@ -105,49 +107,6 @@ const ReleaseWizardDealsSection = () => {
     [stores],
   );
 
-  // A release needs at least one active deal to validate. When the user reaches
-  // this step with none, silently create a default worldwide global deal (no
-  // storeId → covers every store). Guarded to run once; if deals already exist
-  // it does nothing (so it never regresses a configured release).
-  const hasAutoCreatedDealRef = useRef(false);
-  useEffect(() => {
-    if (hasAutoCreatedDealRef.current) return;
-    const releaseId = release?.id;
-    if (!releaseId || !isSuccess) return;
-
-    hasAutoCreatedDealRef.current = true;
-    if (deals.length > 0) return;
-
-    const startDate =
-      release?.digitalReleaseDate?.slice(0, 10) ||
-      new Date().toISOString().slice(0, 10);
-
-    void (async () => {
-      try {
-        await createReleaseDeal({
-          releaseId,
-          body: {
-            commercialModelType: CommercialModelType.SUBSCRIPTION,
-            useType: DealUseType.ON_DEMAND_STREAM,
-            territories: [],
-            startDate,
-          },
-        }).unwrap();
-        await fetchReleaseDeals({ releaseId });
-      } catch {
-        // Best-effort: a deal may already exist or overlap; the user can still
-        // add one manually below.
-      }
-    })();
-  }, [
-    release?.id,
-    release?.digitalReleaseDate,
-    isSuccess,
-    deals.length,
-    createReleaseDeal,
-    fetchReleaseDeals,
-  ]);
-
   const handleCreate = useCallback(async () => {
     if (!release?.id) return;
     const territories = parseTerritories(territoriesInput);
@@ -172,10 +131,7 @@ const ReleaseWizardDealsSection = () => {
       toast.success('Deal added.');
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not create deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not create deal.'));
     }
   }, [
     commercialModelType,
@@ -198,10 +154,7 @@ const ReleaseWizardDealsSection = () => {
       toast.success('Deal removed.');
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not delete deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not delete deal.'));
     }
   };
 
@@ -257,17 +210,14 @@ const ReleaseWizardDealsSection = () => {
       closeEditDeal();
       await fetchReleaseDeals({ releaseId: release.id });
     } catch (e) {
-      const msg =
-        (e as { data?: { message?: string } })?.data?.message ||
-        'Could not update deal.';
-      toast.error(msg);
+      toast.error(getApiErrorMessage(e, 'Could not update deal.'));
     }
   };
 
   return (
     <section className="mt-8 card-framed p-5">
       <header className="mb-4 space-y-1">
-        <h3 className="text-sm font-medium text-(--ink)">
+        <h3 className="text-sm text-(--ink)">
           Commercial deals (DDEX)
         </h3>
         <p className="text-[13px] text-(--muted)">
@@ -339,13 +289,22 @@ const ReleaseWizardDealsSection = () => {
       </div>
 
       <div className="mt-6 pt-4">
-        <h4 className="text-[13px] font-medium text-(--ink)">
+        <h4 className="text-[13px] text-(--ink)">
           Active deals
         </h4>
         {isFetching ? (
           <p className="mt-2 text-[13px] text-(--muted)">
             Loading…
           </p>
+        ) : isError ? (
+          <WizardQueryError
+            className="mt-2"
+            title="We couldn't load the deals."
+            error={error}
+            onRetry={() => {
+              if (release?.id) fetchReleaseDeals({ releaseId: release.id });
+            }}
+          />
         ) : deals.length === 0 ? (
           <p className="mt-2 text-[13px] text-(--muted)">
             No deals yet. Add one above.
@@ -358,7 +317,7 @@ const ReleaseWizardDealsSection = () => {
                 className="flex items-start justify-between gap-3 rounded-(--radius-control) bg-(--surface) p-3 text-[13px]"
               >
                 <div className="space-y-0.5">
-                  <p className="font-medium text-(--ink)">
+                  <p className="font-normal text-(--ink)">
                     {deal.commercialModelType} · {deal.useType}
                   </p>
                   <p className="text-xs text-(--muted)">

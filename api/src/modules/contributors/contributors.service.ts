@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, ILike, Repository } from "typeorm";
+import { FindOptionsWhere, ILike, Raw, Repository } from "typeorm";
 import { Contributor } from "../../entities/contributor.entity";
 import { ContributorManager } from "../../entities/contributor-manager.entity";
 import { User } from "../../entities/user.entity";
@@ -18,6 +18,7 @@ import {
   Pagination,
 } from "../../helpers/pagination.helper";
 import { UUID } from "../../types/common.types";
+import { phoneSearchDigits } from "../../helpers/phone.helper";
 import { CreateContributorDto } from "./dto/create-contributor.dto";
 import { UpdateContributorDto } from "./dto/update-contributor.dto";
 import { ContributorMembership } from "../../entities/contributor-membership.entity";
@@ -161,6 +162,19 @@ export class ContributorService {
         { ...baseCondition, phoneNumber: ILike(`%${normalizedSearchKey}%`) },
         { ...baseCondition, country: ILike(`%${normalizedSearchKey}%`) },
       ];
+      // Phones are stored as E.164, so "0788 123 456" and "+250788123456"
+      // should find the same person: compare digits only.
+      const digits = phoneSearchDigits(normalizedSearchKey);
+      if (digits) {
+        where.push({
+          ...baseCondition,
+          phoneNumber: Raw(
+            (column) =>
+              `regexp_replace(${column}, '[^0-9]', '', 'g') LIKE :phoneDigits`,
+            { phoneDigits: `%${digits}%` },
+          ),
+        });
+      }
     } else {
       where = Array.isArray(condition)
         ? (condition as FindOptionsWhere<Contributor>[])

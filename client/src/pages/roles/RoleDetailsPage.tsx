@@ -6,7 +6,7 @@ import { Heading } from "@/components/text/Headings";
 import UserLayout from "@/containers/UserLayout";
 import { useFetchRoleById } from "@/hooks/roles/roles.hooks";
 import { useAppSelector } from "@/state/hooks";
-import { formatDate } from "@/utils/strings.helper";
+import { capitalizeString, formatDate } from "@/utils/strings.helper";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import Loader from "@/components/inputs/Loader";
@@ -57,7 +57,7 @@ const RoleDetailsPage = () => {
         </header>
 
         <section className="flex w-full flex-col gap-1 card-framed p-5 sm:p-6">
-          <h2 className="text-[18px] font-semibold text-(--ink)">{role.name}</h2>
+          <h2 className="text-[18px] text-(--ink)">{capitalizeString(role.name)}</h2>
           {role.description && (
             <p className="text-[13px] text-(--muted)">{role.description}</p>
           )}
@@ -95,7 +95,7 @@ const RoleDetailsPage = () => {
                   key={permission.id}
                   className="inline-flex items-center rounded-(--radius-control) bg-(--surface) px-2 py-1 text-[13px] text-(--ink)"
                 >
-                  {permission.permission?.name}
+                  {capitalizeString(permission.permission?.name)}
                 </li>
               ))}
             </ul>

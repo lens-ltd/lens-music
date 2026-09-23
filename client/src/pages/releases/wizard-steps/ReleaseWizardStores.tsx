@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { toast } from "sonner";
 import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { useFetchStores } from "@/hooks/stores/store.hooks";
 import {
   useAssignReleaseStores,
@@ -16,6 +14,8 @@ import { Store } from "@/types/models/store.types";
 import { Input as UiInput } from "@/components/ui/input";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import ReleaseWizardDealsSection from "./ReleaseWizardDealsSection";
+import WizardQueryError from "./components/WizardQueryError";
+import { useReleaseSelection } from "@/hooks/releases/releaseSelection.hooks";
 
 const ReleaseWizardStores = ({
   currentStepName,
@@ -24,74 +24,78 @@ const ReleaseWizardStores = ({
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
 
-  const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
   const [storesError, setStoresError] = useState<string | undefined>(undefined);
 
-  const {
-    createReleaseNavigationFlow,
-    isLoading: createNavigationFlowIsLoading,
-  } = useCreateReleaseNavigationFlow();
-  const {
-    completeReleaseNavigationFlow,
-    isLoading: completeNavigationFlowIsLoading,
-  } = useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
   const {
     fetchStores,
     data: storesResponse,
     isFetching: storesIsFetching,
+    isError: storesIsError,
+    error: storesFetchError,
   } = useFetchStores();
   const {
     fetchReleaseStores,
     data: releaseStoresResponse,
     isFetching: releaseStoresIsFetching,
+    isError: releaseStoresIsError,
+    error: releaseStoresFetchError,
   } = useFetchReleaseStores();
   const { assignReleaseStores, isLoading: isAssigning } =
     useAssignReleaseStores();
 
-  useEffect(() => {
+  const loadStores = useCallback(() => {
     fetchStores({ isActive: true });
-  }, [fetchStores]);
-
-  useEffect(() => {
     if (release?.id) {
       fetchReleaseStores({ releaseId: release.id });
     }
-  }, [fetchReleaseStores, release?.id]);
+  }, [fetchStores, fetchReleaseStores, release?.id]);
 
   useEffect(() => {
-    const assignedStoreIds =
-      releaseStoresResponse?.data?.map(
-        (releaseStore: { storeId: string }) => releaseStore.storeId,
-      ) ?? [];
-    setSelectedStoreIds(assignedStoreIds);
-    setStoresError(undefined);
-  }, [releaseStoresResponse]);
+    loadStores();
+  }, [loadStores]);
 
-  // When a release has no stores assigned yet, default-select every available
-  // store so the "at least one store" rule is satisfied with zero effort. Runs
-  // once (guarded), and never overrides a user's manual selection.
-  const hasDefaultedStoresRef = useRef(false);
-  useEffect(() => {
-    if (hasDefaultedStoresRef.current) return;
-    if (storesIsFetching || releaseStoresIsFetching) return;
-    if (!storesResponse || !releaseStoresResponse) return;
+  const storesAreLoaded =
+    !storesIsFetching &&
+    !releaseStoresIsFetching &&
+    Boolean(storesResponse) &&
+    Boolean(releaseStoresResponse);
 
-    const assignedStoreIds = releaseStoresResponse?.data ?? [];
-    const availableStores = storesResponse?.data ?? [];
-    if (assignedStoreIds.length === 0 && availableStores.length > 0) {
-      hasDefaultedStoresRef.current = true;
-      setSelectedStoreIds(
-        availableStores.map((store: { id: string }) => store.id),
-      );
-    } else if (assignedStoreIds.length > 0) {
-      hasDefaultedStoresRef.current = true;
-    }
-  }, [
-    storesIsFetching,
-    releaseStoresIsFetching,
-    storesResponse,
-    releaseStoresResponse,
-  ]);
+  const assignedStoreIds = useMemo(
+    () =>
+      storesAreLoaded
+        ? (releaseStoresResponse?.data ?? []).map(
+            (releaseStore: { storeId: string }) => releaseStore.storeId,
+          )
+        : undefined,
+    [storesAreLoaded, releaseStoresResponse],
+  );
+
+  // When a release has no stores assigned yet, every available store starts
+  // selected, so the "at least one store" rule is met with zero effort.
+  const initialStoreIds = useMemo(
+    () =>
+      assignedStoreIds?.length === 0
+        ? (storesResponse?.data ?? []).map((store: { id: string }) => store.id)
+        : undefined,
+    [assignedStoreIds, storesResponse],
+  );
+
+  const {
+    selected: selectedStoreIds,
+    setSelected: setSelectedStoreIds,
+    markSaved,
+  } = useReleaseSelection({
+    releaseId: release?.id,
+    saved: assignedStoreIds,
+    initial: initialStoreIds,
+  });
+
+  const storesLoadFailed = storesIsError || releaseStoresIsError;
 
   const stores: Store[] = useMemo(
     () => storesResponse?.data ?? [],
@@ -130,45 +134,33 @@ const ReleaseWizardStores = ({
       return;
     }
 
-    try {
-      await assignReleaseStores({
-        id: release.id,
-        storeIds: selectedStoreIds,
-      }).unwrap();
+    const releaseId = release.id;
 
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+    await goNext(async () => {
+      try {
+        await assignReleaseStores({
+          id: releaseId,
+          storeIds: selectedStoreIds,
+        }).unwrap();
+        markSaved(selectedStoreIds);
+        return true;
+      } catch (error) {
+        toast.error(
+          getApiErrorMessage(error, "Failed to assign stores to this release."),
+        );
+        return false;
       }
-      await createReleaseNavigationFlow({
-        releaseId: release.id,
-        staticReleaseNavigationStepName: nextStepName,
-      });
-    } catch (error) {
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Failed to assign stores to this release.";
-      toast.error(errorMessage);
-    }
+    });
   };
 
   const handleGoBack = () => {
-    if (previousStepName && release?.id) {
-      createReleaseNavigationFlow({
-        releaseId: release.id,
-        staticReleaseNavigationStepName: previousStepName,
-      });
-    }
+    void goBack();
   };
 
   const navButtons = (
     <>
       <BackButton
-        disabled={
-          createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-        }
+        disabled={isNavigating}
         onClick={(event) => {
           event.preventDefault();
           handleGoBack();
@@ -179,17 +171,8 @@ const ReleaseWizardStores = ({
       <Button
         type="button"
         primary
-        isLoading={
-          isAssigning ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
-        disabled={
-          selectedStoreIds.length === 0 ||
-          isAssigning ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        isLoading={isNavigating || isAssigning}
+        disabled={selectedStoreIds.length === 0}
         onClick={(event) => {
           event.preventDefault();
           void saveAndContinue();
@@ -203,7 +186,7 @@ const ReleaseWizardStores = ({
   return (
     <section className="w-full flex flex-col gap-4">
       <header>
-        <h2 className="text-xl font-semibold text-(--ink)">Stores</h2>
+        <h2 className="text-xl text-(--ink)">Stores</h2>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-(--muted)">
           Select the stores where this release should be delivered.
         </p>
@@ -256,6 +239,13 @@ const ReleaseWizardStores = ({
           <p className="text-[13px] text-(--muted)">
             Loading stores...
           </p>
+        ) : storesLoadFailed ? (
+          <WizardQueryError
+            className="col-span-full"
+            title="We couldn't load the stores."
+            error={storesFetchError || releaseStoresFetchError}
+            onRetry={loadStores}
+          />
         ) : stores.length === 0 ? (
           <p className="text-[13px] text-(--muted)">
             No stores available.
@@ -310,7 +300,7 @@ const ReleaseWizardStores = ({
 
       <ReleaseWizardDealsSection />
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         {navButtons}
       </footer>
     </section>

@@ -47,7 +47,7 @@ const DeclineUserInvitation = ({
       <article className="flex w-full flex-col gap-4">
         <p className="text-[13px] leading-6 text-(--muted)">
           Decline the access request from{" "}
-          <span className="font-medium text-(--ink)">
+          <span className="font-normal text-(--ink)">
             {selectedUserInvitation?.email || "this user"}
           </span>
           ? This will remove the request from the approval queue.

@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { PhoneNumberField } from '../../../helpers/phone.helper';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -9,9 +10,8 @@ export class UpdateProfileDto {
   @IsEmail({}, { message: 'Invalid email address' })
   email?: string;
 
-  @IsOptional()
-  @IsString()
-  phoneNumber?: string;
+  @PhoneNumberField()
+  phoneNumber?: string | null;
 
   @IsOptional()
   @IsString()

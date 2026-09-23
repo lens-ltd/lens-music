@@ -115,7 +115,7 @@ const DashboardChart: FC<DashboardChartProps> = ({
         ariaDescription="Exact monthly values are available in the table below the chart."
       />
       <details className="mt-3">
-        <summary className="cursor-pointer text-xs font-medium text-(--signal)">
+        <summary className="cursor-pointer text-xs font-normal text-(--signal)">
           View exact monthly values
         </summary>
         <div className="mt-2 max-h-56 overflow-auto">

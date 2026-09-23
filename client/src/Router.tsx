@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { ReactElement } from "react";
+import { RouteErrorBoundary } from "./components/feedbacks/ErrorBoundary";
 import Login from "./pages/authentication/Login";
 import SignUp from "./pages/authentication/SignUp";
 import RequestInvitation from "./pages/authentication/RequestInvitation";
@@ -213,8 +214,12 @@ const routeSeo = {
   },
 } satisfies Record<string, RouteSeoConfig>;
 
+// Every routed page gets its own error boundary, so a crash in one page
+// leaves the app shell and other routes working.
 const withSeo = (element: ReactElement, seo: RouteSeoConfig) => (
-  <Seo {...seo}>{element}</Seo>
+  <RouteErrorBoundary>
+    <Seo {...seo}>{element}</Seo>
+  </RouteErrorBoundary>
 );
 
 const Router = () => {

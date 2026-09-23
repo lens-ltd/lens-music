@@ -13,7 +13,7 @@ const PreviewValidationBanner = ({
 
   if (validationResult.valid) {
     return (
-      <aside className="flex items-center gap-3 rounded-xl bg-(--success-soft) p-4">
+      <aside className="flex items-center gap-3 rounded-(--radius-card) bg-(--success-soft) p-4">
         <LuCircleCheck className="text-(--success)" />
         <p className="text-[13px] font-normal text-(--success)">
           {successMessage || "Release validated successfully."}
@@ -28,7 +28,7 @@ const PreviewValidationBanner = ({
         <LuTriangleAlert
          
           className="text-[13px] text-(--ink)" />
-        <h3 className="text-[13px] font-medium text-(--ink)">
+        <h3 className="text-[13px] text-(--ink)">
           Validation failed
           {validationResult?.errors?.length > 0
             ? ` (${validationResult.errors.length} issue${validationResult.errors.length !== 1 ? "s" : ""})`

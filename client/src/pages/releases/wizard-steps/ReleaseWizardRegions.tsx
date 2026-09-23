@@ -2,39 +2,22 @@ import Button from "@/components/inputs/Button";
 import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import { COUNTRIES_LIST } from "@/constants/countries.constants";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { useUpdateReleaseTerritories } from "@/hooks/releases/release.hooks";
 import { useAppSelector } from "@/state/hooks";
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
 import { Input as UiInput } from "@/components/ui/input";
 import ReleaseTerritoryDetailsSection from "./components/ReleaseTerritoryDetailsSection";
+import { useReleaseSelection } from "@/hooks/releases/releaseSelection.hooks";
+import { useReleaseTerritoryOverrides } from "@/hooks/releases/territoryOverrides.hooks";
 
 import { LuSearch } from 'react-icons/lu';
 
 const ALL_COUNTRY_CODES = COUNTRIES_LIST.map((country) => country.code);
-
-const getErrorMessage = (error: unknown) => {
-  if (typeof error !== "object" || !error) return "Failed to update territories";
-
-  const errorWithData = error as {
-    data?: { message?: string } | string;
-    error?: string;
-  };
-
-  if (typeof errorWithData.data === "string") return errorWithData.data;
-  if (typeof errorWithData.data?.message === "string") {
-    return errorWithData.data.message;
-  }
-  if (typeof errorWithData.error === "string") return errorWithData.error;
-
-  return "Failed to update territories";
-};
 
 const ReleaseWizardRegions = ({
   currentStepName,
@@ -42,16 +25,16 @@ const ReleaseWizardRegions = ({
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const { createReleaseNavigationFlow, isLoading: createNavigationFlowIsLoading } =
-    useCreateReleaseNavigationFlow();
-  const { completeReleaseNavigationFlow, isLoading: completeNavigationFlowIsLoading } =
-    useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
   const {
     updateReleaseTerritories,
     isLoading: isSavingTerritories,
     reset: resetUpdateReleaseTerritories,
   } = useUpdateReleaseTerritories();
-  const [selectedTerritories, setSelectedTerritories] = useState<string[]>([]);
   const [territoriesError, setTerritoriesError] = useState<string | undefined>(undefined);
   const [countrySearchQuery, setCountrySearchQuery] = useState("");
 
@@ -63,15 +46,25 @@ const ReleaseWizardRegions = ({
     );
   }, [countrySearchQuery]);
 
-  useEffect(() => {
-    const currentTerritories = release?.territories || [];
-    const normalizedTerritories = currentTerritories
-      .map((territory) => territory.toUpperCase())
-      .filter((territory) => ALL_COUNTRY_CODES.includes(territory));
-
-    setSelectedTerritories(normalizedTerritories);
-    setTerritoriesError(undefined);
-  }, [release?.territories]);
+  const savedTerritories = useMemo(
+    () =>
+      (release?.territories || [])
+        .map((territory) => territory.toUpperCase())
+        .filter((territory) => ALL_COUNTRY_CODES.includes(territory)),
+    [release?.territories],
+  );
+  const {
+    selected: selectedTerritories,
+    setSelected: setSelectedTerritories,
+    markSaved,
+  } = useReleaseSelection({
+    releaseId: release?.id,
+    saved: savedTerritories,
+  });
+  const territoryOverrides = useReleaseTerritoryOverrides({
+    releaseId: release?.id,
+    selectedTerritories,
+  });
 
   const selectedTerritoriesSet = useMemo(
     () => new Set(selectedTerritories),
@@ -98,12 +91,7 @@ const ReleaseWizardRegions = ({
   };
 
   const handleGoBack = () => {
-    if (!release?.id || !previousStepName) return;
-
-    createReleaseNavigationFlow({
-      releaseId: release.id,
-      staticReleaseNavigationStepName: previousStepName,
-    });
+    void goBack();
   };
 
   const handleSaveAndContinue = async () => {
@@ -114,42 +102,35 @@ const ReleaseWizardRegions = ({
 
     setTerritoriesError(undefined);
     resetUpdateReleaseTerritories();
+    const releaseId = release.id;
 
-    try {
-      const response = await updateReleaseTerritories({
-        id: release.id,
-        territories: selectedTerritories,
-      }).unwrap();
-
-      toast.success(response?.message || "Territories updated successfully");
-
-      if (currentStepName) {
-        await completeReleaseNavigationFlow({
-          staticReleaseNavigationStepName: currentStepName,
-          isCompleted: true,
-        });
+    // Save errors show inline next to the buttons; navigation errors are
+    // toasted by `goNext`.
+    await goNext(async () => {
+      try {
+        const response = await updateReleaseTerritories({
+          id: releaseId,
+          territories: selectedTerritories,
+        }).unwrap();
+        markSaved(selectedTerritories);
+        // Overrides for unticked countries are only deleted now, on Save.
+        await territoryOverrides.removePendingOverrides();
+        toast.success(response?.message || "Territories updated successfully");
+        return true;
+      } catch (error) {
+        setTerritoriesError(
+          getApiErrorMessage(error, "Failed to update territories"),
+        );
+        return false;
       }
-      if (nextStepName) {
-        await createReleaseNavigationFlow({
-          releaseId: release.id,
-          staticReleaseNavigationStepName: nextStepName,
-        });
-      }
-    } catch (error) {
-      setTerritoriesError(getErrorMessage(error));
-    }
+    });
   };
 
   const navButtons = (
     <>
       <BackButton
         onClick={handleGoBack}
-        disabled={
-          !previousStepName ||
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        disabled={!previousStepName || isNavigating}
       >
         Back
       </BackButton>
@@ -158,16 +139,7 @@ const ReleaseWizardRegions = ({
         type="button"
         primary
         onClick={handleSaveAndContinue}
-        disabled={
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
-        isLoading={
-          isSavingTerritories ||
-          createNavigationFlowIsLoading ||
-          completeNavigationFlowIsLoading
-        }
+        isLoading={isNavigating || isSavingTerritories}
       >
         Save & continue
       </Button>
@@ -177,7 +149,7 @@ const ReleaseWizardRegions = ({
   return (
     <section className="flex flex-col gap-4 w-full">
       <header className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-(--ink)">Delivery regions</h2>
+        <h2 className="text-xl text-(--ink)">Delivery regions</h2>
         <p className="text-sm leading-6 text-(--muted)">
           Leave empty for worldwide availability, or select specific countries
           to restrict delivery.
@@ -232,7 +204,7 @@ const ReleaseWizardRegions = ({
             <label
               key={country.code}
               htmlFor={`country-${country.code}`}
-              className={`flex items-center gap-2 rounded-md shadow-sm p-3 cursor-pointer transition-colors hover:bg-(--surface)`}
+              className={`flex items-center gap-2 rounded-(--radius-control) border border-(--line-soft) p-3 cursor-pointer transition-colors hover:bg-(--surface)`}
             >
               <UiInput
                 type="checkbox"
@@ -250,11 +222,11 @@ const ReleaseWizardRegions = ({
       </section>
 
       <ReleaseTerritoryDetailsSection
-        releaseId={release?.id}
         selectedTerritories={selectedTerritories}
+        overrides={territoryOverrides}
       />
 
-      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 mt-2 flex flex-col gap-3 bg-(--paper)/95 py-4">
         <p className="text-xs text-(--muted)">
           {selectedTerritories.length === 0
             ? "Worldwide (all countries)"

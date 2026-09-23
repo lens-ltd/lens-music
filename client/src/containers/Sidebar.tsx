@@ -16,7 +16,7 @@ const matchesPath = (pathname: string, targetPath: string) =>
 /** Nav rows sit on the solid brand-blue sidebar: white text, translucent white fills. */
 const navStateClass = (isActive: boolean) =>
   isActive
-    ? 'bg-white/15 font-medium text-white'
+    ? 'bg-white/15 font-normal text-white'
     : 'text-white/85 hover:bg-white/10 hover:text-white';
 
 const Sidebar = () => {

@@ -82,7 +82,12 @@ export const useCreateReleaseNavigationFlow = () => {
         staticSteps,
         staticReleaseNavigationStepName,
       );
-      if (!releaseId || !staticReleaseNavigationStep?.id) return;
+      if (!releaseId) {
+        throw new Error("This release could not be found. Reload the page and try again.");
+      }
+      if (!staticReleaseNavigationStep?.id) {
+        throw new Error(`The step "${staticReleaseNavigationStepName}" is not available.`);
+      }
       return createReleaseNavigationFlowMutation({
         releaseId,
         staticReleaseNavigationId: staticReleaseNavigationStep.id,
@@ -124,7 +129,11 @@ export const useCompleteReleaseNavigationFlow = () => {
         releaseNavigationFlows,
         staticReleaseNavigationStepName,
       );
-      if (!releaseNavigationFlow?.id) return;
+      if (!releaseNavigationFlow?.id) {
+        throw new Error(
+          "This step's progress could not be found. Reload the page and try again.",
+        );
+      }
       return completeReleaseNavigationFlowMutation({
         id: releaseNavigationFlow.id,
         isCompleted,

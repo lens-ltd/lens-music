@@ -1,6 +1,7 @@
 import { Toaster } from "sonner";
 import Router from "./Router";
 import RouteEffects from "./components/layout/RouteEffects";
+import { RouteErrorBoundary } from "./components/feedbacks/ErrorBoundary";
 
 const App = () => {
   return (
@@ -16,8 +17,10 @@ const App = () => {
           },
         }}
       />
-      <RouteEffects />
-      <Router />
+      <RouteErrorBoundary variant="page">
+        <RouteEffects />
+        <Router />
+      </RouteErrorBoundary>
     </>
   );
 };

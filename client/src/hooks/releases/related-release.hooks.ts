@@ -6,10 +6,10 @@ import {
 import { useLazyFetchRelatedReleasesQuery } from "@/state/api/apiQuerySlice";
 
 export const useFetchRelatedReleases = () => {
-  const [fetchRelatedReleases, { data, isFetching, isSuccess }] =
+  const [fetchRelatedReleases, { data, isFetching, isSuccess, isError, error }] =
     useLazyFetchRelatedReleasesQuery();
 
-  return { fetchRelatedReleases, data, isFetching, isSuccess };
+  return { fetchRelatedReleases, data, isFetching, isSuccess, isError, error };
 };
 
 export const useCreateRelatedRelease = () => {

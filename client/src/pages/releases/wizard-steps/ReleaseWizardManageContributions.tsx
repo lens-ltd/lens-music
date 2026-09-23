@@ -1,4 +1,5 @@
 import Button from "@/components/inputs/Button";
+import { getApiErrorMessage } from "@/utils/errors.helper";
 import { BackButton } from "@/components/layout/PageFooter";
 import Input from "@/components/inputs/Input";
 import Loader from "@/components/inputs/Loader";
@@ -10,10 +11,7 @@ import {
   useDeleteReleaseContributor,
   useUpdateReleaseContributor,
 } from "@/hooks/releases/release-contributor.hooks";
-import {
-  useCompleteReleaseNavigationFlow,
-  useCreateReleaseNavigationFlow,
-} from "@/hooks/releases/navigation.hooks";
+import { useWizardStepNavigation } from "@/hooks/releases/wizardStepNavigation.hooks";
 import { useAppSelector } from "@/state/hooks";
 import { useLazyFetchContributorsQuery } from "@/state/api/apiQuerySlice";
 import { Contributor } from "@/types/models/contributor.types";
@@ -25,35 +23,37 @@ import {
   getContributorCreditName,
   getContributorSearchName,
 } from "@/utils/contributorCredit.helper";
-import {
-  MIN_CONTRIBUTOR_SEARCH_CHARS,
-  toTitleCase,
-} from "@/pages/tracks/components/trackForm.helpers";
+import { MIN_CONTRIBUTOR_SEARCH_CHARS } from "@/pages/tracks/components/trackForm.helpers";
+import { capitalizeString } from "@/utils/strings.helper";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ReleaseWizardStepProps } from "../ReleaseWizardPage";
+import WizardQueryError from "./components/WizardQueryError";
 
 import { LuCheck, LuSearch, LuTrash2 } from 'react-icons/lu';
 import { iconButtonDangerClassName } from '@/constants/input.constants';
 
 import ExternalLink from '@/components/ui/ExternalLink';
+import { formatPhone } from "@/utils/phone.helper";
 const ReleaseWizardManageContributions = ({
   currentStepName,
   nextStepName,
   previousStepName,
 }: ReleaseWizardStepProps) => {
   const { release } = useAppSelector((state) => state.release);
-  const {
-    createReleaseNavigationFlow,
-    isLoading: createNavigationFlowIsLoading,
-  } = useCreateReleaseNavigationFlow();
-  const {
-    completeReleaseNavigationFlow,
-    isLoading: completeNavigationFlowIsLoading,
-  } = useCompleteReleaseNavigationFlow();
+  const { goNext, goBack, isNavigating } = useWizardStepNavigation({
+    currentStepName,
+    nextStepName,
+    previousStepName,
+  });
 
-  const { fetchReleaseContributors, data: releaseContributorsData } =
-    useFetchReleaseContributors();
+  const {
+    fetchReleaseContributors,
+    data: releaseContributorsData,
+    isFetching: releaseContributorsIsFetching,
+    isError: releaseContributorsIsError,
+    error: releaseContributorsError,
+  } = useFetchReleaseContributors();
   const {
     createBulkReleaseContributors,
     isLoading: isCreatingContributor,
@@ -127,10 +127,7 @@ const ReleaseWizardManageContributions = ({
             return;
           }
 
-          const errorMessage =
-            (error as { data?: { message?: string } })?.data?.message ||
-            "Unable to search contributors.";
-          toast.error(errorMessage);
+          toast.error(getApiErrorMessage(error, "Unable to search contributors."));
         } finally {
           if (latestSearchRequestRef.current === requestId) {
             setIsContributorSearchPending(false);
@@ -204,10 +201,7 @@ const ReleaseWizardManageContributions = ({
         setContributorSearchResults([]);
         fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to add contributor.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Failed to add contributor."));
       }
     },
     [
@@ -228,10 +222,7 @@ const ReleaseWizardManageContributions = ({
         toast.success("Contributor removed successfully.");
         fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to remove contributor.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Failed to remove contributor."));
       }
     },
     [release?.id, deleteReleaseContributor, fetchReleaseContributors],
@@ -260,10 +251,7 @@ const ReleaseWizardManageContributions = ({
         }).unwrap();
         await fetchReleaseContributors({ releaseId: release.id });
       } catch (error) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Unable to update order.";
-        toast.error(errorMessage);
+        toast.error(getApiErrorMessage(error, "Unable to update order."));
       }
     },
     [
@@ -287,7 +275,7 @@ const ReleaseWizardManageContributions = ({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <RelaxedHeading>Manage Contributions</RelaxedHeading>
       </header>
 
@@ -363,7 +351,7 @@ const ReleaseWizardManageContributions = ({
                                   <span className="text-xs text-(--muted)">
                                     {[
                                       contributor?.email,
-                                      contributor?.phoneNumber,
+                                      formatPhone(contributor?.phoneNumber),
                                       contributor?.country,
                                     ]
                                       .filter(Boolean)
@@ -419,7 +407,7 @@ const ReleaseWizardManageContributions = ({
             releaseContributors?.map((releaseContributor) => (
               <li
                 key={releaseContributor?.id}
-                className="flex items-start justify-between gap-3 rounded-md p-3 shadow-xs"
+                className="flex items-start justify-between gap-3 rounded-(--radius-control) border border-(--line-soft) p-3"
               >
                 <section className="flex flex-col gap-0.5">
                   <p className="text-[13px] font-normal text-(--ink)">
@@ -429,7 +417,7 @@ const ReleaseWizardManageContributions = ({
                     )}
                   </p>
                   <p className="text-xs text-(--muted)">
-                    {toTitleCase(releaseContributor?.role)}
+                    {capitalizeString(releaseContributor?.role)}
                   </p>
                   <label className="mt-1 flex items-center gap-2 text-xs text-(--muted)">
                     <span className="shrink-0 text-xs">Order</span>
@@ -470,6 +458,22 @@ const ReleaseWizardManageContributions = ({
                 )}
               </li>
             ))
+          ) : releaseContributorsIsFetching ? (
+            <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
+              Loading contributors…
+            </li>
+          ) : releaseContributorsIsError ? (
+            <li>
+              <WizardQueryError
+                title="We couldn't load the contributors."
+                error={releaseContributorsError}
+                onRetry={() => {
+                  if (release?.id) {
+                    fetchReleaseContributors({ releaseId: release.id });
+                  }
+                }}
+              />
+            </li>
           ) : (
             <li className="rounded-(--radius-control) bg-(--surface) p-3 text-[13px] text-(--muted)">
               No contributors added yet.
@@ -478,7 +482,9 @@ const ReleaseWizardManageContributions = ({
         </ul>
       </article>
 
-      {!hasPrimaryArtist ? (
+      {!hasPrimaryArtist &&
+      !releaseContributorsIsFetching &&
+      !releaseContributorsIsError ? (
         <p
           className="rounded-md bg-(--surface) px-4 py-3 text-xs leading-5 text-(--muted)"
           role="status"
@@ -487,43 +493,24 @@ const ReleaseWizardManageContributions = ({
         </p>
       ) : null}
 
-      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-white/95 py-4">
+      <footer className="sticky bottom-0 flex w-full items-center justify-between gap-3 bg-(--paper)/95 py-4">
         <BackButton
+          disabled={isNavigating}
           onClick={(e) => {
             e.preventDefault();
-            previousStepName &&
-              release?.id &&
-              createReleaseNavigationFlow({
-                releaseId: release.id,
-                staticReleaseNavigationStepName: previousStepName,
-              });
+            void goBack();
           }}
         >
           Back
         </BackButton>
         <Button
           primary
-          isLoading={
-            createNavigationFlowIsLoading || completeNavigationFlowIsLoading
-          }
-          disabled={
-            !hasPrimaryArtist ||
-            createNavigationFlowIsLoading ||
-            completeNavigationFlowIsLoading
-          }
-          onClick={async (e) => {
+          isLoading={isNavigating}
+          disabled={!hasPrimaryArtist}
+          onClick={(e) => {
             e.preventDefault();
-            if (!nextStepName || !release?.id) return;
-            if (currentStepName) {
-              await completeReleaseNavigationFlow({
-                staticReleaseNavigationStepName: currentStepName,
-                isCompleted: true,
-              });
-            }
-            await createReleaseNavigationFlow({
-              releaseId: release.id,
-              staticReleaseNavigationStepName: nextStepName,
-            });
+            if (!nextStepName) return;
+            void goNext();
           }}
         >
           Save and continue

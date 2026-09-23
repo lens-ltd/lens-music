@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { PhoneNumberField } from '../../../helpers/phone.helper';
 
 export class RequestUserInvitationDto {
   @IsString()
@@ -8,7 +9,6 @@ export class RequestUserInvitationDto {
   @IsEmail()
   email!: string;
 
-  @IsOptional()
-  @IsString()
-  phoneNumber?: string;
+  @PhoneNumberField()
+  phoneNumber?: string | null;
 }

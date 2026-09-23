@@ -80,7 +80,7 @@ const ResetPassword = () => {
               <Loader />
             </div>
           ) : unavailable ? (
-            <div className="mt-8 rounded-xl bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
+            <div className="mt-8 rounded-(--radius-card) bg-(--danger-soft) p-4 text-[13px] text-(--danger)">
               This password reset link is invalid or has expired.
             </div>
           ) : (

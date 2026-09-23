@@ -13,9 +13,9 @@ const headingClass: Record<NonNullable<HeadingProps["type"]>, string> = {
   h1: "type-page-title text-(--ink)",
   h2: "type-card-title text-(--ink)",
   h3: "type-label text-(--ink)",
-  h4: "type-body-sm font-medium text-(--ink)",
+  h4: "type-body-sm text-(--ink)",
   h5: "type-meta text-(--ink)",
-  h6: "text-xs font-medium text-(--muted)",
+  h6: "text-xs text-(--muted)",
 };
 
 export const Heading = ({

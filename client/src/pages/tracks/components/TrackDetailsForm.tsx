@@ -4,8 +4,8 @@ import {
   FormField,
   FormValues,
   parentalAdvisoryOptions,
-  toTitleCase,
 } from "./trackForm.helpers";
+import { capitalizeString } from "@/utils/strings.helper";
 import Combobox from "@/components/inputs/Combobox";
 import { LANGUAGES_LIST } from "@/constants/languages.constants";
 import { SoundRecordingType } from "@/types/models/track.types";
@@ -13,7 +13,7 @@ import { SoundRecordingType } from "@/types/models/track.types";
 const soundRecordingTypeOptions = Object.values(SoundRecordingType).map(
   (v) => ({
     value: v,
-    label: toTitleCase(v.replace(/_/g, " ").toLowerCase()),
+    label: capitalizeString(v),
   }),
 );
 
@@ -154,7 +154,7 @@ const TrackDetailsForm = ({
             </span>
             <Combobox
               options={parentalAdvisoryOptions.map((option) => ({
-                label: toTitleCase(option),
+                label: capitalizeString(option),
                 value: option,
               }))}
               value={String(field.value)}

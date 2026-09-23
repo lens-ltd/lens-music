@@ -6,10 +6,19 @@ import {
 import { useLazyFetchReleaseTerritoryDetailsQuery } from "@/state/api/apiQuerySlice";
 
 export const useFetchReleaseTerritoryDetails = () => {
-  const [fetchReleaseTerritoryDetails, { data, isFetching, isSuccess }] =
-    useLazyFetchReleaseTerritoryDetailsQuery();
+  const [
+    fetchReleaseTerritoryDetails,
+    { data, isFetching, isSuccess, isError, error },
+  ] = useLazyFetchReleaseTerritoryDetailsQuery();
 
-  return { fetchReleaseTerritoryDetails, data, isFetching, isSuccess };
+  return {
+    fetchReleaseTerritoryDetails,
+    data,
+    isFetching,
+    isSuccess,
+    isError,
+    error,
+  };
 };
 
 export const useCreateReleaseTerritoryDetail = () => {

@@ -138,6 +138,7 @@ export const apiQuerySlice = createApi({
           status,
           digitalReleaseDateFrom,
           digitalReleaseDateTo,
+          searchKey,
         }) => {
           return {
             url: "/releases",
@@ -148,6 +149,7 @@ export const apiQuerySlice = createApi({
               status,
               digitalReleaseDateFrom,
               digitalReleaseDateTo,
+              searchKey,
             },
           };
         },

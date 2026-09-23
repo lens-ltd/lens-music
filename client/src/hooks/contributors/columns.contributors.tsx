@@ -24,6 +24,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { LuBadgeCheck, LuCircleCheck, LuCircleX, LuEllipsis, LuInfo, LuSquarePen, LuTrash2, LuUsers } from 'react-icons/lu';
+import { formatPhone } from "@/utils/phone.helper";
 
 // CONTRIBUTOR COLUMNS
 export const useContributorColumns = () => {
@@ -61,6 +62,7 @@ export const useContributorColumns = () => {
       {
         header: "Phone Number",
         accessorKey: "phoneNumber",
+        cell: ({ row }) => formatPhone(row.original.phoneNumber) || "—",
       },
       {
         header: "Verification Status",
