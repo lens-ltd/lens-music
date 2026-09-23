@@ -138,12 +138,12 @@ export default function Table<TData, TValue>({
     <>
       <section
         data-slot="table-frame"
-        className={`overflow-hidden rounded-(--radius-card) border border-(--line) bg-(--paper) ${containerClassName}`}
+        className={`overflow-hidden rounded-(--radius-card) rounded-t-sm border border-gray-100 bg-(--paper) ${containerClassName}`}
       >
         <DataTable className={tableClassName}>
-          <TableHeader className="px-0">
+          <TableHeader className="px-0 bg-black/10">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="py-8">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
@@ -203,7 +203,7 @@ export default function Table<TData, TValue>({
                       <TableCell
                         className={`${
                           preventAction ? "!cursor-auto" : ""
-                        } ${cellClassName}`}
+                        } text-[13px] ${cellClassName}`}
                         key={cell.id}
                         onClick={(e) => {
                           if (preventAction) {
